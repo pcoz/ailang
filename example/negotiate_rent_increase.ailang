@@ -1,0 +1,83 @@
+DO INTELLIGENTLY negotiate_rent_increase:
+
+    # Deterministic input retrieval
+    GET tenant_details FROM user_input  # E.g., current rent, borough, family size
+    GET rent_increase_notice FROM "landlord_email.pdf"  # Parse notice for proposed increase
+    GET local_rent_data FROM "gov_uk_api/london_rent_averages?borough=Hackney&date=2025-08"
+    GET tenant_rights_laws FROM "citizens_advice_api/rent_controls_london"
+    GET cost_of_living_index FROM "ons_gov_uk_api/inflation_data?year=2025"
+
+    # Deterministic setup of variables
+    SET current_rent TO tenant_details.rent_amount
+    SET proposed_increase TO rent_increase_notice.percentage  # E.g., 15
+    SET proposed_rent TO current_rent * (1 + (proposed_increase / 100))
+    SET affordable_threshold TO tenant_details.income * 0.3  # 30% of income rule
+    SET is_unaffordable TO proposed_rent > affordable_threshold
+
+    # Deterministic calculations
+    SET market_average_rent TO AVERAGE(local_rent_data.similar_properties)
+    SET inflation_adjusted_increase TO cost_of_living_index.cpi * current_rent / 100
+    SET legal_max_increase TO tenant_rights_laws.section_13_cap  # E.g., based on Renters Reform Bill updates
+
+    IF proposed_increase > legal_max_increase THEN:
+        SET violation_flag TO true
+        SEND alert TO "tenants_union_support" WITH "Potential illegal increase detected"
+    END_IF
+
+    # Intelligent analysis grounded in deterministic data
+    CONTEXTUALLY assess_fair_rent BASED_ON market_average_rent AND tenant_details.tenure_length
+    # AI uses computed market_average_rent and laws to suggest a fair counter-offer, e.g., 5% if below inflation
+
+    ADAPTIVELY evaluate_negotiation_leverage FROM tenant_details.family_status AND ...local_housing_crisis_reports
+    # Ellipsis allows AI to incorporate current 2025 crisis data (e.g., homelessness stats) for arguments like family impact
+
+    # Conditional with intelligent gap-filling
+    IF is_unaffordable OR violation_flag THEN:
+        CREATIVELY draft_negotiation_email WITH:
+            TONE: polite_and_firm
+            CONSTRAINTS: comply_with_UK_tenant_laws, avoid_escalation
+            OBJECTIVE: reduce_increase_to_fair_level
+            GIVEN: current_rent, proposed_rent, fair_rent, leverage_points
+        # AI generates email citing data, e.g., "Given the 2025 borough averages and my long tenancy..."
+
+        SEND drafted_email TO user_for_review
+
+        # Loop for iterative negotiation
+        WHILE negotiation_ongoing DO:
+            GET landlord_response FROM email_inbox
+            INTELLIGENTLY analyze_response FOR concessions OR threats
+            IF response CONTAINS "eviction" THEN:
+                ADAPTIVELY suggest_legal_aid_options BASED_ON tenant_rights_laws AND ...affordable_services_in_London
+            ELSE:
+                CONTEXTUALLY propose_counter_offer BASED_ON analyzed_response AND fair_rent
+                CREATIVELY update_email_draft WITH new_counter
+            END_IF
+            SET negotiation_ongoing TO landlord_response NOT EQUALS "agreement_reached"
+        END_WHILE
+
+    ELSE:
+        SET recommendation TO "Accept if within budget"
+    END_IF
+
+    # Deterministic logging and output
+    CREATE OBJECT negotiation_report:
+        initial_proposal: proposed_rent
+        suggested_fair_rent: fair_rent
+        leverage_analysis: leverage_points
+        final_outcome: agreement_details
+        timestamp: current_time
+    END_OBJECT
+
+    SEND negotiation_report TO "tenant_records.json"
+    SEND summary TO user_display WITH ...personalized_advice_message
+
+    # Error handling with intelligent recovery
+    TRY:
+        SEND final_agreement TO "landlord_email"
+    INTELLIGENTLY_HANDLE any_errors WITH:
+        CONSTRAINTS: maintain_privacy
+        OBJECTIVES: ensure_delivery
+        FALLBACKS: postal_service_alternative
+    END_TRY
+
+END
