@@ -1,0 +1,67 @@
+{
+  "tenant": {
+    "name": "Alex Tenant",
+    "address": "Flat 3, 45 Example Street, Hackney, London E8 1AB",
+    "family_status": "Single parent with one child",
+    "income": 30000,
+    "rent_amount": 2000,
+    "tenure_length": "2 years",
+    "borough": "Hackney"
+  },
+  "notice": {
+    "proposed_increase_pct": 15.0,
+    "proposed_rent_amount": 2000.0,
+    "landlord_email": "landlord@example.com",
+    "pdf_text_found": true
+  },
+  "market": {
+    "borough": "Hackney",
+    "date": "2025-08",
+    "one_bed_avg": 2200.0,
+    "overall_avg": 2563.0,
+    "annual_change_pct": 8.6,
+    "similar_properties": [
+      {
+        "location": "Homerton E9",
+        "rent": 1950
+      },
+      {
+        "location": "Dalston E8",
+        "rent": 2200
+      },
+      {
+        "location": "London Fields",
+        "rent": 2250
+      },
+      {
+        "location": "Bethnal Green E2",
+        "rent": 2100
+      }
+    ],
+    "source": "Office for National Statistics (ONS) and property portals like Rightmove and Zoopla, data for July 2025"
+  },
+  "inflation": {
+    "cpi_pct": 3.8,
+    "month": "July",
+    "year": 2025,
+    "details": "CPI rose from 3.6% in June to 3.8% in July 2025",
+    "source": "Office for National Statistics (ONS), year to July 2025",
+    "forecast": "Expected to peak at 4.0% in September 2025 per Bank of England"
+  },
+  "affordability": {
+    "annual_income": 30000.0,
+    "monthly_threshold_30pct": 750.0,
+    "proposed_is_unaffordable": true
+  },
+  "recommended": {
+    "cpi_counter": 2075.0,
+    "cpi_plus2_counter": 2115.0,
+    "midpoint_counter": 2000.0,
+    "recommended_counter": 2000.0,
+    "step_up_offer": {
+      "first_6_months": 2000.0,
+      "next_6_months": 2040.0
+    }
+  },
+  "legal_summary": "See attached tenant_rights_laws.md for Section 13 rights, notice periods, and tribunal guidance."
+}
