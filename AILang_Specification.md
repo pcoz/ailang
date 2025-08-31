@@ -225,53 +225,62 @@ Variables store and manipulate data throughout program execution. They maintain 
 
 Variables can be assigned using natural language patterns or traditional programming syntax:
 
-SET \[variable\] TO \[value\]  
-LET \[variable\] BE \[value\]
+```
+#ailang
+SET [variable] TO [value]  
+LET [variable] BE [value]
 
-\[variable\] \= \[value\]
+[variable] = [value]
+```
 
 All three forms are equivalent and can be used interchangeably based on preference or context. The `=` operator provides familiarity for those coming from traditional programming backgrounds.
 
 **Examples:**
 
-\#ailang  
-SET customer\_count TO 0  
-LET total\_amount BE 1500.00  
-username \= "Alice"  
-is\_active \= true
+```
+#ailang  
+SET customer_count TO 0  
+LET total_amount BE 1500.00  
+username = "Alice"  
+is_active = true
 
-calculation\_result \= (price \* quantity) \+ tax
+calculation_result = (price * quantity) + tax
+```
 
 #### Property Access 
 
 Object properties and nested values use dot notation:
 
-\#ailang  
-SET user\_profile.name TO "Alice Smith"  
-user\_profile.email \= "alice@example.com"  
-SET customer\_count TO 0  
-LET total\_amount BE 1500.00
+```
+#ailang  
+SET user_profile.name TO "Alice Smith"  
+user_profile.email = "alice@example.com"  
+SET customer_count TO 0  
+LET total_amount BE 1500.00
 
-config.settings.timeout \= 30
+config.settings.timeout = 30
+```
 
 #### Complex State Management 
 
 AILang supports complex state operations with nested structures:
 
-\#ailang  
-\# Nested property access  
+```
+#ailang  
+# Nested property access  
 SET user.preferences.notifications.email TO true  
 GET value FROM deeply.nested.object.property
 
-\# Dynamic property access  
-SET property\_name TO "status"  
-SET object.\[property\_name\] TO "active"  \# Dynamic key access
+# Dynamic property access  
+SET property_name TO "status"  
+SET object.[property_name] TO "active"  # Dynamic key access
 
-\# State accumulation  
+# State accumulation  
 ADD item TO collection  
 INCREMENT counter BY 1
 
-APPEND log\_entry TO audit\_trail
+APPEND log_entry TO audit_trail
+```
 
 **Specification**: Variables are dynamically typed and maintain their values throughout program scope. Property access follows standard dot notation rules for nested structures. The assignment operator `=` can be used with all variable types and in all contexts where `SET` or `LET` would be valid. Complex state operations maintain deterministic behavior while supporting nested and dynamic access patterns.
 
@@ -283,17 +292,12 @@ All operators follow deterministic evaluation rules and return predictable resul
 
 Mathematical operations on numeric values:
 
-* `[value1] + [value2]` or `[value1] PLUS [value2]` \- Addition  
-    
-* `[value1] - [value2]` or `[value1] MINUS [value2]` \- Subtraction  
-    
-* `[value1] * [value2]` or `[value1] TIMES [value2]` \- Multiplication  
-    
-* `[value1] / [value2]` or `[value1] DIVIDED BY [value2]` \- Division  
-    
-* `[value1] % [value2]` or `[value1] MODULO [value2]` \- Remainder  
-    
-* `[value1] ^ [power]` or `[value1] TO THE POWER OF [power]` \- Exponentiation
+* **Addition:** `[value1] + [value2]` or `[value1] PLUS [value2]`
+* **Subtraction:** `[value1] - [value2]` or `[value1] MINUS [value2]`
+* **Multiplication:** `[value1] * [value2]` or `[value1] TIMES [value2]`
+* **Division:** `[value1] / [value2]` or `[value1] DIVIDED BY [value2]`
+* **Remainder:** `[value1] % [value2]` or `[value1] MODULO [value2]`
+* **Exponentiation:** `[value1] ^ [power]` or `[value1] TO THE POWER OF [power]`
 
 #### Comparison Operators 
 
@@ -301,761 +305,737 @@ All comparisons return boolean values (true/false):
 
 **Equality Testing:**
 
-* `[value1] EQUALS [value2]` or `[value1] == [value2]`  
-    
+* `[value1] EQUALS [value2]` or `[value1] == [value2]`
 * `[value1] NOT EQUALS [value2]` or `[value1] != [value2]`
 
 **Numeric Comparisons:**
 
-* `[value1] GREATER THAN [value2]` or `[value1] > [value2]`  
-    
-* `[value1] LESS THAN [value2]` or `[value1] < [value2]`  
-    
-* `[value1] GREATER THAN OR EQUAL TO [value2]` or `[value1] >= [value2]`  
-    
+* `[value1] GREATER THAN [value2]` or `[value1] > [value2]`
+* `[value1] LESS THAN [value2]` or `[value1] < [value2]`
+* `[value1] GREATER THAN OR EQUAL TO [value2]` or `[value1] >= [value2]`
 * `[value1] LESS THAN OR EQUAL TO [value2]` or `[value1] <= [value2]`
 
-#### Logical Operators 
+#### Logical Operators
 
 Boolean logic operations for combining conditions:
 
-* `[condition1] AND [condition2]` \- Both conditions must be true  
-    
-* `[condition1] OR [condition2]` \- At least one condition must be true  
-    
-* `NOT [condition]` \- Inverts the boolean value
+* `[condition1] AND [condition2]` - Both conditions must be true
+* `[condition1] OR [condition2]` - At least one condition must be true
+* `NOT [condition]` - Inverts the boolean value
 
-#### Text Operators 
+#### Text Operators
 
 String manipulation and testing:
 
-* `CONTAINS` \- Checks if text contains a substring  
-    
-* `STARTS WITH` \- Checks if text begins with a substring  
-    
-* `ENDS WITH` \- Checks if text concludes with a substring  
-    
-* `CONCATENATE` or `[text1] + [text2]` \- Joins text strings  
-    
-* `LENGTH OF [text]` \- Returns the number of characters  
-    
-* `SUBSTRING OF [text] FROM [start] TO [end]` \- Extracts portion of text
+* `CONTAINS` - Checks if text contains a substring
+* `STARTS WITH` - Checks if text begins with a substring
+* `ENDS WITH` - Checks if text concludes with a substring
+* `CONCATENATE` or `[text1] + [text2]` - Joins text strings
+* `LENGTH OF [text]` - Returns the number of characters
+* `SUBSTRING OF [text] FROM [start] TO [end]` - Extracts portion of text
 
-### 
-
-### 4. Input/Output Operations 
+### 4. Input/Output Operations
 
 I/O operations provide deterministic data flow between the program and external systems.
 
-#### Input Operations 
+#### Input Operations
 
-**Purpose**: Acquire data from specified sources **Syntax Options**:
+**Purpose**: Acquire data from specified sources. **Syntax Options**:
 
-* `GET [variable] FROM [source]`  
-    
-* `[variable] << [source]` (stream operator syntax)
+```
+#ailang
+GET [variable] FROM [source]
+[variable] << [source]    # stream operator syntax
+```
 
 The AI must retrieve data from the specified source and assign it to the variable. If the source is inaccessible, an input error is thrown.
 
 **Examples:**
 
-GET user\_name FROM user\_input
+```
+#ailang
+GET user_name FROM user_input
+GET weather_data FROM "weather_api.com/current"
+GET file_contents FROM "document.txt"
+GET current_time FROM system_clock
 
-GET weather\_data FROM "weather\_api.com/current"
+# Equivalent using stream operators:
+user_name << user_input
+weather_data << "weather_api.com/current"
+file_contents << "document.txt"
+current_time << system_clock
+```
 
-GET file\_contents FROM "document.txt"
+#### Output Operations
 
-GET current\_time FROM system\_clock
+**Purpose**: Send data to specified destinations. **Syntax Options**:
 
-\# Equivalent using stream operators:
-
-user\_name \<\< user\_input
-
-weather\_data \<\< "weather\_api.com/current"
-
-file\_contents \<\< "document.txt"
-
-current\_time \<\< system\_clock
-
-#### Output Operations 
-
-**Purpose**: Send data to specified destinations **Syntax Options**:
-
-* `SEND [data] TO [destination]`  
-    
-* `[data] >> [destination]` (stream operator syntax)
+```
+#ailang
+SEND [data] TO [destination]
+[data] >> [destination]   # stream operator syntax
+```
 
 The AI must transmit the data to the specified destination. If transmission fails, an output error is thrown.
 
 **Examples:**
 
-SEND greeting\_message TO user\_display
+```
+#ailang
+SEND greeting_message TO user_display
+SEND analysis_results TO "report.txt"
+SEND notification TO email_system
 
-SEND analysis\_results TO "report.txt"
+# Equivalent using stream operators:
+greeting_message >> user_display
+analysis_results >> "report.txt"
+notification >> email_system
+```
 
-SEND notification TO email\_system
-
-\# Equivalent using stream operators:
-
-greeting\_message \>\> user\_display
-
-analysis\_results \>\> "report.txt"
-
-notification \>\> email\_system
-
-#### Stream Operator Chaining 
+#### Stream Operator Chaining
 
 The stream operators can be chained for sequential operations:
 
-\# Input chaining: process data as it flows
+```
+#ailang
+# Input chaining: process data as it flows
+raw_data << "input.csv"
+processed_data << PROCESS(raw_data)
 
-raw\_data \<\< "input.csv"
+# Output chaining: send to multiple destinations
+report >> "local_file.txt"
+report >> email_system
+report >> backup_storage
+```
 
-processed\_data \<\< PROCESS(raw\_data)
-
-\# Output chaining: send to multiple destinations
-
-report \>\> "local\_file.txt"
-
-report \>\> email\_system
-
-report \>\> backup\_storage
-
-### 5. Control Flow Structures 
+### 5. Control Flow Structures
 
 Control flow determines the execution path through the program. All control structures follow deterministic branching rules.
 
-#### Conditional Execution (IF Statements) 
+#### Conditional Execution (`IF` Statements)
 
 Conditionals evaluate boolean expressions and execute corresponding code blocks:
 
-IF \[condition\] THEN:
-
-[instructions]
-
-ELSE IF \[condition\] THEN:
-
-[instructions]
-
+```
+#ailang
+IF [condition] THEN:
+    [instructions]
+ELSE IF [condition] THEN:
+    [instructions]
 ELSE:
+    [instructions]
+END_IF
+```
 
-[instructions]
+**Specification**: Conditions are evaluated sequentially. The first branch with a true condition executes. If no conditions are true, the `ELSE` branch executes if present.
 
-END\_IF
+#### Loop Structures
 
-**Specification**: Conditions are evaluated sequentially. The first branch with a true condition executes. If no conditions are true, the ELSE branch executes if present.
-
-#### Loop Structures 
-
-##### WHILE Loops 
+##### `WHILE` Loops
 
 Execute instructions repeatedly while a condition remains true:
 
-WHILE \[condition\] DO:
+```
+#ailang
+WHILE [condition] DO:
+    [instructions]
+END_WHILE
+```
 
-[instructions]
+**Specification**: The condition is checked before each iteration. The loop continues while the condition evaluates to `true`.
 
-END\_WHILE
-
-**Specification**: The condition is checked before each iteration. The loop continues while the condition evaluates to true.
-
-##### FOR Loops 
+##### `FOR` Loops
 
 Iterate through collections, binding each element to a variable:
 
-FOR each \[item\] IN \[collection\] DO:
+```
+#ailang
+FOR EACH [item] IN [collection] DO:
+    [instructions]
+END_FOR
+```
 
-[instructions]
+**Specification**: Each element in the collection is processed sequentially, with the current element bound to the `item` variable.
 
-END\_FOR
-
-**Specification**: Each element in the collection is processed sequentially, with the current element bound to the item variable.
-
-##### REPEAT Loops 
+##### `REPEAT` Loops
 
 Execute instructions a specific number of times:
 
-REPEAT \[number\] TIMES:
+```
+#ailang
+REPEAT [number] TIMES:
+    [instructions]
+END_REPEAT
+```
 
-[instructions]
-
-END\_REPEAT
-
-#### Pattern Matching 
+#### Pattern Matching
 
 Match values against multiple patterns with structured case handling:
 
-MATCH \[value\] WITH:
+```
+#ailang
+MATCH [value] WITH:
+    CASE [pattern1]:
+        [instructions]
+    CASE [pattern2]:
+        [instructions]
+    DEFAULT:
+        [instructions]
+END_MATCH
+```
 
-CASE [pattern1]: [instructions]
-
-CASE [pattern2]: [instructions]
-
-DEFAULT: [instructions]
-
-END\_MATCH
-
-
-### 6. Procedures and Functions 
+### 6. Procedures and Functions
 
 Procedures encapsulate reusable logic with parameters and return values.
 
-#### Basic Operation Blocks 
+#### Basic Operation Blocks
 
 Simple operation blocks for organizing code:
 
-DO \[operation\_name\]:
-
-[instructions]
-
+```
+#ailang
+DO [operation_name]:
+    [instructions]
 END
+```
 
 Operations with parameters and return values:
 
-DO \[operation\_name\] WITH \[parameters\]:
-
-[instructions]
-
-RETURN [value]
-
+```
+#ailang
+DO [operation_name] WITH [parameters]:
+    [instructions]
+    RETURN [value]
 END
+```
 
-#### Function Definition and Calling 
+#### Function Definition and Calling
 
 Define reusable procedures with formal parameters:
 
-DEFINE PROCEDURE \[name\] WITH PARAMETERS \[param1, param2\]:
+```
+#ailang
+DEFINE PROCEDURE [name] WITH PARAMETERS [param1, param2]:
+    [instructions]
+    RETURN [value]
+END_PROCEDURE
+```
 
-[instructions]
+```
+#ailang
+CALL [procedure_name] WITH [arguments]
+```
 
-RETURN [value]
-
-END\_PROCEDURE
-
-CALL \[procedure\_name\] WITH \[arguments\]
-
-
-### 7. Object Management 
+### 7. Object Management
 
 Objects provide structured data containers with properties and methods.
 
-#### Object Creation 
+#### Object Creation
 
 Define objects with properties and methods:
 
-CREATE OBJECT \[name\]:
+```
+#ailang
+CREATE OBJECT [name]:
+    [property]: [value]
+    [property]: [value]
 
-[property]: [value]
+    METHOD [method_name]:
+        [instructions]
+    END_METHOD
+END_OBJECT
+```
 
-[property]: [value]
-
-METHOD [method\_name]:
-
-    [instructions]
-
-END\_METHOD
-
-END\_OBJECT
-
-#### Object Instantiation and Access 
+#### Object Instantiation and Access
 
 Create instances and access properties:
 
-SET \[variable\] TO NEW \[object\_name\]
+```
+#ailang
+SET [variable] TO NEW [object_name]
+```
 
 Property and method access uses dot notation:
 
-* `[object].[property]` \- Access property value  
-    
-* `[object].[method]([parameters])` \- Call object method
+* `[object].[property]` - Access property value
+* `[object].[method]([parameters])` - Call object method
 
 **Specification**: Objects follow deterministic structure rules for property access and method invocation, while property values may be intelligently determined based on context.
 
-
-### 8. Enhanced Intelligent Programming Constructs 
+### 8. Enhanced Intelligent Programming Constructs
 
 AILang provides constructs that explicitly delegate to AI intelligence while maintaining structured frameworks.
 
-#### Contextual Intelligence Framework 
+#### Contextual Intelligence Framework
 
 When transitioning from deterministic to intelligent operations, the AI has access to:
 
-1. **Current Variable State**: All deterministic calculations and data assignments  
-2. **Execution History**: Previous operations and their outcomes  
-3. **Program Context**: The overall objective and constraints of the program  
+1. **Current Variable State**: All deterministic calculations and data assignments
+2. **Execution History**: Previous operations and their outcomes
+3. **Program Context**: The overall objective and constraints of the program
 4. **Domain Knowledge**: AI's understanding of the relevant problem domain
 
 This ensures intelligent operations are grounded in concrete program state rather than arbitrary reasoning.
 
-#### Intelligence Modifiers 
+#### Intelligence Modifiers
 
 These modifiers signal that creative problem-solving and contextual adaptation are expected:
 
-##### INTELLIGENTLY 
+##### `INTELLIGENTLY`
 
 Apply domain knowledge and best practices using current program state:
 
-\# After deterministic calculations establish customer\_value \= 15000  
-INTELLIGENTLY determine\_service\_tier BASED\_ON customer\_value  
-\# AI uses the concrete value of 15000 to make tier decision
+```
+#ailang
+# After deterministic calculations establish customer_value = 15000
+INTELLIGENTLY determine_service_tier BASED_ON customer_value
+# AI uses the concrete value of 15000 to make tier decision
 
-INTELLIGENTLY analyze\_data FROM user\_input  
-INTELLIGENTLY choose\_response BASED\_ON customer\_history
+INTELLIGENTLY analyze_data FROM user_input
+INTELLIGENTLY choose_response BASED_ON customer_history
+```
 
-##### CREATIVELY 
+##### `CREATIVELY`
 
 Generate novel approaches using established constraints:
 
-\# After deterministic validation of available\_resources \= \["staff", "budget", "time"\]  
-CREATIVELY solve\_scheduling\_conflict WITH available\_resources  
-\# AI creates solutions constrained by the specific available resources
+```
+#ailang
+# After deterministic validation of available_resources = ["staff", "budget", "time"]
+CREATIVELY solve_scheduling_conflict WITH available_resources
+# AI creates solutions constrained by the specific available resources
 
-CREATIVELY design\_workflow FOR new\_requirements
+CREATIVELY design_workflow FOR new_requirements
+```
 
-##### ADAPTIVELY 
+##### `ADAPTIVELY`
 
 Adjust approach based on computed conditions:
 
-\# After deterministic calculation shows system\_load \= 85%  
-ADAPTIVELY optimize\_performance WHEN system\_load \> 80%  
-\# AI adapts strategy based on the specific computed load value
+```
+#ailang
+# After deterministic calculation shows system_load = 85%
+ADAPTIVELY optimize_performance WHEN system_load > 80%
+# AI adapts strategy based on the specific computed load value
 
-ADAPTIVELY handle\_errors WHEN standard\_procedures\_fail
+ADAPTIVELY handle_errors WHEN standard_procedures_fail
+```
 
-##### CONTEXTUALLY 
+##### `CONTEXTUALLY`
 
 Make decisions using calculated program state:
 
-\# After deterministic analysis shows customer\_tier \= "premium", issue\_complexity \= "high"  
-CONTEXTUALLY set\_response\_priority BASED\_ON customer\_tier AND issue\_complexity  
-\# AI sets priority using concrete deterministic values, not assumptions
+```
+#ailang
+# After deterministic analysis shows customer_tier = "premium", issue_complexity = "high"
+CONTEXTUALLY set_response_priority BASED_ON customer_tier AND issue_complexity
+# AI sets priority using concrete deterministic values, not assumptions
 
-CONTEXTUALLY set\_message\_tone FOR recipient\_relationship
+CONTEXTUALLY set_message_tone FOR recipient_relationship
+```
 
-#### Intelligent Operation Blocks 
+#### Intelligent Operation Blocks
 
 Structured blocks that combine deterministic framework with intelligent execution:
 
-DO INTELLIGENTLY \[operation\_description\]:  
-    \[instructions with gaps\]  
+```
+#ailang
+DO INTELLIGENTLY [operation_description]:
+    [instructions with gaps]
 END
+```
 
-DO CREATIVELY \[problem\_description\]:  
-    GIVEN \[constraints\]  
-    \[instructions\]  
+```
+#ailang
+DO CREATIVELY [problem_description]:
+    GIVEN [constraints]
+    [instructions]
 END
+```
 
-#### Bounded Intelligence Constraints 
+#### Bounded Intelligence Constraints
 
 All intelligent operations must specify explicit boundaries:
 
-INTELLIGENTLY operation WITH:  
-    MUST\_INCLUDE: \[required\_elements\]  
-    CANNOT\_INCLUDE: \[forbidden\_elements\]  
-    OUTPUT\_FORMAT: \[structured\_requirement\]  
-    MAX\_SCOPE: \[boundary\_definition\]  
+```
+#ailang
+INTELLIGENTLY operation WITH:
+    MUST_INCLUDE: [required_elements]
+    CANNOT_INCLUDE: [forbidden_elements]
+    OUTPUT_FORMAT: [structured_requirement]
+    MAX_SCOPE: [boundary_definition]
 END
+```
 
 **Example:**
 
-INTELLIGENTLY generate\_response WITH:  
-    MUST\_INCLUDE: \[apology, next\_steps, timeline\]  
-    CANNOT\_INCLUDE: \[legal\_admissions, new\_policies, promises\]  
-    OUTPUT\_FORMAT: professional\_email  
-    MAX\_SCOPE: current\_incident\_only  
+```
+#ailang
+INTELLIGENTLY generate_response WITH:
+    MUST_INCLUDE: [apology, next_steps, timeline]
+    CANNOT_INCLUDE: [legal_admissions, new_policies, promises]
+    OUTPUT_FORMAT: professional_email
+    MAX_SCOPE: current_incident_only
 END
+```
 
-#### Gap-Filling Syntax 
+#### Gap-Filling Syntax
 
-##### Ellipsis Operator (...) 
+##### Ellipsis Operator (`...`)
 
 Indicates where AI should apply intelligence:
 
-GET user\_data FROM ...appropriate\_data\_source  
-PROCESS information USING ...suitable\_analysis\_method  
-RESPOND TO user WITH ...contextually\_relevant\_message
+```
+#ailang
+GET user_data FROM ...appropriate_data_source
+PROCESS information USING ...suitable_analysis_method
+RESPOND TO user WITH ...contextually_relevant_message
+```
 
-##### Smart Defaults 
+##### Smart Defaults
 
 Variables that adapt to context:
 
-SET response\_time TO reasonable\_duration FOR current\_context  
-SET message\_style TO appropriate\_for user\_preference  
-SET processing\_method TO optimal\_for data\_size
+```
+#ailang
+SET response_time TO reasonable_duration FOR current_context
+SET message_style TO appropriate_for user_preference
+SET processing_method TO optimal_for data_size
+```
 
-#### Context-Aware Conditions 
+#### Context-Aware Conditions
 
 Conditions that combine deterministic evaluation with intelligent interpretation:
 
-IF situation\_warrants\_escalation THEN:  
-    \# AI determines what constitutes "warranting escalation"  
-END\_IF
+```
+#ailang
+IF situation_warrants_escalation THEN:
+    # AI determines what constitutes "warranting escalation"
+END_IF
+```
 
-WHILE progress\_is\_being\_made DO:  
-    \# AI evaluates both quantitative and qualitative progress  
-END\_WHILE
+```
+#ailang
+WHILE progress_is_being_made DO:
+    # AI evaluates both quantitative and qualitative progress
+END_WHILE
+```
 
-#### Intelligent Iteration 
+#### Intelligent Iteration
 
 Loops where AI determines relevance or selection criteria:
 
-FOR each ...relevant\_record IN large\_dataset DO:  
-    \# AI determines relevance based on context and objectives  
-END\_FOR
+```
+#ailang
+FOR EACH ...relevant_record IN large_dataset DO:
+    # AI determines relevance based on context and objectives
+END_FOR
+```
 
-WHILE ...customer\_is\_not\_happy DO:  
-    \# Escalate to higher management level  
-END\_WHILE
+```
+#ailang
+WHILE ...customer_is_not_happy DO:
+    # Escalate to higher management level
+END_WHILE
+```
 
-### 9. Confidence Levels and Action Authority 
+### 9. Confidence Levels and Action Authority
 
-AILang supports explicit confidence levels for intelligent operations that determine action authority:
+AILang supports explicit confidence levels for intelligent operations that determine action authority.
 
-#### Confidence Declaration 
+#### Confidence Declaration
 
-\#ailang  
-INTELLIGENTLY assess\_situation WITH:  
-    OUTPUT: assessment  
-    CONFIDENCE\_LEVEL: \[high|moderate|low\]  
-    ALTERNATIVE\_INTERPRETATIONS: \[list\_of\_possibilities\]
-
+```
+#ailang
+INTELLIGENTLY assess_situation WITH:
+    OUTPUT: assessment
+    CONFIDENCE_LEVEL: [high|moderate|low]
+    ALTERNATIVE_INTERPRETATIONS: [list_of_possibilities]
 END
+```
 
-#### Confidence-Based Branching 
+#### Confidence-Based Branching
 
-\#ailang  
-IF interpretation\_confidence \< high THEN:  
-    CONFIRM WITH user: "I understand \[interpretation\]. Is this correct?"  
-    WAIT for\_confirmation BEFORE proceeding
-
-END\_IF
+```
+#ailang
+IF interpretation_confidence < high THEN:
+    CONFIRM WITH user: "I understand [interpretation]. Is this correct?"
+    WAIT for_confirmation BEFORE proceeding
+END_IF
+```
 
 **Specification**: Lower confidence assessments require tighter boundaries and often user confirmation before significant actions.
 
-### 10. The Qualitative Spectrum 
+### 10. The Qualitative Spectrum
 
 Within qualitative processing, AILang recognizes a spectrum from observable to interpretive assessments that determines execution confidence and boundary placement.
 
-#### Observable Qualitative Phenomena 
+#### Observable Qualitative Phenomena
 
 Qualitative assessments grounded in verifiable, sensory data where multiple observers would largely agree:
 
-* Physical states: "person is walking", "room is cluttered", "door is open"  
-* Emotional expressions: "voice sounds angry", "person is crying"  
+* Physical states: "person is walking", "room is cluttered", "door is open"
+* Emotional expressions: "voice sounds angry", "person is crying"
 * Environmental conditions: "room is dark", "music is playing"
 
 These assessments, while qualitative, have high confidence due to observable anchors.
 
-#### Interpretive Qualitative Assessments 
+#### Interpretive Qualitative Assessments
 
 Assessments requiring inference chains and subjective judgment:
 
-* Internal states: "person feels lonely", "customer is considering switching"  
-* Social interpretations: "meeting has tension", "joke might offend"  
+* Internal states: "person feels lonely", "customer is considering switching"
+* Social interpretations: "meeting has tension", "joke might offend"
 * Value judgments: "behavior is inappropriate", "request seems unreasonable"
 
 These assessments require lower confidence and tighter action boundaries.
 
-#### Confidence-Based Execution 
+#### Confidence-Based Execution
 
 AILang adjusts execution based on assessment type:
 
-\#ailang  
-\# High confidence \- observable  
-IF person\_is\_crying THEN:  
-    OFFER tissue  \# Direct action authorized  
-END\_IF
+```
+#ailang
+# High confidence - observable
+IF person_is_crying THEN:
+    OFFER tissue  # Direct action authorized
+END_IF
 
-\# Low confidence \- interpretive    
-IF mood\_seems\_depressed THEN:  
-    ONLY SUGGEST: "Would you like to talk?"  \# Minimal action  
-    CANNOT: diagnose, prescribe, assume\_causes
+# Low confidence - interpretive    
+IF mood_seems_depressed THEN:
+    ONLY SUGGEST: "Would you like to talk?"  # Minimal action
+    CANNOT: diagnose, prescribe, assume_causes
+END_IF
+```
 
-END\_IF
+**Specification**: The AI must recognize where assessments fall on the observable–interpretive spectrum and adjust confidence levels and action boundaries accordingly.
 
-**Specification**: The AI must recognize where assessments fall on the observable-interpretive spectrum and adjust confidence levels and action boundaries accordingly.
-
-### 11. Execution Boundaries 
+### 11. Execution Boundaries
 
 Clear delineation between deterministic and intelligent execution ensures program reliability.
 
-#### What AI Must Execute Deterministically 
+#### What AI Must Execute Deterministically
 
 These operations must behave consistently every time:
 
-1. **Variable Assignment**: `SET`/`LET` operations must behave consistently  
-     
-2. **Control Flow Logic**: `IF`/`WHILE`/`FOR` must follow exact branching rules  
-     
-3. **Input/Output Operations**: `GET`/`SEND` must attempt specified operations  
-     
-4. **Comparison Results**: Same inputs must yield same boolean outputs  
-     
-5. **Object Structure**: Property and method access must follow defined patterns
+1. **Variable Assignment:** `SET` / `LET` operations must behave consistently
+2. **Control Flow Logic:** `IF` / `WHILE` / `FOR` must follow exact branching rules
+3. **Input/Output Operations:** `GET` / `SEND` must attempt specified operations
+4. **Comparison Results:** Same inputs must yield same boolean outputs
+5. **Object Structure:** Property and method access must follow defined patterns
 
-#### What AI May Handle Intelligently 
+#### What AI May Handle Intelligently
 
 These aspects allow for contextual adaptation:
 
-1. **Underspecified Parameters**: Choosing appropriate defaults when values aren't explicit  
-     
-2. **Error Recovery**: Deciding how to handle unexpected situations gracefully  
-     
-3. **Optimization Decisions**: Improving performance without changing logical behavior  
-     
-4. **Contextual Interpretation**: Understanding intent when natural language is ambiguous  
-     
-5. **Creative Problem-Solving**: Generating solutions within specified constraints
+1. **Underspecified Parameters:** Choosing appropriate defaults when values aren't explicit
+2. **Error Recovery:** Deciding how to handle unexpected situations gracefully
+3. **Optimization Decisions:** Improving performance without changing logical behavior
+4. **Contextual Interpretation:** Understanding intent when natural language is ambiguous
+5. **Creative Problem-Solving:** Generating solutions within specified constraints
 
-
-### 12. State-Aware Dynamic Boundaries 
+### 12. State-Aware Dynamic Boundaries
 
 AILang maintains state that creates dynamic execution boundaries:
 
-#### State-Dependent Limits 
+#### State-Dependent Limits
 
-\#ailang  
-SET daily\_limit TO 1000  
-SET current\_usage TO 0
+```
+#ailang
+SET daily_limit TO 1000
+SET current_usage TO 0
 
-FOR each request IN queue:  
-    IF current\_usage \+ request.amount \> daily\_limit THEN:  
-        DEFER request TO next\_day  
-    ELSE:  
-        PROCESS request  
-        INCREMENT current\_usage BY request.amount  
-    END\_IF
+FOR EACH request IN queue DO:
+    IF current_usage + request.amount > daily_limit THEN:
+        DEFER request TO next_day
+    ELSE:
+        PROCESS request
+        INCREMENT current_usage BY request.amount
+    END_IF
+END_FOR
+```
 
-END\_FOR
+#### Progressive Authorization
 
-#### Progressive Authorization 
+```
+#ailang
+IF success_rate > 0.95 FOR last_100_operations THEN:
+    EXPAND authority TO level_2_operations
+ELSE IF error_rate > 0.10 THEN:
+    RESTRICT authority TO read_only_mode
+END_IF
+```
 
-\#ailang  
-IF success\_rate \> 0.95 FOR last\_100\_operations THEN:  
-    EXPAND authority TO level\_2\_operations  
-ELSE IF error\_rate \> 0.10 THEN:  
-    RESTRICT authority TO read\_only\_mode
+#### Cascade Prevention
 
-END\_IF
+```
+#ailang
+# Prevent action cascades
+IF actions_taken_for(entity) > threshold TODAY THEN:
+    ESCALATE TO human_supervisor
+    STOP_PROCESSING_FOR entity
+END_IF
+```
 
-#### Cascade Prevention 
+#### Compositional Limits
 
-\#ailang  
-\# Prevent action cascades  
-IF actions\_taken\_for(entity) \> threshold TODAY THEN:  
-    ESCALATE TO human\_supervisor  
-    STOP\_PROCESSING\_FOR entity
-
-END\_IF
-
-#### Compositional Limits 
-
-\#ailang  
-WITHIN time\_period(1\_hour) ALLOW:  
-    \- MAXIMUM 10 external\_api\_calls  
-    \- MAXIMUM 100 database\_updates  
-    \- MAXIMUM 50 customer\_contacts
-
-END\_WITHIN
+```
+#ailang
+WITHIN time_period(1_hour) ALLOW:
+    MAXIMUM 10 external_api_calls
+    MAXIMUM 100 database_updates
+    MAXIMUM 50 customer_contacts
+END_WITHIN
+```
 
 **Specification**: Boundaries can dynamically adjust based on program state, but must always remain within maximum defined limits. State-aware boundaries prevent cascade failures and resource exhaustion while allowing adaptive behavior within safe parameters.
 
-### 13. Error Handling 
+### 13. Error Handling
 
 AILang provides both deterministic error handling patterns and intelligent error recovery mechanisms.
 
-#### Deterministic Error Patterns 
+#### Deterministic Error Patterns
 
 Structured try-catch blocks with explicit error handling:
 
-\#ailang  
-TRY:  
-    \[instructions that might fail\]  
-CATCH \[error\_type\]:  
-    \[specific error handling\]  
-CATCH ANY:  
-    \[general error handling\]  
-FINALLY:  
-    \[cleanup instructions\]
+```
+#ailang
+TRY:
+    [instructions that might fail]
+CATCH [error_type]:
+    [specific error handling]
+CATCH ANY:
+    [general error handling]
+FINALLY:
+    [cleanup instructions]
+END_TRY
+```
 
-END\_TRY
-
-#### Intelligent Error Recovery 
+#### Intelligent Error Recovery
 
 Adaptive error handling that leverages AI intelligence within defined boundaries:
 
-\#ailang  
-TRY:  
-    \[instructions\]  
-INTELLIGENTLY\_HANDLE any\_errors WITH:  
-    CONSTRAINTS: \[safety\_requirements\]  
-    OBJECTIVES: \[desired\_outcomes\]    
-    FALLBACKS: \[alternative\_approaches\]  
-    CONTEXT: \[relevant\_state\]
-
-END\_TRY
+```
+#ailang
+TRY:
+    [instructions]
+INTELLIGENTLY_HANDLE any_errors WITH:
+    CONSTRAINTS: [safety_requirements]
+    OBJECTIVES: [desired_outcomes]
+    FALLBACKS: [alternative_approaches]
+    CONTEXT: [relevant_state]
+END_TRY
+```
 
 The AI uses specified constraints and objectives to determine recovery strategies while maintaining safety requirements. Error handling remains bounded by explicit constraints even when using intelligence.
 
 **Example:**
 
-\#ailang  
-TRY:  
-    CONNECT TO external\_service  
-INTELLIGENTLY\_HANDLE connection\_errors WITH:  
-    CONSTRAINTS: \[max\_retries: 3, preserve\_data\_integrity\]  
-    OBJECTIVES: \[maintain\_service, log\_details\]  
-    CONTEXT: current\_transaction\_state
+```
+#ailang
+TRY:
+    CONNECT TO external_service
+INTELLIGENTLY_HANDLE connection_errors WITH:
+    CONSTRAINTS: [max_retries: 3, preserve_data_integrity]
+    OBJECTIVES: [maintain_service, log_details]
+    CONTEXT: current_transaction_state
+END_TRY
+```
 
-END\_TRY
+## Example Programs
 
-## Example Programs 
+### Hybrid Deterministic-Intelligent Program
 
-### Hybrid Deterministic-Intelligent Program 
+```
+#ailang
+# Customer Service Automation System
 
-\# Customer Service Automation System
+DO INTELLIGENTLY process_customer_inquiry:
+    # Deterministic input
+    GET inquiry FROM customer_service_queue
+    GET customer_history FROM database WHERE customer_id EQUALS inquiry.customer_id
 
-DO INTELLIGENTLY process\_customer\_inquiry:
+    # Intelligent analysis with gaps
+    INTELLIGENTLY analyze_inquiry_type FROM inquiry.text
+    CONTEXTUALLY assess_urgency BASED_ON customer_history AND inquiry_content
 
-\# Deterministic input
+    # Deterministic control flow
+    IF urgency EQUALS "high" THEN:
+        # Intelligent content generation
+        CREATIVELY craft_immediate_response WITH:
+            TONE: empathetic_and_professional
+            CONSTRAINTS: company_policy_guidelines
+            OBJECTIVE: customer_satisfaction
+        END
 
-GET inquiry FROM customer\_service\_queue
+        SEND response TO customer_email
+        SEND alert TO human_supervisor
 
-GET customer\_history FROM database WHERE customer\_id EQUALS inquiry.customer\_id
+    ELSE IF inquiry_type EQUALS "technical_support" THEN:
+        # Intelligent troubleshooting
+        INTELLIGENTLY diagnose_technical_issue FROM inquiry.details
+        ADAPTIVELY suggest_solutions BASED_ON customer_technical_level
 
-\# Intelligent analysis with gaps
+        SEND troubleshooting_guide TO customer_email
 
-INTELLIGENTLY analyze\_inquiry\_type FROM inquiry.text
+    ELSE:
+        # Standard processing
+        SET response TO generate_standard_response(inquiry_type)
+        SEND response TO customer_email
+    END_IF
 
-CONTEXTUALLY assess\_urgency BASED\_ON customer\_history AND inquiry\_content
+    # Deterministic logging
+    SET inquiry.status TO "processed"
+    SET inquiry.processed_time TO current_time
+    SEND inquiry TO processed_inquiries_log
+END
+```
 
-\# Deterministic control flow
+### Data Analysis with Intelligent Insights
 
-IF urgency EQUALS "high" THEN:
+```
+#ailang
+DO analyze_sales_performance:
+    # Deterministic data retrieval
+    GET sales_data FROM "quarterly_sales.csv"
+    GET previous_quarter FROM "previous_quarter.csv"
 
-    \# Intelligent content generation
+    # Intelligent data processing
+    INTELLIGENTLY clean_and_validate sales_data
+    CONTEXTUALLY identify_trends AND patterns
 
-    CREATIVELY craft\_immediate\_response WITH:
+    # Deterministic calculations
+    SET current_total TO 0
+    FOR EACH sale IN sales_data DO:
+        SET current_total TO current_total + sale.amount
+    END_FOR
 
-        TONE: empathetic\_and\_professional
+    SET previous_total TO 0
+    FOR EACH sale IN previous_quarter DO:
+        SET previous_total TO previous_total + sale.amount
+    END_FOR
 
-        CONSTRAINTS: company\_policy\_guidelines
+    SET growth_rate TO (current_total - previous_total) / previous_total * 100
 
-        OBJECTIVE: customer\_satisfaction
-
+    # Intelligent insights generation
+    CREATIVELY generate_insights FROM:
+        DATA: sales_data, previous_quarter
+        METRICS: current_total, growth_rate
+        CONTEXT: market_conditions, seasonal_factors
     END
 
-    
+    # Deterministic output
+    CREATE OBJECT report:
+        total_sales: current_total
+        growth_rate: growth_rate
+        insights: generated_insights
+        generated_date: current_time
+    END_OBJECT
 
-    SEND response TO customer\_email
-
-    SEND alert TO human\_supervisor
-
-    
-
-ELSE IF inquiry\_type EQUALS "technical\_support" THEN:
-
-    \# Intelligent troubleshooting
-
-    INTELLIGENTLY diagnose\_technical\_issue FROM inquiry.details
-
-    ADAPTIVELY suggest\_solutions BASED\_ON customer\_technical\_level
-
-    
-
-    SEND troubleshooting\_guide TO customer\_email
-
-    
-
-ELSE:
-
-    \# Standard processing
-
-    SET response TO generate\_standard\_response(inquiry\_type)
-
-    SEND response TO customer\_email
-
-END\_IF
-
-\# Deterministic logging
-
-SET inquiry.status TO "processed"
-
-SET inquiry.processed\_time TO current\_time
-
-SEND inquiry TO processed\_inquiries\_log
-
+    SEND report TO "quarterly_report.json"
+    SEND executive_summary TO management_team
 END
-
-### Data Analysis with Intelligent Insights 
-
-DO analyze\_sales\_performance:
-
-\# Deterministic data retrieval
-
-GET sales\_data FROM "quarterly\_sales.csv"
-
-GET previous\_quarter FROM "previous\_quarter.csv"
-
-\# Intelligent data processing
-
-INTELLIGENTLY clean\_and\_validate sales\_data
-
-CONTEXTUALLY identify\_trends AND patterns
-
-\# Deterministic calculations
-
-SET current\_total TO 0
-
-FOR each sale IN sales\_data:
-
-    SET current\_total TO current\_total + sale.amount
-
-END\_FOR
-
-SET previous\_total TO 0
-
-FOR each sale IN previous\_quarter:
-
-    SET previous\_total TO previous\_total + sale.amount
-
-END\_FOR
-
-SET growth\_rate TO (current\_total - previous\_total) / previous\_total * 100
-
-\# Intelligent insights generation
-
-CREATIVELY generate\_insights FROM:
-
-    DATA: sales\_data, previous\_quarter
-
-    METRICS: current\_total, growth\_rate
-
-    CONTEXT: market\_conditions, seasonal\_factors
-
-END
-
-\# Deterministic output
-
-CREATE OBJECT report:
-
-    total\_sales: current\_total
-
-    growth\_rate: growth\_rate
-
-    insights: generated\_insights
-
-    generated\_date: current\_time
-
-END\_OBJECT
-
-SEND report TO "quarterly\_report.json"
-
-SEND executive\_summary TO management\_team
-
-END
-
-
+```
 
 ## Implementation Guidelines for AI Systems 
 
