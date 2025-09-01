@@ -1,0 +1,9 @@
+{
+  "name": "Alex Tenant",
+  "address": "Flat 3, 45 Example Street, Hackney, London E8 1AB",
+  "family_status": "Single parent with one child",
+  "income": 30000,
+  "rent_amount": 2000,
+  "tenure_length": "2 years",
+  "borough": "Hackney"
+}
