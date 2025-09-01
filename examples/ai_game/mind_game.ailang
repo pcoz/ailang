@@ -1,0 +1,248 @@
+#ailang
+# Argument Battle: A Mind Game of Wit and Rhetoric
+# Players compete to out-argue each other using various tactics
+
+# Initialize game state
+SET game_active TO true
+SET round_count TO 0
+SET human_score TO 0
+SET ai_score TO 0
+SET max_rounds TO 5
+SET argument_history TO []
+
+# Define argument tactics and their effectiveness
+CREATE OBJECT ArgumentTactics:
+    logical_reasoning: 3
+    emotional_appeal: 2
+    factual_evidence: 4
+    rhetorical_question: 2
+    reductio_ad_absurdum: 3
+    analogy: 2
+    counterexample: 3
+    appeal_to_authority: 1
+    humor_deflection: 2
+    moral_high_ground: 3
+END_OBJECT
+
+# Main game procedure
+DO play_argument_battle:
+    SEND "=== ARGUMENT BATTLE: MIND GAME ===" TO user_display
+    SEND "You'll face an AI in rhetorical combat!" TO user_display
+    SEND "Each round, choose your argument tactic wisely." TO user_display
+    SEND "" TO user_display
+    
+    # Get debate topic
+    GET debate_topic FROM user_input WITH_PROMPT "Enter a debate topic (or 'random' for AI to choose): "
+    
+    IF debate_topic EQUALS "random" THEN:
+        INTELLIGENTLY generate_debate_topic WITH:
+            CONSTRAINTS: [appropriate, debatable, interesting]
+            OUTPUT_FORMAT: single_sentence_topic
+        END
+        SET debate_topic TO generated_topic
+    END_IF
+    
+    SEND "DEBATE TOPIC: " + debate_topic TO user_display
+    SEND "---" TO user_display
+    
+    # Game loop
+    WHILE game_active AND round_count < max_rounds DO:
+        INCREMENT round_count BY 1
+        SEND "" TO user_display
+        SEND "=== ROUND " + round_count + " ===" TO user_display
+        
+        # Human player's turn
+        DO human_turn:
+            SEND "Your argument tactics:" TO user_display
+            SEND "1. Logical Reasoning (systematic logic)" TO user_display
+            SEND "2. Emotional Appeal (pathos)" TO user_display
+            SEND "3. Factual Evidence (concrete data)" TO user_display
+            SEND "4. Rhetorical Question (thought-provoking)" TO user_display
+            SEND "5. Reductio ad Absurdum (show absurdity)" TO user_display
+            SEND "6. Analogy (comparative reasoning)" TO user_display
+            SEND "7. Counterexample (disprove by example)" TO user_display
+            SEND "8. Appeal to Authority (expert opinion)" TO user_display
+            SEND "9. Humor Deflection (wit and charm)" TO user_display
+            SEND "10. Moral High Ground (ethical superiority)" TO user_display
+            
+            GET tactic_choice FROM user_input WITH_PROMPT "Choose your tactic (1-10): "
+            GET human_argument FROM user_input WITH_PROMPT "Make your argument: "
+            
+            # Map choice to tactic
+            SET human_tactic TO map_tactic_choice(tactic_choice)
+            
+            # Store in history
+            APPEND {player: "human", tactic: human_tactic, argument: human_argument} TO argument_history
+        END
+        
+        # AI opponent's turn
+        DO ai_turn:
+            SEND "" TO user_display
+            SEND "AI is formulating response..." TO user_display
+            
+            # AI intelligently analyzes and responds
+            INTELLIGENTLY analyze_human_argument WITH:
+                INPUT: human_argument
+                CONTEXT: debate_topic, argument_history
+                OUTPUT: weakness_identified
+            END
+            
+            CREATIVELY generate_counter_argument WITH:
+                OBJECTIVES: [exploit_weakness, advance_position, maintain_coherence]
+                CONSTRAINTS: [stay_on_topic, be_respectful, max_200_words]
+                GIVEN: weakness_identified, debate_topic, argument_history
+                OUTPUT: ai_argument
+            END
+            
+            ADAPTIVELY select_optimal_tactic WITH:
+                BASED_ON: human_tactic, weakness_identified
+                OPTIONS: ArgumentTactics
+                OUTPUT: ai_tactic
+            END
+            
+            SEND "AI uses: " + ai_tactic TO user_display
+            SEND "AI argues: " + ai_argument TO user_display
+            
+            # Store AI's move
+            APPEND {player: "ai", tactic: ai_tactic, argument: ai_argument} TO argument_history
+        END
+        
+        # Judge the round
+        DO judge_round:
+            SEND "" TO user_display
+            SEND "--- Round Judgment ---" TO user_display
+            
+            # Calculate base scores
+            SET human_tactic_value TO ArgumentTactics.[human_tactic]
+            SET ai_tactic_value TO ArgumentTactics.[ai_tactic]
+            
+            # Intelligent evaluation of argument quality
+            INTELLIGENTLY evaluate_argument_quality WITH:
+                ARGUMENTS: human_argument, ai_argument
+                TACTICS: human_tactic, ai_tactic
+                CONTEXT: debate_topic
+                CRITERIA: [relevance, coherence, persuasiveness, creativity]
+                OUTPUT: quality_scores
+            END
+            
+            SET human_round_score TO human_tactic_value + quality_scores.human
+            SET ai_round_score TO ai_tactic_value + quality_scores.ai
+            
+            # Check for special combinations
+            IF human_tactic EQUALS "factual_evidence" AND ai_tactic EQUALS "emotional_appeal" THEN:
+                INCREMENT human_round_score BY 2  # Facts beat emotions
+            ELSE IF ai_tactic EQUALS "counterexample" AND human_tactic EQUALS "logical_reasoning" THEN:
+                INCREMENT ai_round_score BY 2  # Counterexample beats pure logic
+            ELSE IF human_tactic EQUALS "humor_deflection" AND ai_tactic EQUALS "moral_high_ground" THEN:
+                INCREMENT human_round_score BY 1  # Humor deflates moral superiority
+            END_IF
+            
+            # Determine round winner
+            IF human_round_score > ai_round_score THEN:
+                SEND "You win this round! (" + human_round_score + " vs " + ai_round_score + ")" TO user_display
+                INCREMENT human_score BY 1
+                
+                CONTEXTUALLY generate_victory_commentary WITH:
+                    TONE: encouraging
+                    BASED_ON: human_argument, human_tactic
+                END
+                SEND commentary TO user_display
+                
+            ELSE IF ai_round_score > human_round_score THEN:
+                SEND "AI wins this round! (" + ai_round_score + " vs " + human_round_score + ")" TO user_display
+                INCREMENT ai_score BY 1
+                
+                INTELLIGENTLY explain_ai_victory WITH:
+                    FOCUS: why_ai_argument_was_stronger
+                    TONE: educational_not_condescending
+                END
+                SEND explanation TO user_display
+                
+            ELSE:
+                SEND "This round is a draw! (" + human_round_score + " each)" TO user_display
+            END_IF
+            
+            # Show current standings
+            SEND "" TO user_display
+            SEND "SCORE - You: " + human_score + " | AI: " + ai_score TO user_display
+        END
+        
+        # Check if player wants to continue
+        IF round_count < max_rounds THEN:
+            GET continue_choice FROM user_input WITH_PROMPT "Continue to next round? (yes/no): "
+            IF continue_choice EQUALS "no" OR continue_choice EQUALS "n" THEN:
+                SET game_active TO false
+            END_IF
+        END_IF
+    END_WHILE
+    
+    # Final results
+    DO display_final_results:
+        SEND "" TO user_display
+        SEND "=== GAME OVER ===" TO user_display
+        SEND "Final Score - You: " + human_score + " | AI: " + ai_score TO user_display
+        
+        IF human_score > ai_score THEN:
+            SEND "🏆 CONGRATULATIONS! You've out-argued the AI!" TO user_display
+            
+            CREATIVELY generate_victory_message WITH:
+                TONE: celebratory_and_respectful
+                ACKNOWLEDGE: player_strengths
+                BASED_ON: argument_history
+            END
+            SEND victory_message TO user_display
+            
+        ELSE IF ai_score > human_score THEN:
+            SEND "The AI wins this battle of wits!" TO user_display
+            
+            INTELLIGENTLY provide_improvement_tips WITH:
+                BASED_ON: argument_history
+                FOCUS: constructive_feedback
+                CONSTRAINTS: [encouraging, specific, actionable]
+            END
+            SEND improvement_tips TO user_display
+            
+        ELSE:
+            SEND "It's a perfect draw! Equally matched minds!" TO user_display
+            
+            CONTEXTUALLY summarize_best_moments WITH:
+                FROM: argument_history
+                HIGHLIGHT: most_clever_arguments
+            END
+            SEND summary TO user_display
+        END_IF
+        
+        # Offer detailed analysis
+        GET analysis_choice FROM user_input WITH_PROMPT "Would you like a detailed analysis of the debate? (yes/no): "
+        
+        IF analysis_choice EQUALS "yes" OR analysis_choice EQUALS "y" THEN:
+            INTELLIGENTLY analyze_debate_performance WITH:
+                DATA: argument_history
+                METRICS: [tactic_effectiveness, argument_evolution, missed_opportunities]
+                OUTPUT_FORMAT: structured_analysis
+                CONSTRAINTS: [constructive, balanced, insightful]
+            END
+            SEND detailed_analysis TO user_display
+        END_IF
+    END
+END
+
+# Helper procedure to map user input to tactic
+DEFINE PROCEDURE map_tactic_choice WITH PARAMETERS choice:
+    MATCH choice WITH:
+        CASE "1": RETURN "logical_reasoning"
+        CASE "2": RETURN "emotional_appeal"
+        CASE "3": RETURN "factual_evidence"
+        CASE "4": RETURN "rhetorical_question"
+        CASE "5": RETURN "reductio_ad_absurdum"
+        CASE "6": RETURN "analogy"
+        CASE "7": RETURN "counterexample"
+        CASE "8": RETURN "appeal_to_authority"
+        CASE "9": RETURN "humor_deflection"
+        CASE "10": RETURN "moral_high_ground"
+        DEFAULT: RETURN "logical_reasoning"
+    END_MATCH
+END_PROCEDURE
+
+# Execute the game
+CALL play_argument_battle
