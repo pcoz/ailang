@@ -1,0 +1,477 @@
+# Universal Documentation Generator (UDG)
+
+DO INTELLIGENTLY generate_documentation:
+    # 0) Deterministic inputs & defaults
+    GET sources           FROM runner.inputs.sources            # e.g., paths/URLs/connectors
+    GET target_directory  FROM runner.outputs.directory
+    GET user_prefs        FROM runner.inputs.preferences
+    IF user_prefs EQUALS NULL THEN:
+        CREATE OBJECT user_prefs:
+            audience:           "mixed"            # "ba" | "dev" | "qa" | "ops" | "exec" | "mixed"
+            doc_kinds:          []                 # if empty => auto-select
+            output_formats:     ["markdown"]       # "markdown" | "html" | "confluence" | "pdf" | "docx"
+            language:           "en"
+            show_confidence:    true
+            auto_apply_threshold: 0.82             # auto-generate when confidence >= threshold
+            require_source_anchors: true
+            depth:              "detailed"         # "brief" | "standard" | "detailed"
+            ask_before_low_conf: false             # override confidence gate behavior
+        END_OBJECT
+    END_IF
+
+    # 1) Ingest sources → knowledge_base (deterministic I/O)
+    CREATE OBJECT knowledge_base:
+        code:       []
+        apis:       []
+        database:   []
+        ui_docs:    []
+        tickets:    []
+        notes:      []
+        files:      []     # misc PDFs, txt, md
+        anchors:    []     # [ {id, source, location, snippet, hash} ]
+    END_OBJECT
+
+    FOR EACH src IN sources DO:
+        MATCH src.type WITH:
+            CASE "code_repo":
+                CALL load_code_repo   WITH [src, knowledge_base]
+            CASE "code_files":
+                CALL load_code_files  WITH [src, knowledge_base]
+            CASE "api_spec":
+                CALL load_api_spec    WITH [src, knowledge_base]
+            CASE "db":
+                CALL load_db_schema   WITH [src, knowledge_base]
+            CASE "issues":
+                CALL load_issue_backlog WITH [src, knowledge_base]
+            CASE "pages":
+                CALL load_ui_docs     WITH [src, knowledge_base]
+            CASE "files":
+                CALL load_loose_files WITH [src, knowledge_base]
+            DEFAULT:
+                APPEND {warning: CONCATENATE("Unknown source type: ", src.type)} TO knowledge_base.notes
+        END_MATCH
+    END_FOR
+
+    # 2) Classify content profile
+    SET content_profile TO classify_content(knowledge_base)
+
+    # 3) Choose document kinds (auto if none explicitly requested)
+    IF LENGTH OF user_prefs.doc_kinds == 0 THEN:
+        SET selected_doc_kinds TO auto_select_doc_kinds(content_profile, user_prefs.audience)
+    ELSE:
+        SET selected_doc_kinds TO user_prefs.doc_kinds
+    END_IF
+
+    # 4) Generate each document deterministically→intelligently
+    CREATE OBJECT produced_docs: []
+    FOR EACH kind IN selected_doc_kinds DO:
+        SET outline TO draft_outline(kind, content_profile, user_prefs)
+        SET assembled TO assemble_document(kind, outline, knowledge_base, user_prefs)
+        CALL quality_checks WITH [assembled, knowledge_base, user_prefs]
+        APPEND assembled TO produced_docs
+    END_FOR
+
+    # 5) Emit artifacts
+    FOR EACH doc IN produced_docs DO:
+        CALL persist_document WITH [doc, target_directory, user_prefs.output_formats]
+    END_FOR
+
+    # 6) Index & summary
+    CREATE OBJECT index:
+        generated_at: current_time
+        audience: user_prefs.audience
+        docs: [FOR EACH d IN produced_docs DO: {title: d.title, path: d.path, format: d.format, confidence: d.confidence} END_FOR]
+    END_OBJECT
+    SEND index TO target_directory
+END
+
+
+# ---------- Content Classification & Selection ----------
+
+DEFINE PROCEDURE classify_content WITH PARAMETERS [kb]:
+    CREATE OBJECT profile:
+        has_code:        LENGTH OF kb.code > 0
+        has_apis:        LENGTH OF kb.apis > 0
+        has_database:    LENGTH OF kb.database > 0
+        has_ui_docs:     LENGTH OF kb.ui_docs > 0
+        has_tickets:     LENGTH OF kb.tickets > 0
+        has_notes:       LENGTH OF kb.notes > 0 OR LENGTH OF kb.files > 0
+        languages:       deduce_languages(kb.code)
+        api_kinds:       deduce_api_kinds(kb.apis)        # OpenAPI/GraphQL/AsyncAPI/SOAP
+        db_flavor:       deduce_db_flavor(kb.database)    # Postgres/MySQL/SQLServer/NoSQL
+        maturity:        deduce_project_maturity(kb)
+    END_OBJECT
+    RETURN profile
+END_PROCEDURE
+
+
+DEFINE PROCEDURE auto_select_doc_kinds WITH PARAMETERS [profile, audience]:
+    CREATE OBJECT doc_menu:
+        README:                 profile.has_code OR profile.has_apis
+        DeveloperGuide:         profile.has_code
+        APIReference:           profile.has_apis
+        ArchitectureOverview:   profile.has_code OR profile.has_apis OR profile.has_database
+        ERD_DatabaseDoc:        profile.has_database
+        UserGuide:              profile.has_ui_docs OR profile.has_notes
+        BA_Spec:                true                      # always available (reverse-engineer)
+        ReleaseNotes:           profile.has_tickets
+        TestPlan:               profile.has_code OR profile.has_apis
+        ADR_Compendium:         profile.has_notes OR profile.has_ui_docs OR profile.has_tickets
+        Changelog:              profile.has_tickets OR profile.has_code
+    END_OBJECT
+
+    CREATE OBJECT chosen: []
+    # Simple rules biased by audience
+    IF audience EQUALS "exec" THEN:
+        APPEND "ArchitectureOverview" TO chosen
+        APPEND "README"               TO chosen
+        IF doc_menu.ReleaseNotes THEN APPEND "ReleaseNotes" TO chosen END_IF
+    ELSE IF audience EQUALS "ba" THEN:
+        APPEND "BA_Spec" TO chosen
+        IF doc_menu.UserGuide THEN APPEND "UserGuide" TO chosen END_IF
+        IF doc_menu.ERD_DatabaseDoc THEN APPEND "ERD_DatabaseDoc" TO chosen END_IF
+    ELSE IF audience EQUALS "dev" THEN:
+        APPEND "README" TO chosen
+        IF doc_menu.DeveloperGuide THEN APPEND "DeveloperGuide" TO chosen END_IF
+        IF doc_menu.APIReference THEN APPEND "APIReference" TO chosen END_IF
+        IF doc_menu.TestPlan THEN APPEND "TestPlan" TO chosen END_IF
+        APPEND "ArchitectureOverview" TO chosen
+    ELSE:
+        # mixed / default
+        FOR EACH k IN KEYS OF doc_menu DO:
+            IF GET_VALUE doc_menu.[k] THEN APPEND k TO chosen END_IF
+        END_FOR
+    END_IF
+    RETURN chosen
+END_PROCEDURE
+
+
+# ---------- Outlines (deterministic section maps) ----------
+
+DEFINE PROCEDURE draft_outline WITH PARAMETERS [kind, profile, prefs]:
+    MATCH kind WITH:
+        CASE "README":
+            RETURN [
+                {id:"intro", title:"Overview"},
+                {id:"features", title:"Key Features"},
+                {id:"quickstart", title:"Quick Start"},
+                {id:"configuration", title:"Configuration"},
+                {id:"usage", title:"Usage Examples"},
+                {id:"architecture", title:"Architecture Snapshot"},
+                {id:"links", title:"Links & Further Reading"}
+            ]
+        CASE "DeveloperGuide":
+            RETURN [
+                {id:"setup", title:"Dev Setup"},
+                {id:"architecture", title:"Architecture & Modules"},
+                {id:"code_walkthrough", title:"Code Walkthrough"},
+                {id:"standards", title:"Coding Standards"},
+                {id:"build_deploy", title:"Build & Deploy"},
+                {id:"observability", title:"Observability & Troubleshooting"}
+            ]
+        CASE "APIReference":
+            RETURN [
+                {id:"intro", title:"API Overview"},
+                {id:"auth",  title:"Authentication"},
+                {id:"endpoints", title:"Endpoints & Schemas"},
+                {id:"examples", title:"Examples"},
+                {id:"errors", title:"Errors"}
+            ]
+        CASE "ERD_DatabaseDoc":
+            RETURN [
+                {id:"overview", title:"Database Overview"},
+                {id:"tables", title:"Tables & Columns"},
+                {id:"relationships", title:"Relationships"},
+                {id:"indexes", title:"Indexes & Performance"},
+                {id:"sample_queries", title:"Sample Queries"}
+            ]
+        CASE "ArchitectureOverview":
+            RETURN [
+                {id:"context", title:"System Context"},
+                {id:"containers", title:"Containers & Services"},
+                {id:"components", title:"Key Components"},
+                {id:"dataflow", title:"Data Flow & Integrations"},
+                {id:"quality", title:"Quality Attributes & NFRs"},
+                {id:"risks", title:"Assumptions & Risks"}
+            ]
+        CASE "BA_Spec":
+            RETURN [
+                {id:"business_context", title:"Business Context"},
+                {id:"actors", title:"Actors & Personas"},
+                {id:"user_stories", title:"User Stories & Acceptance Criteria"},
+                {id:"business_rules", title:"Business Rules"},
+                {id:"process_flows", title:"Process Flows"},
+                {id:"data_dictionary", title:"Data Dictionary"},
+                {id:"non_functional", title:"Non-Functional Requirements"},
+                {id:"risks_questions", title:"Risks, Assumptions & Open Questions"}
+            ]
+        CASE "UserGuide":
+            RETURN [
+                {id:"intro", title:"Getting Started"},
+                {id:"tasks", title:"Common Tasks"},
+                {id:"tips", title:"Tips & Troubleshooting"},
+                {id:"faq", title:"FAQ"}
+            ]
+        CASE "ReleaseNotes":
+            RETURN [
+                {id:"summary", title:"Release Summary"},
+                {id:"epics_features", title:"Epics & Features"},
+                {id:"fixes", title:"Bug Fixes"},
+                {id:"why_it_matters", title:"Why It Matters"},
+                {id:"upgrade_notes", title:"Upgrade/Breaking Changes"}
+            ]
+        CASE "TestPlan":
+            RETURN [
+                {id:"scope", title:"Scope & Objectives"},
+                {id:"strategy", title:"Test Strategy"},
+                {id:"matrix", title:"Coverage Matrix"},
+                {id:"environments", title:"Test Environments & Data"},
+                {id:"automation", title:"Automation & CI"},
+                {id:"entry_exit", title:"Entry/Exit Criteria"}
+            ]
+        CASE "ADR_Compendium":
+            RETURN [
+                {id:"index", title:"Decision Index"},
+                {id:"decisions", title:"Architectural Decisions"}
+            ]
+        CASE "Changelog":
+            RETURN [
+                {id:"log", title:"Changes by Date"}
+            ]
+        DEFAULT:
+            RETURN [{id:"intro", title:"Overview"}, {id:"details", title:"Details"}]
+    END_MATCH
+END_PROCEDURE
+
+
+# ---------- Assembly (facts first, then bounded intelligence) ----------
+
+DEFINE PROCEDURE assemble_document WITH PARAMETERS [kind, outline, kb, prefs]:
+    CREATE OBJECT doc:
+        kind: kind
+        title: CONCATENATE(kind, " Documentation")
+        sections: []
+        confidence: "moderate"
+        format: FIRST OF prefs.output_formats
+        path: ""
+    END_OBJECT
+
+    # 1) Deterministic fact extraction per section
+    FOR EACH sec IN outline DO:
+        SET facts TO extract_facts(kind, sec.id, kb)
+        APPEND { id: sec.id, title: sec.title, facts: facts, prose: "" } TO doc.sections
+    END_FOR
+
+    # 2) Fill narrative with bounded intelligence per section
+    FOR EACH s IN doc.sections DO:
+        INTELLIGENTLY write_section WITH:
+            MUST_INCLUDE: [s.facts, source_anchors_for(s.facts)]
+            CANNOT_INCLUDE: [invent_new_endpoints, fabricate_tables, unstated_requirements_without_flag]
+            OUTPUT_FORMAT: prose_for(prefs.language, doc.kind, s.id, prefs.audience, prefs.depth)
+            MAX_SCOPE: project_scope_from(kb)
+        END
+        SET s.prose TO write_section.text
+        SET s.confidence TO write_section.confidence
+    END_FOR
+
+    # 3) Confidence gating (optionally ask)
+    SET doc.confidence TO min_confidence(doc.sections)
+    IF doc.confidence < "high" AND prefs.ask_before_low_conf THEN:
+        CONFIRM WITH user: CONCATENATE("Sections below high confidence: ", list_low_conf_sections(doc))
+        WAIT for_confirmation BEFORE proceeding
+    END_IF
+
+    # 4) Render & package
+    SET rendered TO render_document(doc, prefs.output_formats, kb.anchors, prefs.require_source_anchors)
+    SET doc.path TO rendered.primary_path
+    RETURN doc
+END_PROCEDURE
+
+
+# ---------- Quality checks ----------
+
+DEFINE PROCEDURE quality_checks WITH PARAMETERS [doc, kb, prefs]:
+    # Deterministic validations
+    SET missing_anchors TO find_missing_anchors(doc.sections, prefs.require_source_anchors)
+    IF LENGTH OF missing_anchors > 0 THEN:
+        APPEND {warning:"Missing anchors", items: missing_anchors} TO doc.sections
+    END_IF
+
+    SET coverage TO compute_coverage(doc.kind, kb)
+    IF coverage < 0.75 THEN:
+        APPEND {warning:"Low coverage", coverage: coverage} TO doc.sections
+    END_IF
+END_PROCEDURE
+
+
+# ---------- Persistence ----------
+
+DEFINE PROCEDURE persist_document WITH PARAMETERS [doc, dir, formats]:
+    TRY:
+        FOR EACH f IN formats DO:
+            MATCH f WITH:
+                CASE "markdown":  SEND render_as_markdown(doc)  TO CONCATENATE(dir, "/", doc.title, ".md")
+                CASE "html":      SEND render_as_html(doc)      TO CONCATENATE(dir, "/", doc.title, ".html")
+                CASE "confluence":SEND render_as_confluence(doc)TO confluence.space
+                CASE "pdf":       SEND render_as_pdf(doc)       TO CONCATENATE(dir, "/", doc.title, ".pdf")
+                CASE "docx":      SEND render_as_docx(doc)      TO CONCATENATE(dir, "/", doc.title, ".docx")
+            END_MATCH
+        END_FOR
+    CATCH ANY:
+        APPEND {error:"persist_failed", detail:any.message} TO doc.sections
+    FINALLY:
+        # always write a JSON sidecar for traceability
+        SEND serialize(doc) TO CONCATENATE(dir, "/", doc.title, ".json")
+    END_TRY
+END_PROCEDURE
+
+
+# ---------- Source loaders (stubs with deterministic I/O + bounded AI parsing) ----------
+
+DEFINE PROCEDURE load_code_repo WITH PARAMETERS [src, kb]:
+    GET repo_snapshot FROM src.url
+    INTELLIGENTLY parse_code WITH:
+        MUST_INCLUDE: [modules, files, functions, classes, public_apis, build_scripts]
+        OUTPUT_FORMAT: structured_index
+        MAX_SCOPE: repo_snapshot
+    END
+    APPEND parse_code.index TO kb.code
+    APPEND parse_code.anchors TO kb.anchors
+END_PROCEDURE
+
+DEFINE PROCEDURE load_code_files WITH PARAMETERS [src, kb]:
+    FOR EACH file IN src.paths DO:
+        GET text FROM file
+        INTELLIGENTLY parse_file WITH:
+            MUST_INCLUDE: [language, symbols, exported_entities]
+            OUTPUT_FORMAT: structured_index
+            MAX_SCOPE: text
+        END
+        APPEND parse_file.index TO kb.code
+        APPEND parse_file.anchors TO kb.anchors
+    END_FOR
+END_PROCEDURE
+
+DEFINE PROCEDURE load_api_spec WITH PARAMETERS [src, kb]:
+    GET spec_text FROM src.location
+    INTELLIGENTLY parse_api WITH:
+        MUST_INCLUDE: [kind, endpoints, methods, auth, schemas, examples]
+        OUTPUT_FORMAT: structured_index
+        MAX_SCOPE: spec_text
+    END
+    APPEND parse_api.index TO kb.apis
+    APPEND parse_api.anchors TO kb.anchors
+END_PROCEDURE
+
+DEFINE PROCEDURE load_db_schema WITH PARAMETERS [src, kb]:
+    GET schema_dump FROM src.connection_or_file
+    INTELLIGENTLY parse_db WITH:
+        MUST_INCLUDE: [tables, columns, keys, relationships, indexes]
+        OUTPUT_FORMAT: structured_index
+        MAX_SCOPE: schema_dump
+    END
+    APPEND parse_db.index TO kb.database
+    APPEND parse_db.anchors TO kb.anchors
+END_PROCEDURE
+
+DEFINE PROCEDURE load_issue_backlog WITH PARAMETERS [src, kb]:
+    GET items FROM src.query
+    INTELLIGENTLY normalize_tickets WITH:
+        MUST_INCLUDE: [ids, titles, types, statuses, epics, changes, links]
+        OUTPUT_FORMAT: structured_index
+        MAX_SCOPE: items
+    END
+    APPEND normalize_tickets.index TO kb.tickets
+    APPEND normalize_tickets.anchors TO kb.anchors
+END_PROCEDURE
+
+DEFINE PROCEDURE load_ui_docs WITH PARAMETERS [src, kb]:
+    GET pages FROM src.connector
+    INTELLIGENTLY extract_ui WITH:
+        MUST_INCLUDE: [screens, flows, steps, screenshots_refs]
+        OUTPUT_FORMAT: structured_index
+        MAX_SCOPE: pages
+    END
+    APPEND extract_ui.index TO kb.ui_docs
+    APPEND extract_ui.anchors TO kb.anchors
+END_PROCEDURE
+
+DEFINE PROCEDURE load_loose_files WITH PARAMETERS [src, kb]:
+    FOR EACH f IN src.files DO:
+        GET blob FROM f
+        INTELLIGENTLY parse_blob WITH:
+            MUST_INCLUDE: [text, sections, detected_entities]
+            OUTPUT_FORMAT: structured_index
+            MAX_SCOPE: blob
+        END
+        APPEND parse_blob.index TO kb.files
+        APPEND parse_blob.anchors TO kb.anchors
+    END_FOR
+END_PROCEDURE
+
+
+# ---------- Fact extraction helpers ----------
+
+DEFINE PROCEDURE extract_facts WITH PARAMETERS [kind, section_id, kb]:
+    MATCH kind WITH:
+        CASE "APIReference":
+            IF section_id EQUALS "endpoints" THEN:
+                RETURN collect_api_endpoints(kb.apis)
+            ELSE IF section_id EQUALS "auth" THEN:
+                RETURN collect_api_auth(kb.apis)
+            ELSE:
+                RETURN collect_generic(kb.apis, section_id)
+        CASE "ERD_DatabaseDoc":
+            IF section_id EQUALS "tables" THEN RETURN kb.database.tables END_IF
+            IF section_id EQUALS "relationships" THEN RETURN kb.database.relationships END_IF
+            RETURN collect_generic(kb.database, section_id)
+        CASE "ReleaseNotes":
+            RETURN synthesize_release_items(kb.tickets, section_id)
+        CASE "BA_Spec":
+            RETURN reverse_engineer_business_facts(kb)   # functions→capabilities, entities, rules
+        DEFAULT:
+            RETURN collect_generic(kb, section_id)
+    END_MATCH
+END_PROCEDURE
+
+
+# ---------- Renderers (format-specific; deterministic transforms) ----------
+
+DEFINE PROCEDURE render_document WITH PARAMETERS [doc, formats, anchors, require_anchors]:
+    CREATE OBJECT rendered:
+        primary_path: ""
+    END_OBJECT
+    # default primary: first format
+    IF FIRST OF formats EQUALS "markdown" THEN:
+        SET rendered.primary_path TO CONCATENATE("docs/", doc.title, ".md")
+    ELSE:
+        SET rendered.primary_path TO CONCATENATE("docs/", doc.title, ".", FIRST OF formats)
+    END_IF
+    RETURN rendered
+END_PROCEDURE
+
+
+# ---------- Utility selectors (pure/deterministic placeholders) ----------
+
+DEFINE PROCEDURE deduce_languages WITH PARAMETERS [code_index]: RETURN ["mixed"] END_PROCEDURE
+DEFINE PROCEDURE deduce_api_kinds WITH PARAMETERS [api_index]: RETURN ["OpenAPI"] END_PROCEDURE
+DEFINE PROCEDURE deduce_db_flavor WITH PARAMETERS [db_index]: RETURN "SQL" END_PROCEDURE
+DEFINE PROCEDURE deduce_project_maturity WITH PARAMETERS [kb]: RETURN "beta" END_PROCEDURE
+DEFINE PROCEDURE source_anchors_for WITH PARAMETERS [facts]: RETURN facts END_PROCEDURE
+DEFINE PROCEDURE prose_for WITH PARAMETERS [lang, kind, section_id, audience, depth]: RETURN "markdown" END_PROCEDURE
+DEFINE PROCEDURE project_scope_from WITH PARAMETERS [kb]: RETURN "current_project_only" END_PROCEDURE
+DEFINE PROCEDURE min_confidence WITH PARAMETERS [sections]: RETURN "high" END_PROCEDURE
+DEFINE PROCEDURE list_low_conf_sections WITH PARAMETERS [doc]: RETURN [] END_PROCEDURE
+DEFINE PROCEDURE render_as_markdown WITH PARAMETERS [doc]: RETURN "file" END_PROCEDURE
+DEFINE PROCEDURE render_as_html WITH PARAMETERS [doc]: RETURN "file" END_PROCEDURE
+DEFINE PROCEDURE render_as_confluence WITH PARAMETERS [doc]: RETURN "sent" END_PROCEDURE
+DEFINE PROCEDURE render_as_pdf WITH PARAMETERS [doc]: RETURN "file" END_PROCEDURE
+DEFINE PROCEDURE render_as_docx WITH PARAMETERS [doc]: RETURN "file" END_PROCEDURE
+DEFINE PROCEDURE serialize WITH PARAMETERS [doc]: RETURN "{}" END_PROCEDURE
+DEFINE PROCEDURE collect_api_endpoints WITH PARAMETERS [apis]: RETURN apis END_PROCEDURE
+DEFINE PROCEDURE collect_api_auth WITH PARAMETERS [apis]: RETURN apis END_PROCEDURE
+DEFINE PROCEDURE collect_generic WITH PARAMETERS [obj, section_id]: RETURN obj END_PROCEDURE
+DEFINE PROCEDURE synthesize_release_items WITH PARAMETERS [tickets, section_id]: RETURN tickets END_PROCEDURE
+DEFINE PROCEDURE reverse_engineer_business_facts WITH PARAMETERS [kb]: RETURN kb END_PROCEDURE
+DEFINE PROCEDURE compute_coverage WITH PARAMETERS [kind, kb]: RETURN 0.9 END_PROCEDURE
+DEFINE PROCEDURE find_missing_anchors WITH PARAMETERS [sections, require]: RETURN [] END_PROCEDURE
