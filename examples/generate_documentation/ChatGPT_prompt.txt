@@ -1,0 +1,2 @@
+(ChatGPT5 Thinking)
+Per the attached ailang script, and per the attached language spec, create a reverse engineered BA-style spec for: "https://github.com/osTicket/osTicket"
