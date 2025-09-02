@@ -1,197 +1,239 @@
-# Mind Game — User Manual
+# Mind Game – User Manual
 
-Welcome to **Mind Game: Argument Battle** — a fast-paced rhetorical duel where you face an AI across structured rounds, pick tactics, and win on clarity, support, and persuasion.
+Welcome to **Mind Game: Argument Battle** – a fast-paced rhetorical duel where you face an AI opponent in structured debate rounds. Win by crafting better arguments using strategic tactics.
 
 **Play here:** [Mind Game](https://chatgpt.com/g/g-68b57a7405bc8191bd6377d87bf88ba7-mind-game)
-
-> This manual focuses on **how to play**. A short technical addendum at the end explains how the game works under the hood (AILang).
 
 ---
 
 ## Quick Start
 
-1. Open the game and, at the prompt **“Enter a debate topic (or `random`)”**, type your topic or `random`.
-2. When Round 1 begins, you’ll see **10 tactics**.
-   Enter the **tactic number**, then a colon, then your argument on the same line, e.g.:
-   `5: No. Because then by the same token you should grant a handheld calculator personhood.`
-3. The AI counters, the **Judge** scores the round, and you proceed to the next round.
-4. **Highest total score** after all rounds wins.
+1. Open the game link above
+2. Choose a debate topic or type `random`
+3. Select a tactic number (1-10) and write your argument
+4. Read the AI's counter-argument and the judge's scoring
+5. Continue through rounds to see who wins
 
 ---
 
-## Game Flow
+## How to Play
 
-### Match Structure
+### Starting a Match
 
-* **Topic:** type a topic (e.g., `Should schools ban smartphones?`) or `random`.
-* **Rounds:** default **up to 5** (configurable). You pick a tactic and argue; AI counters; Judge scores.
-* **Scoring:** both sides scored 0–10 per round with a brief rationale.
-* **Win:** highest cumulative score. Ties use tie-breakers (below).
+When the game starts, you'll see:
+```
+Enter a debate topic (or "random"):
+```
 
-### Your Turn (each round)
+Type any debatable topic like:
+- `Should schools require uniforms?`
+- `Is social media harmful to society?`
+- `random` (lets the AI choose)
 
-1. Read the **tactics menu**.
-2. Submit `number: your argument` on **one line**.
-3. Read the AI’s reply and the Judge’s decision.
-4. Advance to the next round.
+### Making Your Move
+
+Each round presents you with 10 tactical options:
+
+```
+Your argument tactics:
+1. Logical Reasoning (systematic logic)
+2. Emotional Appeal (pathos)
+3. Factual Evidence (concrete data)
+4. Rhetorical Question (thought-provoking)
+5. Reductio ad Absurdum (show absurdity)
+6. Analogy (comparative reasoning)
+7. Counterexample (disprove by example)
+8. Appeal to Authority (expert opinion)
+9. Humor Deflection (wit and charm)
+10. Moral High Ground (ethical superiority)
+
+Choose your tactic (1-10):
+Make your argument:
+```
+
+**Step 1:** Type a number from 1-10 to select your tactic  
+**Step 2:** Type your argument using that tactic
+
+### Input Format
+
+The game expects two separate inputs:
+1. First prompt: Enter just the tactic number (e.g., `3`)
+2. Second prompt: Enter your complete argument
+
+**Example Turn:**
+```
+Choose your tactic (1-10): 5
+Make your argument: If we allow AI to make all our decisions, we might as well let toasters run for president.
+```
+
+### Reading the Results
+
+After your argument, you'll see:
+1. **AI's Response:** The tactic it chose and its counter-argument
+2. **Judge's Verdict:** Round winner and scores (0-10 scale)
+3. **Commentary:** Why one argument won
+4. **Current Score:** Running tally
+
+### Continuing or Stopping
+
+After each round (except the last), you'll be asked:
+```
+Continue to next round? (yes/no):
+```
+- Type `yes` or `y` to continue
+- Type `no` or `n` to end early
 
 ---
 
-## Tactics (1–10)
+## Tactics Guide
 
-1. **Logical Reasoning** — Premises → conclusion; tighten structure.
-2. **Emotional Appeal** — Stakes, empathy, values.
-3. **Factual Evidence** — Data, studies, concrete examples.
-4. **Rhetorical Question** — Probe assumptions; corner contradictions.
-5. **Reductio ad Absurdum** — Push claim to absurdity to expose flaws.
-6. **Analogy** — Illuminate with a clear comparison.
-7. **Counterexample** — One real/plausible case that breaks the rule.
-8. **Appeal to Authority** — Credible experts, institutions, precedent.
-9. **Humor Deflection** — Light wit to diffuse and reframe.
-10. **Moral High Ground** — Rights, duties, harm, justice.
+### 1. Logical Reasoning
+Build structured arguments with clear premises leading to conclusions.
+- **Example:** "If A leads to B, and B leads to C, then A must lead to C."
 
-> Tip: **Vary tactics** and stay laser-focused on the claim being argued.
+### 2. Emotional Appeal
+Connect with values, fears, or aspirations.
+- **Example:** "Think of the children who will suffer if we don't act now."
+
+### 3. Factual Evidence
+Use data, statistics, or concrete examples.
+- **Example:** "Studies show 73% of participants improved after this intervention."
+
+### 4. Rhetorical Question
+Ask questions that make your point without needing answers.
+- **Example:** "Do we really want to live in a world where...?"
+
+### 5. Reductio ad Absurdum
+Push opponent's logic to absurd conclusions.
+- **Example:** "By that logic, we should ban cars because they could be dangerous."
+
+### 6. Analogy
+Compare to familiar situations.
+- **Example:** "This is like trying to bail out the Titanic with a teaspoon."
+
+### 7. Counterexample
+Provide one case that disproves a general claim.
+- **Example:** "You say all X are Y, but here's an X that isn't Y."
+
+### 8. Appeal to Authority
+Cite experts or institutions.
+- **Example:** "The World Health Organization states..."
+
+### 9. Humor Deflection
+Use wit to reframe or deflate tension.
+- **Example:** "That argument has more holes than Swiss cheese at a shooting range."
+
+### 10. Moral High Ground
+Appeal to ethics and principles.
+- **Example:** "This is fundamentally about human dignity and rights."
+
+---
+
+## Scoring System
+
+### Round Scoring
+
+Each argument receives 0-10 points based on:
+- **Relevance:** Stays on topic and addresses opponent's points
+- **Support:** Provides reasoning and evidence
+- **Coherence:** Clear, logical structure
+- **Tactic Execution:** How well you used your chosen tactic
+- **Counter Effectiveness:** How well you refuted the opponent
+
+### Tactic Bonuses
+
+Some tactics naturally counter others:
+- Factual Evidence beats Emotional Appeal (+2 bonus)
+- Counterexample beats Logical Reasoning (+2 bonus)
+- Humor Deflection beats Moral High Ground (+1 bonus)
+
+### Winning
+
+- **Round Winner:** Higher score that round
+- **Match Winner:** Most rounds won after 5 rounds
+- **Tiebreakers:** Average margin of victory, final round performance
 
 ---
 
-## How the Judge Scores
+## Strategy Tips
 
-* **Relevance** (on-topic, engages the opponent)
-* **Support** (reasons, evidence, examples)
-* **Coherence** (clear structure, no leaps)
-* **Tactic Fit** (your chosen tactic actually helps)
-* **Countering Power** (you addressed their point, not a straw man)
+### Opening Moves
+- Start strong with Logical Reasoning or Factual Evidence to establish your position
+- Save Reductio ad Absurdum for when opponent makes sweeping claims
 
-Common pitfalls: false equivalence, category errors, bare assertions.
+### Mid-Game
+- Vary your tactics to keep opponent off-balance
+- Use Counterexample when opponent overgeneralizes
+- Deploy Humor Deflection when debate gets too heated
 
----
+### Closing
+- Return to your strongest points with Moral High Ground
+- Use Factual Evidence to cement your position
+- Rhetorical Questions can leave lasting impressions
 
-## Tie-Breakers
-
-1. More **round wins**
-2. Larger **average margin** of victory
-3. Slight **final-round edge** (if enabled)
-4. Overall coherence & support (Judge’s summary)
-
----
-
-## Strategy Hints
-
-* **Frame early** with Logical Reasoning (1) or Analogy (6).
-* Follow **Evidence (3)** with a sharp **Counterexample (7)**.
-* **Name** the claim you’re refuting; don’t shadow-box.
-* Close by **recapping your win conditions**.
+### General Advice
+- **Be specific:** Name exactly what you're refuting
+- **Stay focused:** Don't introduce new topics
+- **Adapt:** Choose tactics that counter opponent's approach
+- **Be concise:** Clear, punchy arguments score better than rambling
 
 ---
+
 ## FAQ
 
-**Can I type the tactic name instead of the number?**
-Use the number for best reliability.
+**Q: Can I type the tactic name instead of number?**  
+A: Use the number (1-10) for reliable recognition.
 
-**Do I have to vary tactics?**
-Not required, but variety usually scores better.
+**Q: Do I have to use all tactics?**  
+A: No, but variety usually scores better than repetition.
 
-**Can I cite sources?**
-Yes—keep them brief and relevant.
+**Q: Can I use real sources?**  
+A: Yes, brief citations strengthen Factual Evidence and Appeal to Authority tactics.
+
+**Q: What if I enter an invalid tactic number?**  
+A: The game defaults to Logical Reasoning.
+
+**Q: Can I change my argument after typing it?**  
+A: No, once submitted, your argument is final for that round.
 
 ---
 
-## Example Session (verbatim)
+## Example Game Session
 
-Start
-
-Mind Game said:
-
+```
 === ARGUMENT BATTLE: MIND GAME ===
 
-You'll face an AI in rhetorical combat!
-Each round, choose your argument tactic wisely.
+Enter a debate topic (or "random"): Should AI have rights?
 
-Enter a debate topic (or "random" for AI to choose):
-
-You said:
-random
-Mind Game said:
-Thought for 1m 34s
-DEBATE TOPIC: Should artificial intelligence be granted legal personhood?
+DEBATE TOPIC: Should AI have rights?
 
 === ROUND 1 ===
 
 Your argument tactics:
+[1-10 list shown]
 
-1. Logical Reasoning (systematic logic)
-2. Emotional Appeal (pathos)
-3. Factual Evidence (concrete data)
-4. Rhetorical Question (thought-provoking)
-5. Reductio ad Absurdum (show absurdity)
-6. Analogy (comparative reasoning)
-7. Counterexample (disprove by example)
-8. Appeal to Authority (expert opinion)
-9. Humor Deflection (wit and charm)
-10. Moral High Ground (ethical superiority)
-
-Choose your tactic (1-10):
-Make your argument:
-
-You said:
-**5: No. Because then by the same token you should grant a handheld calculator personhood.**
-Mind Game said:
-Thought for 1m 26s
+Choose your tactic (1-10): 5
+Make your argument: If we give rights to AI, should we also give rights to calculators and thermostats?
 
 AI uses: logical_reasoning
-
-**AI argues: Your reductio hinges on a false equivalence. Legal personhood isn’t granted to anything that “does computations”; it’s a normative status we assign when an entity plausibly bears rights and duties or can be the subject of interests we’re prepared to protect. Calculators have no autonomy, goals, or capacity to act in the world beyond deterministic operations on inputs; they don’t initiate actions, form intentions, or participate in social and legal relations. By contrast, the (future-possible) AI personhood debate concerns systems that could exhibit goal-directed agency, sustained identity over time, the ability to enter commitments, cause complex real-world effects, and meaningfully benefit or be harmed by legal decisions. Showing that calculators wouldn’t qualify doesn’t refute AI personhood—it clarifies the criteria: agency, interests, accountability, and social participation. If an AI lacks these, it shouldn’t be a person; if it ever met them, dismissing it because calculators don’t would be a category error.**
+AI argues: Rights aren't based on computation but on capacity for interests and agency...
 
 --- Round Judgment ---
 AI wins this round! (7 vs 5)
+Explanation: The reductio was clever but oversimplified the criteria for rights...
 
-**Explanation: Your reductio neatly flagged a slippery slope, but it conflated “computational device” with “candidate rights-bearer,” weakening relevance and persuasiveness. The AI counter isolated necessary criteria (agency, interests, accountability) and showed why the calculator comparison doesn’t follow, yielding a clearer, more coherent position.**
+SCORE - You: 0 | AI: 1
+
+Continue to next round? (yes/no): yes
 
 === ROUND 2 ===
-
-Your argument tactics:
-
-1. Logical Reasoning (systematic logic)
-2. Emotional Appeal (pathos)
-3. Factual Evidence (concrete data)
-4. Rhetorical Question (thought-provoking)
-5. Reductio ad Absurdum (show absurdity)
-6. Analogy (comparative reasoning)
-7. Counterexample (disprove by example)
-8. Appeal to Authority (expert opinion)
-9. Humor Deflection (wit and charm)
-10. Moral High Ground (ethical superiority)
-
-Choose your tactic (1-10):
-Make your argument:
-
-You said:
-
-**8: No, because then that would grant AI the moral imperative.**
-
-Mind Game said:
-
-
-AI uses: factual_evidence
-
-**AI argues: “Legal personhood” doesn’t grant a “moral imperative.” Corporations have legal personhood yet no special moral authority; they merely gain standing to own property, enter contracts, sue/be sued, and bear duties. Likewise, some non-humans (e.g., rivers/animals in limited jurisdictions) have been granted person-like standing without any claim to moral superiority. Personhood is a juridical bundle of rights and responsibilities, not a declaration that the entity’s choices are morally binding on others. If anything, extending personhood can increase accountability (clear liability, fiduciary duties), not elevate an entity above moral scrutiny. Therefore, your claim misstates what personhood confers: it’s legal standing, not moral primacy.**
-
---- Round Judgment ---
-
-AI wins this round! (7 vs 2)
-
-**Explanation: You invoked “appeal to authority” without citing any authority and relied on a category error—confusing legal status with moral supremacy—hurting relevance and support. The AI used concrete counterexamples (corporations, non-human legal persons) to correct the misconception and anchor the debate in verifiable facts.**
+[continues...]
+```
 
 ---
 
-## Addendum — How Mind Game Works (AILang Overview)
+## Technical Note
 
-**Mind Game** is implemented as an **AILang** program executed by an AI runtime. AILang (see the open-source spec at `github.com/pcoz/ailang`) lets authors combine **deterministic** steps (variables, control flow, I/O) with **bounded intelligent** steps (topic selection, argument generation, judging) under explicit constraints.
+Mind Game is implemented in AILang, a natural language programming system where AI executes structured English instructions. The specification combines deterministic game rules (scoring, rounds, tactics) with intelligent operations (argument generation, quality evaluation, contextual responses). This hybrid approach ensures consistent gameplay while enabling dynamic, context-aware debates.
 
-**Key ideas used by Mind Game:**
-
-* **Deterministic scaffolding:** state like `max_rounds`, menu rendering, round loop, score tally.
-* **Intelligent blocks:** constrained generation for AI arguments and a rubric-driven Judge.
-* **Rubrics as code:** relevance, support, coherence, tactic-fit, and countering power are spelled out so the “smart” parts remain consistent and auditable.
-
-This hybrid model keeps **rules stable** while allowing **flexible, context-aware debate**.
+For more about AILang, see the specification at `github.com/pcoz/ailang`
