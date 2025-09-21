@@ -8,70 +8,79 @@ AILang is a programming language that uses structured English instead of traditi
 
 ## The Core Paradigm
 
-Traditional programming requires translating human intent through artificial syntax, compilation, and machine code execution. AILang inverts this model by recognizing that modern AI systems are sophisticated computational engines capable of directly processing human logical intent expressed in natural language.
+Traditional programming translates human intent through artificial syntax, compilation, and machine code. AILang inverts this model by recognizing that modern AI systems can directly process human logical intent expressed in natural language.
 
-AILang operates on a **hybrid deterministic–intelligent architecture**:
+AILang operates on a **hybrid architecture**:
 
 * **Deterministic Layer**: Core operations (variables, control flow, I/O) execute identically every time, providing reliability.
-* **Intelligent Layer**: Specific constructs delegate decision-making to AI intelligence, using deterministic data as context.
-
-This means programs can have both predictable computational behavior and intelligent adaptability where explicitly designed.
+* **Intelligent Layer**: Specific constructs delegate decision-making to AI intelligence, using deterministic data and program state as context.
+* **Mathematical Layer**: Exact symbolic math and high-precision numerical methods for domains that require provable correctness and stable computation.
 
 ## How AILang Works
 
-AILang uses a **Retrieval-Augmented Generation (RAG) execution model**. The complete language specification serves as a knowledge base that the AI system references during program execution. This ensures consistent interpretation of instructions while allowing intelligent decision-making within defined boundaries.
+AILang uses a **Retrieval-Augmented Generation (RAG)** execution model: the complete language specification is attached to the AI system as a knowledge base. During execution, the AI retrieves exact behavioral definitions for each construct, enforcing consistency on deterministic operations while allowing bounded intelligence where explicitly permitted.
 
-The AI retrieves exact behavioral definitions for each language construct, transforming from an unpredictable creative system into a reliable computational processor that follows precise rules while retaining intelligent adaptability where explicitly permitted.
+### Execution Environments
 
-## Production-Ready AI
+1. **AI Web Interface** — author and run programs interactively.
+2. **API Integration** — submit AILang programs programmatically for system integration.
 
-The major advantage of AILang is that it enables AI to be used in production environments by constraining AI operations to **known boundaries**. Traditional AI systems are unpredictable and cannot be responsibly deployed in production because their outputs are random and unreliable.
+### RAG Integration Requirements (Summary)
 
-AILang solves this through its RAG architecture: the AI retrieves exact behavioral definitions from the specification, ensuring deterministic operations behave consistently while allowing intelligent adaptation only where explicitly permitted. This transforms AI from an unpredictable creative system into a reliable computational processor that operates within defined constraints.
+* Load the **entire** specification into the AI’s retrieval system before execution.
+* For each instruction, retrieve its definition and enforce consistency on deterministic constructs.
+* Distinguish deterministic vs. intelligent operations and respect defined boundaries.
+
+## Why AILang for Production
+
+The spec’s RAG-backed rules turn AI from a creative but unpredictable system into a reliable computational processor operating within **known boundaries**—appropriate for production use.
 
 ## Language Highlights
 
-* **Readable, dual-style syntax**: Controlled natural language (`SET`, `LET`, `GET`, `SEND`) and familiar operators (`=`, `<<`, `>>`) for assignment and stream-based I/O.
-* **Control flow & branching**: `IF/ELSE`, loops, and `MATCH/CASE` for multi-way pattern matching.
-* **State & data**: Variables, dynamic property access, nested structures, and state accumulation.
-* **Intelligent programming**:
+* **Readable, dual-style syntax**: Controlled natural language (`SET`, `LET`, `GET`, `SEND`) plus familiar operators (`=`, `<<`, `>>`).
 
-  * Invoke AI with explicit modes such as `INTELLIGENTLY`, `CREATIVELY`, `ADAPTIVELY`, and `CONTEXTUALLY`.
-  * Constrain scope and outputs with `MUST_INCLUDE`, `CANNOT_INCLUDE`, `OUTPUT_FORMAT`, `MAX_SCOPE`.
-  * Use gap-filling (`...`) to indicate where AI should apply intelligence within deterministic scaffolding.
-* **Safety & reliability**:
+* **Data & State**: Dynamic typing; dot-notation property access; nested and dynamic keys; accumulation helpers (`ADD`, `INCREMENT`, `APPEND`).
 
-  * Confidence levels on intelligent actions (e.g., `high | moderate | low`) and qualitative distinctions between observable vs. interpretive assessments.
-  * State-aware execution boundaries and cascade-prevention guards to stop runaway operations.
-  * Progressive authorization that adjusts action authority based on observed success rates.
-* **Error handling**:
+* **Operators & Expressions**: Arithmetic, comparison, logical, and text operators with deterministic evaluation.
 
-  * Deterministic `TRY/CATCH/FINALLY` patterns.
-  * `INTELLIGENTLY_HANDLE` for bounded, objective-driven recovery while preserving context.
+* **I/O with streams**: Deterministic input/output via `GET/SEND` and `<<`/`>>` with chainable streams.
+
+* **Control Flow**: `IF/ELSE`, `WHILE`, `FOR EACH`, `REPEAT`, and `MATCH/CASE`.
+
+* **Procedures & Functions**: `DO` blocks; `DEFINE PROCEDURE` and `CALL` with parameters/returns.
+
+* **Object Management**: Object definition, instantiation, and dot-notation method access.
+
+* **Intelligent Programming**:
+
+  * Invoke AI with `INTELLIGENTLY`, `CREATIVELY`, `ADAPTIVELY`, `CONTEXTUALLY`.
+  * Bound scope with `MUST_INCLUDE`, `CANNOT_INCLUDE`, `OUTPUT_FORMAT`, `MAX_SCOPE`.
+  * Use gap-filling `...` and smart defaults to indicate where AI can adapt.
+
+* **Confidence & Qualitative Spectrum**: Declare confidence levels; treat observable vs. interpretive assessments differently, with action authority tied to confidence.
+
+* **Mathematical Layer**:
+
+  * **Contexts**: `MATHEMATICAL_CONTEXT` for domain (`real|complex|quaternion|tensor`), precision, and constraints.
+  * **Symbolic & Numeric**: Algebra, calculus (differentiate/integrate), sums/products, Fourier analysis, linear algebra, optimization.
+  * **Complex Numbers & `i`**: Explicit domain rules and promotion; Euler/trig forms; residues and contour integration.
+  * **Vectors/Tensors/Quaternions** and advanced applications across physics, signals, control, ML, and finance.
+  * **Execution Guarantees**: Precision, stability, domain enforcement, verification.
+
+* **State-Aware Boundaries & Safety**: Rate limits, progressive authorization, cascade prevention, and compositional limits to keep systems safe.
+
+* **Error Handling**: Deterministic `TRY/CATCH/FINALLY` and `INTELLIGENTLY_HANDLE` for bounded recovery.
 
 ## Getting Started
 
-To understand how to write AILang programs, see `AILang_Specification.md`. The specification contains:
+1. **Attach the specification** (`AILang_Specification.md`) to your AI system’s knowledge base.
+2. **Write your program** using the constructs above.
+3. **Execute** via:
 
-* Complete syntax and language constructs
-* Data types and operators
-* Control flow structures
-* Input/output operations with stream operators
-* Intelligent programming constructs and confidence levels
-* State-aware dynamic boundaries and safety controls
-* Detailed examples and use cases
-* Implementation guidelines for AI systems
+   * **AI Web Interface**: paste your program into a conversational session.
+   * **API Integration**: submit programs via API.
 
-## How You Use AILang
-
-1. **Attach the specification**: Provide `AILang_Specification.md` to your AI system as a knowledge base.
-2. **Write your program**: Author AILang code using the syntax and constructs defined in the spec.
-3. **Execute** via either:
-
-   * **AI Web Interface**: Paste your AILang program into conversational AI (e.g., ChatGPT, Claude).
-   * **API Integration**: Submit AILang programs programmatically through API calls.
-
-During execution, the AI follows deterministic rules for core operations and applies bounded intelligence only where your code explicitly requests it.
+During execution, deterministic rules are enforced; bounded intelligence is applied only where your code explicitly requests it.
 
 ## Code Examples
 
@@ -91,10 +100,13 @@ processed_data >> "output.txt"
 ### Pattern Matching
 
 ```ailang
-MATCH doc.type:
-  CASE "invoice":   PROCESS invoice_handler WITH doc
-  CASE "letter":    PROCESS letter_handler WITH doc
-  CASE "unknown":   LOG "Unhandled document type"
+MATCH doc.type WITH:
+    CASE "invoice":
+        PROCESS invoice_handler WITH doc
+    CASE "letter":
+        PROCESS letter_handler WITH doc
+    DEFAULT:
+        LOG "Unhandled document type"
 END_MATCH
 ```
 
@@ -102,10 +114,10 @@ END_MATCH
 
 ```ailang
 INTELLIGENTLY draft_reply WITH:
-  MUST_INCLUDE: [greeting, solution, next_steps]
-  CANNOT_INCLUDE: [personal_opinions, guarantees]
-  OUTPUT_FORMAT: professional_email
-  MAX_SCOPE: current_issue_only
+    MUST_INCLUDE: [greeting, solution, next_steps]
+    CANNOT_INCLUDE: [personal_opinions, guarantees]
+    OUTPUT_FORMAT: professional_email
+    MAX_SCOPE: current_issue_only
 END
 ```
 
@@ -118,42 +130,29 @@ INTELLIGENTLY assess_risk WITH:
 END
 
 IF confidence_level < high THEN:
-  CONFIRM WITH user BEFORE proceeding
+  CONFIRM WITH user: "Proceed?" 
+  WAIT for_confirmation BEFORE proceeding
 END_IF
 ```
 
-### State-Aware Limits
+### Mathematical Context & Complex Numbers
 
 ```ailang
-SET daily_limit TO 100
-SET current_count TO 0
+MATHEMATICAL_CONTEXT:
+  DOMAIN: complex
+  PRECISION: symbolic
+END_CONTEXT
 
-FOR each request IN queue:
-  IF current_count >= daily_limit THEN:
-    DEFER request TO tomorrow
-  ELSE:
-    PROCESS request
-    INCREMENT current_count BY 1
-  END_IF
-END_FOR
+SET z TO 3 + 4*i
+ASSERT |z| EQUALS 5
+INTEGRATE f(x) = e^(i*x) FROM 0 TO pi WITH_RESPECT_TO x
 ```
 
 ## Worked Example
 
-This repository includes practical examples demonstrating AILang's hybrid deterministic–intelligent capabilities. Provide the specification and the program to an AI system along with any required input documents.
+The repository includes practical examples demonstrating hybrid deterministic–intelligent capabilities. Provide the specification and the program to an AI system along with any required input documents.
 
-* **Rent Increase Negotiation** (`examples/negotiate_rent_increase/`): Demonstrates a full workflow that
-
-  * Deterministically retrieves tenant details, parses notices, and gathers market/inflation data.
-  * Intelligently assesses fairness, affordability, and negotiation leverage.
-  * Adaptively generates counter-offer emails and reports, with conditional loops for ongoing negotiations.
-  * Handles errors intelligently while maintaining privacy and legal compliance.
-
-  The example folder includes:
-
-  * `negotiate_rent_increase.ailang`
-  * Inputs: `landlord_email.pdf`, `tenant_details.json`, `local_rent_data.json`, `cost_of_living_index.json`, `tenant_rights_laws.md`
-  * Outputs (generated): `counteroffer_email_to_landlord.txt`, `negotiation_report.json`
+* **Rent Increase Negotiation** (`examples/negotiate_rent_increase/`): Deterministically parses inputs and data; intelligently assesses fairness and crafts communication; adapts across negotiation loops; and handles errors within safety constraints.
 
 ## Repository Contents
 
@@ -164,5 +163,9 @@ This repository includes practical examples demonstrating AILang's hybrid determ
 ---
 
 **Author**: Edward Chalk ([fleetingswallow.com](https://fleetingswallow.com))
-**Version**: 0.2
+
+**Version**: 0.3
+
 **License**: MIT
+
+
