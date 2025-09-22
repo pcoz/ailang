@@ -1,0 +1,160 @@
+#ailang
+DO trial_to_paid_conversion_optimizer_full:
+
+  ###########################################################################
+  # PURPOSE
+  # Pick a single subscription price p AND a day-by-day schedule for:
+  #   • m(t): messaging intensity (emails / in-app nudges)
+  #   • d(t): discount intensity (0..max per day)
+  # …to maximize expected value from a 14-day trial cohort while honoring
+  # budget, brand, and compliance rules. The core is continuous-time calculus:
+  # survival S(t) = exp(−∫ h), objective = ∫ margin·h(t)·S(t) − ∫ penalties.
+  ###########################################################################
+
+  # -----------------------------
+  # 1) Inputs (business controls)
+  # -----------------------------
+  SET horizon_days              TO 14
+  SET p_min                     TO 7.99
+  SET p_max                     TO 19.99
+  SET p_ref                     TO 12.99
+  SET cost_per_user_per_day     TO 0.10
+
+  # Penalties for “pushiness” (quadratic in intensity; integrated over time)
+  # (LIVELY v3 knobs)
+  SET msg_cost_weight k_m       TO 0.10
+  SET disc_cost_weight k_d      TO 0.20
+
+  SET max_daily_discount_pct    TO 0.30
+  SET total_msg_budget          TO 8.0      # ∫ m(t) dt ≤ 8
+  SET avg_discount_cap          TO 0.08     # (1/T) ∫ d(t) dt ≤ 8%
+
+  # Brand/compliance rules
+  SET no_discount_after_day     TO 10       # forbid discount after day 10
+  SET max_m_endgame             TO 2.0      # last 3 days: m(t) ≤ 2.0
+
+  # -----------------------------
+  # 2) Behavior priors (bounded intelligence + safe defaults)
+  # -----------------------------
+  INTELLIGENTLY estimate_churn_and_response WITH:
+    WANT: [baseline_hazard_lambda0, price_sensitivity_alpha, msg_effect_beta, discount_effect_gamma, seasonality_vector s(t)]
+    MUST_INCLUDE: [recent_cohort_data, industry_benchmarks]
+    OUTPUT_RANGES:
+      lambda0 in [0.03, 0.20]
+      alpha   in [0.02, 0.15]
+      beta    in [0.05, 0.40]
+      gamma   in [0.10, 0.70]
+  END
+
+  # Safe defaults if AI omitted anything (keeps the program executable)
+  # (LIVELY v3 priors)
+  SET lambda0 TO COALESCE(lambda0, 0.10)
+  SET alpha   TO COALESCE(alpha,   0.06)
+  SET beta    TO COALESCE(beta,    0.35)
+  SET gamma   TO COALESCE(gamma,   0.60)
+  DEFINE s(t) := COALESCE(s(t), 1)         # seasonality defaults to flat 1
+
+  # -----------------------------
+  # 3) Mathematical core (continuous time)
+  # -----------------------------
+  MATHEMATICAL_CONTEXT: DOMAIN: real; PRECISION: high END_CONTEXT
+
+  # Decision variables
+  VARIABLE  p WITH p_min <= p <= p_max
+  FUNCTION  m(t) ON t∈[0,horizon_days] WITH m(t) >= 0
+  FUNCTION  d(t) ON t∈[0,horizon_days] WITH 0 <= d(t) <= max_daily_discount_pct
+
+  # Hazard & survival
+  DEFINE hazard(t) := lambda0 * s(t) * EXP( alpha*(p - p_ref) - beta*m(t) - gamma*d(t) )
+  DEFINE S(t)      := EXP( -INTEGRAL(u, 0, t, hazard(u)) )
+
+  # Objective components
+  DEFINE margin        := p - cost_per_user_per_day
+  DEFINE ltv_trial     := INTEGRAL(t, 0, horizon_days, margin * hazard(t) * S(t))
+  DEFINE control_cost  := INTEGRAL(t, 0, horizon_days, k_m*(m(t)^2) + k_d*(d(t)^2))
+
+  # Constraints (all math; no loops)
+  CONSTRAINTS:
+    INTEGRAL(t, 0, horizon_days, m(t)) <= total_msg_budget
+    (1.0 / horizon_days) * INTEGRAL(t, 0, horizon_days, d(t)) <= avg_discount_cap
+    FOR t IN (no_discount_after_day, horizon_days]: d(t) = 0
+    FOR t IN [horizon_days-3, horizon_days]: m(t) <= max_m_endgame
+
+  # (Optional showcase constraints to ensure a “lively” plan)
+  # INTEGRAL(t, 0, horizon_days, m(t)) >= 3.0
+  # CARDINALITY({ τ | τ ≤ no_discount_after_day ∧ d(τ) ≥ 0.05 }) ≥ 2
+
+  # Optimization (solver discretizes time internally)
+  OPTIMIZE maximize_LTV:
+    OBJECTIVE: ltv_trial - control_cost
+    METHOD: optimal_control_with_discretization
+  END_OPTIMIZE
+
+  # -----------------------------
+  # 4) Make a concrete day-by-day plan (sampling)
+  # -----------------------------
+  DEFINE grid := [0,1,2,...,horizon_days-1]
+  SET send_plan TO [
+    { day: t, message_intensity: ROUND(m(t),2), discount_pct: ROUND(100*d(t),1) }
+    FOR EACH t IN grid
+  ]
+  SET chosen_price TO ROUND(p, 2)
+
+  # -----------------------------
+  # 5) “Intelligent” human-friendly assessments (bounded)
+  # -----------------------------
+  INTELLIGENTLY assess_day FOR EACH entry IN send_plan WITH:
+    MUST_INCLUDE: [headline, why_this_choice, hazard_snapshot, sensitivity_notes, policy_notes]
+    CANNOT_INCLUDE: [speculative_claims, competitor_mentions, false_urgency]
+    CONTEXT: {
+      price: chosen_price,
+      seasonality: s(t),
+      params: { lambda0, alpha, beta, gamma, p_ref },
+      policy: {
+        total_msg_budget, avg_discount_cap,
+        no_discount_after_day, max_m_endgame,
+        max_daily_discount_pct
+      },
+      entry: entry
+    }
+  END
+
+  SET annotated_plan TO [
+    MERGE(entry, { assessment: assess_day[i] })
+    FOR EACH i, entry IN ENUMERATE(send_plan)
+  ]
+
+  # -----------------------------
+  # 6) Campaign assets (bounded intelligence for content)
+  # -----------------------------
+  INTELLIGENTLY craft_trial_sequence WITH:
+    MUST_INCLUDE: [clear_value_prop, social_proof, friction_busters, CTA, legal_footer]
+    CANNOT_INCLUDE: [false_urgency, competitor_mentions]
+    OUTPUT_FORMAT: day_by_day_email_and_inapp
+    CONTEXT: { price: chosen_price, schedule: annotated_plan }
+  END
+
+  # -----------------------------
+  # 7) Publish artifacts
+  # -----------------------------
+  SEND {
+    price: chosen_price,
+    schedule: annotated_plan,
+    metrics: {
+      objective: ltv_trial - control_cost,
+      ltv_component: ltv_trial,
+      control_cost: control_cost,
+      avg_discount: (1.0 / horizon_days) * INTEGRAL(t, 0, horizon_days, d(t)),
+      msg_integral: INTEGRAL(t, 0, horizon_days, m(t))
+    },
+    inputs_used: {
+      horizon_days, p_min, p_max, p_ref, cost_per_user_per_day,
+      k_m, k_d, max_daily_discount_pct, total_msg_budget, avg_discount_cap,
+      no_discount_after_day, max_m_endgame,
+      lambda0, alpha, beta, gamma, seasonality: s(t)
+    }
+  } TO "trial_paid_plan.json"
+
+  SEND craft_trial_sequence TO "trial_message_pack.md"
+
+END
