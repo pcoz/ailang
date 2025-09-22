@@ -148,7 +148,7 @@ You get: "Light messaging with 5% discount because messaging reduces barriers to
 **Seasonal Patterns**:
 - `seasonality`: Are some days naturally better than others? (Array of 14 values, one per day)
 
-### The Generated Results
+### The Generated Results (using ChatGPT 5 - Thinking)
 
 **`trial_paid_plan.json`** - The basic output:
 - Chosen price: **$19.49**
