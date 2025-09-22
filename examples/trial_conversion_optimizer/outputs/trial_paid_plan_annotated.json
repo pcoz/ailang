@@ -1,0 +1,300 @@
+{
+  "price": 19.49,
+  "schedule": [
+    {
+      "day": 0,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.1403,
+          "d_dp": 0.0084,
+          "d_dm": -0.0491,
+          "d_dd_per_pct": -0.000842
+        },
+        "why_this_choice": "messaging reduces hazard (\u2202h/\u2202m\u2248-0.0491); discount eases decision (\u2202h/\u2202d\u2248-0.000842/%pt)",
+        "policy_notes": [],
+        "tags": []
+      }
+    },
+    {
+      "day": 1,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.1377,
+          "d_dp": 0.0083,
+          "d_dm": -0.0482,
+          "d_dd_per_pct": -0.000826
+        },
+        "why_this_choice": "messaging reduces hazard (\u2202h/\u2202m\u2248-0.0482); discount eases decision (\u2202h/\u2202d\u2248-0.000826/%pt)",
+        "policy_notes": [],
+        "tags": []
+      }
+    },
+    {
+      "day": 2,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.1336,
+          "d_dp": 0.008,
+          "d_dm": -0.0468,
+          "d_dd_per_pct": -0.000802
+        },
+        "why_this_choice": "messaging reduces hazard (\u2202h/\u2202m\u2248-0.0468); discount eases decision (\u2202h/\u2202d\u2248-0.000802/%pt)",
+        "policy_notes": [],
+        "tags": []
+      }
+    },
+    {
+      "day": 3,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.131,
+          "d_dp": 0.0079,
+          "d_dm": -0.0458,
+          "d_dd_per_pct": -0.000786
+        },
+        "why_this_choice": "messaging reduces hazard (\u2202h/\u2202m\u2248-0.0458); discount eases decision (\u2202h/\u2202d\u2248-0.000786/%pt)",
+        "policy_notes": [],
+        "tags": [
+          "low_seasonality"
+        ]
+      }
+    },
+    {
+      "day": 4,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.1296,
+          "d_dp": 0.0078,
+          "d_dm": -0.0454,
+          "d_dd_per_pct": -0.000778
+        },
+        "why_this_choice": "soft demand expected; messaging reduces hazard (\u2202h/\u2202m\u2248-0.0454); discount eases decision (\u2202h/\u2202d\u2248-0.000778/%pt)",
+        "policy_notes": [],
+        "tags": [
+          "low_seasonality"
+        ]
+      }
+    },
+    {
+      "day": 5,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.131,
+          "d_dp": 0.0079,
+          "d_dm": -0.0458,
+          "d_dd_per_pct": -0.000786
+        },
+        "why_this_choice": "messaging reduces hazard (\u2202h/\u2202m\u2248-0.0458); discount eases decision (\u2202h/\u2202d\u2248-0.000786/%pt)",
+        "policy_notes": [],
+        "tags": [
+          "low_seasonality"
+        ]
+      }
+    },
+    {
+      "day": 6,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.1336,
+          "d_dp": 0.008,
+          "d_dm": -0.0468,
+          "d_dd_per_pct": -0.000802
+        },
+        "why_this_choice": "messaging reduces hazard (\u2202h/\u2202m\u2248-0.0468); discount eases decision (\u2202h/\u2202d\u2248-0.000802/%pt)",
+        "policy_notes": [],
+        "tags": []
+      }
+    },
+    {
+      "day": 7,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.1363,
+          "d_dp": 0.0082,
+          "d_dm": -0.0477,
+          "d_dd_per_pct": -0.000818
+        },
+        "why_this_choice": "messaging reduces hazard (\u2202h/\u2202m\u2248-0.0477); discount eases decision (\u2202h/\u2202d\u2248-0.000818/%pt)",
+        "policy_notes": [],
+        "tags": []
+      }
+    },
+    {
+      "day": 8,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.139,
+          "d_dp": 0.0083,
+          "d_dm": -0.0486,
+          "d_dd_per_pct": -0.000834
+        },
+        "why_this_choice": "messaging reduces hazard (\u2202h/\u2202m\u2248-0.0486); discount eases decision (\u2202h/\u2202d\u2248-0.000834/%pt)",
+        "policy_notes": [],
+        "tags": []
+      }
+    },
+    {
+      "day": 9,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.1417,
+          "d_dp": 0.0085,
+          "d_dm": -0.0496,
+          "d_dd_per_pct": -0.00085
+        },
+        "why_this_choice": "seasonality uplift \u2248 +6%; messaging reduces hazard (\u2202h/\u2202m\u2248-0.0496); discount eases decision (\u2202h/\u2202d\u2248-0.00085/%pt)",
+        "policy_notes": [],
+        "tags": []
+      }
+    },
+    {
+      "day": 10,
+      "message_intensity": 0.2,
+      "discount_pct": 5.0,
+      "assessment": {
+        "headline": "\ud83d\udca1 Targeted promo",
+        "hazard_snapshot": {
+          "h": 0.1443,
+          "d_dp": 0.0087,
+          "d_dm": -0.0505,
+          "d_dd_per_pct": -0.000866
+        },
+        "why_this_choice": "seasonality uplift \u2248 +8%; messaging reduces hazard (\u2202h/\u2202m\u2248-0.0505); discount eases decision (\u2202h/\u2202d\u2248-0.000866/%pt)",
+        "policy_notes": [],
+        "tags": []
+      }
+    },
+    {
+      "day": 11,
+      "message_intensity": 0.5,
+      "discount_pct": 0.0,
+      "assessment": {
+        "headline": "\ud83c\udfc1 Endgame nudge",
+        "hazard_snapshot": {
+          "h": 0.1364,
+          "d_dp": 0.0082,
+          "d_dm": -0.0477,
+          "d_dd_per_pct": -0.000818
+        },
+        "why_this_choice": "seasonality uplift \u2248 +10%; messaging reduces hazard (\u2202h/\u2202m\u2248-0.0477)",
+        "policy_notes": [],
+        "tags": [
+          "high_seasonality",
+          "endgame_window"
+        ]
+      }
+    },
+    {
+      "day": 12,
+      "message_intensity": 0.5,
+      "discount_pct": 0.0,
+      "assessment": {
+        "headline": "\ud83c\udfc1 Endgame nudge",
+        "hazard_snapshot": {
+          "h": 0.1389,
+          "d_dp": 0.0083,
+          "d_dm": -0.0486,
+          "d_dd_per_pct": -0.000833
+        },
+        "why_this_choice": "seasonality uplift \u2248 +12%; messaging reduces hazard (\u2202h/\u2202m\u2248-0.0486)",
+        "policy_notes": [],
+        "tags": [
+          "high_seasonality",
+          "endgame_window"
+        ]
+      }
+    },
+    {
+      "day": 13,
+      "message_intensity": 0.5,
+      "discount_pct": 0.0,
+      "assessment": {
+        "headline": "\ud83c\udfc1 Endgame nudge",
+        "hazard_snapshot": {
+          "h": 0.1426,
+          "d_dp": 0.0086,
+          "d_dm": -0.0499,
+          "d_dd_per_pct": -0.000856
+        },
+        "why_this_choice": "seasonality uplift \u2248 +14%; messaging reduces hazard (\u2202h/\u2202m\u2248-0.0499)",
+        "policy_notes": [],
+        "tags": [
+          "high_seasonality",
+          "endgame_window"
+        ]
+      }
+    }
+  ],
+  "metrics": {
+    "objective": 16.7956,
+    "ltv_component": 16.9201,
+    "control_cost": 0.1245,
+    "avg_discount": 0.0393,
+    "msg_integral": 3.7,
+    "discount_days>=5pct": 11
+  },
+  "inputs_used": {
+    "horizon_days": 14,
+    "p_min": 7.99,
+    "p_max": 19.99,
+    "cost_per_user_per_day": 0.1,
+    "msg_cost_weight": 0.1,
+    "disc_cost_weight": 0.2,
+    "max_daily_discount_pct": 0.3,
+    "total_msg_budget": 8.0,
+    "avg_discount_cap": 0.08,
+    "no_discount_after_day": 10,
+    "max_m_endgame": 2.0,
+    "lambda0": 0.1,
+    "alpha": 0.06,
+    "beta": 0.35,
+    "gamma": 0.6,
+    "p_ref": 12.99,
+    "seasonality": [
+      1.05,
+      1.03,
+      1.0,
+      0.98,
+      0.97,
+      0.98,
+      1.0,
+      1.02,
+      1.04,
+      1.06,
+      1.08,
+      1.1,
+      1.12,
+      1.15
+    ]
+  }
+}
