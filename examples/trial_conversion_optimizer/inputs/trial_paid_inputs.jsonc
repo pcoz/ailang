@@ -1,0 +1,113 @@
+{
+  // ============================================================================
+  // Trial → Paid Optimizer : INPUTS (commented)
+  // ----------------------------------------------------------------------------
+  // This file controls BOTH:
+  //   1) Business guardrails (budgets, caps, policy rules)
+  //   2) Behavioral priors (how users respond to price, messages, discounts)
+  //
+  // The AILang spec (and the parity Python script) read these values to produce:
+  //   - An optimal subscription price p   (scalar)
+  //   - A daily schedule m(t), d(t) for the 14-day trial (controls)
+  //   - A plan JSON + campaign copy
+  //
+  // HOW TO TUNE:
+  // • To get a quieter plan: raise msg_cost_weight/disc_cost_weight, or lower beta/gamma.
+  // • To encourage more action: lower those weights, or increase beta/gamma.
+  // • To force liveliness in demos: keep the “punchy” values below.
+  //
+  // UNITS & CONVENTIONS:
+  // • Prices in currency units; costs per user per day.
+  // • Discounts are FRACTIONS (0.08 = 8%), not percents, unless clearly annotated as “%” later.
+  // • Time is in *days*, indexed 0..horizon_days-1 for schedules.
+  // ============================================================================
+
+  // -------------------------
+  // Trial horizon & price box
+  // -------------------------
+  "horizon_days": 14,           // Length of free trial window (continuous model sampled daily).
+  "p_min": 7.99,                // Minimum allowed subscription price (search lower bound).
+  "p_max": 19.99,               // Maximum allowed subscription price (search upper bound).
+  "p_ref": 12.99,               // Reference price used in the hazard’s exp() term; “neutral” anchor.
+
+  // -------------------------
+  // Cost & margin proxy
+  // -------------------------
+  "cost_per_user_per_day": 0.10, // Simplified per-day cost during trial. We monetize conversion
+                                 // as margin = (p - cost_per_user_per_day) inside the objective’s integral.
+                                 // For deeper LTV, replace with your own margin model.
+
+  // -------------------------------------------------------
+  // “Pushiness” penalties (regularization on the controls)
+  // -------------------------------------------------------
+  // These weights penalize the *integral of squared intensity*:
+  //    control_cost = ∫ [ k_m * m(t)^2 + k_d * d(t)^2 ] dt
+  // Intuition:
+  //   • Higher values ⇒ the solver avoids using that control.
+  //   • Lower values ⇒ more aggressive nudging/discounting gets used.
+  // The “punchy” demo uses *lower* weights than the conservative baseline.
+  "msg_cost_weight": 0.10,      // k_m : messaging penalty weight (was 0.4 in “quiet” baseline).
+  "disc_cost_weight": 0.20,     // k_d : discount penalty weight (was 0.6 in “quiet” baseline).
+
+  // -------------------------------------------
+  // Hard business caps & budgets (global rules)
+  // -------------------------------------------
+  "max_daily_discount_pct": 0.30, // HARD per-day cap: 0.30 = 30% max discount any day.
+  "total_msg_budget": 8.0,        // Budget on ∫ m(t) dt (sum of daily messaging intensity).
+                                  // Example: if m=0.5 on 10 days, that consumes 5.0.
+  "avg_discount_cap": 0.08,       // Average discount cap across the whole window:
+                                  // (1/T) * ∫ d(t) dt  ≤  0.08 (i.e., 8% average over all days).
+  "no_discount_after_day": 10,    // Compliance/brand rule: absolutely no discounts after DAY 10.
+  "max_m_endgame": 2.0,           // Endgame gentleness: cap messaging m(t) ≤ 2.0 on the last 3 days.
+
+  // -------------------------------------------------
+  // Behavioral priors (bounded “intelligent” inputs)
+  // -------------------------------------------------
+  // The hazard of conversion during trial is:
+  //   h(t) = λ0 * s(t) * exp( α*(p - p_ref)  - β*m(t)  - γ*d(t) )
+  //
+  // Where:
+  //   • λ0   (lambda0)    : baseline hazard level
+  //   • α     (alpha)     : price sensitivity      (higher p ⇒ harder to convert ⇒ hazard ↑)
+  //   • β     (beta)      : messaging effectiveness (more m ⇒ easier to convert ⇒ hazard ↓)
+  //   • γ     (gamma)     : discount effectiveness  (more d ⇒ easier to convert ⇒ hazard ↓)
+  //
+  // RANGES (typical):
+  //   lambda0 in [0.03, 0.20], alpha in [0.02, 0.15], beta in [0.05, 0.40], gamma in [0.10, 0.70]
+  //
+  // “Punchy” demo settings (more responsive to nudges & discounts, a bit less price sensitive):
+  "lambda0": 0.10,          // Baseline per-day propensity to convert (before controls & seasonality).
+  "alpha": 0.06,            // Price sensitivity: lower than conservative baseline (0.08) to avoid
+                            // the optimizer “fleeing” to the lowest price too easily.
+  "beta": 0.35,             // Messaging effectiveness: higher ⇒ m(t) has a stronger positive effect.
+  "gamma": 0.60,            // Discount effectiveness: higher ⇒ d(t) has a stronger positive effect.
+
+  // ---------------------------
+  // Seasonality profile s(t)
+  // ---------------------------
+  // Day-specific multipliers that modulate the hazard (e.g., weekends, product events).
+  // Values >1 boost demand; <1 dampen demand. Length must equal horizon_days.
+  //
+  // This curve slopes gently up toward the end to showcase how the optimizer
+  // might time endgame nudges even if discounts are disallowed after day 10.
+  "seasonality": [1.05, 1.03, 1.00, 0.98, 0.97, 0.98, 1.00, 1.02, 1.04, 1.06, 1.08, 1.10, 1.12, 1.15]
+
+  // --------------------------------------------------------------------------
+  // FAQ / TIPS:
+  // • “It still chooses no messaging/discounts.” → Either raise beta/gamma or
+  //   lower msg_cost_weight/disc_cost_weight. You can also *require* activity:
+  //   add constraints in the AILang spec like:
+  //      INTEGRAL m(t) ≥ 3.0
+  //      CARDINALITY({ t | t ≤ no_discount_after_day ∧ d(t) ≥ 0.05 }) ≥ 2
+  //
+  // • “It blows budget.” → Reduce beta/gamma (controls are less potent), or
+  //   increase weights, or tighten caps.
+  //
+  // • “We want a mid-trial promo spike.” → Shape seasonality (s(t)) to have a
+  //   peak mid-window, or explicitly constrain where d(t) may be non-zero.
+  //
+  // • “Units?” → Discounts here are *fractions* (0.05=5%). The plan JSON outputs
+  //   `discount_pct` in percent for readability.
+  //
+  // --------------------------------------------------------------------------
+}
