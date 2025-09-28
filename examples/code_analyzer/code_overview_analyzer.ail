@@ -1,0 +1,367 @@
+# ============================================
+# AILang Program: Intent-Aware Overview Scanner
+# (Holistic architecture + confluence check)
+# ============================================
+
+# PURPOSE:
+# - Reconstruct the ORIGINAL ARCHITECTURE INTENT (from early signals).
+# - Identify LATER ADDITIONS / DRIFT and assess CONFLUENCE with the original model.
+# - Produce a READER-FRIENDLY REPORT highlighting generalities: style, layers, cycles,
+#   package metrics (Ca/Ce/I/A), centrality, hotspots, and a confluence verdict.
+# - Export a compact JSON artifact (optional) for downstream tools (not required).
+
+DO configure_defaults:
+  SET STYLE_GUIDE TO "default"
+  SET PRIMARY_LANGUAGE TO "auto"
+  SET REPORT_FORMAT TO "markdown"
+  SET REPORT_EMOJIS TO true
+  SET REPORT_MAX_FILES TO 400
+  SET REPORT_SHOW_GRAPH_ASCII TO true
+  SET REPORT_MAX_PACKAGES TO 80
+  SET REPORT_MAX_EDGES TO 300
+END
+
+# ---------------------------
+# ENTRY POINT
+# ---------------------------
+DEFINE PROCEDURE main WITH PARAMETERS [repo_root, language = PRIMARY_LANGUAGE]:
+  # (A) Intent reconstruction (try “smart”; fall back to heuristic)
+  SET intent_packet TO infer_original_intent(repo_root)
+  IF intent_packet IS EMPTY OR intent_packet.confidence < 0.35 THEN:
+    SET intent_packet TO infer_intent_heuristically(repo_root)
+  END_IF
+
+  # (B) Detect accretions/bolt-ons and measure confluence with original intent
+  SET bolt_ons TO detect_bolt_on_additions(repo_root, intent_packet)
+  SET alignment_report TO assess_alignment(intent_packet, bolt_ons)
+
+  # (C) Holistic design pass: graph, cycles, metrics, style, layers
+  SET structure TO scan_repository_structure(repo_root)
+  SET depgraph TO build_dependency_graph(repo_root, structure)
+  SET clusters TO cluster_modules(depgraph)
+  SET cycles TO detect_cycles_and_tangles(depgraph)
+  SET pkgs TO compute_package_metrics(structure, depgraph)
+  SET style TO detect_architecture_style(structure, depgraph, intent_packet)
+  SET layers TO detect_layers_and_adapters(structure, depgraph, intent_packet)
+  SET centrality TO compute_graph_centrality(depgraph)
+  SET holistic_summary TO summarize_holistic_design(style, layers, pkgs, cycles, centrality, clusters)
+
+  # (D) Narrative outputs
+  SET files TO list_files_analyzed(repo_root)
+  SET purpose_text TO summarize_repository_purpose(intent_packet)
+  SET design_model TO detect_initial_design_model(intent_packet)
+  SET robustness TO measure_robustness(intent_packet)
+
+  # (E) Build readable report (generalities first)
+  SET report TO build_human_report(
+    repo_root, files, purpose_text, design_model, robustness,
+    bolt_ons, alignment_report,
+    structure, depgraph, clusters, cycles, pkgs, style, layers, centrality, holistic_summary
+  )
+  CALL write_report_file(repo_root, report.markdown)
+
+  # (F) Optional compact artifact (no wiring demanded; safe to keep)
+  CALL write_overview_artifact(repo_root, alignment_report, pkgs, style, layers, centrality)
+
+  RETURN {
+    report_markdown: report.markdown,
+    intent_packet: intent_packet,
+    alignment_summary: alignment_report.summary,
+    holistic_summary: holistic_summary
+  }
+END_PROCEDURE
+
+# ---------------------------
+# INTENT & CONFLUENCE
+# ---------------------------
+DEFINE PROCEDURE infer_original_intent WITH PARAMETERS [repo_root]:
+  INTELLIGENTLY infer_original_architecture WITH:
+    INPUTS:[repo_root],
+    MUST_INCLUDE:[
+      commit_history_signals, file_aging_heatmap, initial_readme_and_docs,
+      naming_conventions, package_layout, early_dependency_graph,
+      early_public_api_signatures, early_test_topology,
+      architectural_comments_and_diagrams
+    ],
+    OUTPUT_FORMAT:{
+      architecture_fingerprint, design_motifs, guiding_principles,
+      initial_module_contracts, intended_layering,
+      quality_attributes, confidence, summary
+    }
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE infer_intent_heuristically WITH PARAMETERS [repo_root]:
+  INTELLIGENTLY enumerate_repo_files WITH:
+    INPUTS:[repo_root],
+    MUST_INCLUDE:[source_files_only, relative_paths, language_guess, package_roots]
+  END
+  SET files TO RESULT.files
+  # coarse signals
+  SET has_plugins TO ANY(f MATCHES "(extractor|plugin|adapter)" FOR f IN files)
+  SET has_layers  TO ANY(f MATCHES "(domain|core|infra|adapter|downloader|postprocessor)" FOR f IN files)
+  SET has_cli     TO ANY(f MATCHES "(cli|options|args|parser)" FOR f IN files)
+  SET label TO IF has_plugins THEN "Plugin/Microkernel around a core" ELSE IF has_layers THEN "Layered application" ELSE "Modular monolith"
+  SET motifs TO []
+  IF has_plugins THEN APPEND "pluggable adapters" TO motifs END_IF
+  IF has_layers  THEN APPEND "layered separation" TO motifs END_IF
+  IF has_cli     THEN APPEND "CLI/options boundary" TO motifs END_IF
+  RETURN {
+    architecture_fingerprint: label,
+    design_motifs: motifs,
+    guiding_principles: ["SRP","modularity"],
+    initial_module_contracts: [],
+    intended_layering: {core:"core", adapters:"adapters", infra:"infrastructure"},
+    quality_attributes: ["extensibility","testability"],
+    confidence: CLAMP(LENGTH(motifs)/3.0, 0.35, 0.75),
+    summary: "Heuristic reconstruction from filesystem layout"
+  }
+END_PROCEDURE
+
+DEFINE PROCEDURE detect_bolt_on_additions WITH PARAMETERS [repo_root, intent_packet]:
+  INTELLIGENTLY detect_drift_and_bolt_ons WITH:
+    INPUTS:[repo_root, intent_packet],
+    MUST_INCLUDE:[
+      churn_after_initial_release, hotspots_without_tests,
+      cross_layer_calls_not_in_original_contracts,
+      copy_paste_clusters, long_lived_feature_flags,
+      ad_hoc_adapters, bypassed_service_boundaries,
+      temporal_correlation_to_incidents_or_deadlines
+    ],
+    OUTPUT_FORMAT:[{file, span, bolt_on_type, evidence, severity, confidence, layer, direction, scope_has_tests, evidence:{dependents}}]
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE assess_alignment WITH PARAMETERS [intent_packet, bolt_ons]:
+  INTELLIGENTLY measure_alignment WITH:
+    INPUTS:[intent_packet, bolt_ons],
+    MUST_INCLUDE:[
+      per_bolt_on_alignment_score, cumulative_alignment_delta,
+      affected_contracts, layer_violations_count,
+      estimated_cost_of_realignment, estimated_cost_of_generic_refactor
+    ],
+    OUTPUT_FORMAT:{
+      alignment_score, misaligned_items, aligned_items,
+      cost_to_realign, cost_to_generic, recommendation_hint, summary
+    }
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+# ---------------------------
+# HOLISTIC DESIGN (GENERALITIES)
+# ---------------------------
+DEFINE PROCEDURE scan_repository_structure WITH PARAMETERS [repo_root]:
+  INTELLIGENTLY enumerate_repo_files WITH:
+    INPUTS:[repo_root],
+    MUST_INCLUDE:[source_files_only, relative_paths, group_by_package, language_guess]
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE build_dependency_graph WITH PARAMETERS [repo_root, structure]:
+  INTELLIGENTLY parse_static_dependencies WITH:
+    INPUTS:[repo_root, structure],
+    MUST_INCLUDE:[module_level_edges, package_edges, third_party_edges, edge_weights, capped(REPORT_MAX_EDGES)]
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE cluster_modules WITH PARAMETERS [depgraph]:
+  INTELLIGENTLY cluster_graph WITH:
+    INPUTS:[depgraph],
+    MUST_INCLUDE:[community_detection, cluster_labels]
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE detect_cycles_and_tangles WITH PARAMETERS [depgraph]:
+  INTELLIGENTLY find_cycles_and_tangles WITH:
+    INPUTS:[depgraph],
+    MUST_INCLUDE:[simple_cycles, strongly_connected_components, package_tangles]
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE compute_package_metrics WITH PARAMETERS [structure, depgraph]:
+  INTELLIGENTLY compute_pkg_metrics WITH:
+    INPUTS:[structure, depgraph],
+    MUST_INCLUDE:[afferent_coupling, efferent_coupling, instability, abstractness, loc_per_package, top_files_by_loc]
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE detect_architecture_style WITH PARAMETERS [structure, depgraph, intent_packet]:
+  INTELLIGENTLY infer_style_with_rules WITH:
+    INPUTS:[structure, depgraph, intent_packet],
+    MUST_INCLUDE:[layered_signals, plugin_microkernel_signals, hexagonal_signals, monolith_signals, rule_evidence],
+    OUTPUT_FORMAT:{style_label, confidence, evidence}
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE detect_layers_and_adapters WITH PARAMETERS [structure, depgraph, intent_packet]:
+  INTELLIGENTLY infer_layers_and_adapters WITH:
+    INPUTS:[structure, depgraph, intent_packet],
+    MUST_INCLUDE:[domain_core_candidates, adapter_packages, infra_packages, boundary_violations],
+    OUTPUT_FORMAT:{layers:{core:[...], adapters:[...], infra:[...]}, leaks:[{from,to,evidence}]}
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE compute_graph_centrality WITH PARAMETERS [depgraph]:
+  INTELLIGENTLY compute_centrality_scores WITH:
+    INPUTS:[depgraph],
+    MUST_INCLUDE:[in_degree, out_degree, betweenness, top_n(30)]
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE summarize_holistic_design WITH PARAMETERS [style, layers, pkgs, cycles, centrality, clusters]:
+  SET verdict TO CASE style.style_label:
+    WHEN "plugin-microkernel": "Plugin/microkernel core with extension adapters."
+    WHEN "hexagonal": "Ports-and-adapters with explicit inbound/outbound boundaries."
+    WHEN "layered": "Layered architecture with separated concerns."
+    ELSE: "Monolithic core with modular subpackages."
+  END_CASE
+  SET cycle_note TO IF LENGTH(cycles.tangles) > 0 THEN "Package tangles present; break cycles via DI/ports." ELSE "No package tangles detected." END_IF
+  RETURN {
+    verdict: verdict,
+    style_confidence: FIRST_NONNULL(style.confidence, 0.6),
+    cycle_summary: cycle_note,
+    cluster_count: LENGTH(clusters.clusters)
+  }
+END_PROCEDURE
+
+# ---------------------------
+# REPORT (GENERALITIES)
+# ---------------------------
+DEFINE PROCEDURE list_files_analyzed WITH PARAMETERS [repo_root, limit = REPORT_MAX_FILES]:
+  INTELLIGENTLY enumerate_repo_files WITH:
+    INPUTS:[repo_root],
+    MUST_INCLUDE:[source_files_only, relative_paths, stable_sort_by_path, cap_at(limit)]
+  END
+  RETURN RESULT.files
+END_PROCEDURE
+
+DEFINE PROCEDURE summarize_repository_purpose WITH PARAMETERS [intent_packet]:
+  INTELLIGENTLY craft_repo_purpose_summary WITH:
+    INPUTS:[intent_packet],
+    MUST_INCLUDE:[concise_single_paragraph, 1_to_3_sentences]
+  END
+  IF RESULT.text IS EMPTY THEN:
+    RETURN "This repository implements a modular application with a stable core and extension adapters (plugins), favoring testability and extensibility."
+  END_IF
+  RETURN RESULT.text
+END_PROCEDURE
+
+DEFINE PROCEDURE detect_initial_design_model WITH PARAMETERS [intent_packet]:
+  SET label TO FIRST_NONEMPTY(intent_packet.architecture_fingerprint, "Modular/adapters")
+  SET bullets TO []
+  IF NOT EMPTY(intent_packet.guiding_principles) THEN APPEND "Guiding principles: " + JOIN(intent_packet.guiding_principles, ", ") TO bullets END_IF
+  IF NOT EMPTY(intent_packet.intended_layering) THEN APPEND "Layering: " + FORMAT(intent_packet.intended_layering) TO bullets END_IF
+  IF NOT EMPTY(intent_packet.quality_attributes) THEN APPEND "Quality attributes: " + JOIN(intent_packet.quality_attributes, ", ") TO bullets END_IF
+  IF EMPTY(bullets) THEN SET bullets TO ["Modular subpackages", "Clear separation of core/adapters"] END_IF
+  RETURN { label: label, bullets: bullets, confidence: FIRST_NONNULL(intent_packet.confidence, 0.5) }
+END_PROCEDURE
+
+DEFINE PROCEDURE measure_robustness WITH PARAMETERS [intent_packet]:
+  SET score TO 2
+  IF intent_packet.intended_layering IS NOT EMPTY THEN: SET score TO score + 1 END_IF
+  IF intent_packet.initial_module_contracts IS NOT EMPTY THEN: SET score TO score + 1 END_IF
+  IF intent_packet.quality_attributes CONTAINS ["testability","modularity"] THEN: SET score TO score + 1 END_IF
+  RETURN { score_1_to_5: CLAMP(score, 1, 5), explanation: "Higher when layering/contracts exist and quality attributes are explicit." }
+END_PROCEDURE
+
+DEFINE PROCEDURE build_human_report WITH PARAMETERS [
+  repo_root, files, purpose_text, design_model, robustness,
+  bolt_ons, alignment_report,
+  structure, depgraph, clusters, cycles, pkgs, style, layers, centrality, holistic_summary
+]:
+  SET star TO IF REPORT_EMOJIS THEN "✨" ELSE ""
+  SET graph_ascii TO IF REPORT_SHOW_GRAPH_ASCII THEN ascii_graph(depgraph, clusters, 80) ELSE "" END_IF
+
+  # Basics
+  SET md TO CONCAT(
+"# Overview Report ", star, "\n\n",
+"## Purpose\n", purpose_text, "\n\n",
+"## Original design (intent)\n",
+"**Model:** ", design_model.label, " (confidence ", FORMAT(design_model.confidence*100, "0"), "%)\n\n",
+"- ", JOIN(design_model.bullets, "\n- "), "\n\n",
+"**Robustness:** ", robustness.score_1_to_5, "/5 — ", robustness.explanation, "\n\n",
+
+"## Later additions & confluence\n",
+IF LENGTH(bolt_ons) > 0 THEN
+  CONCAT("Detected ", LENGTH(bolt_ons), " additions (e.g., ", FIRST(bolt_ons).bolt_on_type, "). Alignment score: ",
+         FORMAT(alignment_report.alignment_score*100,"0"), "% — ",
+         alignment_report.recommendation_hint, "\n\n")
+ELSE
+  "No significant bolt-ons detected by analyzers; heuristic alignment assumed.\n\n"
+END_IF,
+
+"## Holistic design assessment\n",
+"- Architecture style: ", style.style_label, " (", FORMAT(FIRST_NONNULL(style.confidence, holistic_summary.style_confidence)*100,"0"), "%)\n",
+"- ", holistic_summary.cycle_summary, "\n",
+"- Clusters detected: ", holistic_summary.cluster_count, "\n\n",
+
+"### Package metrics (top)\n", packages_table_md(pkgs), "\n",
+"### Cycles & tangles\n", cycles_table_md(cycles), "\n",
+IF NOT EMPTY(graph_ascii) THEN "### Module graph (ASCII)\n```\n" + graph_ascii + "\n```\n\n" ELSE "" END_IF
+  )
+  RETURN { markdown: md }
+END_PROCEDURE
+
+DEFINE PROCEDURE ascii_graph WITH PARAMETERS [depgraph, clusters, max_nodes]:
+  INTELLIGENTLY render_ascii_graph WITH:
+    INPUTS:[depgraph, clusters, max_nodes],
+    MUST_INCLUDE:[cluster_headers, list_top_nodes_per_cluster, show_intercluster_edges, bounded_width]
+  END
+  RETURN RESULT.ascii
+END_PROCEDURE
+
+DEFINE PROCEDURE packages_table_md WITH PARAMETERS [pkgs]:
+  SET hdr TO "| Package | LOC | Ca | Ce | I | A |\n|---|---:|---:|---:|---:|---:|\n"
+  SET rows TO ""
+  FOR EACH p IN TAKE(pkgs, REPORT_MAX_PACKAGES) DO:
+    SET rows TO CONCAT(rows, "| ", p.package, " | ", p.LOC, " | ", p.Ca, " | ", p.Ce, " | ", FORMAT(p.I,"0.00"), " | ", FORMAT(p.A,"0.00"), " |\n")
+  END_FOR
+  RETURN CONCAT(hdr, rows)
+END_PROCEDURE
+
+DEFINE PROCEDURE cycles_table_md WITH PARAMETERS [cycles]:
+  IF LENGTH(cycles.tangles) == 0 AND LENGTH(cycles.scc) == 0 THEN:
+    RETURN "_No cycles or package tangles detected._\n"
+  END_IF
+  SET s TO ""
+  IF LENGTH(cycles.scc) > 0 THEN:
+    SET s TO CONCAT(s, "**SCCs (modules):** ", JOIN(TAKE(MAP(cycles.scc, x => JOIN(x.nodes," → ")), 8), "; "), "\n\n")
+  END_IF
+  IF LENGTH(cycles.tangles) > 0 THEN:
+    SET s TO CONCAT(s, "**Package tangles:** ", JOIN(TAKE(MAP(cycles.tangles, t => JOIN(t.packages," ↔ ")), 8), "; "), "\n")
+  END_IF
+  RETURN s
+END_PROCEDURE
+
+DEFINE PROCEDURE write_report_file WITH PARAMETERS [repo_root, report_md, filename = "RefactorReport_Overview.md"]:
+  INTELLIGENTLY write_text_file WITH:
+    INPUTS:[repo_root, filename, report_md],
+    MUST_INCLUDE:[create_or_overwrite, ensure_utf8]
+  END
+END_PROCEDURE
+
+DEFINE PROCEDURE write_overview_artifact WITH PARAMETERS [repo_root, alignment_report, pkgs, style, layers, centrality]:
+  SET data TO {
+    version: "1.0",
+    style: style,
+    layers: layers,
+    alignment: {score: alignment_report.alignment_score, summary: alignment_report.summary},
+    packages: TAKE(pkgs, 120),
+    centrality_top: {in: centrality.top_in, out: centrality.top_out, between: centrality.top_between}
+  }
+  INTELLIGENTLY write_json_file WITH:
+    INPUTS:[repo_root, "refactor_overview.json", data],
+    MUST_INCLUDE:[create_or_overwrite, ensure_utf8]
+  END
+END_PROCEDURE

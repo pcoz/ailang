@@ -1,0 +1,442 @@
+# ============================================
+# AILang Program: Intent-Aware Refactor (Specific)
+# (Targeted smells → ordered steps + hard gates)
+# ============================================
+
+# PURPOSE:
+# - Respect the ORIGINAL ARCHITECTURAL MODEL: reconstruct intent, verify “wholesome”.
+# - Evaluate LATER ADDITIONS for CONFLUENCE vs original.
+# - Build a SPECIFIC, ORDERED REFACTOR PLAN for selected files/modules.
+# - Execute steps with TEST/FORMAT gates and assert thresholds post-run.
+
+DO configure_defaults:
+  SET PRIMARY_LANGUAGE TO "auto"
+  SET STYLE_GUIDE TO "default"
+  SET RISK_PROFILE TO "balanced"
+
+  # Hard gates (assertions after execution)
+  SET MAX_FN_LENGTH TO 40
+  SET MAX_PARAM_COUNT TO 5
+  SET MAX_CYCLOMATIC_COMPLEXITY TO 10
+  SET MAX_NESTING_DEPTH TO 3
+  SET MAX_DUPLICATION_PERCENT TO 5
+  SET MAX_COUPLING_SCORE TO 0.35
+  SET MIN_TEST_COVERAGE TO 0.70
+
+  # Weights for entropy (guides priority)
+  SET ENTROPY_WEIGHTS TO {
+    duplication: 0.25, complexity: 0.25, coupling: 0.20, long_units: 0.15, untested_ratio: 0.15
+  }
+
+  # Smell→refactor catalog
+  SET SMELL_TO_REFACTOR_MAP TO {
+    duplicate_code:["Consolidate Duplicate Logic","Extract Method/Class"],
+    long_method:["Extract Method","Decompose Conditional","Introduce Parameter Object"],
+    long_parameter_list:["Introduce Parameter Object","Encapsulate Collection"],
+    complex_conditionals:["Decompose Conditional","Replace Conditional with Polymorphism"],
+    deep_nesting:["Flatten Nesting","Early Return Guards"],
+    magic_numbers:["Replace Magic Number with Constant"],
+    primitive_obsession:["Introduce Value Object"],
+    god_class:["Extract Class","Introduce Interface/Port"],
+    feature_envy:["Move Method/Field"],
+    data_clumps:["Introduce Parameter Object","Encapsulate Collection"],
+    cyclic_dependencies:["Dependency Inversion","Introduce Interface/Port"],
+    low_cohesion_high_coupling:["Extract Class","Introduce Interface/Port"],
+    comments_as_deodorant:["Rename for Clarity","Extract Method"],
+    speculative_generality:["Remove Dead Code"],
+    law_of_demeter_violations:["Law of Demeter Guards","Move Method"]
+  }
+END
+
+# ---------------------------
+# ENTRY POINT
+# ---------------------------
+DEFINE PROCEDURE main WITH PARAMETERS [repo_root, language = PRIMARY_LANGUAGE, risk = RISK_PROFILE]:
+  # (A) Safety & baselines
+  CALL create_safety_snapshot(repo_root)
+  SET baseline TO collect_metrics(repo_root, language)
+  SET baseline_entropy TO compute_entropy(baseline, ENTROPY_WEIGHTS)
+
+  # (B) Reconstruct original intent & check confluence of later additions
+  SET intent_packet TO infer_original_intent(repo_root)
+  IF intent_packet IS EMPTY OR intent_packet.confidence < 0.35 THEN:
+    SET intent_packet TO infer_intent_heuristically(repo_root)
+  END_IF
+  SET bolt_ons TO detect_bolt_on_additions(repo_root, intent_packet)
+  SET alignment_report TO assess_alignment(intent_packet, bolt_ons)
+
+  # Strategy: realign to wholesome intent if drift is recoverable; else generic reduction
+  SET wholesome TO is_wholesome_intent(intent_packet)
+  SET recoverable TO alignment_report.alignment_score >= 0.55
+  SET strategy TO IF wholesome AND recoverable THEN
+    { mode:"REALIGN_TO_ORIGINAL", rationale:"Original intent sound + drift recoverable." }
+  ELSE
+    { mode:"GENERIC_ENTROPY_REDUCTION", rationale:"Intent weak or drift too large." }
+  END_IF
+
+  # (C) Smell detection (specifics)
+  INTELLIGENTLY detect_code_smells WITH:
+    INPUTS:[repo_root, language],
+    MUST_INCLUDE:[
+      duplicate_code,long_method,long_parameter_list,complex_conditionals,deep_nesting,
+      magic_numbers,primitive_obsession,god_class,feature_envy,data_clumps,
+      cyclic_dependencies,low_cohesion_high_coupling,comments_as_deodorant,
+      speculative_generality,law_of_demeter_violations
+    ],
+    OUTPUT_FORMAT: structured_list   # [{file, span, smell, evidence, severity, confidence, scope_has_tests}]
+  END
+  SET smells TO RESULT
+
+  # (D) Architecture map (specifics helper)
+  INTELLIGENTLY discover_architecture_boundaries WITH:
+    INPUTS:[repo_root],
+    MUST_INCLUDE:[modules,layers,external_dependencies,entrypoints,hotspots],
+    OUTPUT_FORMAT: architecture_map
+  END
+  SET architecture_map TO RESULT
+
+  # (E) Build a plan respecting strategy + original model
+  IF strategy.mode EQUALS "REALIGN_TO_ORIGINAL" THEN:
+    SET plan TO build_intent_realignment_plan(intent_packet, bolt_ons, baseline, architecture_map, risk)
+  ELSE:
+    SET plan TO build_refactor_plan(smells, baseline, architecture_map, risk)
+  END_IF
+
+  # (F) Execute steps with gates (specific, small diffs)
+  FOR EACH step IN plan DO:
+    APPLY step TO repo_root
+    CALL format_and_lint(repo_root, STYLE_GUIDE)
+    IF has_tests(repo_root) THEN:
+      CALL run_tests(repo_root)
+      ASSERT tests_pass()
+    ELSE:
+      CALL generate_probe_tests(repo_root, step.targets)
+      CALL run_tests(repo_root)
+      ASSERT tests_pass()
+    END_IF
+  END_FOR
+
+  # (G) Post metrics & HARD assertions
+  SET post TO collect_metrics(repo_root, language)
+  SET post_entropy TO compute_entropy(post, ENTROPY_WEIGHTS)
+
+  ASSERT post_entropy < baseline_entropy
+  ASSERT post.duplication_percent <= MAX_DUPLICATION_PERCENT
+  ASSERT post.avg_cyclomatic_complexity <= MAX_CYCLOMATIC_COMPLEXITY
+  ASSERT post.max_function_length <= MAX_FN_LENGTH
+  ASSERT post.avg_param_count <= MAX_PARAM_COUNT
+  ASSERT post.max_nesting_depth <= MAX_NESTING_DEPTH
+  ASSERT post.coupling_score <= MAX_COUPLING_SCORE
+  ASSERT post.files_with_tests_ratio >= MIN_TEST_COVERAGE
+
+  # (H) Specifics report
+  SET report TO build_specific_report(intent_packet, alignment_report, strategy, baseline, post, baseline_entropy, post_entropy, plan)
+  CALL write_specific_report(repo_root, report.markdown)
+
+  RETURN {
+    strategy: strategy,
+    baseline: baseline, post: post,
+    entropy_delta: baseline_entropy - post_entropy,
+    plan_applied: plan,
+    intent_packet: intent_packet.summary,
+    alignment_summary: alignment_report.summary,
+    report_markdown: report.markdown
+  }
+END_PROCEDURE
+
+# ---------------------------
+# INTENT & CONFLUENCE (same contract as overview)
+# ---------------------------
+DEFINE PROCEDURE infer_original_intent WITH PARAMETERS [repo_root]:  # same as overview
+  INTELLIGENTLY infer_original_architecture WITH:
+    INPUTS:[repo_root],
+    MUST_INCLUDE:[commit_history_signals, file_aging_heatmap, initial_readme_and_docs, naming_conventions, package_layout, early_dependency_graph, early_public_api_signatures, early_test_topology, architectural_comments_and_diagrams],
+    OUTPUT_FORMAT:{architecture_fingerprint, design_motifs, guiding_principles, initial_module_contracts, intended_layering, quality_attributes, confidence, summary}
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE infer_intent_heuristically WITH PARAMETERS [repo_root]:  # same as overview (brief)
+  INTELLIGENTLY enumerate_repo_files WITH:
+    INPUTS:[repo_root],
+    MUST_INCLUDE:[source_files_only, relative_paths]
+  END
+  SET files TO RESULT.files
+  SET label TO IF ANY(f CONTAINS "extractor|adapter|plugin" FOR f IN files) THEN "Plugin/Microkernel around a core" ELSE "Layered/Modular"
+  RETURN {
+    architecture_fingerprint: label,
+    design_motifs: [],
+    guiding_principles: ["SRP","modularity"],
+    intended_layering: {core:"core", adapters:"adapters", infra:"infrastructure"},
+    quality_attributes: ["extensibility","testability"],
+    confidence: 0.5,
+    summary: "Heuristic intent (specific pass)"
+  }
+END_PROCEDURE
+
+DEFINE PROCEDURE detect_bolt_on_additions WITH PARAMETERS [repo_root, intent_packet]:
+  INTELLIGENTLY detect_drift_and_bolt_ons WITH:
+    INPUTS:[repo_root, intent_packet],
+    MUST_INCLUDE:[cross_layer_calls_not_in_original_contracts, copy_paste_clusters, ad_hoc_adapters, long_lived_feature_flags, bypassed_service_boundaries],
+    OUTPUT_FORMAT:[{file, span, bolt_on_type, evidence, severity, confidence, layer, direction, scope_has_tests, evidence:{dependents}}]
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE assess_alignment WITH PARAMETERS [intent_packet, bolt_ons]:
+  INTELLIGENTLY measure_alignment WITH:
+    INPUTS:[intent_packet, bolt_ons],
+    MUST_INCLUDE:[per_bolt_on_alignment_score, cumulative_alignment_delta, layer_violations_count, estimated_cost_of_realignment, estimated_cost_of_generic_refactor],
+    OUTPUT_FORMAT:{alignment_score, misaligned_items, aligned_items, cost_to_realign, cost_to_generic, recommendation_hint, summary}
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE is_wholesome_intent WITH PARAMETERS [intent_packet]:
+  SET score TO 0
+  IF intent_packet.intended_layering IS NOT EMPTY THEN: SET score TO score + 1 END_IF
+  IF intent_packet.initial_module_contracts IS NOT EMPTY THEN: SET score TO score + 1 END_IF
+  IF intent_packet.guiding_principles CONTAINS ["SRP","ports-and-adapters"] THEN: SET score TO score + 1 END_IF
+  IF intent_packet.quality_attributes CONTAINS ["testability","modularity"] THEN: SET score TO score + 1 END_IF
+  IF intent_packet.confidence >= 0.7 THEN: SET score TO score + 1 END_IF
+  RETURN score >= 4
+END_PROCEDURE
+
+# ---------------------------
+# PLAN CONSTRUCTION (specifics)
+# ---------------------------
+DEFINE PROCEDURE build_refactor_plan WITH PARAMETERS [smells, metrics, architecture_map, risk]:
+  SET steps TO []
+  FOR EACH f IN smells DO:
+    SET actions TO SMELL_TO_REFACTOR_MAP[f.smell]
+    FOR EACH a IN actions DO:
+      SET impact TO estimate_impact(f, metrics)
+      SET safety TO estimate_safety(f, architecture_map, risk)
+      APPEND { action:a, file:f.file, span:f.span, reason:f.smell, impact:impact, safety:safety, confidence:f.confidence, targets:[f.file] } TO steps
+    END_FOR
+  END_FOR
+
+  # Respect boundaries: stabilize public APIs, refactor leaves before roots
+  INTELLIGENTLY consolidate_and_toposort WITH:
+    INPUTS:[steps, architecture_map],
+    MUST_INCLUDE:[dedupe_overlaps, stabilize_public_apis_first, refactor_leaves_before_roots],
+    OUTPUT_FORMAT: ordered_steps
+  END
+
+  # Prepend test-seam creation for risky edits
+  SET ordered TO RESULT
+  SET test_seams TO FILTER(ordered, s => needs_test_seams(s))
+  SET core_edits TO FILTER(ordered, s => NOT needs_test_seams(s))
+  RETURN CONCAT(test_seams, core_edits)
+END_PROCEDURE
+
+DEFINE PROCEDURE build_intent_realignment_plan WITH PARAMETERS [intent_packet, bolt_ons, metrics, architecture_map, risk]:
+  SET steps TO []
+  FOR EACH b IN bolt_ons DO:
+    IF is_aligned_with_intent(b, intent_packet) THEN CONTINUE END_IF
+    SET action TO CASE b.bolt_on_type:
+      WHEN "cross_layer_bypass": "Introduce Interface/Port"
+      WHEN "copy_paste_cluster": "Consolidate Duplicate Logic"
+      WHEN "adhoc_adapter": "Introduce Interface/Port"
+      WHEN "feature_flag_residue": "Remove Dead Code"
+      ELSE: "Move Method/Field"
+    END_CASE
+    APPEND {
+      action: action, file: b.file, span: b.span,
+      reason: "Realign with original layering/contracts",
+      impact: estimate_impact_from_alignment(b),
+      safety: estimate_safety_from_alignment(b, intent_packet, risk),
+      confidence: b.confidence, targets:[b.file]
+    } TO steps
+  END_FOR
+
+  INTELLIGENTLY consolidate_and_toposort WITH:
+    INPUTS:[steps, architecture_map],
+    MUST_INCLUDE:[stabilize_public_apis_first, refactor_leaves_before_roots, dedupe_overlaps],
+    OUTPUT_FORMAT: ordered_steps
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE is_aligned_with_intent WITH PARAMETERS [b, intent_packet]:
+  RETURN NOT (b.crosses_layer_boundary AND b.layer NOT_IN intent_packet.intended_layering)
+END_PROCEDURE
+
+DEFINE PROCEDURE estimate_impact WITH PARAMETERS [finding, metrics]:
+  SET base TO CASE finding.severity: WHEN "high":1.0 WHEN "medium":0.6 ELSE:0.3 END_CASE
+  SET footprint TO CLAMP(finding.evidence.lines / 200.0, 0, 1)
+  SET dep_pressure TO CLAMP(finding.evidence.dependents / 20.0, 0, 1)
+  RETURN ROUND(0.5*base + 0.3*footprint + 0.2*dep_pressure, 3)
+END_PROCEDURE
+
+DEFINE PROCEDURE estimate_safety WITH PARAMETERS [finding, architecture_map, risk]:
+  SET leaf_bonus TO IF is_leaf(architecture_map, finding.file) THEN 0.2 ELSE 0
+  SET tests_bonus TO IF finding.scope_has_tests THEN 0.3 ELSE -0.2
+  SET public_surface_penalty TO IF touches_public_api(finding) THEN -0.3 ELSE 0
+  SET base TO 0.5 + leaf_bonus + tests_bonus + public_surface_penalty
+  IF risk EQUALS "aggressive" THEN:
+    RETURN CLAMP(base + 0.1, 0, 1)
+  ELSEIF risk EQUALS "conservative" THEN:
+    RETURN CLAMP(base - 0.1, 0, 1)
+  ELSE:
+    RETURN CLAMP(base, 0, 1)
+  END_IF
+END_PROCEDURE
+
+DEFINE PROCEDURE estimate_impact_from_alignment WITH PARAMETERS [b]:
+  SET base TO IF b.severity EQUALS "high" THEN 0.9 ELSE 0.6
+  SET deps TO CLAMP(b.evidence.dependents / 20.0, 0, 1)
+  RETURN ROUND(0.6*base + 0.4*deps, 3)
+END_PROCEDURE
+
+DEFINE PROCEDURE estimate_safety_from_alignment WITH PARAMETERS [b, intent_packet, risk]:
+  SET has_contract TO IF intent_packet.initial_module_contracts NOT EMPTY THEN 0.2 ELSE -0.1
+  SET tests_bonus TO IF b.scope_has_tests THEN 0.3 ELSE -0.2
+  SET base TO 0.5 + has_contract + tests_bonus
+  IF risk EQUALS "aggressive" THEN:
+    RETURN CLAMP(base + 0.1, 0, 1)
+  ELSEIF risk EQUALS "conservative" THEN:
+    RETURN CLAMP(base - 0.1, 0, 1)
+  ELSE:
+    RETURN CLAMP(base, 0, 1)
+  END_IF
+END_PROCEDURE
+
+# ---------------------------
+# EXECUTION SUPPORT
+# ---------------------------
+DEFINE PROCEDURE create_safety_snapshot WITH PARAMETERS [repo_root]:
+  INTELLIGENTLY create_branch_and_checkpoint WITH:
+    INPUTS:[repo_root],
+    MUST_INCLUDE:[create_new_branch_named("refactor/entropy-reduction"), save_working_state, tag_baseline_commit]
+  END
+END_PROCEDURE
+
+DEFINE PROCEDURE collect_metrics WITH PARAMETERS [repo_root, language]:
+  INTELLIGENTLY run_static_and_style_analysis WITH:
+    INPUTS:[repo_root, language],
+    MUST_INCLUDE:[
+      lines_of_code, functions_count,
+      avg_cyclomatic_complexity, max_function_length,
+      avg_param_count, max_nesting_depth,
+      duplication_percent, coupling_score,
+      files_with_tests_ratio, style_violations_per_kloc
+    ],
+    OUTPUT_FORMAT: metrics_object
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE compute_entropy WITH PARAMETERS [m, weights]:
+  SET norm_dup TO CLAMP(m.duplication_percent / 30.0, 0, 1)
+  SET norm_cpx TO CLAMP(m.avg_cyclomatic_complexity / 20.0, 0, 1)
+  SET norm_cpl TO CLAMP(m.coupling_score, 0, 1)
+  SET norm_long TO CLAMP(MAX(m.max_function_length - 40, 0) / 60.0, 0, 1)
+  SET norm_untested TO CLAMP(MAX(1 - m.files_with_tests_ratio, 0), 0, 1)
+  RETURN ROUND(
+    weights.duplication * norm_dup +
+    weights.complexity  * norm_cpx +
+    weights.coupling    * norm_cpl +
+    weights.long_units  * norm_long +
+    weights.untested_ratio * norm_untested,
+  4)
+END_PROCEDURE
+
+DEFINE PROCEDURE has_tests WITH PARAMETERS [repo_root]:
+  INTELLIGENTLY detect_test_layout WITH:
+    INPUTS:[repo_root],
+    MUST_INCLUDE:[unit_tests, integration_tests, coverage_config],
+    OUTPUT_FORMAT: boolean_presence
+  END
+  RETURN RESULT
+END_PROCEDURE
+
+DEFINE PROCEDURE generate_probe_tests WITH PARAMETERS [repo_root, targets]:
+  INTELLIGENTLY create_probe_tests WITH:
+    INPUTS:[repo_root, targets],
+    MUST_INCLUDE:[boundary_snapshots, public_api_contracts, key_examples, regression_cases_minimal]
+  END
+END_PROCEDURE
+
+DEFINE PROCEDURE run_tests WITH PARAMETERS [repo_root]:
+  INTELLIGENTLY execute_test_suite WITH:
+    INPUTS:[repo_root],
+    MUST_INCLUDE:[unit, integration, coverage]
+  END
+END_PROCEDURE
+
+DEFINE PROCEDURE tests_pass:
+  INTELLIGENTLY summarize_test_outcome WITH:
+    MUST_INCLUDE:[all_green, coverage_threshold_ok]
+  END
+  RETURN RESULT.all_green AND RESULT.coverage_threshold_ok
+END_PROCEDURE
+
+DEFINE PROCEDURE format_and_lint WITH PARAMETERS [repo_root, style_guide]:
+  INTELLIGENTLY enforce_style WITH:
+    INPUTS:[repo_root, style_guide],
+    MUST_INCLUDE:[formatter_run, linter_run, auto_fixes_where_safe, report_unfixed_violations]
+  END
+END_PROCEDURE
+
+DEFINE PROCEDURE is_leaf WITH PARAMETERS [architecture_map, file]:
+  INTELLIGENTLY check_leaf_in_dependency_graph WITH:
+    INPUTS:[architecture_map, file],
+    MUST_INCLUDE:[internal_dependents_count]
+  END
+  RETURN RESULT.internal_dependents_count <= 1
+END_PROCEDURE
+
+DEFINE PROCEDURE touches_public_api WITH PARAMETERS [finding]:
+  INTELLIGENTLY detect_public_surface WITH:
+    INPUTS:[finding.file, finding.span],
+    MUST_INCLUDE:[exported_symbols, public_namespaces, web_handlers, sdk_packages]
+  END
+  RETURN (RESULT.exported_symbols OR RESULT.public_namespaces OR RESULT.web_handlers OR RESULT.sdk_packages)
+END_PROCEDURE
+
+DEFINE PROCEDURE needs_test_seams WITH PARAMETERS [step]:
+  SET risky_move TO (step.action IN ["Introduce Interface/Port","Move Method/Field","Extract Class"])
+  SET signaturey TO (step.reason CONTAINS "contract" OR step.action EQUALS "Introduce Parameter Object")
+  INTELLIGENTLY overlap_with_public_surface WITH:
+    INPUTS:[step.targets],
+    MUST_INCLUDE:[any_public_surface]
+  END
+  RETURN risky_move OR signaturey OR RESULT.any_public_surface
+END_PROCEDURE
+
+# ---------------------------
+# SPECIFICS REPORT
+# ---------------------------
+DEFINE PROCEDURE build_specific_report WITH PARAMETERS [intent_packet, alignment_report, strategy, baseline, post, baseline_entropy, post_entropy, plan]:
+  SET check TO "✅"; SET warn TO "⚠️"; SET boom TO "💥"
+  SET plan_md TO ""
+  FOR EACH s IN TAKE(plan, 40) DO:
+    SET plan_md TO CONCAT(plan_md, "- ", s.action, " — ", s.reason, " (", s.file, ")  [impact ", FORMAT(s.impact,"0.00"), ", safety ", FORMAT(s.safety,"0.00"), "]\n")
+  END_FOR
+  IF LENGTH(plan) > 40 THEN:
+    SET plan_md TO CONCAT(plan_md, "_…and ", LENGTH(plan)-40, " more steps._\n")
+  END_IF
+
+  SET md TO CONCAT(
+"# Specific Refactor Report\n\n",
+"## Intent & confluence\n",
+"- Original model: ", intent_packet.architecture_fingerprint, " (confidence ", FORMAT(intent_packet.confidence*100,"0"), "%)\n",
+"- Confluence score: ", FORMAT(alignment_report.alignment_score*100,"0"), "% — ", alignment_report.recommendation_hint, "\n\n",
+"## Strategy\n", strategy.mode, " — ", strategy.rationale, "\n\n",
+"## Plan (top actions)\n", plan_md, "\n",
+"## Gates & outcomes\n",
+IF post_entropy < baseline_entropy THEN check ELSE boom END_IF, " Entropy ",
+IF post_entropy < baseline_entropy THEN "reduced" ELSE "not reduced" END_IF,
+" (", FORMAT(baseline_entropy,"0.000"), " → ", FORMAT(post_entropy,"0.000"), ")\n",
+warn, " Thresholds asserted (complexity, duplication, coupling, function length, params, nesting, coverage).\n"
+  )
+  RETURN { markdown: md }
+END_PROCEDURE
+
+DEFINE PROCEDURE write_specific_report WITH PARAMETERS [repo_root, report_md, filename = "RefactorReport_Specific.md"]:
+  INTELLIGENTLY write_text_file WITH:
+    INPUTS:[repo_root, filename, report_md],
+    MUST_INCLUDE:[create_or_overwrite, ensure_utf8]
+  END
+END_PROCEDURE
