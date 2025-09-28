@@ -36,7 +36,7 @@ You can see both in the bundled outputs:
 ## Files in this example
 
 ```
-/examples/people_holiday_madrid/
+/examples/holiday_simulation/
 ├─ holiday.ail               # The AILang program (person-centric generator)
 ├─ holidays_output.json      # Example run output (structured report)
 └─ holidays_memoir.md        # Example memoir produced from the report
@@ -120,5 +120,6 @@ You’ll get **variant but consistent** trips—same scaffolding and constraints
 
 * Example program: `holiday.ail`
 * Example outputs: `holidays_output.json`, `holidays_memoir.md` (generated from a single AILang run and then rendered by AI as prose).  
+
 
 
