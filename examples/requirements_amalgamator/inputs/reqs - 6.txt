@@ -1,0 +1,23 @@
+File 6: Meeting Notes - Sprint Planning Doc
+Type: Google Doc/Word Export (Meeting Notes)
+Meeting Title: Sprint 3 Planning for Project Tracker
+Date: 2025-06-01
+Attendees: PM, Dev Lead, QA, UX
+Key Decisions:
+
+Finalize task CRUD: Create/Read/Update/Delete tasks fully implemented.
+
+Update includes changing assignee, due date, status.
+Delete only by creator or admin.
+
+
+Notifications: Email for assignments and due dates only. No SMS yet.
+Edge cases: What if assigned user not in project? Auto-add as member.
+Next: Integrate with calendar APIs? Defer.
+
+Action Items:
+
+Dev: Update Confluence with priority field addition.
+QA: Write tests for dashboard filters.
+
+These simulated files scatter the requirements: e.g., authentication in JIRA PTA-101, project creation in Confluence, assignments and notifications in email/Slack, tasks in multiple places, dashboard in JIRA PTA-205 and notes. In a real scenario, you'd aggregate them for a cohesive spec. If you need more files, variations, or a different system, let me know!2.6sExpert

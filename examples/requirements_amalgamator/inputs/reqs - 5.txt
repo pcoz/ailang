@@ -1,0 +1,24 @@
+File 5: JIRA Ticket - PTA-205 (Dashboard and Reporting)
+Type: JIRA Issue
+Created: 2025-05-15 by ux_designer@xai.com
+Status: Open
+Summary: Build user dashboard for overview of tasks and projects.
+Description:
+As a user, I want a dashboard to see all my tasks across projects.
+
+Display: List of assigned tasks, sorted by due date.
+Filters: By project, status, priority (high/medium/low – add priority field to tasks).
+Overdue tasks highlighted.
+Quick actions: Mark as done from dashboard.
+
+Acceptance Criteria:
+
+Dashboard loads in <2 seconds.
+Responsive for mobile.
+Integration with notifications: Clickable links to tasks.
+
+Linked Issues:
+
+PTA-101 (Authentication) – Dashboard requires login.
+Epic: User Experience Improvements
+

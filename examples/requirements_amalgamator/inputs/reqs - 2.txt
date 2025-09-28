@@ -1,0 +1,37 @@
+File 2: Confluence Page - Project Tracker Requirements Overview
+Type: Confluence Wiki Page
+Page Title: High-Level Requirements for Project Tracker App
+Last Edited: 2025-03-20 by pm@xai.com
+Version: 4
+Content:
+This page outlines the core functional requirements for the Project Tracker App.
+Section 1: Projects
+
+Users can create new projects with name, description, and start/end dates.
+Projects can be archived or deleted by owners.
+
+Section 2: Tasks
+
+Within a project, create tasks with:
+
+Title (required)
+Description (optional, rich text)
+Due date (calendar picker)
+
+
+Tasks have statuses: To Do, In Progress, Done.
+
+Section 3: User Roles
+
+Admin: Manage all projects.
+Member: View/edit assigned tasks.
+
+Attachments:
+
+Wireframes.pdf (not included here)
+
+Child Pages:
+
+Detailed UI Specs
+API Endpoints
+

@@ -1,0 +1,25 @@
+File 3: Email Thread - Discussion on Task Assignments
+Type: Email Chain (exported from Outlook/Gmail)
+Subject: Re: Task Assignment Feature for Project Tracker
+From: dev_team@xai.com
+To: pm@xai.com, qa@xai.com
+Date: 2025-04-05
+Original Email (2025-04-02):
+Hi team,
+For the task assignment in Project Tracker, we need:
+
+Assign tasks to registered users via dropdown (searchable by email/username).
+Only project members can be assigned.
+Reassignment logs history.
+
+What about notifications? Should we send emails on assignment?
+Best,
+Dev Lead
+Reply (2025-04-03):
+Yes to emails. Notification: "You have been assigned task [title] in project [name]. Due: [date]."
+Also, add push notifications if mobile app is in scope.
+PM
+Reply (2025-04-05):
+Agreed on email notifs. Use SendGrid for delivery. Ensure opt-out option in user settings.
+QA: Test for spam filters.
+Dev Lead

@@ -1,0 +1,11 @@
+File 4: Slack Message Thread - Notifications Brainstorm
+Type: Slack Export (from #project-tracker channel)
+Timestamp: 2025-05-10 14:30 UTC
+Participants: @pm, @dev1, @ux_designer
+Messages:
+@pm: Quick brainstorm: What notifications do we need beyond assignments?
+@dev1: Due date reminders – email 1 day before due date.
+@ux_designer: Also, in-app notifications for task updates (e.g., status change). Bell icon in UI.
+@pm: Good. Add to reqs: Notifications configurable per user (email, in-app, none).
+@dev1: For due dates: If overdue, highlight in red on dashboard.
+@pm: Yes! Scatter this into JIRA PTA-205.

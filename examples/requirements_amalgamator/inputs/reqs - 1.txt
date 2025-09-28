@@ -1,0 +1,24 @@
+File 1: JIRA Ticket - PTA-101 (User Authentication Epic)
+Type: JIRA Issue
+Created: 2025-01-15 by dev_lead@xai.com
+Status: In Progress
+Summary: Implement secure user authentication for Project Tracker App.
+Description:
+As a user, I want to register and log in securely so that I can access my projects.
+
+Registration: Email, password (min 8 chars, with complexity rules).
+Login: Email/password or OAuth (Google).
+Password reset via email.
+Session management: JWT tokens, expire after 30 mins inactivity.
+
+Acceptance Criteria:
+
+User can create account without errors.
+Login redirects to dashboard.
+Invalid credentials show error message.
+
+Comments:
+
+[2025-02-10] QA: Add 2FA as stretch goal?
+[2025-02-12] PM: No, defer to next sprint. Focus on basics.
+
