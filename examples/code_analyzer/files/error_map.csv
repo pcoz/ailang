@@ -1,0 +1,6 @@
+code,name,retryable,category,notes
+E100,ExtractorError,false,extractor,Site structure change or unsupported URL
+E200,NetworkError,true,network,Retry with backoff; consider transport switch
+E210,HTTP403,true,network,Try impersonation/proxy per NetworkPolicy
+E300,PostProcessingError,false,postproc,FFmpeg failure; check invariants
+E400,UnavailableVideoError,false,expected,Geo/DRM/unpublished

@@ -1,0 +1,139 @@
+{
+  "script": "refactor_specific.ail",
+  "target_repo": "yt-dlp/yt-dlp",
+  "scanned_at_utc": "2025-09-28T08:37:24Z",
+  "scope": [
+    "yt_dlp/YoutubeDL (core orchestration)",
+    "yt_dlp/extractor/common.py (IE base)",
+    "yt_dlp/downloader/common.py (Downloader base)",
+    "yt_dlp/postprocessor/common.py (PP base)",
+    "yt_dlp/utils.py (+ submodules)",
+    "Networking (proxies, curl_cffi impersonation)",
+    "Plugin surface (IE/PP loading)"
+  ],
+  "findings": {
+    "contracts": {
+      "extractor_IE_contract": {
+        "status": "stable",
+        "notes": "Public classes ending with 'IE' treated as extractors; enforced via discovery/import. Keep base methods explicit (._real_extract, suitable, _VALID_URL)."
+      },
+      "postprocessor_PP_contract": {
+        "status": "stable",
+        "notes": "Public classes ending with 'PP' act as post-processors; rely on FFmpeg and metadata helpers."
+      },
+      "embedding_API": {
+        "status": "documented",
+        "notes": "README provides embedding examples; params object is the primary integration seam."
+      }
+    },
+    "parameterization_checks": [
+      {
+        "area": "network",
+        "observation": "Proxy strings without scheme default to http:// in request director; consider explicit scheme validation + typed URL parsing.",
+        "risk": "Medium"
+      },
+      {
+        "area": "format_selection",
+        "observation": "Format sorting & filtering highly configurable; defaults differ from youtube-dl; strong user-facing contract.",
+        "risk": "Low"
+      },
+      {
+        "area": "postprocessing",
+        "observation": "FFmpeg flags passed via structured params; ensure invariant checks before stream copy / concat.",
+        "risk": "Medium"
+      }
+    ],
+    "error_taxonomy": [
+      "ExtractorError (site/data problems)",
+      "DownloadError/NetworkError (transient/permanent)",
+      "PostProcessingError (FFmpeg/metadata)",
+      "UnavailableVideoError (expected unavailability cases)"
+    ],
+    "hotspots": [
+      "yt_dlp/utils.py — many helpers; centrality risk",
+      "yt_dlp/YoutubeDL.py — build_request_director, option plumbing, progress/logging",
+      "yt_dlp/extractor/common.py — base behaviors touched by every IE"
+    ],
+    "tangles": [
+      {
+        "pattern": "broad utils import",
+        "risk": "import-cycle risk & cohesion loss",
+        "suggestion": "split utils by concern: io, net, str, time, path, compat"
+      },
+      {
+        "pattern": "network details in extractors",
+        "risk": "leaky abstraction",
+        "suggestion": "route all TLS/impersonation/proxy selection via a central 'NetworkPolicy' helper"
+      }
+    ],
+    "typedness": {
+      "status": "partial",
+      "notes": "Gradually expand type hints in core + utils; ship py.typed; run mypy in CI for core paths."
+    },
+    "testing_surfaces": {
+      "unit": [
+        "Extractor base behaviors (error wrapping, retries for known patterns)",
+        "Format selection (sort/filter permutations)",
+        "Network policy matrix (proxies, impersonation fallbacks)"
+      ],
+      "golden": [
+        "Representative extractor fixtures per family (YouTube DASH/HLS, m3u8, mpd, signatures)",
+        "Postprocessor pipelines with patched FFmpeg builds"
+      ]
+    },
+    "plugin_API": {
+      "surface": [
+        "IE",
+        "PP"
+      ],
+      "stability": "keep-minimal",
+      "guardrails": [
+        "documented base methods + examples",
+        "versioned capabilities (feature flags in params)",
+        "compat shims for deprecations"
+      ]
+    },
+    "rollout_safety": [
+      "nightly/master channels decouple extractor velocity from core stability",
+      "guarded options for experimental network adapters (e.g., curl_cffi)"
+    ]
+  },
+  "recommendations": [
+    {
+      "id": "UTILS-SPLIT",
+      "title": "Decompose utils into cohesive modules",
+      "impact": "reduce import cycles, improve readability",
+      "difficulty": "medium"
+    },
+    {
+      "id": "NET-POLICY",
+      "title": "Central NetworkPolicy hub",
+      "impact": "reduce per-extractor hacks; uniform proxies/TLS/impersonation",
+      "difficulty": "medium"
+    },
+    {
+      "id": "TYPED-CORE",
+      "title": "Strengthen typing & ship py.typed",
+      "impact": "fewer regressions across fast-moving extractors",
+      "difficulty": "low-medium"
+    },
+    {
+      "id": "PP-INVARIANTS",
+      "title": "Preflight FFmpeg invariants",
+      "impact": "cut PostProcessingError rate",
+      "difficulty": "low"
+    },
+    {
+      "id": "IE-KIT",
+      "title": "Extractor cookiecutter + lint rules",
+      "impact": "reduce drift & copy/paste bugs",
+      "difficulty": "low"
+    },
+    {
+      "id": "ERROR-MAP",
+      "title": "Unified error mapping matrix",
+      "impact": "clearer telemetry & retries",
+      "difficulty": "low"
+    }
+  ]
+}

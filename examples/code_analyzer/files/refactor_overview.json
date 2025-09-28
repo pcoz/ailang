@@ -1,0 +1,109 @@
+{
+  "project": "yt-dlp/yt-dlp",
+  "scanned_at_utc": "2025-09-28T08:33:42Z",
+  "version": "1.0",
+  "style": {
+    "architecture": "Modular CLI tool with pluggable extractors/postprocessors; core engine orchestrates network, format selection, download, and post-processing"
+  },
+  "layers": [
+    {
+      "name": "CLI & Config",
+      "examples": [
+        "yt-dlp entrypoints",
+        "README-defined CLI options"
+      ]
+    },
+    {
+      "name": "Core Engine",
+      "examples": [
+        "YoutubeDL core orchestration",
+        "format selection",
+        "progress & logging"
+      ]
+    },
+    {
+      "name": "Extractors (IE)",
+      "examples": [
+        "site-specific modules for URL->info extraction"
+      ]
+    },
+    {
+      "name": "Downloaders/Network",
+      "examples": [
+        "HTTP(S)/WebSocket handling",
+        "curl-cffi impersonation support"
+      ]
+    },
+    {
+      "name": "Postprocessors (PP)",
+      "examples": [
+        "ffmpeg integration",
+        "metadata, thumbnails, sponsorblock"
+      ]
+    },
+    {
+      "name": "Plugins",
+      "examples": [
+        "external Python packages exporting IE/PP classes"
+      ]
+    }
+  ],
+  "alignment": {
+    "score": 0.86,
+    "summary": "Later additions (plugins, browser impersonation, multiple release channels) generally align with the original youtube-dl-style architecture and enhance capability without overturning core abstractions."
+  },
+  "packages": [
+    {
+      "name": "yt_dlp.core",
+      "notes": "central coordination (YoutubeDL); high fan-in/out"
+    },
+    {
+      "name": "yt_dlp.extractor",
+      "notes": "largest surface; many site modules; churn hotspot"
+    },
+    {
+      "name": "yt_dlp.downloader",
+      "notes": "protocol-specific downloaders; interacts with network and ffmpeg"
+    },
+    {
+      "name": "yt_dlp.postprocessor",
+      "notes": "ffmpeg and metadata processors; optional sponsorblock integration"
+    },
+    {
+      "name": "yt_dlp.utils",
+      "notes": "shared helpers; risk of becoming a god-module; keep cohesive"
+    },
+    {
+      "name": "yt_dlp.network",
+      "notes": "requests/curl-cffi/websockets; proxy & TLS settings"
+    }
+  ],
+  "centrality_top": {
+    "in": [
+      "yt_dlp.utils",
+      "yt_dlp.extractor.common",
+      "yt_dlp.YoutubeDL"
+    ],
+    "out": [
+      "yt_dlp.YoutubeDL",
+      "yt_dlp.downloader",
+      "yt_dlp.postprocessor"
+    ],
+    "between": [
+      "yt_dlp.utils",
+      "yt_dlp.compat",
+      "yt_dlp.network"
+    ]
+  },
+  "tangles_risks": [
+    "Wide use of utils across modules may create import cycles if not carefully managed",
+    "Extractor modules can drift stylistically; enforce base-class patterns and lints"
+  ],
+  "recommendations": [
+    "Keep plugin API surface minimal and stable; document IE/PP contract with examples/tests",
+    "Strengthen typing across core and common utilities to prevent subtle regressions",
+    "Automate extractor style checks and shared helpers to avoid copy-paste divergence",
+    "Consider decomposition of utils into focused helper modules to reduce centrality/tangles",
+    "Track network impersonation feature flags and fallbacks centrally to avoid per-extractor hacks"
+  ]
+}
