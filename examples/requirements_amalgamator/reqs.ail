@@ -1,0 +1,581 @@
+# =============================================================================
+# AILANG — Requirements Amalgamation with Thematic Hierarchy & Scope Sense
+# Purpose:
+#   Ingest varied sources and—using AI judgment—discover themes, build a
+#   hierarchy (epic→capability→feature→story), label scope (essential/important/
+#   nice/gold), then normalize into a coherent Requirements Register.
+# Outputs:
+#   1) requirements_register.json
+#   2) requirements_register.md  (with Hierarchy Map + Scope Summary)
+#   3) register_review_summary.json (if human nudge is useful)
+# Notes:
+#   - Heavy use of INTELLIGENTLY blocks to lean on AI understanding.
+#   - Minimal knobs; review queues only when confidence is low or nuance is high.
+# =============================================================================
+
+# ----------------------------
+# 0) CONFIG & GENTLE BOUNDARIES
+# ----------------------------
+CREATE OBJECT config:
+  project_prefix: "REQ"
+  priority_vocab: ["must","should","could","wont"]
+  kinds: ["functional","nonFunctional","constraint","assumption","decision"]
+  status_flow: ["captured","candidate","normalized","approved"]
+  scope_labels: ["essential","important","nice","gold"]
+  human_review_confidence_floor: 0.75
+  time_zone: "UTC"
+END_OBJECT
+
+# -----------------------------------
+# 1) DECLARE INPUTS (ADAPT AS NEEDED)
+# -----------------------------------
+CREATE OBJECT sources:
+  domain_context: ["./inputs/context/*.md","./inputs/context/*.pdf"] # vision, OKRs, regulatory, risks
+  jira_exports: ["./inputs/jira_*.csv"]
+  confluence_pages: ["./inputs/conf_*.html","./inputs/conf_*.md"]
+  docs_and_notes: ["./inputs/**/*.docx","./inputs/**/*.md","./inputs/**/*.pdf"]
+  emails_or_chats: ["./inputs/messages/*.eml","./inputs/chats/*.txt"]
+  code_comments: ["./inputs/code/**/*.*"]
+END_OBJECT
+
+# -----------------------------------
+# 2) CANONICAL SHAPES (RCM SUBSET + HIERARCHY)
+# -----------------------------------
+CREATE OBJECT shapes:
+  Requirement: {reqId, title, statement, kind, priority, risk, status, version,
+                acceptanceCriteria[], links[], provenance[], scopeLabel, themePath[]}
+  AcceptanceCriterion: {acId, text, type}
+  NFR: {id, category, metric, target, unit, scope}
+  GlossaryTerm: {term, definition, synonyms[]}
+  TraceLink: {from, to, relation, confidence, provenance[]}
+  Provenance: {srcId, span, confidence, capturedAt}
+  # Hierarchy nodes (AI-discovered)
+  ThemeNode: {id, name, level, parentId?, rationale, confidence}
+  # Dependency edges (branches, branches-of-branches)
+  Dependency: {fromReqId, toReqId, type, rationale, confidence}
+END_OBJECT
+
+# -------------------------------------------------
+# 3) TOP-LEVEL ORCHESTRATION
+# -------------------------------------------------
+DO build_requirements_register:
+  # 3.1 Read domain context first so the AI has grounding (mission, constraints)
+  CALL ingest_domain_context WITH [sources.domain_context] RETURNING context
+
+  # 3.2 Ingest all sources with context-aware parsing
+  CALL ingest_all_sources WITH [sources, context] RETURNING raw_items
+
+  # 3.3 Extract atomic candidates (REQs, ACs, NFRs, terms) + per-item provenance
+  CALL extract_candidates WITH [raw_items, context] RETURNING candidates
+
+  # 3.4 Discover THEMES & HIERARCHY (epic→capability→feature→story) + scope labels
+  CALL discover_themes_and_hierarchy WITH [candidates, context, config]
+    RETURNING {thematic_map, scoped_candidates}
+
+  # 3.5 Normalize language/IDs; attach ACs/NFRs by meaning and theme anchors
+  CALL normalize_candidates WITH [scoped_candidates, config, thematic_map]
+    RETURNING normalized
+
+  # 3.6 Group & consolidate by meaning/intent within themes (AI-first)
+  CALL cluster_and_merge_by_meaning WITH [normalized, config, thematic_map]
+    RETURNING {merged, review_groups}
+
+  # 3.7 Detect conflicts & dependencies (post-merge, cross-theme allowed)
+  CALL detect_conflicts WITH [merged] RETURNING conflicts
+  CALL detect_dependencies WITH [merged, thematic_map] RETURNING dependencies
+  CALL resolve_conflicts WITH [merged, conflicts] RETURNING resolved
+
+  # 3.8 Status promotion + gap surfacing
+  CALL promote_statuses WITH [resolved, config] RETURNING {ready, gaps}
+
+  # 3.9 Emit register (JSON + MD with Hierarchy Map & Scope Summary)
+  CALL emit_register WITH [ready, gaps, review_groups, thematic_map, dependencies]
+    RETURNING {json_doc, md_doc}
+
+  # 3.10 Save
+  SEND json_doc TO "requirements_register.json"
+  SEND md_doc TO "requirements_register.md"
+
+  IF LENGTH(gaps) > 0 OR LENGTH(review_groups) > 0 THEN:
+    SEND {gaps: gaps, review_groups: review_groups} TO "register_review_summary.json"
+    SEND "Register created; some items flagged for friendly review." TO console
+  ELSE:
+    SEND "Register created with zero outstanding reviews." TO console
+  END_IF
+END
+
+# -----------------------------------
+# 4) INGEST (CONTEXT-AWARE)
+# -----------------------------------
+DEFINE PROCEDURE ingest_domain_context WITH PARAMETERS [context_files]:
+  INTELLIGENTLY ingest_file_list MATCHING context_files WITH:
+    MUST_INCLUDE: [mission, goals, constraints, risks, regulatory, timelines]
+    OUTPUT_FORMAT: structured_context
+  END AS ctx
+  RETURN ctx
+END_PROCEDURE
+
+DEFINE PROCEDURE ingest_all_sources WITH PARAMETERS [sources, context]:
+  SET raw_items TO []
+  FOR EACH pattern IN (sources.jira_exports + sources.confluence_pages +
+                       sources.docs_and_notes + sources.emails_or_chats +
+                       sources.code_comments) DO:
+    INTELLIGENTLY ingest_file_list MATCHING pattern WITH:
+      USE_CONTEXT: context
+      MUST_INCLUDE: [basic_metadata, discovered_sections, any_tables, any_bullets]
+      CANNOT_INCLUDE: [hallucinated_content]
+      OUTPUT_FORMAT: structured_chunks
+      MAX_SCOPE: "only actual file contents"
+    END AS chunks
+    APPEND chunks TO raw_items
+  END_FOR
+  RETURN raw_items
+END_PROCEDURE
+
+# -----------------------------------
+# 5) EXTRACTION (ATOMIC UNITS)
+# -----------------------------------
+DEFINE PROCEDURE extract_candidates WITH PARAMETERS [raw_items, context]:
+  SET candidates TO { reqs:[], acs:[], nfrs:[], terms:[] }
+
+  FOR EACH item IN raw_items DO:
+    INTELLIGENTLY find_requirement_like_statements IN item WITH:
+      USE_CONTEXT: context
+      DETECT: [user_stories, shall_should_statements, given_when_then, nfr_clauses,
+               constraints, assumptions, decisions, glossary_entries]
+      MUST_INCLUDE: [clear_statement, any_title_if_present, source_pointer]
+      OUTPUT_FORMAT: atomic_units
+    END AS extracted
+
+    FOR EACH unit IN extracted DO:
+      CALL classify_unit_kind WITH [unit, context] RETURNING unit_kind
+      MATCH unit_kind WITH:
+        CASE "REQ":   APPEND unit TO candidates.reqs
+        CASE "AC":    APPEND unit TO candidates.acs
+        CASE "NFR":   APPEND unit TO candidates.nfrs
+        CASE "TERM":  APPEND unit TO candidates.terms
+      END_MATCH
+    END_FOR
+  END_FOR
+  RETURN candidates
+END_PROCEDURE
+
+DEFINE PROCEDURE classify_unit_kind WITH PARAMETERS [unit, context]:
+  INTELLIGENTLY classify unit INTO ["REQ","AC","NFR","TERM"] WITH:
+    USE_CONTEXT: context
+    SIGNALS_FOR:
+      "AC": [given_when_then, test-like phrasing, verification intent]
+      "NFR": [metrics/thresholds/security/performance/availability/SLA]
+      "TERM": [term/definition patterns, glossary sections]
+      "REQ": [behavioral/outcome statements]
+    OUTPUT_FORMAT: label
+  END AS label
+  RETURN label
+END_PROCEDURE
+
+# -----------------------------------
+# 6) THEME & HIERARCHY DISCOVERY + SCOPE SENSE
+# -----------------------------------
+DEFINE PROCEDURE discover_themes_and_hierarchy WITH PARAMETERS [candidates, context, config]:
+  # 6.1 Theme discovery: epics/capabilities/features/stories with rationale
+  INTELLIGENTLY discover_themes FROM candidates.reqs WITH:
+    USE_CONTEXT: context
+    TARGET_LEVELS: ["epic","capability","feature","story"]
+    MUST_CONSIDER: [problem statements, outcomes, actors, domain terms, regulatory needs,
+                    business goals/OKRs, architectural seams]
+    OUTPUT_FORMAT: [
+      { id, name, level, parentId?, rationale, confidence }
+    ]
+  END AS thematic_map
+
+  # 6.2 Scope labeling per requirement (essential/important/nice/gold)
+  #     Use mission/constraints/risks to weigh necessity.
+  SET scoped TO []
+  FOR EACH r IN candidates.reqs DO:
+    INTELLIGENTLY label_scope FOR r USING context WITH:
+      LABELS: config.scope_labels
+      DEFINITIONS: {
+        essential: "fundamental to deliver the promised value or mandated by compliance/safety",
+        important: "strong contributor to value/risk reduction; can phase if needed",
+        nice: "beneficial but deferrable without harming core value",
+        gold: "polish or speculative; risks time/cost without near-term value"
+      }
+      ALSO_CLASSIFY: {modal_strength: ["must","should","could","wont"]}
+      OUTPUT_FORMAT: {scopeLabel, modal_strength, rationale, confidence}
+    END AS scope
+
+    # Attach a theme path (AI chooses the best-fit theme node chain)
+    INTELLIGENTLY map_requirement_to_theme FOR r AMONG thematic_map WITH:
+      OUTPUT_FORMAT: {themePathIds[], rationale, confidence}
+    END AS mapping
+
+    APPEND r WITH {scopeLabel: scope.scopeLabel,
+                   priority: scope.modal_strength OR r.priority,
+                   themePath: mapping.themePathIds,
+                   scopeRationale: scope.rationale,
+                   themeRationale: mapping.rationale} TO scoped
+  END_FOR
+
+  RETURN {thematic_map: thematic_map, scoped_candidates: {reqs: scoped,
+          acs: candidates.acs, nfrs: candidates.nfrs, terms: candidates.terms}}
+END_PROCEDURE
+
+# -----------------------------------
+# 7) NORMALIZATION (LIGHT, CONTEXT-AWARE)
+# -----------------------------------
+DEFINE PROCEDURE normalize_candidates WITH PARAMETERS [bundle, config, thematic_map]:
+  SET out TO { reqs:[], acs:[], nfrs:[], terms:[] }
+
+  FOR EACH r IN bundle.reqs DO:
+    SET statement TO to_clear_voice(r.text)
+    SET title TO r.title IF r.title EXISTS ELSE first_n_words(statement, 8)
+    INTELLIGENTLY infer_kind FROM statement INTO config.kinds AS kind
+    SET priority TO map_to_vocab(r.priority, config.priority_vocab, default="should")
+    SET reqId TO mint_id(config.project_prefix, title, statement)
+
+    APPEND {
+      reqId: reqId,
+      title: title,
+      statement: statement,
+      kind: kind,
+      priority: priority,
+      risk: r.risk OR "medium",
+      status: "candidate",
+      version: "v1",
+      acceptanceCriteria: [],
+      links: [],
+      provenance: [r.provenance],
+      scopeLabel: r.scopeLabel,
+      themePath: r.themePath
+    } TO out.reqs
+  END_FOR
+
+  FOR EACH a IN bundle.acs DO:
+    SET text TO to_gwt_if_possible(a.text)
+    SET acId TO mint_id("AC", first_n_words(text, 8), text)
+    APPEND {acId: acId, text: text, type: guess_ac_type(text)} TO out.acs
+  END_FOR
+
+  FOR EACH n IN bundle.nfrs DO:
+    INTELLIGENTLY extract_nfr_fields FROM n.text WITH:
+      MUST_INCLUDE: [category, metric, target, unit]
+      NICE_TO_HAVE: [scope]
+      OUTPUT_FORMAT: fields
+    END AS f
+    SET id TO mint_id("NFR", f.metric, f.scope OR "")
+    APPEND {id: id, category: f.category, metric: f.metric,
+            target: f.target, unit: f.unit, scope: f.scope OR "system"} TO out.nfrs
+  END_FOR
+
+  FOR EACH t IN bundle.terms DO:
+    APPEND {term: tidy_term(t.term), definition: t.definition, synonyms: t.synonyms} TO out.terms
+  END_FOR
+
+  # Attach ACs/NFRs by meaning within theme anchors (conservative)
+  CALL link_acs_and_nfrs WITH [out] RETURNING out2
+  RETURN out2
+END_PROCEDURE
+
+DEFINE PROCEDURE link_acs_and_nfrs WITH PARAMETERS [bundle]:
+  FOR EACH ac IN bundle.acs DO:
+    INTELLIGENTLY choose_best_parent_req FOR ac.text AMONG bundle.reqs WITH:
+      CRITERIA: [same actor/object, verifies same outcome, scope alignment]
+      CONSERVATIVE: true
+      OUTPUT_FORMAT: {reqId, confidence}
+    END AS pick
+    IF pick.reqId EXISTS THEN:
+      SET parent TO FIRST(r IN bundle.reqs WHERE r.reqId == pick.reqId)
+      APPEND ac TO parent.acceptanceCriteria
+    END_IF
+  END_FOR
+
+  FOR EACH nfr IN bundle.nfrs DO:
+    INTELLIGENTLY choose_best_constrained_req FOR nfr AMONG bundle.reqs WITH:
+      CRITERIA: [the requirement whose outcome the NFR meaningfully constrains]
+      CONSERVATIVE: true
+      OUTPUT_FORMAT: {reqId, confidence}
+    END AS choose
+    IF choose.reqId EXISTS THEN:
+      SET parent TO FIRST(r IN bundle.reqs WHERE r.reqId == choose.reqId)
+      APPEND {from: parent.reqId, to: nfr.id, relation: "constrainedBy",
+              confidence: choose.confidence, provenance: []} TO parent.links
+    END_IF
+  END_FOR
+  RETURN bundle
+END_PROCEDURE
+
+# -----------------------------------
+# 8) CLUSTER & MERGE BY MEANING (WITHIN THEMES)
+# -----------------------------------
+DEFINE PROCEDURE cluster_and_merge_by_meaning WITH PARAMETERS [normalized, config, thematic_map]:
+  # Cluster per themePath first; AI can still bridge clusters if truly same intent.
+  INTELLIGENTLY cluster ITEMS normalized.reqs BY shared_intent WITH:
+    GROUP_HINTS: [themePath]
+    MUST_CONSIDER: [actor, intended_outcome, object, constraints, scope qualifiers,
+                    modal strength, scopeLabel, nearby decisions/assumptions]
+    MUST_AVOID: [hallucinating new requirements, over-merging unlike intents]
+    SPLIT_COMPOUND_ITEMS: true
+    OUTPUT_FORMAT: [
+      { clusterId, theme, confidence, rationale, members: [reqIds], cautions? }
+    ]
+  END AS clusters
+
+  SET merged TO []
+  SET review_groups TO []
+
+  FOR EACH c IN clusters DO:
+    INTELLIGENTLY adjudicate_cluster FOR c WITH:
+      GOAL: "produce the clearest single requirement when safe;
+             otherwise a small set of distinct but related requirements"
+      MERGE_RULES: [
+        choose clearest precise statement; retain strongest priority,
+        prefer essential>important>nice>gold when combining,
+        union ACs by meaning; preserve all provenance & themePath,
+        surface explicit conflicts as 'conflictsWithinCluster'
+      ]
+      OUTPUT_FORMAT: {
+        canonical: [Requirement...],
+        conflictsWithinCluster?: [ {aReqId, bReqId, reason} ],
+        confidence, rationale, needsHumanReview
+      }
+    END AS decision
+
+    IF decision.needsHumanReview OR decision.confidence < config.human_review_confidence_floor
+       OR LENGTH(decision.conflictsWithinCluster) > 0 THEN:
+      APPEND {clusterId: c.clusterId, theme: c.theme, rationale: decision.rationale,
+              confidence: decision.confidence, conflicts: decision.conflictsWithinCluster,
+              members: c.members, proposed: decision.canonical} TO review_groups
+    END_IF
+
+    FOR EACH r IN decision.canonical DO:
+      APPEND r TO merged
+    END_FOR
+  END_FOR
+
+  INTELLIGENTLY scan_for_residual_duplicates IN merged WITH:
+    ACTION: "merge only when clearly the same intent and scope; otherwise keep both"
+  END AS cleaned
+
+  RETURN {merged: cleaned, review_groups: review_groups}
+END_PROCEDURE
+
+# -----------------------------------
+# 9) CONFLICTS & DEPENDENCIES
+# -----------------------------------
+DEFINE PROCEDURE detect_conflicts WITH PARAMETERS [reqs]:
+  INTELLIGENTLY find_direct_conflicts AMONG reqs WITH:
+    TYPES: ["mutually exclusive rule", "incompatible thresholds",
+            "policy vs feature", "security vs convenience"]
+    OUTPUT_FORMAT: [ {aReqId, bReqId, reason, confidence} ]
+  END AS conflicts
+  RETURN conflicts
+END_PROCEDURE
+
+DEFINE PROCEDURE detect_dependencies WITH PARAMETERS [reqs, thematic_map]:
+  INTELLIGENTLY infer_dependencies AMONG reqs WITH:
+    DETECT: ["prerequisite", "enables", "blocks", "refines", "isPartOf"]
+    USE_THEMES: thematic_map
+    OUTPUT_FORMAT: [ {fromReqId, toReqId, type, rationale, confidence} ]
+  END AS deps
+  RETURN deps
+END_PROCEDURE
+
+DEFINE PROCEDURE resolve_conflicts WITH PARAMETERS [reqs, conflicts]:
+  FOR EACH c IN conflicts DO:
+    INTELLIGENTLY recommend_resolution FOR c WITH:
+      PRINCIPLES: [
+        respect explicit decisions/constraints, prefer recent authoritative sources,
+        prefer specific scope over vague generality, preserve safety/security
+      ]
+      OUTPUT_FORMAT: {winnerReqId?, loserReqId?, keepBoth?:boolean, rationale}
+    END AS rec
+    IF rec.keepBoth THEN CONTINUE
+    ELSE IF rec.winnerReqId EXISTS AND rec.loserReqId EXISTS THEN:
+      SET loser TO FIRST(r IN reqs WHERE r.reqId == rec.loserReqId)
+      SET loser.status TO "deprecated"
+    END_IF
+  END_FOR
+  RETURN reqs
+END_PROCEDURE
+
+# -----------------------------------
+# 10) STATUS PROMOTION & GAPS
+# -----------------------------------
+DEFINE PROCEDURE promote_statuses WITH PARAMETERS [reqs, config]:
+  SET ready TO []
+  SET gaps TO []
+  FOR EACH r IN reqs DO:
+    SET has_ac TO (LENGTH(r.acceptanceCriteria) >= 1)
+    SET has_terms_resolved TO terms_in_statement_are_defined(r.statement)
+    SET nfr_ok TO true
+    IF has_ac AND has_terms_resolved AND nfr_ok THEN:
+      SET r.status TO "normalized"
+    ELSE:
+      APPEND {reqId: r.reqId, missing: missing_bits(has_ac, has_terms_resolved, nfr_ok)} TO gaps
+    END_IF
+    APPEND r TO ready
+  END_FOR
+  RETURN {ready: ready, gaps: gaps}
+END_PROCEDURE
+
+# -----------------------------------
+# 11) EMIT REGISTER (JSON + MARKDOWN with Hierarchy & Scope)
+# -----------------------------------
+DEFINE PROCEDURE emit_register WITH PARAMETERS [reqs, gaps, review_groups, thematic_map, dependencies]:
+  SET json_doc TO {
+    generatedAt: now(),
+    project: config.project_prefix,
+    totals: {
+      requirements: LENGTH(reqs),
+      gaps: LENGTH(gaps),
+      reviewGroups: LENGTH(review_groups),
+      themes: LENGTH(thematic_map),
+      dependencies: LENGTH(dependencies)
+    },
+    requirements: reqs,
+    gaps: gaps,
+    reviewGroups: review_groups,
+    themes: thematic_map,
+    dependencies: dependencies
+  }
+
+  SET md_doc TO "# Requirements Register\n\n"
+  APPEND "Generated: " + now() + "\n\n" TO md_doc
+  APPEND "## Summary\n" TO md_doc
+  APPEND "- Total REQs: " + LENGTH(reqs) + "\n" TO md_doc
+  APPEND "- With Gaps: " + LENGTH(gaps) + "\n" TO md_doc
+  APPEND "- Review Groups: " + LENGTH(review_groups) + "\n" TO md_doc
+  APPEND "- Themes: " + LENGTH(thematic_map) + " | Dependencies: " + LENGTH(dependencies) + "\n\n" TO md_doc
+
+  # 11.1 Hierarchy Map (compact)
+  APPEND "## Hierarchy Map (Epic → Capability → Feature → Story)\n" TO md_doc
+  INTELLIGENTLY render_theme_hierarchy FROM thematic_map WITH:
+    OUTPUT_FORMAT: markdown_nested_list
+  END AS theme_md
+  APPEND theme_md + "\n" TO md_doc
+
+  # 11.2 Scope Summary
+  APPEND "## Scope Summary\n" TO md_doc
+  INTELLIGENTLY summarize_scope_distribution FOR reqs WITH:
+    BUCKETS: ["essential","important","nice","gold"]
+    OUTPUT_FORMAT: markdown_table
+  END AS scope_md
+  APPEND scope_md + "\n" TO md_doc
+
+  # 11.3 Requirements
+  APPEND "## Requirements\n" TO md_doc
+  FOR EACH r IN reqs DO:
+    APPEND "### " + r.reqId + " — " + r.title + "\n" TO md_doc
+    APPEND "**Status:** " + r.status + " | **Kind:** " + r.kind + " | **Priority:** " + r.priority + " | **Scope:** " + r.scopeLabel + "\n" TO md_doc
+    IF LENGTH(r.themePath) > 0 THEN:
+      APPEND " | **Theme Path:** " + JOIN(r.themePath, " › ") + "\n\n" TO md_doc
+    ELSE:
+      APPEND "\n\n" TO md_doc
+    END_IF
+    APPEND r.statement + "\n\n" TO md_doc
+
+    IF LENGTH(r.acceptanceCriteria) > 0 THEN:
+      APPEND "**Acceptance Criteria:**\n" TO md_doc
+      FOR EACH ac IN r.acceptanceCriteria DO:
+        APPEND "- " + ac.acId + ": " + ac.text + "\n" TO md_doc
+      END_FOR
+      APPEND "\n" TO md_doc
+    END_IF
+
+    IF ANY(link.relation == "constrainedBy" FOR link IN r.links) THEN:
+      APPEND "**NFR Constraints:** " TO md_doc
+      APPEND JOIN([link.to FOR link IN r.links WHERE link.relation == "constrainedBy"], ", ") + "\n\n" TO md_doc
+    END_IF
+
+    IF r.reqId IN [g.reqId FOR g IN gaps] THEN:
+      SET gap_line TO FIRST(g IN gaps WHERE g.reqId == r.reqId)
+      APPEND "> ⚠ Needs: " + human_gap_list(gap_line.missing) + "\n\n" TO md_doc
+    END_IF
+  END_FOR
+
+  # 11.4 Dependencies (readable)
+  IF LENGTH(dependencies) > 0 THEN:
+    APPEND "## Dependencies\n" TO md_doc
+    FOR EACH d IN dependencies DO:
+      APPEND "- " + d.fromReqId + " " + d.type + " " + d.toReqId + "  \n" TO md_doc
+    END_FOR
+    APPEND "\n" TO md_doc
+  END_IF
+
+  # 11.5 Review groups
+  IF LENGTH(review_groups) > 0 THEN:
+    APPEND "## Review — Meaning Groups Needing Attention\n" TO md_doc
+    FOR EACH g IN review_groups DO:
+      APPEND "- Cluster " + g.clusterId + " (“" + g.theme + "”), confidence "
+            + ROUND(g.confidence,2) + "\n" TO md_doc
+      APPEND "  Members: " + JOIN(g.members, ", ") + "\n" TO md_doc
+      IF LENGTH(g.conflicts) > 0 THEN
+        APPEND "  Conflicts: " + JOIN([c.reason FOR c IN g.conflicts], " | ") + "\n" TO md_doc
+      END_IF
+    END_FOR
+  END_IF
+
+  RETURN {json_doc: json_doc, md_doc: md_doc}
+END_PROCEDURE
+
+# -----------------------------------
+# 12) SMALL, PLAIN HELPERS
+# -----------------------------------
+DEFINE PROCEDURE to_clear_voice WITH PARAMETERS [s]:
+  INTELLIGENTLY restate s AS:
+    MUST_INCLUDE: ["The system shall" OR equivalent concrete subject],
+    CANNOT_INCLUDE: [vague fillers like "maybe", "nice to"],
+    STYLE: ["concise","unambiguous","testable"],
+    OUTPUT_FORMAT: single_sentence
+  END AS out
+  RETURN trim(out)
+END_PROCEDURE
+
+DEFINE PROCEDURE to_gwt_if_possible WITH PARAMETERS [text]:
+  INTELLIGENTLY convert text TO given_when_then IF feasible, ELSE return text AS_IS
+  RETURN result
+END_PROCEDURE
+
+DEFINE PROCEDURE guess_ac_type WITH PARAMETERS [text]:
+  INTELLIGENTLY classify acceptance_criterion INTO ["functional","nfr","security","ux","other"]
+    USING text AS evidence
+  END AS t
+  RETURN t
+END_PROCEDURE
+
+DEFINE PROCEDURE mint_id WITH PARAMETERS [prefix, title, statement]:
+  SET slug TO UPPERCASE(slugify(first_n_words(title,5)))
+  SET hash_tail TO SHORT_HASH(statement, 3)
+  RETURN prefix + "-" + slug + "-" + hash_tail
+END_PROCEDURE
+
+DEFINE PROCEDURE map_to_vocab WITH PARAMETERS [value, vocab, default]:
+  INTELLIGENTLY map value TO one_of vocab ELSE RETURN default
+END_PROCEDURE
+
+DEFINE PROCEDURE tidy_term WITH PARAMETERS [t]:
+  RETURN TRIM(REPLACE_MULTISPACE(t))
+END_PROCEDURE
+
+DEFINE PROCEDURE terms_in_statement_are_defined WITH PARAMETERS [statement]:
+  INTELLIGENTLY find_undefined_terms IN statement WITH OUTPUT_FORMAT: list
+  END AS missing
+  RETURN LENGTH(missing) == 0
+END_PROCEDURE
+
+DEFINE PROCEDURE missing_bits WITH PARAMETERS [has_ac, has_terms, nfr_ok]:
+  SET m TO []
+  IF NOT has_ac THEN APPEND "Add at least one AC (Given/When/Then)" TO m END_IF
+  IF NOT has_terms THEN APPEND "Resolve undefined glossary terms" TO m END_IF
+  IF NOT nfr_ok THEN APPEND "Complete NFR metric/target/unit/scope" TO m END_IF
+  RETURN m
+END_PROCEDURE
+
+DEFINE PROCEDURE human_gap_list WITH PARAMETERS [missing]:
+  RETURN JOIN(missing, "; ")
+END_PROCEDURE
+
+# -----------------------------------
+# 13) RUN
+# -----------------------------------
+CALL build_requirements_register
