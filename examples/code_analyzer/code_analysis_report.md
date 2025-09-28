@@ -72,7 +72,7 @@ A full PR roadmap is prepared for you:
 * **PR-6 — Unified Error Map** (risk: low): structured codes, retryability flags, and logging fields; align issue templates with categories.
 
 👉 Download the detailed PR breakdown (tasks, gates, owners, exit criteria):
-**[workplan.md](sandbox:/mnt/data/workplan.md)**
+**[workplan.md](./files/workplan.md)**
 
 ---
 
@@ -102,7 +102,7 @@ A full PR roadmap is prepared for you:
   * Enforce “no ad-hoc UA/proxy”—must call NetworkPolicy.
   * Add type hints to base IE methods and common return dicts.
 
-Template & rules: **[extractor_cookiecutter.md](sandbox:/mnt/data/extractor_cookiecutter.md)**
+Template & rules: **[extractor_cookiecutter.md](./files/extractor_cookiecutter.md)**
 
 ### 5.3 Downloaders / Networking
 
@@ -116,8 +116,8 @@ Template & rules: **[extractor_cookiecutter.md](sandbox:/mnt/data/extractor_cook
   * Add a table-driven transport decision (feature flags, site hints).
   * Test matrix across transports, proxies (http/https/socks), IPv4/IPv6, and failure modes.
 
-Starter module: **[network_policy_draft.py](sandbox:/mnt/data/network_policy_draft.py)**
-Test matrix: **[test_matrix.md](sandbox:/mnt/data/test_matrix.md)**
+Starter module: **[network_policy_draft.py](./files/network_policy_draft.py)**
+Test matrix: **[test_matrix.md](./files/test_matrix.md)**
 
 ### 5.4 Post-processors (FFmpeg, metadata)
 
@@ -139,7 +139,7 @@ Test matrix: **[test_matrix.md](sandbox:/mnt/data/test_matrix.md)**
   * Execute the **utils split** with re-exports and a deprecation window.
   * Introduce ownership per submodule and small READMEs to keep cohesion.
 
-Migration plan: **[migration_utils_split.md](sandbox:/mnt/data/migration_utils_split.md)**
+Migration plan: **[migration_utils_split.md](./files/migration_utils_split.md)**
 
 ---
 
@@ -155,7 +155,7 @@ Standardize into structured categories with retry hints:
 | E300 | PostProcessingError   | false     | postproc  | FFmpeg failure; check invariants          |
 | E400 | UnavailableVideoError | false     | expected  | Geo/DRM/unpublished                       |
 
-CSV for CI/log parsers: **[error_map.csv](sandbox:/mnt/data/error_map.csv)**
+CSV for CI/log parsers: **[error_map.csv](./files/error_map.csv)**
 
 ---
 
@@ -168,9 +168,9 @@ CSV for CI/log parsers: **[error_map.csv](sandbox:/mnt/data/error_map.csv)**
 
 Configs/snippets:
 
-* **[mypy_core_strict.ini](sandbox:/mnt/data/mypy_core_strict.ini)**
-* **[test_matrix.md](sandbox:/mnt/data/test_matrix.md)**
-* **[ci_additions.md](sandbox:/mnt/data/ci_additions.md)**
+* **[mypy_core_strict.ini](./files/mypy_core_strict.ini)**
+* **[test_matrix.md](./files/test_matrix.md)**
+* **[ci_additions.md](./files/ci_additions.md)**
 
 ---
 
@@ -184,16 +184,16 @@ Configs/snippets:
 
 ## 9) Artifacts index (everything in one place)
 
-* Findings JSON (specific scan): **[refactor_specific_findings.json](sandbox:/mnt/data/refactor_specific_findings.json)**
-* High-level overview JSON: **[refactor_overview.json](sandbox:/mnt/data/refactor_overview.json)**
-* Workplan: **[workplan.md](sandbox:/mnt/data/workplan.md)**
-* NetworkPolicy draft: **[network_policy_draft.py](sandbox:/mnt/data/network_policy_draft.py)**
-* Extractor template & rules: **[extractor_cookiecutter.md](sandbox:/mnt/data/extractor_cookiecutter.md)**
-* Mypy config: **[mypy_core_strict.ini](sandbox:/mnt/data/mypy_core_strict.ini)**
-* Test matrix: **[test_matrix.md](sandbox:/mnt/data/test_matrix.md)**
-* Utils split migration plan: **[migration_utils_split.md](sandbox:/mnt/data/migration_utils_split.md)**
-* Error map CSV: **[error_map.csv](sandbox:/mnt/data/error_map.csv)**
-* CI additions: **[ci_additions.md](sandbox:/mnt/data/ci_additions.md)**
+* Findings JSON (specific scan): **[refactor_specific_findings.json](./files/refactor_specific_findings.json)**
+* High-level overview JSON: **[refactor_overview.json](./files/refactor_overview.json)**
+* Workplan: **[workplan.md](./files/workplan.md)**
+* NetworkPolicy draft: **[network_policy_draft.py](./files/network_policy_draft.py)**
+* Extractor template & rules: **[extractor_cookiecutter.md](./files/extractor_cookiecutter.md)**
+* Mypy config: **[mypy_core_strict.ini](./files/mypy_core_strict.ini)**
+* Test matrix: **[test_matrix.md](./files/test_matrix.md)**
+* Utils split migration plan: **[migration_utils_split.md](./files/migration_utils_split.md)**
+* Error map CSV: **[error_map.csv](./files/error_map.csv)**
+* CI additions: **[ci_additions.md](./files/ci_additions.md)**
 
 ---
 
