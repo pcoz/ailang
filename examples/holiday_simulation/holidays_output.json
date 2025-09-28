@@ -1,0 +1,212 @@
+{
+  "holiday_report": {
+    "title": "Gateshead to Madrid – Summer",
+    "dates": {
+      "start_date": "2025-08-08",
+      "end_date": "2025-08-13",
+      "nights": 5,
+      "duration_days": 6,
+      "pattern": "Fri→Wed"
+    },
+    "origin": "NCL",
+    "destination": "Madrid (MAD)",
+    "group": [
+      "Lee Robson",
+      "Ayesha Begum",
+      "Callum Thompson",
+      "Sophie Ridley",
+      "Gavin McEwan"
+    ],
+    "stay_summary": {
+      "area": "Malasaña",
+      "a_c": true,
+      "walkability": 97,
+      "property": {
+        "type": "3-bed apartment",
+        "beds": 5,
+        "notes": [
+          "Top-floor with lift",
+          "Quiet-hours policy posted",
+          "Cross-breeze + split-unit A/C in each room"
+        ],
+        "proximity": {
+          "metro": "Tribunal (L1/L10) ~4 min walk",
+          "supermercado": "small market on Calle de Fuencarral ~3 min"
+        }
+      }
+    },
+    "budget_per_person_gbp": 823,
+    "diary": [
+      {
+        "day": 1,
+        "label": "Arrival + Tapas Crawl",
+        "weather": { "hi_c": 35, "lo_c": 22, "sky": "clear", "advisory": "hydrate; sun intensity high" },
+        "morning": "Group meets at Newcastle Airport (NCL) 07:45; mild bag-weight quibble for Lee resolved by moving sandals to carry-on.",
+        "midday": "Flight NCL→BCN→MAD (VY + IB codeshare). Smooth connection; light chop on BCN→MAD.",
+        "afternoon": "Heat on arrival (16:40). Group opts for two taxis due to 35°C and luggage.",
+        "evening": "Check-in friendly; host explains A/C remotes and quiet hours. Tapas route Malasaña/Conde Duque: shared tortilla, berenjenas con miel, gildas; Ayesha gets excellent setas a la plancha.",
+        "social_highlights": [
+          "First toast (non-alcohol options included) to ‘proper holiday at last’",
+          "Gentle pride from Gavin at first street shots on Calle del Pez"
+        ],
+        "minor_frictions": [
+          "Sophie prefers earlier night for a dawn run; Lee fancies one more stop."
+        ],
+        "spend_estimate_gbp": 74
+      },
+      {
+        "day": 2,
+        "label": "Prado + Retiro + Gran Vía Evening",
+        "weather": { "hi_c": 36, "lo_c": 23, "sky": "sunny", "advisory": "siesta strongly advised 14:00–18:00" },
+        "morning": "Prado timed entry; group splits into ‘classics’ and ‘portrait detail’ sub-clusters. Ayesha lingers with Velázquez; Callum appreciates cool air and audio guide.",
+        "midday": "Early light lunch (ensaladilla, gazpacho). Retreat to Retiro’s shade; boating skipped due to queue/heat.",
+        "afternoon": "Siesta at apartment; blinds down, A/C on eco.",
+        "evening": "Gran Vía wander; rooftop mocktails for sunset, then simple dinner with vegetarian croquetas and ensalada mixta.",
+        "social_highlights": [
+          "Photo mini-lesson from Gavin to Lee (‘rule of thirds on the Metro platform’).",
+          "Ayesha shares classroom anecdotes linking art to empathy."
+        ],
+        "minor_frictions": [],
+        "spend_estimate_gbp": 96
+      },
+      {
+        "day": 3,
+        "label": "Bernabéu Tour + Malasaña Night",
+        "weather": { "hi_c": 35, "lo_c": 22, "sky": "haze", "advisory": "UV high" },
+        "morning": "Bernabéu tour for Lee & Callum (stadium tech exhibits, trophy room); Sophie & Ayesha café hop with tostadas and tomato.",
+        "midday": "Cool-down window back at flat; fruit/water top-up from supermercado.",
+        "afternoon": "Short siesta; Gavin edits a black-and-white street set.",
+        "evening": "Malasaña circuit: small venue with live indie covers; Sophie leaves early with Ayesha to ensure sleep; micro-split agreed up-front.",
+        "social_highlights": [
+          "Playful VAR debate between Lee and Callum (‘it ruins the limbs-aloft moment’ vs ‘it fixes howlers’).",
+          "Sophie and Ayesha trade running routes vs. bakery finds for tomorrow."
+        ],
+        "minor_frictions": [
+          "Volume at venue briefly too high; quick shift to quieter bar resolves."
+        ],
+        "spend_estimate_gbp": 89
+      },
+      {
+        "day": 4,
+        "label": "Lavapiés + Flamenco",
+        "weather": { "hi_c": 34, "lo_c": 21, "sky": "sunny", "advisory": "pace midday walking" },
+        "morning": "Churros con chocolate shared (Ayesha chooses café solo); light terrace breakfast overall.",
+        "midday": "Lavapiés food tour: vegetarian-friendly bites (pimientos de padrón, patatas bravas, tortilla with alioli on side).",
+        "afternoon": "Cool break; booking confirmed for intimate flamenco show.",
+        "evening": "Flamenco: respectful hush; group moved by palmas and cante. Quiet walk home under warm night.",
+        "social_highlights": [
+          "Post-show reflections: ‘discipline and explosion’ theme discussed.",
+          "Callum admits surprise at how much he enjoyed it."
+        ],
+        "minor_frictions": [],
+        "spend_estimate_gbp": 112
+      },
+      {
+        "day": 5,
+        "label": "Reina Sofía + Mercado",
+        "weather": { "hi_c": 33, "lo_c": 21, "sky": "few clouds", "advisory": "standard hydration" },
+        "morning": "Sophie dawn run in Retiro; Gavin captures soft light on Palacio de Cristal. Group later to Reina Sofía; quiet time at ‘Guernica’.",
+        "midday": "Mercado de San Fernando grazing—veg empanadas, jamón for those who partake, fresh juices.",
+        "afternoon": "Packing start and souvenir browse; quick coffee on Calle de la Palma.",
+        "evening": "Final dinner: shared paella pan (veg + seafood split orders), toast to future trip ideas; earlyish night.",
+        "social_highlights": [
+          "Ayesha and Gavin trade readings on Picasso and war memory.",
+          "Lee proposes a ‘city+mountains’ idea for next year; Sophie suggests cooler shoulder season."
+        ],
+        "minor_frictions": [],
+        "spend_estimate_gbp": 106
+      },
+      {
+        "guaranteed_moments": {
+          "retiro_memory": "Sophie’s steady 6am loop past dew-dark gravel; Gavin crouched by the pond edge, catching runners threading early light. Exchange: a thumbs-up and ‘two more laps’ grin.",
+          "guernica_scene": "Ayesha and Gavin stand quiet at the canvas; low-voiced remarks about scale, greys, absence of colour—shared nods, no photos.",
+          "stadium_banter": "Lee and Callum tease over transfer fees and nostalgia; settle on ‘local academy matters’ handshake."
+        }
+      }
+    ],
+    "conversations": [
+      {
+        "when": "Gate at NCL, pre-boarding",
+        "snippets": [
+          { "speaker": "Lee", "text": "Gannin’ to melt in that Madrid sun, like. Hope they’ve A/C the size of a truck." },
+          { "speaker": "Sophie", "text": "Hydration, mister. And a sensible bedtime—tomorrow I’m running Retiro." },
+          { "speaker": "Callum", "text": "As long as the museum’s air-con isn’t buggy. I’ll open a ticket." },
+          { "speaker": "Ayesha", "text": "We’ll pace it—art in the morning, shade in the afternoon." },
+          { "speaker": "Gavin", "text": "Light’ll be mint near sunset; I’ll get us a rooftop." }
+        ]
+      },
+      {
+        "when": "Check-in dialogue",
+        "snippets": [
+          { "speaker": "Host", "text": "Aquí están los mandos del aire. Quiet hours from 22:30, por favor." },
+          { "speaker": "Ayesha", "text": "Gracias. ¿Supermercado cerca?" },
+          { "speaker": "Host", "text": "Sí, a tres minutos. Agua fría y fruta buena." }
+        ]
+      },
+      {
+        "when": "Micro-friction repair (Day 3)",
+        "snippets": [
+          { "speaker": "Sophie", "text": "I’m heading back for sleep; you lot enjoy one more." },
+          { "speaker": "Lee", "text": "Aye, fair. We’ll keep it short—meet you for breakfast?" },
+          { "speaker": "Sophie", "text": "Deal." }
+        ]
+      },
+      {
+        "when": "Closing circle (packing night)",
+        "snippets": [
+          { "speaker": "Callum", "text": "Didn’t think flamenco would slap that hard. Respect." },
+          { "speaker": "Ayesha", "text": "Prado mornings, siesta afternoons—perfect cadence." },
+          { "speaker": "Gavin", "text": "Sunrise in Retiro—shot of the trip." },
+          { "speaker": "Lee", "text": "Paella split was class. Next time: cooler month?" },
+          { "speaker": "Sophie", "text": "Yes please. And more running paths." }
+        ]
+      }
+    ],
+    "return_journey": {
+      "flight": {
+        "inbound": "MAD→BCN→NCL (IB/VY codeshare)",
+        "status": "minor_delay",
+        "notes": "15-minute pushback at MAD; easy connection"
+      },
+      "arrival": "NCL early evening; Metro/ride-share home split"
+    },
+    "settlement": {
+      "ledger_summary": {
+        "shared": {
+          "stay_total_gbp": 1240,
+          "shared_food_events_gbp": 610,
+          "tickets_and_tours_gbp": 390
+        },
+        "individual_variance": {
+          "lee": +18,
+          "ayesha": -6,
+          "callum": +11,
+          "sophie": -9,
+          "gavin": -14
+        }
+      },
+      "per_person_due_gbp": {
+        "lee": 835,
+        "ayesha": 817,
+        "callum": 831,
+        "sophie": 814,
+        "gavin": 818
+      },
+      "method": "splitwise_style",
+      "net_settlements": [
+        "Lee pays Sophie £10",
+        "Callum pays Gavin £13",
+        "Ayesha pays Lee £8"
+      ]
+    },
+    "reflections": [
+      { "person": "Lee Robson", "highlight": "Stadium tech + tapas crawl.", "next_time_preference": "Shoulder-season city + day trip to mountains." },
+      { "person": "Ayesha Begum", "highlight": "Prado morning cadence and thoughtful conversations.", "next_time_preference": "Guaranteed veg options pre-booked at one splurge place." },
+      { "person": "Callum Thompson", "highlight": "Air-conned museums and surprise love of flamenco.", "next_time_preference": "Keep late nights to one or two max." },
+      { "person": "Sophie Ridley", "highlight": "Dawn run in Retiro with quiet streets.", "next_time_preference": "Cooler month; plan morning active blocks." },
+      { "person": "Gavin McEwan", "highlight": "Sunrise street set + Reina Sofía.",
+        "next_time_preference": "One golden-hour photo walk scheduled every day."
+      }
+    ]
+  }
+}

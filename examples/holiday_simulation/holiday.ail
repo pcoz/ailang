@@ -1,0 +1,325 @@
+#ailang
+DO INTELLIGENTLY synthesize_gateshead_group_holiday_to_madrid:
+    # ----------------------------
+    # 0) Trip-wide deterministic setup
+    # ----------------------------
+    SET trip.name TO "Gateshead to Madrid – Summer"
+    SET trip.season TO "summer"
+    SET trip.duration_days TO 6  # travel days included
+    SET trip.objectives TO ["rest", "culture", "food", "nightlife", "friendship"]
+    SET trip.constraints TO {
+        max_budget_per_person: 900,            # GBP per person, inclusive
+        flights_preference: "reasonable_schedules",
+        accommodation: "central, walkable, air_conditioning",
+        heat_safety: true,
+        nightlife_noise_tolerance: "moderate",
+        safety_requirements: ["no_illegal_activity", "respect_local_laws", "no_hate_speech"]
+    }
+
+    # ----------------------------
+    # 1) Synthesize five specific people from Gateshead-upon-Tyne
+    # ----------------------------
+    # Note: Backgrounds are generated intelligently, but bounded to be plausible and non-identifying.
+    INTELLIGENTLY create_person FROM "Gateshead-upon-Tyne" WITH:
+        OUTPUT: lee
+        MUST_INCLUDE: [name, background, personality, interaction_system]
+        BOUNDS: "fictional but locally plausible"
+        HINTS: {name: "Lee Robson", age_range: [28, 35], job_hint: "joiner", football: "Newcastle sympathies"}
+    END
+    INTELLIGENTLY create_person FROM "Gateshead-upon-Tyne" WITH:
+        OUTPUT: ayesha
+        MUST_INCLUDE: [name, background, personality, interaction_system]
+        BOUNDS: "fictional but locally plausible"
+        HINTS: {name: "Ayesha Begum", age_range: [27, 34], job_hint: "primary school teacher", foodie: true}
+    END
+    INTELLIGENTLY create_person FROM "Gateshead-upon-Tyne" WITH:
+        OUTPUT: callum
+        MUST_INCLUDE: [name, background, personality, interaction_system]
+        HINTS: {name: "Callum Thompson", age_range: [26, 32], job_hint: "IT helpdesk", gamer: true}
+    END
+    INTELLIGENTLY create_person FROM "Gateshead-upon-Tyne" WITH:
+        OUTPUT: sophie
+        MUST_INCLUDE: [name, background, personality, interaction_system]
+        HINTS: {name: "Sophie Ridley", age_range: [29, 36], job_hint: "nurse", runner: true}
+    END
+    INTELLIGENTLY create_person FROM "Gateshead-upon-Tyne" WITH:
+        OUTPUT: gavin
+        MUST_INCLUDE: [name, background, personality, interaction_system]
+        HINTS: {name: "Gavin McEwan", age_range: [30, 38], job_hint: "civil engineer", photography: true}
+    END
+
+    SET group TO [lee, ayesha, callum, sophie, gavin]
+
+    # Subtle interpersonal seeds (used later for emergent social dynamics)
+    SET dynamics TO {
+        history_pairs: [
+            {between: [lee, callum], note: "five-a-side mates"},
+            {between: [sophie, ayesha], note: "met in yoga class"},
+            {between: [gavin, lee], note: "grew up on adjacent streets"}
+        ],
+        potential_tensions: [
+            {topic: "late nights vs early runs", parties: [sophie, lee]},
+            {topic: "budget vigilance", parties: [callum, ayesha]}
+        ],
+        latent_alignments: [
+            {topic: "art & museums", parties: [ayesha, gavin]},
+            {topic: "football & stadium tours", parties: [lee, callum]}
+        ]
+    }
+
+    # ----------------------------
+    # 2) Plan phase (UK -> Madrid)
+    # ----------------------------
+    DO INTELLIGENTLY plan_basics:
+        # Choose realistic July/August dates, Fri-Wed, respecting budgets and work constraints.
+        SET trip.dates TO reasonable_summer_dates(duration=trip.duration_days, month_options=["July","August"])
+        # Choose flight origin/destination suited to Gateshead: prefer NCL; fallback MAN if schedules force it.
+        SET flight_candidates TO synthesize_economical_flights(
+            origins=["NCL","MAN"],
+            destination="MAD",
+            preference=trip.constraints.flights_preference,
+            dates=trip.dates
+        )
+        SET chosen_flights TO balanced_choice(flight_candidates, criteria=["price","departure_time","layovers<=1"])
+
+        # Lodging: pick central Madrid neighbourhood with A/C
+        SET neighbourhood_options TO ["Malasaña","La Latina","Lavapiés","Sol"]
+        SET stay_candidate_properties TO {
+            bedrooms: 3,
+            beds: 5,
+            aircon: true,
+            quiet_hours_policy: true,
+            walk_score_min: 90
+        }
+        SET stay_options TO synthesize_stays(neighbourhood_options, stay_candidate_properties, dates=trip.dates)
+        SET chosen_stay TO balanced_choice(stay_options, criteria=["cooling","noise","price","proximity_metro"])
+
+        # Daily skeleton: balance culture/food/rest/nightlife; avoid midday heat with siesta
+        SET skeleton TO [
+            {day: 1, theme: "arrival + tapas crawl (evening)"},
+            {day: 2, theme: "Prado + Retiro + siesta + Gran Vía evening"},
+            {day: 3, theme: "Bernabéu tour or football-themed + Malasaña night"},
+            {day: 4, theme: "Day trip or barrio exploration + churros morning, flamenco night"},
+            {day: 5, theme: "Reina Sofía + Lavapiés food tour"},
+            {day: 6, theme: "checkout + return"}
+        ]
+
+        # Personal wishes used later to branch choices
+        SET wishes TO {
+            lee:    ["stadium tour","late-night bars","paella (even if touristy)"],
+            ayesha: ["Prado","local markets","vegetarian tapas"],
+            callum: ["air-conditioned museums","arcade bar","tech store browse"],
+            sophie: ["early morning run in Retiro","healthy brunch","rooftop sunset"],
+            gavin:  ["street photography","Reina Sofía","sunrise cityscapes"]
+        }
+
+        RETURN {chosen_flights, chosen_stay, skeleton, wishes}
+    END AS plan
+
+    SET trip.flights TO plan.chosen_flights
+    SET trip.stay TO plan.chosen_stay
+    SET trip.skeleton TO plan.skeleton
+    SET trip.wishes TO plan.wishes
+
+    # Cost split (deterministic accumulation; actual numbers synthesized within bounds)
+    SET costs TO estimate_group_costs(trip.flights, trip.stay, group_size=LENGTH(group), meals="mix", activities="moderate")
+    ASSERT costs.per_person <= trip.constraints.max_budget_per_person "Stay within agreed budget"
+
+    # ----------------------------
+    # 3) Outbound travel (Day 1)
+    # ----------------------------
+    DO travel_outbound:
+        # Morning meet at NCL (or chosen origin). Generate plausible hiccups.
+        INTELLIGENTLY generate_airport_situation WITH:
+            GROUP: group
+            FLIGHT: trip.flights.outbound
+            POSSIBLE_EVENTS: ["security_queue_long","bag_weight_quibble","gate_change","nothing_special"]
+            BOUNDS: "minor inconvenience only"
+            OUTPUT: outbound_events
+        END
+
+        # Social exchanges at the gate
+        FOR EACH person IN group DO:
+            SET context TO {location: "departure gate", topic: "anticipation", energy: "high"}
+            SET utterance TO person.speech_system.speak("pre-trip banter", context)
+            APPEND utterance TO interaction_log
+        END_FOR
+
+        # Flight experiences (seat swaps, window views, turbulence light)
+        INTELLIGENTLY generate_flight_microevents WITH:
+            GROUP: group
+            FLIGHT: trip.flights.outbound
+            OUTPUT: flight_story
+        END
+
+        # Arrival, Metro vs taxi decision (budget vs heat)
+        IF temperature_in_madrid(trip.dates.day1_arrival_time) > 34 AND trip.constraints.heat_safety THEN:
+            SET arrival_transport TO "taxi/ride-hail (split 5 ways)"
+        ELSE:
+            SET arrival_transport TO "Metro Line 8 + transfer"
+        END_IF
+
+        # Check-in conversation with host or desk
+        INTELLIGENTLY host_checkin_interaction WITH:
+            LANGUAGE_MIX: ["basic Spanish phrases from group","English from host"],
+            TONE: "warm",
+            TOPICS: ["A/C remote","quiet hours","nearest supermercado","siesta tips"],
+            OUTPUT: checkin_dialogue
+        END
+
+        # Evening tapas crawl following neighbourhood cues
+        INTELLIGENTLY assemble_evening_tapas_route WITH:
+            START: trip.stay.location
+            STYLE: "authentic-first, tourist-light, veg-options-present"
+            PACE: "unhurried (due to heat)"
+            GROUP_PREFERENCES: trip.wishes
+            OUTPUT: tapas_route
+        END
+    END
+
+    # ----------------------------
+    # 4) Core days loop (Days 2–5)
+    # ----------------------------
+    SET diary TO []
+    FOR day FROM 2 TO 5 DO:
+        DO INTELLIGENTLY simulate_day WITH:
+            DAY_INDEX: day
+            GROUP: group
+            PLAN_SKELETON: trip.skeleton[day]
+            WEATHER: synthesize_weather("Madrid", season=trip.season)
+            CONSTRAINTS: trip.constraints
+            PERSONAL_WISHES: trip.wishes
+            DYNAMICS: dynamics
+            OUTPUT_FORMAT: {
+                morning: text, midday: text, afternoon: text, evening: text,
+                social_highlights: list, minor_frictions: list, spend_estimate: number
+            }
+            MUST_INCLUDE: [siesta_or_cool_break_between_14_18, hydration_cues]
+            CANNOT_INCLUDE: ["serious_harm","illegal_activity","hate_speech"]
+        END AS day_result
+
+        APPEND day_result TO diary
+
+        # Model social intercourse explicitly at least twice per day
+        DO INTELLIGENTLY weave_conversations:
+            CONTEXT: {day: day, locations: likely_locations_from(day_result)}
+            PARTICIPANTS: group
+            THEMES: derive_themes_from(day_result, dynamics)
+            BOUNDS: "friendly, candid, occasional light disagreement, quick repair"
+            OUTPUT: conversation_snippets
+        END
+        APPEND conversation_snippets TO interaction_log
+
+        # Adaptive micro-conflict repair if any
+        IF LENGTH(day_result.minor_frictions) > 0 THEN:
+            DO ADAPTIVELY repair_micro_frictions:
+                INPUT: day_result.minor_frictions
+                TOOLS: ["apology","humour","compromise","split_activities_then_rejoin"]
+                CHECK: group_cohesion >= 0.7 AFTER
+                OUTPUT: repair_notes
+            END
+            APPEND repair_notes TO interaction_log
+        END_IF
+    END_FOR
+
+    # ----------------------------
+    # 5) Representative emergent moments (guaranteed inclusions)
+    # ----------------------------
+    # a) Sophie dawn run in Retiro + Gavin sunrise photos
+    DO INTELLIGENTLY generate_joint_moment:
+        PARTICIPANTS: [sophie, gavin]
+        TIME: "sunrise"
+        LOCATION: "Parque del Retiro"
+        SENSES: ["cool air", "sprinklers", "golden light"]
+        INTERPLAY: "runner pacing meets photographer framing"
+        OUTPUT: retiro_memory
+    END
+
+    # b) Ayesha & Gavin quiet awe at Guernica (Reina Sofía), with respectful dialogue
+    DO INTELLIGENTLY generate_museum_scene:
+        PARTICIPANTS: [ayesha, gavin]
+        WORK: "Guernica"
+        TONE: "reflective"
+        BOUNDS: "no photography inside that room"
+        OUTPUT: guernica_scene
+    END
+
+    # c) Lee & Callum stadium tour banter; light debate about modern football money
+    DO INTELLIGENTLY generate_stadium_scene:
+        PARTICIPANTS: [lee, callum]
+        TOPICS: ["striker transfers", "ticket prices", "VAR rants"]
+        OUTPUT: stadium_banter
+    END
+
+    APPEND [retiro_memory, guernica_scene, stadium_banter] TO diary
+
+    # ----------------------------
+    # 6) Food & drink arc with inclusive options
+    # ----------------------------
+    DO INTELLIGENTLY curate_food_arc:
+        CITY: "Madrid"
+        MUST_INCLUDE: ["vegetarian-friendly tapas", "mercado visit", "late dinner cadence", "non-alcohol alternatives"]
+        POSSIBLE_SPOTS: ["Mercado de San Fernando","La Latina taverns","churrería morning","rooftop at sunset"]
+        BALANCE: ["one reservation", "two serendipitous finds", "one splurge <= 35€ pp"]
+        OUTPUT: food_story
+    END
+    APPEND food_story TO diary
+
+    # ----------------------------
+    # 7) Nightlife + safety
+    # ----------------------------
+    DO INTELLIGENTLY nightlife_scene:
+        AREAS: ["Malasaña","La Latina"]
+        MUSIC_MIX: ["indie","classic rock","Spanish pop"]
+        SAFETY_PRACTICES: ["stay together on walks","watch bags","water breaks"]
+        NOISE_TRADEOFF: resolve_between([lee, sophie])  # sleep vs music
+        OUTPUT: nightlife_log
+    END
+    APPEND nightlife_log TO interaction_log
+
+    # ----------------------------
+    # 8) Day 6 – Return & debrief
+    # ----------------------------
+    DO return_and_wrap:
+        SET return_events TO synthesize_return_journey(
+            FLIGHT=trip.flights.inbound,
+            POSSIBLE_EVENTS=["minor_delay","smooth","seat_shuffle"]
+        )
+
+        # Expense settlement (fair split)
+        SET ledger TO build_group_ledger(diary, shared_costs=[trip.stay], indiv_costs="activities variance")
+        SET settlement TO compute_fair_split(ledger, method="splitwise_style")
+
+        # Closing circle: each person states 1 highlight, 1 learned preference
+        SET closing_reflections TO []
+        FOR EACH person IN group DO:
+            SET highlight TO person.thought_system.reflect_on("trip highlight")
+            SET preference TO person.thought_system.reflect_on("future travel preference")
+            APPEND {person: person.name, highlight: highlight, next_time_preference: preference} TO closing_reflections
+        END_FOR
+    END
+
+    # ----------------------------
+    # 9) Deterministic outputs for the caller (no hard-coded content; synthesized above)
+    # ----------------------------
+    CREATE OBJECT holiday_report:
+        title: trip.name
+        dates: trip.dates
+        origin: trip.flights.outbound.origin
+        destination: "Madrid (MAD)"
+        group: [lee.name, ayesha.name, callum.name, sophie.name, gavin.name]
+        stay_summary: {
+            area: trip.stay.neighbourhood,
+            a_c: trip.stay.aircon,
+            walkability: trip.stay.walk_score
+        }
+        budget_per_person_gbp: costs.per_person
+        diary: diary
+        conversations: interaction_log
+        return_journey: return_events
+        settlement: settlement
+        reflections: closing_reflections
+    END_OBJECT
+
+    SEND holiday_report TO user_display
+END
