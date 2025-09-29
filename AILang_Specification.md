@@ -1,6 +1,6 @@
 **AILang: Complete Language Specification**
 
-**Version 0.4**
+**Version 0.4.1**
 
 **Author**: Edward Chalk (fleetingswallow.com)
 
@@ -819,19 +819,6 @@ END_IF
 
 Mathematical operations in AILang follow standard mathematical notation and conventions while remaining readable in natural language.
 
-#### Mathematical Declaration Block
-
-Define mathematical context and constraints:
-
-```
-#ailang
-MATHEMATICAL_CONTEXT:
-    DOMAIN: [real|complex|quaternion|tensor]
-    PRECISION: [symbolic|high|standard|adaptive]
-    CONSTRAINTS: [list_of_mathematical_constraints]
-END_CONTEXT
-```
-
 #### Basic Mathematical Operations
 
 ##### Algebraic Operations
@@ -1273,50 +1260,79 @@ The imaginary unit `i` (where i² = -1) is available when working in complex dom
   - Auto-promote to `DOMAIN: complex` if allowed by constraints
 - Explicit domain promotion: `SET_DOMAIN complex` when complex arithmetic is needed
 
+###### Example: Complex Number Operations
 ```
 #ailang
-# The imaginary unit i (requires complex domain)
-MATHEMATICAL_CONTEXT:
+WITH MATHEMATICAL_CONTEXT:
     DOMAIN: complex  # Required for i
+    
+    SET i TO sqrt(-1)  # Now valid
+    ASSERT i^2 EQUALS -1
+    
+    # Complex number construction - multiple natural forms
+    SET z1 TO 3 + 4*i  # Rectangular form
+    SET z2 TO COMPLEX(3, 4)  # Explicit constructor
+    SET z3 TO 5 * e^(i*pi/4)  # Euler form
+    SET z4 TO 5 * (cos(pi/4) + i*sin(pi/4))  # Trigonometric form
+    
+    # Basic complex arithmetic
+    SET sum TO (3 + 4*i) + (1 - 2*i)  # = 4 + 2i
+    SET product TO (3 + 4*i) * (1 - 2*i)  # = 11 - 2i
+    SET quotient TO (3 + 4*i) / (1 - 2*i)  # = -1 + 2i
+    SET power TO (1 + i)^8  # = 16
+    
+    # Complex properties
+    SET conjugate TO CONJUGATE(3 + 4*i)  # = 3 - 4i
+    SET magnitude TO |3 + 4*i|  # = 5
+    SET argument TO ARG(3 + 4*i)  # = atan(4/3)
+    SET real_part TO REAL(z1)  # = 3
+    SET imaginary_part TO IMAG(z1)  # = 4
+    
+    # Euler's identity - the most beautiful equation in mathematics
+    ASSERT e^(i*pi) + 1 EQUALS 0
+    
+    # De Moivre's theorem
+    SET n TO 5
+    ASSERT (cos(theta) + i*sin(theta))^n EQUALS cos(n*theta) + i*sin(n*theta)
+    
+    # Complex roots and logarithms
+    SET cube_roots TO SOLVE z^3 = 1  # Returns 1, e^(2πi/3), e^(4πi/3)
+    SET complex_log TO ln(-1)  # = i*pi (principal branch)
+    SET multi_valued_log TO LOG(z) + 2*pi*i*k WHERE k IN integers
+    
+    # Complex analytic functions
+    SET complex_sin TO sin(x + i*y)  # = sin(x)*cosh(y) + i*cos(x)*sinh(y)
+    SET complex_exp TO e^(x + i*y)  # = e^x * (cos(y) + i*sin(y))
+        
+END_CONTEXT
+```
+
+###### Example: Mixed Contexts
+
+```
+#ailang
+# Default context for general calculations
+SET_MATHEMATICAL_CONTEXT:
+    DOMAIN: real
+    PRECISION: standard
+END_SET
+
+# Calculations use real domain
+SET x TO 5
+SET y TO sqrt(25)  # Valid
+
+# Override with complex context for specific operations
+WITH MATHEMATICAL_CONTEXT:
+    DOMAIN: complex
+    PRECISION: high
+    
+    SET z TO sqrt(-1)  # Valid only within this block
+    SET result TO e^(i*pi)
+    
 END_CONTEXT
 
-SET i TO sqrt(-1)  # Fundamental definition
-ASSERT i^2 EQUALS -1
-
-# Complex number construction - multiple natural forms
-SET z1 TO 3 + 4*i  # Rectangular form
-SET z2 TO COMPLEX(3, 4)  # Explicit constructor
-SET z3 TO 5 * e^(i*pi/4)  # Euler form
-SET z4 TO 5 * (cos(pi/4) + i*sin(pi/4))  # Trigonometric form
-
-# Basic complex arithmetic
-SET sum TO (3 + 4*i) + (1 - 2*i)  # = 4 + 2i
-SET product TO (3 + 4*i) * (1 - 2*i)  # = 11 - 2i
-SET quotient TO (3 + 4*i) / (1 - 2*i)  # = -1 + 2i
-SET power TO (1 + i)^8  # = 16
-
-# Complex properties
-SET conjugate TO CONJUGATE(3 + 4*i)  # = 3 - 4i
-SET magnitude TO |3 + 4*i|  # = 5
-SET argument TO ARG(3 + 4*i)  # = atan(4/3)
-SET real_part TO REAL(z1)  # = 3
-SET imaginary_part TO IMAG(z1)  # = 4
-
-# Euler's identity - the most beautiful equation in mathematics
-ASSERT e^(i*pi) + 1 EQUALS 0
-
-# De Moivre's theorem
-SET n TO 5
-ASSERT (cos(theta) + i*sin(theta))^n EQUALS cos(n*theta) + i*sin(n*theta)
-
-# Complex roots and logarithms
-SET cube_roots TO SOLVE z^3 = 1  # Returns 1, e^(2πi/3), e^(4πi/3)
-SET complex_log TO ln(-1)  # = i*pi (principal branch)
-SET multi_valued_log TO LOG(z) + 2*pi*i*k WHERE k IN integers
-
-# Complex analytic functions
-SET complex_sin TO sin(x + i*y)  # = sin(x)*cosh(y) + i*cos(x)*sinh(y)
-SET complex_exp TO e^(x + i*y)  # = e^x * (cos(y) + i*sin(y))
+# Back to real domain (default context)
+SET a TO 10  # Uses real domain
 ```
 
 ##### Trigonometry and Extended Applications
@@ -1816,13 +1832,56 @@ PROVE_BY_CONTRADICTION:
 END_PROVE
 ```
 
-#### Mathematical Conventions and Domain Rules
+#### Mathematical Contexts
 
-##### Logarithm Notation
-- **`ln(x)`**: Natural logarithm (base e)
-- **`log(x, base=b)`**: Logarithm with specified base b
-- **`log(x)`**: Defaults to base 10 unless otherwise specified
-- **`log2(x)`**: Binary logarithm (base 2)
+##### Mathematical Context Block
+Mathematical contexts **wrap** the operations they affect:
+
+```
+#ailang
+WITH MATHEMATICAL_CONTEXT:
+    DOMAIN: [real|complex|quaternion|tensor]
+    PRECISION: [symbolic|high|standard|adaptive]
+    CONSTRAINTS: [list_of_mathematical_constraints]
+    
+    # Mathematical operations within this context
+    [mathematical operations]
+    
+END_CONTEXT
+```
+##### Persistent Mathematical Context
+
+For setting a default mathematical context that remains active:
+
+```
+#ailang
+SET_MATHEMATICAL_CONTEXT:
+    DOMAIN: complex
+    PRECISION: high
+END_SET
+
+# Context remains active until changed
+# Can be overridden by WITH blocks
+```
+
+##### Context Scope Rules
+
+1. **WITH blocks**: Create scoped contexts that wrap operations
+   - Context applies only to operations within the block
+   - Context ends at END_CONTEXT or END_WITH
+   - Can be nested
+
+2. **SET blocks** (optional): Create persistent default contexts
+   - Remain active until explicitly changed
+   - Can be overridden by WITH blocks
+   - When a WITH block ends, returns to the persistent context
+
+3. **Context Priority**:
+   - Innermost WITH block takes precedence
+   - SET contexts provide defaults when no WITH block is active
+   - Explicit WITH always overrides SET
+
+#### Mathematical Conventions and Domain Rules
 
 ##### Block Terminators
 All mathematical blocks follow consistent termination patterns:
@@ -1831,6 +1890,12 @@ All mathematical blocks follow consistent termination patterns:
 - PDE solving: `SOLVE_PDE ... END_SOLVE`
 - Integration regions: `OVER_REGION { ... }`
 - Conditional blocks within math: `IF ... THEN ... ELSE ... END_IF`
+
+##### Logarithm Notation
+- **`ln(x)`**: Natural logarithm (base e)
+- **`log(x, base=b)`**: Logarithm with specified base b
+- **`log(x)`**: Defaults to base 10 unless otherwise specified
+- **`log2(x)`**: Binary logarithm (base 2)
 
 ##### Mathematical Proof Notation
 Supports both symbolic and spelled-out quantifiers:
@@ -1882,58 +1947,89 @@ When operations cross domain boundaries:
 
 #### Extended Example Programs with Mathematics
 
+##### Nested Mathematical Contexts
+
+```
+#ailang
+WITH MATHEMATICAL_CONTEXT:
+    DOMAIN: real
+    PRECISION: standard
+    
+    # Real number calculations
+    SET distance TO sqrt(x^2 + y^2)
+    
+    # Need complex numbers for a specific calculation
+    WITH MATHEMATICAL_CONTEXT:
+        DOMAIN: complex
+        PRECISION: high
+        
+        # Complex operations
+        SET phase TO e^(i*theta)
+        SET amplitude TO |phase|
+        
+    END_CONTEXT
+    
+    # Back to real domain
+    SET final_result TO distance * 2
+    
+END_CONTEXT
+```
+
 ##### Example: Black-Scholes Option Pricing
 
 ```
 #ailang
 # Black-Scholes Option Pricing Model
-MATHEMATICAL_CONTEXT:
+WITH MATHEMATICAL_CONTEXT:
     DOMAIN: real
     PRECISION: high
     CONSTRAINTS: [S > 0, K > 0, r >= 0, T > 0, sigma > 0]
-END_CONTEXT
 
-DEFINE PROCEDURE black_scholes_call WITH PARAMETERS [S, K, r, T, sigma]:
-    # Validate parameters
-    ASSERT S > 0 "Stock price must be positive"
-    ASSERT K > 0 "Strike price must be positive"
-    ASSERT T > 0 "Time to maturity must be positive"
-    ASSERT sigma > 0 "Volatility must be positive"
-    ASSERT r >= 0 "Risk-free rate must be non-negative"
+    DEFINE PROCEDURE black_scholes_call WITH PARAMETERS [S, K, r, T, sigma]:
+        # Validate parameters
+        ASSERT S > 0 "Stock price must be positive"
+        ASSERT K > 0 "Strike price must be positive"
+        ASSERT T > 0 "Time to maturity must be positive"
+        ASSERT sigma > 0 "Volatility must be positive"
+        ASSERT r >= 0 "Risk-free rate must be non-negative"
+        
+        # S = current stock price
+        # K = strike price
+        # r = risk-free rate
+        # T = time to maturity
+        # sigma = volatility
+        
+        # Calculate d1 and d2
+        SET d1 TO (ln(S/K) + (r + sigma²/2)*T) / (sigma*sqrt(T))
+        SET d2 TO d1 - sigma*sqrt(T)
+        
+        # Standard normal cumulative distribution
+        SET N_d1 TO CUMULATIVE_NORMAL(d1)
+        SET N_d2 TO CUMULATIVE_NORMAL(d2)
+        
+        # Black-Scholes formula
+        SET call_price TO S*N_d1 - K*e^(-r*T)*N_d2
+        
+        # Calculate Greeks
+        SET delta TO N_d1
+        SET gamma TO NORMAL_PDF(d1) / (S*sigma*sqrt(T))
+        SET theta TO -(S*NORMAL_PDF(d1)*sigma)/(2*sqrt(T)) - r*K*e^(-r*T)*N_d2
+        SET vega TO S*NORMAL_PDF(d1)*sqrt(T)
+        SET rho TO K*T*e^(-r*T)*N_d2
+        
+        RETURN {
+            price: call_price,
+            delta: delta,
+            gamma: gamma,
+            theta: theta,
+            vega: vega,
+            rho: rho
+        }
+        
+        # Call the procedure within the same context
+        SET option_value TO CALL black_scholes_call WITH [100, 110, 0.05, 0.25, 0.20]
     
-    # S = current stock price
-    # K = strike price
-    # r = risk-free rate
-    # T = time to maturity
-    # sigma = volatility
-    
-    # Calculate d1 and d2
-    SET d1 TO (ln(S/K) + (r + sigma²/2)*T) / (sigma*sqrt(T))
-    SET d2 TO d1 - sigma*sqrt(T)
-    
-    # Standard normal cumulative distribution
-    SET N_d1 TO CUMULATIVE_NORMAL(d1)
-    SET N_d2 TO CUMULATIVE_NORMAL(d2)
-    
-    # Black-Scholes formula
-    SET call_price TO S*N_d1 - K*e^(-r*T)*N_d2
-    
-    # Calculate Greeks
-    SET delta TO N_d1
-    SET gamma TO NORMAL_PDF(d1) / (S*sigma*sqrt(T))
-    SET theta TO -(S*NORMAL_PDF(d1)*sigma)/(2*sqrt(T)) - r*K*e^(-r*T)*N_d2
-    SET vega TO S*NORMAL_PDF(d1)*sqrt(T)
-    SET rho TO K*T*e^(-r*T)*N_d2
-    
-    RETURN {
-        price: call_price,
-        delta: delta,
-        gamma: gamma,
-        theta: theta,
-        vega: vega,
-        rho: rho
-    }
-END_PROCEDURE
+END_CONTEXT
 
 # Example usage
 SET option_value TO CALL black_scholes_call WITH [100, 110, 0.05, 0.25, 0.20]
@@ -1941,63 +2037,62 @@ SEND option_value TO display
 ```
 
 ##### Example: Quantum Harmonic Oscillator
-
 ```
 #ailang
 # Quantum Harmonic Oscillator Energy Levels and Wavefunctions
 MATHEMATICAL_CONTEXT:
     DOMAIN: complex
     PRECISION: symbolic
-END_CONTEXT
 
-DEFINE PROCEDURE quantum_harmonic_oscillator WITH PARAMETERS [n, x, m, omega, hbar]:
-    # n = quantum number
-    # x = position
-    # m = mass
-    # omega = angular frequency
-    # hbar = reduced Planck constant
-    
-    # Define Hamiltonian operator
-    SET hamiltonian TO -(hbar^2/(2*m)) * d²/dx² + (1/2)*m*omega^2*x^2
-    
-    # Calculate energy level
-    SET E_n TO hbar*omega*(n + 1/2)
-    
-    # Calculate characteristic length
-    SET x_0 TO sqrt(hbar/(m*omega))
-    
-    # Hermite polynomial H_n
-    SET H_n TO HERMITE_POLYNOMIAL(n, x/x_0)
-    
-    # Wavefunction
-    SET normalization TO 1/sqrt(2^n * factorial(n)) * (m*omega/(pi*hbar))^(1/4)
-    SET gaussian TO e^(-(x²)/(2*x_0²))
-    SET psi_n TO normalization * H_n * gaussian
-    
-    # Probability density
-    SET probability_density TO |psi_n|²
-    
-    # Expectation values
-    SET position_expectation TO INTEGRATE x * probability_density FROM -infinity TO infinity
-    SET momentum_expectation TO 0  # Always zero for energy eigenstates
-    SET position_uncertainty TO sqrt(INTEGRATE x² * probability_density FROM -infinity TO infinity)
-    SET momentum_uncertainty TO sqrt((n + 1/2) * hbar * m * omega)
-    
-    # Verify uncertainty principle
-    SET uncertainty_product TO position_uncertainty * momentum_uncertainty
-    ASSERT uncertainty_product >= hbar/2
-    
-    RETURN {
-        energy: E_n,
-        wavefunction: psi_n,
-        probability_density: probability_density,
-        uncertainties: {
-            position: position_uncertainty,
-            momentum: momentum_uncertainty,
-            product: uncertainty_product
+    DEFINE PROCEDURE quantum_harmonic_oscillator WITH PARAMETERS [n, x, m, omega, hbar]:
+        # n = quantum number
+        # x = position
+        # m = mass
+        # omega = angular frequency
+        # hbar = reduced Planck constant
+        
+        # Define Hamiltonian operator
+        SET hamiltonian TO -(hbar^2/(2*m)) * d²/dx² + (1/2)*m*omega^2*x^2
+        
+        # Calculate energy level
+        SET E_n TO hbar*omega*(n + 1/2)
+        
+        # Calculate characteristic length
+        SET x_0 TO sqrt(hbar/(m*omega))
+        
+        # Hermite polynomial H_n
+        SET H_n TO HERMITE_POLYNOMIAL(n, x/x_0)
+        
+        # Wavefunction
+        SET normalization TO 1/sqrt(2^n * factorial(n)) * (m*omega/(pi*hbar))^(1/4)
+        SET gaussian TO e^(-(x²)/(2*x_0²))
+        SET psi_n TO normalization * H_n * gaussian
+        
+        # Probability density
+        SET probability_density TO |psi_n|²
+        
+        # Expectation values
+        SET position_expectation TO INTEGRATE x * probability_density FROM -infinity TO infinity
+        SET momentum_expectation TO 0  # Always zero for energy eigenstates
+        SET position_uncertainty TO sqrt(INTEGRATE x² * probability_density FROM -infinity TO infinity)
+        SET momentum_uncertainty TO sqrt((n + 1/2) * hbar * m * omega)
+        
+        # Verify uncertainty principle
+        SET uncertainty_product TO position_uncertainty * momentum_uncertainty
+        ASSERT uncertainty_product >= hbar/2
+        
+        RETURN {
+            energy: E_n,
+            wavefunction: psi_n,
+            probability_density: probability_density,
+            uncertainties: {
+                position: position_uncertainty,
+                momentum: momentum_uncertainty,
+                product: uncertainty_product
+            }
         }
-    }
-END_PROCEDURE
+    
+END_CONTEXT
 ```
 
 ##### Example: Fluid Dynamics Simulation
@@ -2008,52 +2103,52 @@ END_PROCEDURE
 MATHEMATICAL_CONTEXT:
     DOMAIN: real
     PRECISION: high
-END_CONTEXT
 
-DEFINE PROCEDURE navier_stokes_2d WITH PARAMETERS [u0, v0, p0, viscosity, dt, dx, dy]:
-    # u0, v0 = initial velocity field components
-    # p0 = initial pressure field
-    # viscosity = kinematic viscosity
-    
-    # Momentum equations with incompressibility constraint
-    SOLVE_PDE_SYSTEM:
-        # x-momentum
-        ∂u/∂t + u*∂u/∂x + v*∂u/∂y = -1/ρ * ∂p/∂x + viscosity*(∂²u/∂x² + ∂²u/∂y²)
+    DEFINE PROCEDURE navier_stokes_2d WITH PARAMETERS [u0, v0, p0, viscosity, dt, dx, dy]:
+        # u0, v0 = initial velocity field components
+        # p0 = initial pressure field
+        # viscosity = kinematic viscosity
         
-        # y-momentum  
-        ∂v/∂t + u*∂v/∂x + v*∂v/∂y = -1/ρ * ∂p/∂y + viscosity*(∂²v/∂x² + ∂²v/∂y²)
+        # Momentum equations with incompressibility constraint
+        SOLVE_PDE_SYSTEM:
+            # x-momentum
+            ∂u/∂t + u*∂u/∂x + v*∂u/∂y = -1/ρ * ∂p/∂x + viscosity*(∂²u/∂x² + ∂²u/∂y²)
+            
+            # y-momentum  
+            ∂v/∂t + u*∂v/∂x + v*∂v/∂y = -1/ρ * ∂p/∂y + viscosity*(∂²v/∂x² + ∂²v/∂y²)
+            
+            # Continuity (incompressibility)
+            ∂u/∂x + ∂v/∂y = 0
+            
+            INITIAL_CONDITIONS: u = u0, v = v0, p = p0
+            BOUNDARY_CONDITIONS: no_slip_walls
+            METHOD: projection_method
+            TIME_STEP: dt
+            SPATIAL_STEP: [dx, dy]
+        END_SOLVE
         
-        # Continuity (incompressibility)
-        ∂u/∂x + ∂v/∂y = 0
+        # Calculate derived quantities
+        SET vorticity TO CURL([u, v])
+        SET stream_function TO SOLVE_POISSON(∂²ψ/∂x² + ∂²ψ/∂y² = -vorticity)
+        SET kinetic_energy TO INTEGRATE 0.5*(u² + v²) OVER_DOMAIN
         
-        INITIAL_CONDITIONS: u = u0, v = v0, p = p0
-        BOUNDARY_CONDITIONS: no_slip_walls
-        METHOD: projection_method
-        TIME_STEP: dt
-        SPATIAL_STEP: [dx, dy]
-    END_SOLVE
+        # Check CFL condition for stability
+        SET max_velocity TO MAX(sqrt(u² + v²))
+        SET CFL_number TO max_velocity * dt / MIN(dx, dy)
+        IF CFL_number > 1 THEN:
+            WARN "Simulation may be unstable: CFL = " + CFL_number
+        END_IF
+        
+        RETURN {
+            velocity_field: [u, v],
+            pressure: p,
+            vorticity: vorticity,
+            stream_function: stream_function,
+            kinetic_energy: kinetic_energy,
+            CFL: CFL_number
+        }
     
-    # Calculate derived quantities
-    SET vorticity TO CURL([u, v])
-    SET stream_function TO SOLVE_POISSON(∂²ψ/∂x² + ∂²ψ/∂y² = -vorticity)
-    SET kinetic_energy TO INTEGRATE 0.5*(u² + v²) OVER_DOMAIN
-    
-    # Check CFL condition for stability
-    SET max_velocity TO MAX(sqrt(u² + v²))
-    SET CFL_number TO max_velocity * dt / MIN(dx, dy)
-    IF CFL_number > 1 THEN:
-        WARN "Simulation may be unstable: CFL = " + CFL_number
-    END_IF
-    
-    RETURN {
-        velocity_field: [u, v],
-        pressure: p,
-        vorticity: vorticity,
-        stream_function: stream_function,
-        kinetic_energy: kinetic_energy,
-        CFL: CFL_number
-    }
-END_PROCEDURE
+END_CONTEXT
 ```
 
 ##### Example: Machine Learning Gradient Descent
@@ -2064,68 +2159,68 @@ END_PROCEDURE
 MATHEMATICAL_CONTEXT:
     DOMAIN: real
     PRECISION: high
-END_CONTEXT
 
-DEFINE PROCEDURE train_neural_network WITH PARAMETERS [X, y, architecture, learning_rate]:
-    # Set regularization strength
-    SET lambda TO 0.0001  # L2 regularization parameter
-    
-    # Initialize weights with Xavier initialization
-    SET weights TO []
-    FOR EACH layer IN architecture DO:
-        SET W TO RANDOM_NORMAL(0, sqrt(2/layer.input_size))
-        APPEND W TO weights
-    END_FOR
-    
-    # Training loop
-    REPEAT 1000 TIMES:
-        # Forward propagation
-        SET activations TO [X]
-        FOR EACH W IN weights DO:
-            SET z TO MATRIX_MULTIPLY(activations[-1], W)
-            SET a TO RELU(z)  # or other activation function
-            APPEND a TO activations
+    DEFINE PROCEDURE train_neural_network WITH PARAMETERS [X, y, architecture, learning_rate]:
+        # Set regularization strength
+        SET lambda TO 0.0001  # L2 regularization parameter
+        
+        # Initialize weights with Xavier initialization
+        SET weights TO []
+        FOR EACH layer IN architecture DO:
+            SET W TO RANDOM_NORMAL(0, sqrt(2/layer.input_size))
+            APPEND W TO weights
         END_FOR
         
-        # Calculate loss (mean squared error)
-        SET predictions TO activations[-1]
-        SET loss TO MEAN((predictions - y)²)
-        
-        # Backward propagation
-        SET gradients TO []
-        SET delta TO 2*(predictions - y) / SIZE(y)
-        
-        FOR layer FROM last TO first DO:
-            # Gradient with respect to weights
-            SET grad_W TO MATRIX_MULTIPLY(TRANSPOSE(activations[layer]), delta)
-            PREPEND grad_W TO gradients
+        # Training loop
+        REPEAT 1000 TIMES:
+            # Forward propagation
+            SET activations TO [X]
+            FOR EACH W IN weights DO:
+                SET z TO MATRIX_MULTIPLY(activations[-1], W)
+                SET a TO RELU(z)  # or other activation function
+                APPEND a TO activations
+            END_FOR
             
-            # Propagate error backward
-            IF layer > 0 THEN:
-                SET delta TO MATRIX_MULTIPLY(delta, TRANSPOSE(weights[layer]))
-                SET delta TO delta * RELU_DERIVATIVE(activations[layer])
+            # Calculate loss (mean squared error)
+            SET predictions TO activations[-1]
+            SET loss TO MEAN((predictions - y)²)
+            
+            # Backward propagation
+            SET gradients TO []
+            SET delta TO 2*(predictions - y) / SIZE(y)
+            
+            FOR layer FROM last TO first DO:
+                # Gradient with respect to weights
+                SET grad_W TO MATRIX_MULTIPLY(TRANSPOSE(activations[layer]), delta)
+                PREPEND grad_W TO gradients
+                
+                # Propagate error backward
+                IF layer > 0 THEN:
+                    SET delta TO MATRIX_MULTIPLY(delta, TRANSPOSE(weights[layer]))
+                    SET delta TO delta * RELU_DERIVATIVE(activations[layer])
+                END_IF
+            END_FOR
+            
+            # Update weights using gradient descent
+            FOR i FROM 0 TO LENGTH(weights) DO:
+                SET weights[i] TO weights[i] - learning_rate * gradients[i]
+                
+                # Optional: Add L2 regularization
+                SET weights[i] TO weights[i] - learning_rate * lambda * weights[i]
+            END_FOR
+            
+            # Check convergence
+            IF loss < 0.001 THEN:
+                BREAK
             END_IF
-        END_FOR
+        END_REPEAT
         
-        # Update weights using gradient descent
-        FOR i FROM 0 TO LENGTH(weights) DO:
-            SET weights[i] TO weights[i] - learning_rate * gradients[i]
-            
-            # Optional: Add L2 regularization
-            SET weights[i] TO weights[i] - learning_rate * lambda * weights[i]
-        END_FOR
-        
-        # Check convergence
-        IF loss < 0.001 THEN:
-            BREAK
-        END_IF
-    END_REPEAT
-    
-    RETURN {
-        trained_weights: weights,
-        final_loss: loss
-    }
-END_PROCEDURE
+        RETURN {
+            trained_weights: weights,
+            final_loss: loss
+        }
+
+END_CONTEXT
 ```
 
 ##### Example: Advanced Financial Options Pricing with Nested Integration
@@ -2136,119 +2231,120 @@ END_PROCEDURE
 MATHEMATICAL_CONTEXT:
     DOMAIN: real
     PRECISION: high
+    
+    DEFINE PROCEDURE price_american_option WITH PARAMETERS [S0, K, r, sigma, T, option_type]:
+        # American options can be exercised early - requires nested conditional integration
+        
+        # Define the optimal exercise boundary (free boundary problem)
+        DEFINE FUNCTION exercise_boundary(t):
+            # Solve for S*(t) where it's optimal to exercise
+            SOLVE_IMPLICIT:
+                EQUATION: option_value(S_star, t) = intrinsic_value(S_star)
+                WHERE intrinsic_value = IF option_type = "call" THEN:
+                    MAX(S_star - K, 0)
+                ELSE:
+                    MAX(K - S_star, 0)
+                END_IF
+            END_SOLVE
+            RETURN S_star
+        END_FUNCTION
+        
+        # Price using integral representation with early exercise
+        SET option_price TO INTEGRATE (
+            # Outer integral over all possible stock prices at maturity
+            INTEGRATE (
+                # Inner integral over all possible early exercise times
+                IF S_t > exercise_boundary(t) AND option_type = "call" THEN:
+                    # Continue holding the option
+                    e^(-r*t) * (
+                        INTEGRATE (
+                            payoff(S_T) * transition_density(S_T | S_t)
+                        ) FROM 0 TO infinity WITH_RESPECT_TO S_T
+                    )
+                ELSE IF S_t < exercise_boundary(t) AND option_type = "put" THEN:
+                    # Continue holding the put option
+                    e^(-r*t) * (
+                        INTEGRATE (
+                            payoff(S_T) * transition_density(S_T | S_t)
+                        ) FROM 0 TO infinity WITH_RESPECT_TO S_T
+                    )
+                ELSE:
+                    # Exercise immediately
+                    e^(-r*t) * intrinsic_value(S_t)
+                END_IF
+            ) FROM 0 TO T WITH_RESPECT_TO t
+        ) FROM 0 TO infinity WITH_RESPECT_TO S_t
+        
+        # Calculate Greeks using nested differentiation
+        SET delta TO DIFFERENTIATE option_price WITH_RESPECT_TO S0
+        
+        SET gamma TO DIFFERENTIATE (
+            DIFFERENTIATE option_price WITH_RESPECT_TO S0
+        ) WITH_RESPECT_TO S0
+        
+        # Vega involves differentiating an integral containing sigma
+        SET vega TO DIFFERENTIATE (
+            INTEGRATE (
+                payoff * normal_density((ln(S/S0) - (r-sigma^2/2)*t)/(sigma*sqrt(t)))
+            ) FROM 0 TO infinity
+        ) WITH_RESPECT_TO sigma
+        
+        # Theta with conditional early exercise
+        SET theta TO DIFFERENTIATE (
+            IF t < optimal_exercise_time THEN:
+                holding_value(t)
+            ELSE:
+                exercise_value(t)
+            END_IF
+        ) WITH_RESPECT_TO t
+        
+        RETURN {
+            price: option_price,
+            delta: delta,
+            gamma: gamma,
+            vega: vega,
+            theta: theta,
+            exercise_boundary: exercise_boundary
+        }
+    END_PROCEDURE
+    
+    # Exotic Option with Path-Dependent Nested Integration
+    DEFINE PROCEDURE price_asian_barrier_option WITH PARAMETERS [S0, K, H, r, sigma, T, n_averaging]:
+        # Asian option with barrier - payoff depends on average and barrier hitting
+        
+        # Price using nested Monte Carlo integration
+        SET price TO MONTE_CARLO_INTEGRATE (
+            # Outer integration - over all paths
+            SET path_sum TO 0
+            SET barrier_hit TO false
+            
+            FOR t FROM 0 TO T STEP dt DO:
+                SET S_t TO S_prev * exp((r - sigma^2/2)*dt + sigma*sqrt(dt)*RANDOM_NORMAL())
+                
+                # Check barrier condition
+                IF S_t >= H THEN:
+                    SET barrier_hit TO true
+                END_IF
+                
+                # Accumulate for averaging
+                IF t IN averaging_dates THEN:
+                    SET path_sum TO path_sum + S_t
+                END_IF
+            END_FOR
+            
+            # Conditional payoff based on barrier and average
+            IF barrier_hit THEN:
+                RETURN 0  # Knock-out barrier hit
+            ELSE:
+                SET average TO path_sum / n_averaging
+                RETURN e^(-r*T) * MAX(average - K, 0)
+            END_IF
+        ) OVER n_paths = 100000
+        
+        RETURN price
+    END_PROCEDURE
+
 END_CONTEXT
-
-DEFINE PROCEDURE price_american_option WITH PARAMETERS [S0, K, r, sigma, T, option_type]:
-    # American options can be exercised early - requires nested conditional integration
-    
-    # Define the optimal exercise boundary (free boundary problem)
-    DEFINE FUNCTION exercise_boundary(t):
-        # Solve for S*(t) where it's optimal to exercise
-        SOLVE_IMPLICIT:
-            EQUATION: option_value(S_star, t) = intrinsic_value(S_star)
-            WHERE intrinsic_value = IF option_type = "call" THEN:
-                MAX(S_star - K, 0)
-            ELSE:
-                MAX(K - S_star, 0)
-            END_IF
-        END_SOLVE
-        RETURN S_star
-    END_FUNCTION
-    
-    # Price using integral representation with early exercise
-    SET option_price TO INTEGRATE (
-        # Outer integral over all possible stock prices at maturity
-        INTEGRATE (
-            # Inner integral over all possible early exercise times
-            IF S_t > exercise_boundary(t) AND option_type = "call" THEN:
-                # Continue holding the option
-                e^(-r*t) * (
-                    INTEGRATE (
-                        payoff(S_T) * transition_density(S_T | S_t)
-                    ) FROM 0 TO infinity WITH_RESPECT_TO S_T
-                )
-            ELSE IF S_t < exercise_boundary(t) AND option_type = "put" THEN:
-                # Continue holding the put option
-                e^(-r*t) * (
-                    INTEGRATE (
-                        payoff(S_T) * transition_density(S_T | S_t)
-                    ) FROM 0 TO infinity WITH_RESPECT_TO S_T
-                )
-            ELSE:
-                # Exercise immediately
-                e^(-r*t) * intrinsic_value(S_t)
-            END_IF
-        ) FROM 0 TO T WITH_RESPECT_TO t
-    ) FROM 0 TO infinity WITH_RESPECT_TO S_t
-    
-    # Calculate Greeks using nested differentiation
-    SET delta TO DIFFERENTIATE option_price WITH_RESPECT_TO S0
-    
-    SET gamma TO DIFFERENTIATE (
-        DIFFERENTIATE option_price WITH_RESPECT_TO S0
-    ) WITH_RESPECT_TO S0
-    
-    # Vega involves differentiating an integral containing sigma
-    SET vega TO DIFFERENTIATE (
-        INTEGRATE (
-            payoff * normal_density((ln(S/S0) - (r-sigma^2/2)*t)/(sigma*sqrt(t)))
-        ) FROM 0 TO infinity
-    ) WITH_RESPECT_TO sigma
-    
-    # Theta with conditional early exercise
-    SET theta TO DIFFERENTIATE (
-        IF t < optimal_exercise_time THEN:
-            holding_value(t)
-        ELSE:
-            exercise_value(t)
-        END_IF
-    ) WITH_RESPECT_TO t
-    
-    RETURN {
-        price: option_price,
-        delta: delta,
-        gamma: gamma,
-        vega: vega,
-        theta: theta,
-        exercise_boundary: exercise_boundary
-    }
-END_PROCEDURE
-
-# Exotic Option with Path-Dependent Nested Integration
-DEFINE PROCEDURE price_asian_barrier_option WITH PARAMETERS [S0, K, H, r, sigma, T, n_averaging]:
-    # Asian option with barrier - payoff depends on average and barrier hitting
-    
-    # Price using nested Monte Carlo integration
-    SET price TO MONTE_CARLO_INTEGRATE (
-        # Outer integration - over all paths
-        SET path_sum TO 0
-        SET barrier_hit TO false
-        
-        FOR t FROM 0 TO T STEP dt DO:
-            SET S_t TO S_prev * exp((r - sigma^2/2)*dt + sigma*sqrt(dt)*RANDOM_NORMAL())
-            
-            # Check barrier condition
-            IF S_t >= H THEN:
-                SET barrier_hit TO true
-            END_IF
-            
-            # Accumulate for averaging
-            IF t IN averaging_dates THEN:
-                SET path_sum TO path_sum + S_t
-            END_IF
-        END_FOR
-        
-        # Conditional payoff based on barrier and average
-        IF barrier_hit THEN:
-            RETURN 0  # Knock-out barrier hit
-        ELSE:
-            SET average TO path_sum / n_averaging
-            RETURN e^(-r*T) * MAX(average - K, 0)
-        END_IF
-    ) OVER n_paths = 100000
-    
-    RETURN price
-END_PROCEDURE
 ```
 
 ##### Example: Quantum Field Theory with Nested Path Integrals
@@ -2259,66 +2355,66 @@ END_PROCEDURE
 MATHEMATICAL_CONTEXT:
     DOMAIN: complex
     PRECISION: symbolic
-END_CONTEXT
 
-DEFINE PROCEDURE quantum_path_integral WITH PARAMETERS [initial_state, final_state, lagrangian]:
-    # Path integral: ∫D[x(t)] exp(iS[x]/ℏ) where S is the action
-    
-    # Discretize paths and integrate over all possible trajectories
-    SET amplitude TO PATH_INTEGRATE (
-        # Action functional with conditional potential
-        SET action TO INTEGRATE (
-            lagrangian(x, dx/dt, t) WHERE:
-                lagrangian = IF in_potential_well(x) THEN:
-                    0.5*m*(dx/dt)^2 - V_well(x)
-                ELSE IF in_barrier_region(x) THEN:
-                    0.5*m*(dx/dt)^2 - V_barrier(x) + 
-                    i*GAMMA*tunneling_rate(x)  # Complex potential for tunneling
-                ELSE:
-                    0.5*m*(dx/dt)^2  # Free particle
-                END_IF
-        ) FROM t_initial TO t_final WITH_RESPECT_TO t
+    DEFINE PROCEDURE quantum_path_integral WITH PARAMETERS [initial_state, final_state, lagrangian]:
+        # Path integral: ∫D[x(t)] exp(iS[x]/ℏ) where S is the action
         
-        # Weight by exponential of action
-        SET weight TO e^(i*action/hbar)
+        # Discretize paths and integrate over all possible trajectories
+        SET amplitude TO PATH_INTEGRATE (
+            # Action functional with conditional potential
+            SET action TO INTEGRATE (
+                lagrangian(x, dx/dt, t) WHERE:
+                    lagrangian = IF in_potential_well(x) THEN:
+                        0.5*m*(dx/dt)^2 - V_well(x)
+                    ELSE IF in_barrier_region(x) THEN:
+                        0.5*m*(dx/dt)^2 - V_barrier(x) + 
+                        i*GAMMA*tunneling_rate(x)  # Complex potential for tunneling
+                    ELSE:
+                        0.5*m*(dx/dt)^2  # Free particle
+                    END_IF
+            ) FROM t_initial TO t_final WITH_RESPECT_TO t
+            
+            # Weight by exponential of action
+            SET weight TO e^(i*action/hbar)
+            
+            # Conditional boundary constraints
+            IF satisfies_boundary_conditions(path) THEN:
+                RETURN weight * transition_amplitude(path)
+            ELSE:
+                RETURN 0
+            END_IF
+        ) OVER all_paths FROM initial_state TO final_state
         
-        # Conditional boundary constraints
-        IF satisfies_boundary_conditions(path) THEN:
-            RETURN weight * transition_amplitude(path)
-        ELSE:
-            RETURN 0
-        END_IF
-    ) OVER all_paths FROM initial_state TO final_state
-    
-    # Normalize and extract observables
-    SET norm TO PATH_INTEGRATE |weight|^2 OVER all_paths
-    SET normalized_amplitude TO amplitude / sqrt(norm)
-    
-    # Calculate expectation values using functional derivatives
-    SET position_expectation TO FUNCTIONAL_DERIVATIVE (
-        ln(amplitude)
-    ) WITH_RESPECT_TO source_field AT source=0
-    
-    # Vacuum-to-vacuum amplitude with interactions
-    SET vacuum_persistence TO PATH_INTEGRATE (
-        exp(i * INTEGRATE (
-            L_0 + L_int WHERE:
-                L_int = IF coupling_on THEN:
-                    SUM(n=2 TO 4) OF (
-                        g_n/n! * phi^n
-                    )
-                ELSE:
-                    0
-                END_IF
-        ) FROM -infinity TO infinity)
-    ) OVER field_configurations
-    
-    RETURN {
-        transition_amplitude: normalized_amplitude,
-        vacuum_persistence: vacuum_persistence,
-        position_expectation: position_expectation
-    }
-END_PROCEDURE
+        # Normalize and extract observables
+        SET norm TO PATH_INTEGRATE |weight|^2 OVER all_paths
+        SET normalized_amplitude TO amplitude / sqrt(norm)
+        
+        # Calculate expectation values using functional derivatives
+        SET position_expectation TO FUNCTIONAL_DERIVATIVE (
+            ln(amplitude)
+        ) WITH_RESPECT_TO source_field AT source=0
+        
+        # Vacuum-to-vacuum amplitude with interactions
+        SET vacuum_persistence TO PATH_INTEGRATE (
+            exp(i * INTEGRATE (
+                L_0 + L_int WHERE:
+                    L_int = IF coupling_on THEN:
+                        SUM(n=2 TO 4) OF (
+                            g_n/n! * phi^n
+                        )
+                    ELSE:
+                        0
+                    END_IF
+            ) FROM -infinity TO infinity)
+        ) OVER field_configurations
+        
+        RETURN {
+            transition_amplitude: normalized_amplitude,
+            vacuum_persistence: vacuum_persistence,
+            position_expectation: position_expectation
+        }
+
+END_CONTEXT
 ```
 
 ##### Example: Climate Model with Nested Integration Over Time and Space
@@ -2474,170 +2570,172 @@ END_PROCEDURE
 MATHEMATICAL_CONTEXT:
     DOMAIN: complex
     PRECISION: high
+
+    DEFINE PROCEDURE process_radar_signal WITH PARAMETERS [raw_signal, carrier_freq, sample_rate, c, antenna_spacing]:
+        # Radar uses complex I/Q (In-phase/Quadrature) signals
+        # c = speed of light (typically 299792458 m/s)
+        
+        SET speed_of_light TO c
+        SET wavelength TO speed_of_light / carrier_freq
+        
+        # Step 1: Demodulate received signal to baseband using complex exponential
+        SET t TO LINSPACE(0, LENGTH(raw_signal)/sample_rate, LENGTH(raw_signal))
+        SET demodulation_signal TO e^(-i*2*pi*carrier_freq*t)
+        SET baseband_signal TO raw_signal * demodulation_signal
+        
+        # Step 2: Apply matched filter (pulse compression)
+        # Transmitted chirp: s(t) = e^(i*pi*α*t²) where α is chirp rate
+        SET chirp_rate TO 1e12  # Hz/s
+        SET matched_filter TO CONJUGATE(e^(i*pi*chirp_rate*t^2))
+        SET compressed_signal TO CONVOLVE(baseband_signal, matched_filter)
+        
+        # Step 3: Range-Doppler processing using 2D FFT
+        # Arrange data into range-Doppler matrix
+        SET range_bins TO 512
+        SET doppler_bins TO 256
+        SET data_matrix TO RESHAPE(compressed_signal, [range_bins, doppler_bins])
+        
+        # First FFT for range processing
+        FOR EACH column IN data_matrix DO:
+            SET range_fft TO CALL fast_fourier_transform WITH [column]
+            SET data_matrix[column] TO range_fft
+        END_FOR
+        
+        # Second FFT for Doppler processing
+        FOR EACH row IN data_matrix DO:
+            SET doppler_fft TO CALL fast_fourier_transform WITH [row]
+            SET data_matrix[row] TO doppler_fft
+        END_FOR
+        
+        # Step 4: Convert to polar coordinates for target detection
+        SET range_doppler_map TO |data_matrix|^2  # Power spectrum
+        
+        # Step 5: Target detection using CFAR (Constant False Alarm Rate)
+        SET noise_floor TO MEAN(range_doppler_map)
+        SET threshold TO noise_floor * 10^(12/10)  # 12 dB above noise
+        
+        SET targets TO []
+        FOR r FROM 0 TO range_bins-1 DO:
+            FOR d FROM 0 TO doppler_bins-1 DO:
+                IF range_doppler_map[r,d] > threshold THEN:
+                    # Convert bin indices to physical units
+                    SET range TO r * speed_of_light / (2 * sample_rate)
+                    SET velocity TO d * speed_of_light * carrier_freq / (2 * doppler_bins * sample_rate)
+                    
+                    # Extract phase for angle measurement (monopulse)
+                    SET phase TO ARG(data_matrix[r,d])
+                    
+                    # Monopulse processing for angle estimation
+                    # Note: simplified monopulse - actual implementation requires antenna array geometry
+                    SET azimuth TO arcsin(phase / (2*pi * antenna_spacing / wavelength))
+                    SET elevation TO arcsin(phase / (2*pi * antenna_spacing / wavelength))  # Simplified
+                    
+                    APPEND {
+                        range: range,
+                        velocity: velocity, 
+                        azimuth: azimuth,  # Keep in radians for internal processing
+                        elevation: elevation,  # Keep in radians for internal processing
+                        azimuth_deg: DEGREES(azimuth),  # Degrees for display
+                        elevation_deg: DEGREES(elevation),  # Degrees for display
+                        snr: 10*log10(range_doppler_map[r,d] / noise_floor)
+                    } TO targets
+                END_IF
+            END_FOR
+        END_FOR
+        
+        # Step 6: Kalman filtering for tracking (uses complex state space)
+        # Initialize Kalman filter matrices
+        SET measurement_noise TO 10  # Measurement uncertainty
+        SET P TO IDENTITY(6) * 100  # Initial covariance
+        SET H TO OBSERVATION_MATRIX(3, 6)  # Maps state to measurements
+        SET R TO IDENTITY(3) * measurement_noise  # Measurement noise covariance
+        
+        FOR EACH target IN targets DO:
+            # State vector: [x, y, z, vx, vy, vz]
+            # Convert from polar to Cartesian for state representation
+            SET x TO target.range * cos(target.elevation) * cos(target.azimuth)
+            SET y TO target.range * cos(target.elevation) * sin(target.azimuth)
+            SET z TO target.range * sin(target.elevation)
+            
+            # Velocity vector from Doppler (radial) and estimated tangential components
+            SET radial_velocity TO target.velocity  # From Doppler
+            SET state TO [x, y, z, radial_velocity, 0, 0]  # Initialize with radial velocity
+            
+            # Predict next position
+            SET dt TO 0.1  # 100ms update rate
+            SET predicted_state TO state + [state[3]*dt, state[4]*dt, state[5]*dt, 0, 0, 0]
+            
+            # Innovation using complex measurements
+            SET measurement TO target.range * e^(i*target.azimuth)
+            SET innovation TO measurement - predicted_state
+            
+            # Update with complex Kalman gain
+            SET kalman_gain TO P*H' / (H*P*H' + R)
+            SET updated_state TO predicted_state + kalman_gain * innovation
+            
+            SET target.predicted_position TO updated_state
+        END_FOR
+        
+        RETURN {
+            targets: targets,
+            range_doppler_map: range_doppler_map,
+            detection_performance: {
+                # Note: simplified detection models - actual performance depends on many factors
+                cfar_threshold: threshold,
+                estimated_pfa: 1e-6  # Typical CFAR design target
+            }
+        }
+    END_PROCEDURE
+    
+    # Phased Array Beamforming with Complex Weights
+    DEFINE PROCEDURE beamform_phased_array WITH PARAMETERS [element_signals, steering_angle, carrier_frequency]:
+        SET n_elements TO LENGTH(element_signals)
+        SET speed_of_light TO 299792458  # m/s
+        SET wavelength TO speed_of_light / carrier_frequency
+        SET element_spacing TO wavelength / 2  # Half wavelength spacing
+        
+        # Calculate complex beamforming weights using trigonometry
+        SET weights TO []
+        FOR n FROM 0 TO n_elements-1 DO:
+            # Progressive phase shift for beam steering
+            SET phase_shift TO 2*pi * element_spacing * n * sin(steering_angle) / wavelength
+            SET weight TO e^(-i*phase_shift)  # Complex weight
+            APPEND weight TO weights
+        END_FOR
+        
+        # Apply weights and sum (complex multiplication)
+        SET beamformed_signal TO 0 + 0*i
+        FOR n FROM 0 TO n_elements-1 DO:
+            SET beamformed_signal TO beamformed_signal + element_signals[n] * weights[n]
+        END_FOR
+        
+        # Calculate beam pattern
+        SET angles TO LINSPACE(-pi/2, pi/2, 360)
+        SET beam_pattern TO []
+        FOR theta IN angles DO:
+            SET array_factor TO 0 + 0*i
+            FOR n FROM 0 TO n_elements-1 DO:
+                SET phase TO 2*pi * element_spacing * n * sin(theta) / wavelength
+                SET array_factor TO array_factor + weights[n] * e^(i*phase)
+            END_FOR
+            APPEND 20*log10(|array_factor|) TO beam_pattern  # dB scale
+        END_FOR
+        
+        # Calculate beam characteristics
+        SET main_lobe_width TO 2*arcsin(wavelength / (n_elements * element_spacing))  # Approximate
+        SET max_sidelobe TO MAX(beam_pattern WHERE |angle - steering_angle| > main_lobe_width)
+        
+        RETURN {
+            output_signal: beamformed_signal,
+            beam_pattern: beam_pattern,
+            main_lobe_width_deg: DEGREES(main_lobe_width),
+            sidelobe_level_dB: max_sidelobe,
+            array_gain_dB: 10*log10(n_elements)
+        }
+    END_PROCEDURE    
+
 END_CONTEXT
 
-DEFINE PROCEDURE process_radar_signal WITH PARAMETERS [raw_signal, carrier_freq, sample_rate, c, antenna_spacing]:
-    # Radar uses complex I/Q (In-phase/Quadrature) signals
-    # c = speed of light (typically 299792458 m/s)
-    
-    SET speed_of_light TO c
-    SET wavelength TO speed_of_light / carrier_freq
-    
-    # Step 1: Demodulate received signal to baseband using complex exponential
-    SET t TO LINSPACE(0, LENGTH(raw_signal)/sample_rate, LENGTH(raw_signal))
-    SET demodulation_signal TO e^(-i*2*pi*carrier_freq*t)
-    SET baseband_signal TO raw_signal * demodulation_signal
-    
-    # Step 2: Apply matched filter (pulse compression)
-    # Transmitted chirp: s(t) = e^(i*pi*α*t²) where α is chirp rate
-    SET chirp_rate TO 1e12  # Hz/s
-    SET matched_filter TO CONJUGATE(e^(i*pi*chirp_rate*t^2))
-    SET compressed_signal TO CONVOLVE(baseband_signal, matched_filter)
-    
-    # Step 3: Range-Doppler processing using 2D FFT
-    # Arrange data into range-Doppler matrix
-    SET range_bins TO 512
-    SET doppler_bins TO 256
-    SET data_matrix TO RESHAPE(compressed_signal, [range_bins, doppler_bins])
-    
-    # First FFT for range processing
-    FOR EACH column IN data_matrix DO:
-        SET range_fft TO CALL fast_fourier_transform WITH [column]
-        SET data_matrix[column] TO range_fft
-    END_FOR
-    
-    # Second FFT for Doppler processing
-    FOR EACH row IN data_matrix DO:
-        SET doppler_fft TO CALL fast_fourier_transform WITH [row]
-        SET data_matrix[row] TO doppler_fft
-    END_FOR
-    
-    # Step 4: Convert to polar coordinates for target detection
-    SET range_doppler_map TO |data_matrix|^2  # Power spectrum
-    
-    # Step 5: Target detection using CFAR (Constant False Alarm Rate)
-    SET noise_floor TO MEAN(range_doppler_map)
-    SET threshold TO noise_floor * 10^(12/10)  # 12 dB above noise
-    
-    SET targets TO []
-    FOR r FROM 0 TO range_bins-1 DO:
-        FOR d FROM 0 TO doppler_bins-1 DO:
-            IF range_doppler_map[r,d] > threshold THEN:
-                # Convert bin indices to physical units
-                SET range TO r * speed_of_light / (2 * sample_rate)
-                SET velocity TO d * speed_of_light * carrier_freq / (2 * doppler_bins * sample_rate)
-                
-                # Extract phase for angle measurement (monopulse)
-                SET phase TO ARG(data_matrix[r,d])
-                
-                # Monopulse processing for angle estimation
-                # Note: simplified monopulse - actual implementation requires antenna array geometry
-                SET azimuth TO arcsin(phase / (2*pi * antenna_spacing / wavelength))
-                SET elevation TO arcsin(phase / (2*pi * antenna_spacing / wavelength))  # Simplified
-                
-                APPEND {
-                    range: range,
-                    velocity: velocity, 
-                    azimuth: azimuth,  # Keep in radians for internal processing
-                    elevation: elevation,  # Keep in radians for internal processing
-                    azimuth_deg: DEGREES(azimuth),  # Degrees for display
-                    elevation_deg: DEGREES(elevation),  # Degrees for display
-                    snr: 10*log10(range_doppler_map[r,d] / noise_floor)
-                } TO targets
-            END_IF
-        END_FOR
-    END_FOR
-    
-    # Step 6: Kalman filtering for tracking (uses complex state space)
-    # Initialize Kalman filter matrices
-    SET measurement_noise TO 10  # Measurement uncertainty
-    SET P TO IDENTITY(6) * 100  # Initial covariance
-    SET H TO OBSERVATION_MATRIX(3, 6)  # Maps state to measurements
-    SET R TO IDENTITY(3) * measurement_noise  # Measurement noise covariance
-    
-    FOR EACH target IN targets DO:
-        # State vector: [x, y, z, vx, vy, vz]
-        # Convert from polar to Cartesian for state representation
-        SET x TO target.range * cos(target.elevation) * cos(target.azimuth)
-        SET y TO target.range * cos(target.elevation) * sin(target.azimuth)
-        SET z TO target.range * sin(target.elevation)
-        
-        # Velocity vector from Doppler (radial) and estimated tangential components
-        SET radial_velocity TO target.velocity  # From Doppler
-        SET state TO [x, y, z, radial_velocity, 0, 0]  # Initialize with radial velocity
-        
-        # Predict next position
-        SET dt TO 0.1  # 100ms update rate
-        SET predicted_state TO state + [state[3]*dt, state[4]*dt, state[5]*dt, 0, 0, 0]
-        
-        # Innovation using complex measurements
-        SET measurement TO target.range * e^(i*target.azimuth)
-        SET innovation TO measurement - predicted_state
-        
-        # Update with complex Kalman gain
-        SET kalman_gain TO P*H' / (H*P*H' + R)
-        SET updated_state TO predicted_state + kalman_gain * innovation
-        
-        SET target.predicted_position TO updated_state
-    END_FOR
-    
-    RETURN {
-        targets: targets,
-        range_doppler_map: range_doppler_map,
-        detection_performance: {
-            # Note: simplified detection models - actual performance depends on many factors
-            cfar_threshold: threshold,
-            estimated_pfa: 1e-6  # Typical CFAR design target
-        }
-    }
-END_PROCEDURE
-
-# Phased Array Beamforming with Complex Weights
-DEFINE PROCEDURE beamform_phased_array WITH PARAMETERS [element_signals, steering_angle, carrier_frequency]:
-    SET n_elements TO LENGTH(element_signals)
-    SET speed_of_light TO 299792458  # m/s
-    SET wavelength TO speed_of_light / carrier_frequency
-    SET element_spacing TO wavelength / 2  # Half wavelength spacing
-    
-    # Calculate complex beamforming weights using trigonometry
-    SET weights TO []
-    FOR n FROM 0 TO n_elements-1 DO:
-        # Progressive phase shift for beam steering
-        SET phase_shift TO 2*pi * element_spacing * n * sin(steering_angle) / wavelength
-        SET weight TO e^(-i*phase_shift)  # Complex weight
-        APPEND weight TO weights
-    END_FOR
-    
-    # Apply weights and sum (complex multiplication)
-    SET beamformed_signal TO 0 + 0*i
-    FOR n FROM 0 TO n_elements-1 DO:
-        SET beamformed_signal TO beamformed_signal + element_signals[n] * weights[n]
-    END_FOR
-    
-    # Calculate beam pattern
-    SET angles TO LINSPACE(-pi/2, pi/2, 360)
-    SET beam_pattern TO []
-    FOR theta IN angles DO:
-        SET array_factor TO 0 + 0*i
-        FOR n FROM 0 TO n_elements-1 DO:
-            SET phase TO 2*pi * element_spacing * n * sin(theta) / wavelength
-            SET array_factor TO array_factor + weights[n] * e^(i*phase)
-        END_FOR
-        APPEND 20*log10(|array_factor|) TO beam_pattern  # dB scale
-    END_FOR
-    
-    # Calculate beam characteristics
-    SET main_lobe_width TO 2*arcsin(wavelength / (n_elements * element_spacing))  # Approximate
-    SET max_sidelobe TO MAX(beam_pattern WHERE |angle - steering_angle| > main_lobe_width)
-    
-    RETURN {
-        output_signal: beamformed_signal,
-        beam_pattern: beam_pattern,
-        main_lobe_width_deg: DEGREES(main_lobe_width),
-        sidelobe_level_dB: max_sidelobe,
-        array_gain_dB: 10*log10(n_elements)
-    }
-END_PROCEDURE
 ```
 
 ##### Example: Quantum Circuit Simulation with Complex Amplitudes
@@ -2821,144 +2919,145 @@ END_PROCEDURE
 MATHEMATICAL_CONTEXT:
     DOMAIN: complex
     PRECISION: high
-END_CONTEXT
 
-DEFINE PROCEDURE solve_maxwell_equations WITH PARAMETERS [E0, B0, boundary, frequency, medium]:
-    # Physical constants
-    SET speed_of_light TO 299792458  # m/s
-    SET epsilon_0 TO 8.854187817e-12  # Permittivity of free space
-    SET mu_0 TO 1.256637061e-6  # Permeability of free space
-    SET impedance_0 TO sqrt(mu_0/epsilon_0)  # Free space impedance ~377 ohms
-    
-    # Medium parameters (default to free space if not specified)
-    SET mu TO medium.mu IF medium.mu EXISTS ELSE mu_0
-    SET epsilon TO medium.epsilon IF medium.epsilon EXISTS ELSE epsilon_0
-    SET sigma TO medium.conductivity IF medium.conductivity EXISTS ELSE 0
-    
-    # Electric and magnetic fields as complex phasors
-    # E(r,t) = Re[Ẽ(r) * e^(-iωt)]
-    # B(r,t) = Re[B̃(r) * e^(-iωt)]
-    
-    SET omega TO 2*pi*frequency
-    SET k TO omega/speed_of_light  # Wave number
-    SET wavelength TO 2*pi/k
-    
-    # Solve Helmholtz equation for electric field
-    # ∇²Ẽ + k²Ẽ = 0
-    SOLVE_PDE:
-        EQUATION: ∂²E/∂x² + ∂²E/∂y² + ∂²E/∂z² + k²*E = 0
-        BOUNDARY_CONDITIONS: boundary
-        DOMAIN: computational_domain
-    END_SOLVE AS E_field
-    
-    # Calculate magnetic field from electric field
-    # B̃ = (i/ω) * ∇ × Ẽ
-    SET B_field TO (i/omega) * CURL(E_field)
-    
-    # Source terms (if present)
-    SET rho TO boundary.charge_density  # Charge density
-    SET J TO boundary.current_density  # Current density
-    
-    # Verify Maxwell's equations in complex form
-    ASSERT DIVERGENCE(E_field) EQUALS rho/epsilon_0  # Gauss's law
-    ASSERT DIVERGENCE(B_field) EQUALS 0  # No magnetic monopoles
-    ASSERT CURL(E_field) EQUALS i*omega*B_field  # Faraday's law
-    ASSERT CURL(B_field) EQUALS mu_0*J - i*omega*mu_0*epsilon_0*E_field  # Ampère-Maxwell
-    
-    # Calculate Poynting vector (energy flow)
-    # S = (1/2) * Re[Ẽ × B̃*]
-    SET poynting_vector TO 0.5 * REAL(E_field CROSS CONJUGATE(B_field))
-    
-    # Wave impedance in the medium
-    SET impedance TO sqrt(mu/epsilon) * sqrt((1 + i*sigma/(omega*epsilon)))
-    SET impedance_magnitude TO |impedance|
-    SET impedance_phase TO ARG(impedance)
-    
-    # Reflection and transmission at interfaces
-    FOR EACH interface IN boundary.interfaces DO:
-        SET n1 TO interface.refractive_index_1
-        SET n2 TO interface.refractive_index_2
-        SET theta_i TO interface.incident_angle
+    DEFINE PROCEDURE solve_maxwell_equations WITH PARAMETERS [E0, B0, boundary, frequency, medium]:
+        # Physical constants
+        SET speed_of_light TO 299792458  # m/s
+        SET epsilon_0 TO 8.854187817e-12  # Permittivity of free space
+        SET mu_0 TO 1.256637061e-6  # Permeability of free space
+        SET impedance_0 TO sqrt(mu_0/epsilon_0)  # Free space impedance ~377 ohms
         
-        # Snell's law in complex form for absorbing media
-        SET sin_theta_t TO (n1/n2) * sin(theta_i)
-        SET theta_t TO arcsin(sin_theta_t)  # May be complex for total internal reflection
+        # Medium parameters (default to free space if not specified)
+        SET mu TO medium.mu IF medium.mu EXISTS ELSE mu_0
+        SET epsilon TO medium.epsilon IF medium.epsilon EXISTS ELSE epsilon_0
+        SET sigma TO medium.conductivity IF medium.conductivity EXISTS ELSE 0
         
-        # Fresnel coefficients (complex for absorbing media)
-        # S-polarization (TE)
-        SET r_s TO (n1*cos(theta_i) - n2*cos(theta_t)) / 
-                   (n1*cos(theta_i) + n2*cos(theta_t))
-        SET t_s TO 2*n1*cos(theta_i) / 
-                   (n1*cos(theta_i) + n2*cos(theta_t))
+        # Electric and magnetic fields as complex phasors
+        # E(r,t) = Re[Ẽ(r) * e^(-iωt)]
+        # B(r,t) = Re[B̃(r) * e^(-iωt)]
         
-        # P-polarization (TM)
-        SET r_p TO (n2*cos(theta_i) - n1*cos(theta_t)) / 
-                   (n2*cos(theta_i) + n1*cos(theta_t))
-        SET t_p TO 2*n1*cos(theta_i) / 
-                   (n2*cos(theta_i) + n1*cos(theta_t))
+        SET omega TO 2*pi*frequency
+        SET k TO omega/speed_of_light  # Wave number
+        SET wavelength TO 2*pi/k
         
-        # Power reflection and transmission
-        SET R_s TO |r_s|^2
-        SET R_p TO |r_p|^2
-        SET T_s TO REAL(n2*cos(theta_t)/(n1*cos(theta_i))) * |t_s|^2
-        SET T_p TO REAL(n2*cos(theta_t)/(n1*cos(theta_i))) * |t_p|^2
+        # Solve Helmholtz equation for electric field
+        # ∇²Ẽ + k²Ẽ = 0
+        SOLVE_PDE:
+            EQUATION: ∂²E/∂x² + ∂²E/∂y² + ∂²E/∂z² + k²*E = 0
+            BOUNDARY_CONDITIONS: boundary
+            DOMAIN: computational_domain
+        END_SOLVE AS E_field
         
-        # Verify energy conservation
-        ASSERT R_s + T_s EQUALS 1 WITHIN_TOLERANCE 1e-10
-        ASSERT R_p + T_p EQUALS 1 WITHIN_TOLERANCE 1e-10
-    END_FOR
-    
-    # Near-field to far-field transformation using complex Green's function
-    SET far_field TO []
-    # Define observation angles grid
-    SET theta_range TO LINSPACE(0, pi, 180)  # Elevation angles
-    SET phi_range TO LINSPACE(0, 2*pi, 360)  # Azimuth angles
-    
-    FOR theta IN theta_range DO:
-        FOR phi IN phi_range DO:
-            SET r_hat TO [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)]
-            SET r TO 1000 * wavelength  # Far-field distance
-            SET green_function TO e^(i*k*r) / (4*pi*r)
+        # Calculate magnetic field from electric field
+        # B̃ = (i/ω) * ∇ × Ẽ
+        SET B_field TO (i/omega) * CURL(E_field)
+        
+        # Source terms (if present)
+        SET rho TO boundary.charge_density  # Charge density
+        SET J TO boundary.current_density  # Current density
+        
+        # Verify Maxwell's equations in complex form
+        ASSERT DIVERGENCE(E_field) EQUALS rho/epsilon_0  # Gauss's law
+        ASSERT DIVERGENCE(B_field) EQUALS 0  # No magnetic monopoles
+        ASSERT CURL(E_field) EQUALS i*omega*B_field  # Faraday's law
+        ASSERT CURL(B_field) EQUALS mu_0*J - i*omega*mu_0*epsilon_0*E_field  # Ampère-Maxwell
+        
+        # Calculate Poynting vector (energy flow)
+        # S = (1/2) * Re[Ẽ × B̃*]
+        SET poynting_vector TO 0.5 * REAL(E_field CROSS CONJUGATE(B_field))
+        
+        # Wave impedance in the medium
+        SET impedance TO sqrt(mu/epsilon) * sqrt((1 + i*sigma/(omega*epsilon)))
+        SET impedance_magnitude TO |impedance|
+        SET impedance_phase TO ARG(impedance)
+        
+        # Reflection and transmission at interfaces
+        FOR EACH interface IN boundary.interfaces DO:
+            SET n1 TO interface.refractive_index_1
+            SET n2 TO interface.refractive_index_2
+            SET theta_i TO interface.incident_angle
             
-            # Radiation integral
-            SET E_far TO INTEGRATE (
-                n_hat CROSS (n_hat CROSS J) * green_function
-            ) OVER_SURFACE source_surface
+            # Snell's law in complex form for absorbing media
+            SET sin_theta_t TO (n1/n2) * sin(theta_i)
+            SET theta_t TO arcsin(sin_theta_t)  # May be complex for total internal reflection
             
-            APPEND E_far TO far_field
+            # Fresnel coefficients (complex for absorbing media)
+            # S-polarization (TE)
+            SET r_s TO (n1*cos(theta_i) - n2*cos(theta_t)) / 
+                       (n1*cos(theta_i) + n2*cos(theta_t))
+            SET t_s TO 2*n1*cos(theta_i) / 
+                       (n1*cos(theta_i) + n2*cos(theta_t))
+            
+            # P-polarization (TM)
+            SET r_p TO (n2*cos(theta_i) - n1*cos(theta_t)) / 
+                       (n2*cos(theta_i) + n1*cos(theta_t))
+            SET t_p TO 2*n1*cos(theta_i) / 
+                       (n2*cos(theta_i) + n1*cos(theta_t))
+            
+            # Power reflection and transmission
+            SET R_s TO |r_s|^2
+            SET R_p TO |r_p|^2
+            SET T_s TO REAL(n2*cos(theta_t)/(n1*cos(theta_i))) * |t_s|^2
+            SET T_p TO REAL(n2*cos(theta_t)/(n1*cos(theta_i))) * |t_p|^2
+            
+            # Verify energy conservation
+            ASSERT R_s + T_s EQUALS 1 WITHIN_TOLERANCE 1e-10
+            ASSERT R_p + T_p EQUALS 1 WITHIN_TOLERANCE 1e-10
         END_FOR
-    END_FOR
-    
-    # Antenna radiation pattern
-    SET radiation_pattern TO []
-    SET max_power TO 0
-    FOR EACH field_value IN far_field DO:
-        SET field_magnitude TO |field_value|
-        SET power_density TO field_magnitude^2 / (2*impedance_0)
-        SET max_power TO MAX(max_power, power_density)
-        APPEND power_density TO radiation_pattern
-    END_FOR
-    
-    # Calculate total radiated power
-    SET total_radiated_power TO INTEGRATE (
-        radiation_pattern
-    ) OVER solid_angle
-    
-    # Normalize pattern to dBi
-    SET radiation_pattern_dB TO []
-    FOR EACH power IN radiation_pattern DO:
-        APPEND 10*log10(power/max_power) TO radiation_pattern_dB
-    END_FOR
-    
-    RETURN {
-        electric_field: E_field,
-        magnetic_field: B_field,
-        poynting_vector: poynting_vector,
-        impedance: {magnitude: impedance_magnitude, phase: DEGREES(impedance_phase)},
-        radiation_pattern_dB: radiation_pattern_dB,
-        directivity: 4*pi*max_power/total_radiated_power
-    }
-END_PROCEDURE
+        
+        # Near-field to far-field transformation using complex Green's function
+        SET far_field TO []
+        # Define observation angles grid
+        SET theta_range TO LINSPACE(0, pi, 180)  # Elevation angles
+        SET phi_range TO LINSPACE(0, 2*pi, 360)  # Azimuth angles
+        
+        FOR theta IN theta_range DO:
+            FOR phi IN phi_range DO:
+                SET r_hat TO [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)]
+                SET r TO 1000 * wavelength  # Far-field distance
+                SET green_function TO e^(i*k*r) / (4*pi*r)
+                
+                # Radiation integral
+                SET E_far TO INTEGRATE (
+                    n_hat CROSS (n_hat CROSS J) * green_function
+                ) OVER_SURFACE source_surface
+                
+                APPEND E_far TO far_field
+            END_FOR
+        END_FOR
+        
+        # Antenna radiation pattern
+        SET radiation_pattern TO []
+        SET max_power TO 0
+        FOR EACH field_value IN far_field DO:
+            SET field_magnitude TO |field_value|
+            SET power_density TO field_magnitude^2 / (2*impedance_0)
+            SET max_power TO MAX(max_power, power_density)
+            APPEND power_density TO radiation_pattern
+        END_FOR
+        
+        # Calculate total radiated power
+        SET total_radiated_power TO INTEGRATE (
+            radiation_pattern
+        ) OVER solid_angle
+        
+        # Normalize pattern to dBi
+        SET radiation_pattern_dB TO []
+        FOR EACH power IN radiation_pattern DO:
+            APPEND 10*log10(power/max_power) TO radiation_pattern_dB
+        END_FOR
+        
+        RETURN {
+            electric_field: E_field,
+            magnetic_field: B_field,
+            poynting_vector: poynting_vector,
+            impedance: {magnitude: impedance_magnitude, phase: DEGREES(impedance_phase)},
+            radiation_pattern_dB: radiation_pattern_dB,
+            directivity: 4*pi*max_power/total_radiated_power
+        }
+    END_PROCEDURE
+
+END_CONTEXT
 ```
 
 ##### Example: Portfolio Optimization with Complex Constraints
@@ -2969,78 +3068,79 @@ END_PROCEDURE
 MATHEMATICAL_CONTEXT:
     DOMAIN: real
     PRECISION: high
-END_CONTEXT
 
-DEFINE PROCEDURE optimize_portfolio WITH PARAMETERS [returns, covariance, constraints]:
-    # returns = expected returns vector
-    # covariance = covariance matrix of returns
-    # constraints = investment constraints
-    
-    SET n_assets TO LENGTH(returns)
-    SET risk_free_rate TO 0.02  # 2% risk-free rate (typical treasury rate)
-    
-    # Define optimization problem
-    OPTIMIZE:
-        # Objective: Maximize Sharpe ratio
-        OBJECTIVE: maximize (w'*returns - risk_free_rate) / sqrt(w'*covariance*w)
+    DEFINE PROCEDURE optimize_portfolio WITH PARAMETERS [returns, covariance, constraints]:
+        # returns = expected returns vector
+        # covariance = covariance matrix of returns
+        # constraints = investment constraints
         
-        # Variables
-        VARIABLES: w = [w1, w2, ..., wn]  # portfolio weights
+        SET n_assets TO LENGTH(returns)
+        SET risk_free_rate TO 0.02  # 2% risk-free rate (typical treasury rate)
         
-        # Constraints
-        CONSTRAINTS:
-            # Weights sum to 1
-            SUM(w) = 1
+        # Define optimization problem
+        OPTIMIZE:
+            # Objective: Maximize Sharpe ratio
+            OBJECTIVE: maximize (w'*returns - risk_free_rate) / sqrt(w'*covariance*w)
             
-            # Long-only constraint (no short selling)
-            w >= 0
+            # Variables
+            VARIABLES: w = [w1, w2, ..., wn]  # portfolio weights
             
-            # Maximum position size
-            w <= constraints.max_position_size
-            
-            # Minimum position size (if invested)
-            # Note: Non-convex constraint - solved via MIQP or heuristic if enabled
-            FOR EACH wi IN w:
-                wi = 0 OR wi >= constraints.min_position_size
-            END_FOR
-            
-            # Sector constraints
-            FOR EACH sector IN constraints.sectors:
-                SUM(w[i] FOR i IN sector.assets) <= sector.max_allocation
-            END_FOR
-            
-            # Risk constraint (Value at Risk limit)
-            # VaR defined as maximum loss at confidence level (positive number)
-            # Constraint: VaR should not exceed the limit
-            VAR(0.95, w'*returns, w'*covariance*w) <= constraints.var_limit
-            # Note: VaR(0.95) = -quantile(0.05, returns) for loss convention
-            
-        METHOD: sequential_quadratic_programming
-    END_OPTIMIZE
-    
-    # Calculate portfolio metrics
-    SET portfolio_return TO w'*returns
-    SET portfolio_volatility TO sqrt(w'*covariance*w)
-    SET sharpe_ratio TO (portfolio_return - risk_free_rate) / portfolio_volatility
-    
-    # Risk decomposition
-    SET marginal_var TO []
-    FOR i FROM 1 TO n_assets DO:
-        SET marginal_contribution TO PARTIAL_DERIVATIVE(
-            VAR(0.95, w'*returns, w'*covariance*w),
-            w[i]
-        )
-        APPEND marginal_contribution TO marginal_var
-    END_FOR
-    
-    RETURN {
-        optimal_weights: w,
-        expected_return: portfolio_return,
-        volatility: portfolio_volatility,
-        sharpe_ratio: sharpe_ratio,
-        risk_contributions: marginal_var
-    }
-END_PROCEDURE
+            # Constraints
+            CONSTRAINTS:
+                # Weights sum to 1
+                SUM(w) = 1
+                
+                # Long-only constraint (no short selling)
+                w >= 0
+                
+                # Maximum position size
+                w <= constraints.max_position_size
+                
+                # Minimum position size (if invested)
+                # Note: Non-convex constraint - solved via MIQP or heuristic if enabled
+                FOR EACH wi IN w:
+                    wi = 0 OR wi >= constraints.min_position_size
+                END_FOR
+                
+                # Sector constraints
+                FOR EACH sector IN constraints.sectors:
+                    SUM(w[i] FOR i IN sector.assets) <= sector.max_allocation
+                END_FOR
+                
+                # Risk constraint (Value at Risk limit)
+                # VaR defined as maximum loss at confidence level (positive number)
+                # Constraint: VaR should not exceed the limit
+                VAR(0.95, w'*returns, w'*covariance*w) <= constraints.var_limit
+                # Note: VaR(0.95) = -quantile(0.05, returns) for loss convention
+                
+            METHOD: sequential_quadratic_programming
+        END_OPTIMIZE
+        
+        # Calculate portfolio metrics
+        SET portfolio_return TO w'*returns
+        SET portfolio_volatility TO sqrt(w'*covariance*w)
+        SET sharpe_ratio TO (portfolio_return - risk_free_rate) / portfolio_volatility
+        
+        # Risk decomposition
+        SET marginal_var TO []
+        FOR i FROM 1 TO n_assets DO:
+            SET marginal_contribution TO PARTIAL_DERIVATIVE(
+                VAR(0.95, w'*returns, w'*covariance*w),
+                w[i]
+            )
+            APPEND marginal_contribution TO marginal_var
+        END_FOR
+        
+        RETURN {
+            optimal_weights: w,
+            expected_return: portfolio_return,
+            volatility: portfolio_volatility,
+            sharpe_ratio: sharpe_ratio,
+            risk_contributions: marginal_var
+        }
+    END_PROCEDURE
+
+END_CONTEXT
 ```
 
 #### Mathematical Execution Guidelines
@@ -6014,7 +6114,7 @@ DEFINE PROCEDURE social_gathering WITH PARAMETERS [attendees, location]:
 END_PROCEDURE
 ```
 
-### Implementation Notes
+### Person Implementation Notes
 
 The Person entity system integrates with existing AILang constructs:
 
@@ -6025,6 +6125,479 @@ The Person entity system integrates with existing AILang constructs:
 5. **Extensibility**: New attributes and capabilities can be added through inheritance
 
 The Person class provides a comprehensive framework for modeling human-like agents while maintaining AILang's balance between deterministic computation and intelligent adaptation.
+
+### 16. Reality Context
+
+Reality contexts provide a framework for defining qualitative domains where specific patterns of understanding, interpretation, and meaning-making apply. Unlike quantitative constraints that enforce numerical boundaries, reality contexts shape how intelligent operations interpret situations and generate responses within bounded worldviews.
+
+#### 16.1 Defining Reality Contexts
+
+##### Basic Syntax
+
+```
+#ailang
+DEFINE REALITY_CONTEXT [context_name]:
+    WORLDVIEW: [qualitative_description]
+    ASSUMPTIONS: [list_of_implicit_beliefs]
+    INTERPRETIVE_FRAMEWORK: [meaning_making_patterns]
+    BEHAVIORAL_NORMS: [expected_patterns]
+    DISCOURSE_RULES: [communication_patterns]
+    VALUE_SYSTEM: [what_matters]
+    CAUSAL_MODELS: [how_change_happens]
+END_CONTEXT
+```
+
+##### Example: Therapeutic Reality Context
+
+```
+#ailang
+DEFINE REALITY_CONTEXT psychodynamic_therapy:
+    WORLDVIEW: "Unconscious processes drive behavior"
+    ASSUMPTIONS: [
+        "Current problems stem from childhood experiences",
+        "Defense mechanisms protect from psychological pain",
+        "Transference reveals relationship patterns",
+        "Dreams carry symbolic meaning"
+    ]
+    INTERPRETIVE_FRAMEWORK: [
+        "Surface behavior conceals deeper motivations",
+        "Resistance indicates proximity to truth",
+        "Symptoms are compromises between desires and defenses"
+    ]
+    BEHAVIORAL_NORMS: [
+        "Free association without censorship",
+        "Emotional expression is therapeutic",
+        "Insight precedes change"
+    ]
+    DISCOURSE_RULES: [
+        "Everything said has meaning",
+        "Slips reveal unconscious content",
+        "Silence is communication"
+    ]
+    VALUE_SYSTEM: [
+        "Self-awareness over comfort",
+        "Authenticity over adaptation",
+        "Integration over splitting"
+    ]
+    CAUSAL_MODELS: [
+        "Repressed emotions create symptoms",
+        "Naming transforms experiencing",
+        "Relationship patterns repeat until resolved"
+    ]
+END_CONTEXT
+```
+
+#### 16.2 Applying Reality Contexts
+
+##### Reality Context Activation
+
+```
+#ailang
+WITH REALITY_CONTEXT [context_name]:
+    [operations that occur within this reality]
+END_WITH
+
+# Or for single operations:
+WITHIN [context_name] DO [operation]
+```
+
+##### Example: Multiple Reality Contexts
+
+```
+#ailang
+# Same situation interpreted through different realities
+
+SET customer_complaint TO "This product doesn't work as advertised"
+
+WITH REALITY_CONTEXT legal_reality:
+    # Legal framework sees potential liability
+    INTELLIGENTLY assess_situation
+    # Might conclude: "Potential breach of warranty claim requiring documentation"
+END_WITH
+
+WITH REALITY_CONTEXT customer_service_reality:
+    # Service framework sees relationship issue
+    INTELLIGENTLY assess_situation
+    # Might conclude: "Customer feels unheard and needs validation"
+END_WITH
+
+WITH REALITY_CONTEXT engineering_reality:
+    # Engineering framework sees specification mismatch
+    INTELLIGENTLY assess_situation  
+    # Might conclude: "User expectations don't match design parameters"
+END_WITH
+
+WITH REALITY_CONTEXT startup_reality:
+    # Startup framework sees product-market fit signal
+    INTELLIGENTLY assess_situation
+    # Might conclude: "Valuable feedback for next iteration pivot"
+END_WITH
+```
+
+#### 16.3 Reality Context Inheritance and Composition
+
+##### Extending Reality Contexts
+
+```
+#ailang
+DEFINE REALITY_CONTEXT academic_humanities EXTENDS academic_reality:
+    ADD ASSUMPTIONS: [
+        "Texts have multiple valid interpretations",
+        "Power structures shape knowledge production",
+        "Subjective experience is valid data"
+    ]
+    MODIFY DISCOURSE_RULES: [
+        "Citation creates authority",
+        "Theory frames observation",
+        "Critique is contribution"
+    ]
+END_CONTEXT
+```
+
+##### Blending Reality Contexts
+
+```
+#ailang
+DEFINE REALITY_CONTEXT design_thinking BLENDS [engineering_reality, artistic_reality]:
+    RECONCILE CONFLICTS WITH:
+        "Function and form are equally important"
+        "Constraints inspire creativity"
+        "User experience trumps pure efficiency"
+    END
+END_CONTEXT
+```
+
+#### 16.4 Reality Context-Aware Intelligent Operations
+
+When operating within a reality context, intelligent operations automatically adopt that context's interpretive framework:
+
+```
+#ailang
+WITH REALITY_CONTEXT corporate_reality:
+    INTELLIGENTLY evaluate_proposal
+    # Will consider: ROI, stakeholder buy-in, political implications, precedent
+END_WITH
+
+WITH REALITY_CONTEXT academic_reality:
+    INTELLIGENTLY evaluate_proposal
+    # Will consider: theoretical rigor, methodology, literature positioning, novelty
+END_WITH
+```
+
+#### 16.5 Person Entities and Reality Contexts
+
+Person entities can have inherent reality contexts that shape their worldview:
+
+```
+#ailang
+CREATE Person therapist WITH:
+    default_reality_context: psychodynamic_therapy
+    context_flexibility: 0.3  # How easily they shift contexts
+END_CREATE
+
+CREATE Person engineer WITH:
+    default_reality_context: engineering_reality
+    context_flexibility: 0.7  # More adaptable to other contexts
+END_CREATE
+
+# When they interact, context negotiation occurs
+SET conversation TO therapist.interact_with_person(engineer, neutral_context)
+# Each interprets through their reality lens, creating rich misunderstandings
+# or opportunities for perspective expansion
+```
+
+#### 16.6 Nested and Overlapping Reality Contexts
+
+##### Nested Reality Contexts
+
+```
+#ailang
+WITH REALITY_CONTEXT organizational_culture:
+    # Outer context: company culture
+    
+    WITH REALITY_CONTEXT team_dynamics:
+        # Inner context: specific team norms
+        
+        INTELLIGENTLY resolve_conflict
+        # Uses both contexts, with inner taking precedence for conflicts
+    END_WITH
+END_WITH
+```
+
+##### Reality Context Switching
+
+```
+#ailang
+DEFINE PROCEDURE context_aware_interaction:
+    SET initial_context TO professional_reality
+    
+    START conversation WITH initial_context
+    
+    IF detect_personal_disclosure THEN:
+        TRANSITION TO personal_reality
+    END_IF
+    
+    IF detect_conflict_escalation THEN:
+        TRANSITION TO mediation_reality
+    END_IF
+    
+    RETURN conversation_outcome
+END_PROCEDURE
+```
+
+#### 16.7 Cultural and Social Reality Contexts
+
+##### Cultural Reality Contexts
+
+```
+#ailang
+DEFINE REALITY_CONTEXT collectivist_culture:
+    WORLDVIEW: "Individual identity emerges from group belonging"
+    ASSUMPTIONS: [
+        "Harmony is more important than truth",
+        "Indirect communication preserves face",
+        "Decisions require consensus",
+        "Family needs supersede individual desires"
+    ]
+    BEHAVIORAL_NORMS: [
+        "Defer to elders and authority",
+        "Avoid direct confrontation",
+        "Share resources within in-group",
+        "Maintain group reputation"
+    ]
+END_CONTEXT
+
+DEFINE REALITY_CONTEXT individualist_culture:
+    WORLDVIEW: "Individual autonomy and achievement define identity"
+    ASSUMPTIONS: [
+        "Direct communication is honest",
+        "Personal responsibility for outcomes",
+        "Competition drives excellence",
+        "Self-reliance is virtuous"
+    ]
+    BEHAVIORAL_NORMS: [
+        "Assert personal opinions",
+        "Pursue individual goals",
+        "Maintain personal boundaries",
+        "Celebrate individual achievement"
+    ]
+END_CONTEXT
+```
+
+#### 16.8 Domain-Specific Reality Contexts
+
+##### Medical Reality Context
+
+```
+#ailang
+DEFINE REALITY_CONTEXT biomedical_reality:
+    WORLDVIEW: "Disease has biological causes with biological solutions"
+    INTERPRETIVE_FRAMEWORK: [
+        "Symptoms indicate underlying pathology",
+        "Diagnosis requires objective testing",
+        "Treatment targets biological mechanisms",
+        "Evidence hierarchy prioritizes RCTs"
+    ]
+END_CONTEXT
+
+DEFINE REALITY_CONTEXT holistic_health_reality:
+    WORLDVIEW: "Health emerges from balance of mind, body, spirit"
+    INTERPRETIVE_FRAMEWORK: [
+        "Symptoms express whole-system imbalance",
+        "Healing capacity is innate",
+        "Prevention through lifestyle harmony",
+        "Individual constitution determines treatment"
+    ]
+END_CONTEXT
+```
+
+#### 16.9 Reality Context Validation
+
+##### Consistency Checking
+
+```
+#ailang
+VALIDATE REALITY_CONTEXT [context_name]:
+    CHECK internal_consistency OF assumptions
+    CHECK compatibility OF worldview WITH causal_models
+    CHECK completeness OF interpretive_framework
+    IDENTIFY potential_contradictions
+    SUGGEST refinements
+END_VALIDATE
+```
+
+##### Reality Context Conflict Resolution
+
+```
+#ailang
+WHEN context_conflict_detected:
+    IDENTIFY conflicting_assumptions
+    DETERMINE conflict_severity
+    
+    IF severity > threshold THEN:
+        REQUEST explicit_context_selection FROM user
+    ELSE:
+        APPLY context_priority_rules
+        DOCUMENT context_compromise
+    END_IF
+END_WHEN
+```
+
+#### 16.10 Reality Context Implementation Notes
+
+##### For AI Systems
+
+1. **Context Loading**: Reality contexts should be loaded into the AI's interpretive framework before processing operations within that context
+
+2. **Assumption Tracking**: The AI must track which assumptions from the reality context influenced each decision or interpretation
+
+3. **Context Boundaries**: When transitioning between contexts, the AI should acknowledge the shift in interpretive framework
+
+4. **Context Conflicts**: When multiple contexts apply, the AI should either blend them coherently or make context selection explicit
+
+##### Quality Assurance
+
+1. **Interpretive Consistency**: Operations within a reality context should consistently reflect that context's worldview
+
+2. **Context Leakage**: Prevent assumptions from one reality context from inappropriately influencing operations in another context
+
+3. **Context Documentation**: Clear documentation of which reality context was active for each intelligent operation
+
+4. **User Awareness**: Users should be able to query which reality context is currently active and why
+
+#### 16.11 Examples of Reality Context Applications
+
+##### Negotiation Across Realities
+
+```
+#ailang
+DEFINE PROCEDURE multi_context_negotiation:
+    SET party_a TO Person WITH default_reality_context: legal_reality
+    SET party_b TO Person WITH default_reality_context: relationship_reality
+    
+    # Each party interprets the same situation differently
+    SET dispute TO "Verbal agreement about shared property"
+    
+    party_a.interpretation:  # "No written contract means no agreement"
+    party_b.interpretation:  # "Our trust relationship is the agreement"
+    
+    # Mediator operates in bridging context
+    WITH REALITY_CONTEXT mediation_reality:
+        INTELLIGENTLY identify_shared_values
+        INTELLIGENTLY translate_between_contexts
+        INTELLIGENTLY find_creative_solutions
+    END_WITH
+END_PROCEDURE
+```
+
+##### Educational Context Adaptation
+
+```
+#ailang
+DEFINE PROCEDURE adaptive_teaching:
+    ASSESS student.reality_context
+    
+    IF student.context MATCHES scientific_materialism THEN:
+        PRESENT concepts WITH empirical_evidence
+        USE causal_mechanical_explanations
+    ELSE IF student.context MATCHES narrative_thinking THEN:
+        PRESENT concepts THROUGH stories
+        USE character_journey_explanations
+    ELSE IF student.context MATCHES visual_spatial THEN:
+        PRESENT concepts AS diagrams
+        USE geometric_relationship_explanations
+    END_IF
+END_PROCEDURE
+```
+
+##### Therapeutic Reality Navigation
+
+```
+#ailang
+DEFINE PROCEDURE therapeutic_intervention:
+    # Therapist can shift between reality contexts strategically
+    
+    START WITH REALITY_CONTEXT cognitive_behavioral:
+        IDENTIFY thought_patterns
+        CHALLENGE cognitive_distortions
+    END_WITH
+    
+    IF resistance_encountered THEN:
+        SHIFT TO REALITY_CONTEXT psychodynamic:
+            EXPLORE what_resistance_protects
+            IDENTIFY underlying_conflicts
+        END_WITH
+    END_IF
+    
+    IF somatic_symptoms_present THEN:
+        SHIFT TO REALITY_CONTEXT somatic_experiencing:
+            FOCUS ON body_sensations
+            FACILITATE nervous_system_regulation
+        END_WITH
+    END_IF
+    
+    INTEGRATE insights ACROSS contexts
+END_PROCEDURE
+```
+
+#### 16.12 Advanced Reality Context Features
+
+##### Probabilistic Context Mixing
+
+```
+#ailang
+DEFINE REALITY_CONTEXT_MIX market_analysis:
+    COMPONENTS: [
+        {context: fundamental_analysis, weight: 0.4},
+        {context: technical_analysis, weight: 0.3},
+        {context: behavioral_finance, weight: 0.3}
+    ]
+    RECONCILIATION: weighted_integration
+END_CONTEXT_MIX
+```
+
+##### Dynamic Context Evolution
+
+```
+#ailang
+DEFINE EVOLVING_CONTEXT startup_growth:
+    STAGE early_startup WHEN company_size < 10:
+        REALITY_CONTEXT: garage_startup_reality
+    STAGE growth WHEN company_size BETWEEN 10 AND 50:
+        REALITY_CONTEXT: scaling_startup_reality
+    STAGE established WHEN company_size > 50:
+        REALITY_CONTEXT: corporate_reality
+    
+    TRANSITION_RULES: [
+        "Gradual culture shift over 6 months",
+        "Preserve founding principles as constraints",
+        "Document reality changes explicitly"
+    ]
+END_EVOLVING_CONTEXT
+```
+
+##### Meta-Context Awareness
+
+```
+#ailang
+DEFINE META_CONTEXT reality_awareness:
+    RECOGNIZE current_operating_context
+    UNDERSTAND context_limitations
+    IDENTIFY when_context_shift_needed
+    FACILITATE meta_cognitive_reflection
+    
+    METHOD examine_context_assumptions:
+        LIST active_assumptions
+        EVALUATE assumption_validity
+        IDENTIFY assumption_alternatives
+        CONSIDER context_switching_costs
+    END_METHOD
+END_META_CONTEXT
+```
+
+#### Implementation Requirements
+
+Reality contexts fundamentally change how intelligent operations interpret and respond to situations. They provide the qualitative boundaries that make AI behavior coherent within specific domains of meaning while maintaining the flexibility to shift perspectives when appropriate. This creates AI systems that can truly operate within human social, cultural, and professional contexts rather than merely processing them from the outside.
 
 ## Implementation Guidelines for AI Systems 
 
