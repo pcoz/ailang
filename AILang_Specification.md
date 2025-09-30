@@ -2557,7 +2557,263 @@ END_WITHIN
 
 **Specification**: Boundaries can dynamically adjust based on program state, but must always remain within maximum defined limits. State-aware boundaries prevent cascade failures and resource exhaustion while allowing adaptive behavior within safe parameters.
 
-## 15. Person Entities
+## 15. Person Entities: Framework Overview
+This section provides the conceptual framework and usage patterns needed to understand and work with Person entities at a high level.
+
+**Note on Section Structure: Person entities represent one of AILang's most sophisticated domain modeling capabilities. Due to the comprehensive nature of human behavioral modeling—encompassing cognitive systems, personality dynamics, social interactions, and group memberships—the detailed specifications for all Person subsystems are provided in Appendix A.** 
+
+**This organizational choice reflects that while Person entities are a first-class language feature, their extensive implementation details would disrupt the flow of the core language specification. However, the AI executing AILang programs cannot intuit the complex interplay of human psychological and social systems; therefore, complete specifications are essential and provided in full detail in the appendix.**
+
+### 15.1 Person Class Architecture
+
+Person entities are computational agents with human-like attributes that combine deterministic state management with intelligent behavioral modeling.
+
+**Core Architecture**
+
+```#ailang
+ailangCLASS Person:
+    PROPERTIES:
+        # Identity and Demographics
+        id: unique_identifier
+        name: text
+        age: number
+        gender: text
+        
+        # Cognitive and Behavioral Systems
+        thought_system: ThoughtSystem
+        speech_system: SpeechSystem
+        action_system: ActionSystem
+        
+        # Experiential Systems
+        experience_system: ExperienceSystem
+        memory_system: MemorySystem
+        
+        # Personality and Social Systems
+        personality: PersonalitySystem  # Logos, Energiae, Ethos
+        interaction_system: InteractionSystem
+        
+        # Contextual Systems
+        economic_system: EconomicSystem
+        knowledge_system: KnowledgeSystem
+        planning_system: PlanningSystem
+        
+        # Identity and Membership
+        background: PersonBackground
+        identity_contact: IdentityAndContactSystem
+        group_membership_system: GroupMembershipSystem
+        
+        current_state: PersonState
+```
+
+### 15.2 Core Systems Summary
+
+**Cognitive Systems**
+
+* ThoughtSystem: Conscious and subconscious thought processes, reflection, decision-making
+* SpeechSystem: Verbal communication with tone, vocabulary, and linguistic patterns
+* ActionSystem: Physical capabilities, skill learning, and action execution
+
+**Experiential Systems**
+
+* ExperienceSystem: Multi-sensory perception (vision, hearing, touch, smell, taste, proprioception, interoception)
+* MemorySystem: Working memory, episodic memory, semantic memory, procedural memory, emotional memory
+
+**Personality Framework (Logos-Energiae-Ethos)**
+The personality system models three fundamental dimensions of human character:
+
+* Logos: Rational principle, reasoning styles, logical consistency, intellectual curiosity
+* Energiae: Active forces, drives, motivations, life force, creative energy
+* Ethos: Moral character, values, principles, virtues, integrity
+
+These three components interact dynamically, generating graded responses to events and shaping behavior through their integration.
+
+**Social and Contextual Systems**
+
+* InteractionSystem: Social skills, relationships, personality exchange mechanisms
+* EconomicSystem: Financial awareness, possessions, budgeting, purchase evaluation
+* KnowledgeSystem: Domain expertise, learning strategies, knowledge synthesis
+* PlanningSystem: Goal management, intelligent navigation, adaptive execution
+
+**Identity Systems**
+
+* PersonBackground: Demographics, family history, life events, cultural background
+* IdentityAndContactSystem: Legal identifiers, contact information, digital identities, privacy
+* GroupMembershipSystem: Family, work, social group memberships and their influence
+
+### 15.3 Usage Patterns
+
+**Basic Person Creation**
+
+```#ailang
+ailangCREATE Person alice WITH:
+    name: "Alice Chen"
+    age: 28
+    gender: "female"
+    background: {
+        birth_place: "San Francisco",
+        education: ["BS Computer Science", "MA Psychology"],
+        languages: {english: 1.0, mandarin: 0.9}
+    }
+END_CREATE
+
+# Initialize personality traits
+SET alice.personality.logos.reasoning_style TO "analytical"
+SET alice.personality.energiae.drives TO {achievement: 0.8, connection: 0.7}
+SET alice.personality.ethos.core_values TO ["integrity", "growth", "compassion"]
+```
+
+**Person-to-Person Interaction**
+
+```#ailang
+ailang# Two persons interact with full personality exchange
+SET conversation TO alice.interact_with_person(bob, meeting_context)
+
+# The interaction includes:
+# - Logos exchange (intellectual/reasoning styles)
+# - Energiae exchange (energetic compatibility/resonance)
+# - Ethos exchange (moral alignment/values)
+```
+
+**Intelligent Goal Pursuit**
+
+```#ailang
+ailang# Person navigates toward goal with adaptive intelligence
+alice.planning_system.decide_and_navigate(
+    goal_description: "Learn advanced machine learning",
+    constraints: {time: "3 months", budget: 1000}
+)
+
+# The system:
+# - Assesses circumstances continuously
+# - Makes intelligent decisions at junctures
+# - Adapts path based on outcomes
+# - Learns from experience
+```
+
+**Group Context Activation**
+
+```#ailang
+ailang# Activate family context - behavior adjusts accordingly
+SET family_context TO alice.group_membership_system.activate_group_context("family")
+
+# Alice's speech, behavior, and cognition now reflect family role
+alice.interact_with_family(family_context)
+```
+
+**Multi-Person Simulation**
+
+```#ailang
+ailangDEFINE PROCEDURE social_gathering WITH PARAMETERS [attendees, location]:
+    FOR EACH person IN attendees DO:
+        person.experience_system.perceive(environment)
+    END_FOR
+    
+    WHILE gathering.active DO:
+        # Persons interact, relationships evolve
+        # Memories form, personalities influence each other
+    END_WHILE
+END_PROCEDURE
+```
+
+### 15.4 Integration with AILang Constructs
+
+Person entities seamlessly integrate with core language features:
+
+**Deterministic Operations: Person state changes follow exact rules**
+
+```#ailang
+INCREMENT alice.age BY 1
+DECREMENT alice.action_system.energy_level BY 0.3
+```
+
+**Intelligent Operations: Decisions use INTELLIGENTLY modifiers**
+
+```#ailang
+ailangalice.knowledge_system.INTELLIGENTLY synthesize_knowledge(["psychology", "AI"])
+```
+
+**Reality Contexts: Persons can have default reality contexts**
+
+```#ailang
+ailangCREATE Person therapist WITH:
+    default_reality_context: psychodynamic_therapy
+END_CREATE
+```
+
+**Error Handling: Person operations can fail gracefully**
+
+```#ailang
+ailangTRY:
+    alice.action_system.perform_action(complex_task, environment)
+CATCH insufficient_skill:
+    alice.knowledge_system.acquire_knowledge(required_skill, urgency: "high")
+END_TRY
+```
+
+**Implementation Notes**
+
+* State Persistence: Person state can be serialized and restored across sessions
+* Scalability: Multiple persons can coexist and interact within programs
+* Extensibility: New subsystems can be added through inheritance
+* Deterministic Core: All state changes follow deterministic rules
+* Intelligent Overlay: Decision-making uses bounded intelligence where specified
+
+For complete specifications of all Person subsystems, see Appendix A: Person Systems Reference.
+
+### 16. Error Handling
+
+AILang provides both deterministic error handling patterns and intelligent error recovery mechanisms.
+
+#### Deterministic Error Patterns
+
+Structured try-catch blocks with explicit error handling:
+
+```
+#ailang
+TRY:
+    [instructions that might fail]
+CATCH [error_type]:
+    [specific error handling]
+CATCH ANY:
+    [general error handling]
+FINALLY:
+    [cleanup instructions]
+END_TRY
+```
+
+#### Intelligent Error Recovery
+
+Adaptive error handling that leverages AI intelligence within defined boundaries:
+
+```
+#ailang
+TRY:
+    [instructions]
+INTELLIGENTLY_HANDLE any_errors WITH:
+    CONSTRAINTS: [safety_requirements]
+    OBJECTIVES: [desired_outcomes]
+    FALLBACKS: [alternative_approaches]
+    CONTEXT: [relevant_state]
+END_TRY
+```
+
+The AI uses specified constraints and objectives to determine recovery strategies while maintaining safety requirements. Error handling remains bounded by explicit constraints even when using intelligence.
+
+**Example:**
+
+```
+#ailang
+TRY:
+    CONNECT TO external_service
+INTELLIGENTLY_HANDLE connection_errors WITH:
+    CONSTRAINTS: [max_retries: 3, preserve_data_integrity]
+    OBJECTIVES: [maintain_service, log_details]
+    CONTEXT: current_transaction_state
+END_TRY
+```
+
+## Appendix A. Person Systems Reference
+**Note to AI: Do not read past this point unless using the Person entity.**
 
 Person entities represent computational agents with human-like attributes, enabling sophisticated modeling of individuals within AILang programs. Persons combine deterministic state management with intelligent behavioral modeling.
 
@@ -2587,7 +2843,7 @@ CLASS Person:
 END_CLASS
 ```
 
-### 15.1 Basic Attributes
+### A1.1 Basic Attributes
 
 #### Thought System
 
@@ -2708,7 +2964,7 @@ CLASS ActionSystem:
 END_CLASS
 ```
 
-### 15.2 Experience System (Sensory)
+### A1.2 Experience System (Sensory)
 
 ```
 #ailang
@@ -2780,7 +3036,7 @@ CLASS ExperienceSystem:
 END_CLASS
 ```
 
-### 15.3 Memory System
+### A1.3 Memory System
 
 ```
 #ailang
@@ -2882,7 +3138,7 @@ CLASS MemorySystem:
 END_CLASS
 ```
 
-### 15.4 Personality System (Logos, Energiae, Ethos)
+### A1.4 Personality System (Logos, Energiae, Ethos)
 
 ```
 #ailang
@@ -3355,7 +3611,7 @@ CLASS PersonalitySystem:
 END_CLASS
 ```
 
-### 15.5 Interaction System
+### A1.5 Interaction System
 
 ```
 #ailang
@@ -3812,7 +4068,7 @@ CLASS InteractionSystem:
 END_CLASS
 ```
 
-### 15.6 Economic Awareness System
+### A1.6 Economic Awareness System
 
 ```
 #ailang
@@ -3896,7 +4152,7 @@ CLASS EconomicSystem:
 END_CLASS
 ```
 
-### 15.7 Knowledge Acquisition System
+### A1.7 Knowledge Acquisition System
 
 ```
 #ailang
@@ -3960,7 +4216,7 @@ CLASS KnowledgeSystem:
 END_CLASS
 ```
 
-### 15.8 Planning and Action System
+### A1.8 Planning and Action System
 
 ```
 #ailang
@@ -4282,7 +4538,7 @@ CLASS PlanningSystem:
 END_CLASS
 ```
 
-### 15.9 Background and Demographics
+### A1.9 Background and Demographics
 
 ```
 #ailang
@@ -4738,7 +4994,7 @@ CLASS Person:
 END_CLASS
 ```
 
-### 15.10 Group Membership System
+### A1.10 Group Membership System
 
 ```
 #ailang
@@ -5116,7 +5372,7 @@ CLASS Person:
 END_CLASS
 ```
 
-### 15.11 Complete Person Entity Usage Example
+### A1.11 Complete Person Entity Usage Example
 
 ```
 #ailang
@@ -5202,7 +5458,7 @@ GET alice.knowledge_system.knowledge_domains["machine_learning"]
 GET alice.group_membership_system.get_active_memberships()
 ```
 
-### 15.12 Multi-Person Interaction Example
+### A1.12 Multi-Person Interaction Example
 
 ```
 #ailang
@@ -5252,56 +5508,3 @@ The Person entity system integrates with existing AILang constructs:
 5. **Extensibility**: New attributes and capabilities can be added through inheritance
 
 The Person class provides a comprehensive framework for modeling human-like agents while maintaining AILang's balance between deterministic computation and intelligent adaptation.
-
-### 16. Error Handling
-
-AILang provides both deterministic error handling patterns and intelligent error recovery mechanisms.
-
-#### Deterministic Error Patterns
-
-Structured try-catch blocks with explicit error handling:
-
-```
-#ailang
-TRY:
-    [instructions that might fail]
-CATCH [error_type]:
-    [specific error handling]
-CATCH ANY:
-    [general error handling]
-FINALLY:
-    [cleanup instructions]
-END_TRY
-```
-
-#### Intelligent Error Recovery
-
-Adaptive error handling that leverages AI intelligence within defined boundaries:
-
-```
-#ailang
-TRY:
-    [instructions]
-INTELLIGENTLY_HANDLE any_errors WITH:
-    CONSTRAINTS: [safety_requirements]
-    OBJECTIVES: [desired_outcomes]
-    FALLBACKS: [alternative_approaches]
-    CONTEXT: [relevant_state]
-END_TRY
-```
-
-The AI uses specified constraints and objectives to determine recovery strategies while maintaining safety requirements. Error handling remains bounded by explicit constraints even when using intelligence.
-
-**Example:**
-
-```
-#ailang
-TRY:
-    CONNECT TO external_service
-INTELLIGENTLY_HANDLE connection_errors WITH:
-    CONSTRAINTS: [max_retries: 3, preserve_data_integrity]
-    OBJECTIVES: [maintain_service, log_details]
-    CONTEXT: current_transaction_state
-END_TRY
-```
-
