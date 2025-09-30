@@ -1,0 +1,397 @@
+#ailang
+TITLE: "Requirements ➜ Workflows ➜ Use Cases ➜ Persona-on-the-fly User Stories"
+
+############################################
+# 0) INPUT / OUTPUT
+############################################
+GET requirements_text FROM attached or otherwise supplied requirements document(s)   # can specify path if needed
+SET output_document TO ""
+
+############################################
+# 1) SUPPORTING TYPES & UTILITIES
+############################################
+
+# Extract candidate actors, goals, features, constraints, dependencies, and events
+DEFINE PROCEDURE extract_requirements WITH PARAMETERS [text]:
+    INTELLIGENTLY parse_text WITH:
+        OUTPUT: {
+            actors: LIST,                # e.g., ["Customer", "Admin", "Billing Service"]
+            domains: LIST,               # domain keywords/areas (e.g., "payments", "security")
+            goals: LIST,                 # high-level user/system goals
+            features: LIST,              # explicit feature statements / capabilities
+            constraints: LIST,           # NFRs (perf, security, privacy), policies, regs
+            business_rules: LIST,        # rules shaping flows (eligibility, limits)
+            events: LIST,                # domain events / triggers (e.g., "Order Placed")
+            dependencies: LIST,          # sequencing hints (X before Y)
+            artifacts: LIST,             # referenced docs, APIs, data objects
+            user_segments: LIST          # named segments, if any (e.g., "power user")
+        }
+        MUST_INCLUDE: [actors, goals, features]
+        MAX_SCOPE: "only contents of provided requirements"
+        CANNOT_INCLUDE: ["speculation beyond text"]
+        CONFIDENCE_LEVEL: high
+    END
+    RETURN parse_text.OUTPUT
+END_PROCEDURE
+
+
+# Discover end-to-end workflows and nested sub-workflows before use cases.
+# A 'workflow' = named sequence of stages; a 'sub_workflow' can be reused across workflows.
+DEFINE PROCEDURE discover_workflows WITH PARAMETERS [
+    actors, goals, features, events, dependencies, constraints, business_rules
+]:
+    SET workflows TO []
+    SET sub_workflows TO []
+
+    # 1) Group by top-level intents (goals) → candidate workflows
+    FOR EACH g IN goals DO:
+        SET wf TO {
+            id: "WF-" + (LENGTH(workflows) + 1),
+            name: g,
+            stages: [],           # each stage: {name, intent, actor_candidates, feature_links, entry_events, exit_events}
+            entry_conditions: [],
+            exit_conditions: [],
+            reused_subworkflows: []
+        }
+
+        # 2) Derive stages from features + events related to g
+        # Heuristics: features that co-occur or are sequential by dependencies form contiguous stages
+        SET related_features TO INTELLIGENTLY select_features FOR g FROM features USING dependencies
+        SET ordered_features TO INTELLIGENTLY order_by_dependencies related_features USING dependencies
+
+        # Seed stages from ordered features (merge adjacent features with same actor-intent signature)
+        SET current_stage TO NULL
+        FOR EACH f IN ordered_features DO:
+            SET actor_guess TO INTELLIGENTLY choose_primary_actor BASED_ON f AND actors
+            SET intent TO INTELLIGENTLY summarize_intent FROM f
+            IF current_stage IS NULL THEN:
+                SET current_stage TO {
+                    name: "Stage " + (LENGTH(wf.stages) + 1) + ": " + intent,
+                    intent: intent,
+                    actor_candidates: UNIQUE_LIST([actor_guess]),
+                    feature_links: [f],
+                    entry_events: INTELLIGENTLY infer_entry_events FOR f FROM events,
+                    exit_events: INTELLIGENTLY infer_exit_events FOR f FROM events
+                }
+            ELSE:
+                # merge if actor/intent aligns
+                IF current_stage.intent ≈ intent AND actor_guess IN current_stage.actor_candidates THEN
+                    APPEND f TO current_stage.feature_links
+                    # extend events as needed
+                    APPEND_UNIQUE INTELLIGENTLY infer_entry_events FOR f FROM events TO current_stage.entry_events
+                    APPEND_UNIQUE INTELLIGENTLY infer_exit_events FOR f FROM events TO current_stage.exit_events
+                ELSE:
+                    APPEND current_stage TO wf.stages
+                    SET current_stage TO {
+                        name: "Stage " + (LENGTH(wf.stages) + 1) + ": " + intent,
+                        intent: intent,
+                        actor_candidates: UNIQUE_LIST([actor_guess]),
+                        feature_links: [f],
+                        entry_events: INTELLIGENTLY infer_entry_events FOR f FROM events,
+                        exit_events: INTELLIGENTLY infer_exit_events FOR f FROM events
+                    }
+                END_IF
+            END_IF
+        END_FOR
+        IF current_stage IS NOT NULL THEN:
+            APPEND current_stage TO wf.stages
+        END_IF
+
+        # 3) Lift frequently recurring groups of features into sub-workflows
+        SET extracted_subs TO INTELLIGENTLY mine_reusable_sequences FROM wf.stages USING thresholds:
+            MIN_REPEAT_COUNT: 2
+            MIN_FEATURES: 2
+        END
+        FOR EACH sw IN extracted_subs DO:
+            # normalize / register sub-workflow
+            SET existing TO INTELLIGENTLY find_equivalent_subworkflow IN sub_workflows FOR sw
+            IF existing IS NULL THEN
+                SET sw_id TO "SWF-" + (LENGTH(sub_workflows) + 1)
+                SET normalized_sw TO {
+                    id: sw_id,
+                    name: sw.name,
+                    stages: sw.stages,     # smaller stage list
+                    purpose: sw.purpose
+                }
+                APPEND normalized_sw TO sub_workflows
+                APPEND sw_id TO wf.reused_subworkflows
+            ELSE
+                APPEND existing.id TO wf.reused_subworkflows
+            END_IF
+        END_FOR
+
+        # 4) Constraints & rules at workflow boundaries
+        FOR EACH c IN constraints DO:
+            APPEND "Respect constraint: " + c TO wf.entry_conditions
+        END_FOR
+        FOR EACH r IN business_rules DO:
+            APPEND "Observe business rule: " + r TO wf.exit_conditions
+        END_FOR
+
+        APPEND wf TO workflows
+    END_FOR
+
+    RETURN {workflows: workflows, sub_workflows: sub_workflows}
+END_PROCEDURE
+
+
+# Normalize workflows → canonical Use Cases.
+# Each stage can map to one or more use cases; sub-workflows map to reusable UCs.
+DEFINE PROCEDURE synthesize_use_cases WITH PARAMETERS [
+    workflows, sub_workflows, constraints, business_rules
+]:
+    SET use_cases TO []
+
+    # 1) Use cases from sub-workflows (reusable)
+    FOR EACH sw IN sub_workflows DO:
+        SET uc TO {
+            id: "UC-" + (LENGTH(use_cases) + 1),
+            name: "Execute Sub-Workflow: " + sw.name,
+            primary_actor: INTELLIGENTLY choose_primary_actor FROM sw.stages.actor_candidates,
+            stakeholders: UNIQUE_LIST(INTELLIGENTLY collect_all_actors FROM sw.stages),
+            preconditions: ["Sub-workflow entry conditions satisfied"],
+            triggers: ["Stage-specific trigger within parent workflow"],
+            main_flow: INTELLIGENTLY synthesize_flow FROM sw.stages,
+            alternate_flows: INTELLIGENTLY infer_alternates FROM sw.stages,
+            postconditions: ["Sub-workflow completion achieved"],
+            business_rules: business_rules
+        }
+        APPEND uc TO use_cases
+    END_FOR
+
+    # 2) Use cases per workflow stage
+    FOR EACH wf IN workflows DO:
+        FOR EACH st IN wf.stages DO:
+            SET uc TO {
+                id: "UC-" + (LENGTH(use_cases) + 1),
+                name: wf.name + " — " + st.name,
+                primary_actor: INTELLIGENTLY choose_primary_actor BASED_ON st.actor_candidates,
+                stakeholders: UNIQUE_LIST(st.actor_candidates),
+                preconditions: ["Workflow entry: " + JOIN(wf.entry_conditions, "; ")],
+                triggers: (IF LENGTH(st.entry_events)>0 THEN st.entry_events ELSE ["User initiates stage"]),
+                main_flow: INTELLIGENTLY steps_from_features st.feature_links WITH "validate → act → confirm",
+                alternate_flows: INTELLIGENTLY infer_alternates FROM st.feature_links,
+                postconditions: (IF LENGTH(st.exit_events)>0 THEN st.exit_events ELSE ["Stage completed"]),
+                business_rules: business_rules
+            }
+            # Guardrails from global constraints
+            FOR EACH c IN constraints DO:
+                APPEND "Respect constraint: " + c TO uc.preconditions
+            END_FOR
+            APPEND uc TO use_cases
+        END_FOR
+    END_FOR
+
+    RETURN use_cases
+END_PROCEDURE
+
+
+# Persona-on-the-fly: generate the *right* Person for this story context (per UC)
+DEFINE PROCEDURE synthesize_person_for_uc WITH PARAMETERS [uc, domains, constraints]:
+    # Build a fresh persona aligned to this UC's primary actor, domain, and risk posture
+    CREATE Person p WITH:
+        name: INTELLIGENTLY generate_name WITH:
+            MAX_SCOPE: "generic, culturally neutral"
+        END
+        age: INTELLIGENTLY select_age WITH:
+            MAX_SCOPE: "role-appropriate only"
+            OUTPUT: number
+        END
+        gender: "unspecified"
+        background: {
+            role_label: uc.primary_actor,
+            domain_familiarity: INTELLIGENTLY rate_familiarity FROM domains ON uc.name,  # e.g., novice/intermediate/expert
+            compliance_sensitivity: (IF "security" IN domains OR "privacy" IN domains OR ANY c CONTAINS "compliance" IN constraints THEN "high" ELSE "standard")
+        }
+    END_CREATE
+
+    # Tune *per story* values/concerns without persisting globally
+    SET p.personality.logos.reasoning_style TO INTELLIGENTLY choose FROM ["analytical","procedural","outcome-focused"] BASED_ON uc.name
+    SET p.personality.ethos.core_values TO UNIQUE_LIST(
+        ["usability","reliability"] +
+        (IF p.background.compliance_sensitivity = "high" THEN ["security","privacy"] ELSE []) +
+        (IF "performance" IN constraints THEN ["speed"] ELSE [])
+    )
+    SET p.personality.energiae.drives TO {
+        achievement: 0.6,
+        efficiency: 0.6,
+        safety: (IF p.background.compliance_sensitivity = "high" THEN 0.9 ELSE 0.6)
+    }
+
+    RETURN p
+END_PROCEDURE
+
+
+# Turn a Use Case into User Stories (with persona generated on-the-fly per UC)
+DEFINE PROCEDURE use_case_to_user_stories WITH PARAMETERS [uc, domains, constraints, business_rules]:
+    SET stories TO []
+
+    # Persona synthesized for this UC (no global persona cache)
+    SET persona TO CALL synthesize_person_for_uc WITH [uc, domains, constraints]
+
+    # Core story
+    SET story_title TO "As " + persona.name + " (" + uc.primary_actor + "), I want to " + LOWERCASE(uc.name) + " so that I can complete my task effectively."
+
+    # Acceptance Criteria (contextualized)
+    SET ac TO []
+    APPEND "GIVEN " + (IF LENGTH(uc.preconditions)>0 THEN JOIN(uc.preconditions, "; ") ELSE "system is available") TO ac
+    APPEND "AND " + (IF LENGTH(uc.triggers)>0 THEN "the trigger occurs (" + JOIN(uc.triggers, "; ") + ")" ELSE "I begin this action") TO ac
+    APPEND "WHEN I follow the main flow steps: " + (IF LENGTH(uc.main_flow)>0 THEN JOIN(uc.main_flow, " → ") ELSE "proceed") TO ac
+    APPEND "THEN the system ensures postconditions: " + (IF LENGTH(uc.postconditions)>0 THEN JOIN(uc.postconditions, "; ") ELSE "completion recorded") TO ac
+
+    # Rule/constraint-sensitive ACs (safety, privacy, auditability)
+    FOR EACH rule IN business_rules DO:
+        APPEND "AND outcome adheres to business rule: " + rule TO ac
+    END_FOR
+    IF ANY c CONTAINS "privacy" OR "security" IN constraints THEN
+        APPEND "AND sensitive data is protected at rest and in transit; access is least-privilege with audit trails" TO ac
+    END_IF
+    IF ANY c CONTAINS "performance" IN constraints THEN
+        APPEND "AND response time meets stated performance thresholds under expected load" TO ac
+    END_IF
+    IF LENGTH(uc.alternate_flows) > 0 THEN
+        APPEND "AND for alternates (" + JOIN(uc.alternate_flows, "; ") + ") the system recovers gracefully with actionable guidance" TO ac
+    ELSE
+        APPEND "AND invalid inputs are rejected with clear, non-destructive feedback" TO ac
+    END_IF
+
+    # Definition of Done hints (optional)
+    SET dod TO [
+        "Telemetry: key actions logged with UC/Stage identifiers",
+        "Errors categorized with user-safe messaging and diagnostic codes",
+        "Accessibility checks pass for persona’s typical usage patterns"
+    ]
+
+    APPEND {
+        title: story_title,
+        persona_snapshot: {
+            name: persona.name,
+            role: uc.primary_actor,
+            values: persona.personality.ethos.core_values,
+            compliance_sensitivity: persona.background.compliance_sensitivity,
+            domain_familiarity: persona.background.domain_familiarity
+        },
+        acceptance_criteria: ac,
+        definition_of_done: dod
+    } TO stories
+
+    RETURN stories
+END_PROCEDURE
+
+
+############################################
+# 2) PIPELINE: REQUIREMENTS ➜ WORKFLOWS ➜ UCs ➜ STORIES
+############################################
+
+# Extract structured signals from requirements
+SET parsed TO CALL extract_requirements WITH [requirements_text]
+
+# Discover workflows + sub-workflows (FIRST)
+SET wf_pack TO CALL discover_workflows WITH [
+    parsed.actors, parsed.goals, parsed.features, parsed.events,
+    parsed.dependencies, parsed.constraints, parsed.business_rules
+]
+SET workflows TO wf_pack.workflows
+SET sub_workflows TO wf_pack.sub_workflows
+
+# Build Use Cases from workflows
+SET use_cases TO CALL synthesize_use_cases WITH [
+    workflows, sub_workflows, parsed.constraints, parsed.business_rules
+]
+
+# For each UC, generate persona-on-the-fly stories
+SET user_stories TO []
+FOR EACH uc IN use_cases DO:
+    SET uc_stories TO CALL use_case_to_user_stories WITH [uc, parsed.domains, parsed.constraints, parsed.business_rules]
+    APPEND uc_stories TO user_stories
+END_FOR
+
+
+############################################
+# 3) COMPOSE OUTPUT DOCUMENT
+############################################
+
+# Workflows
+APPEND "# Workflows\n\n" TO output_document
+FOR EACH wf IN workflows DO:
+    APPEND "## " + wf.id + ": " + wf.name + "\n" TO output_document
+    APPEND "- Entry Conditions: " + (IF LENGTH(wf.entry_conditions)>0 THEN JOIN(wf.entry_conditions, "; ") ELSE "None") + "\n" TO output_document
+    APPEND "- Sub-Workflows Reused: " + (IF LENGTH(wf.reused_subworkflows)>0 THEN JOIN(wf.reused_subworkflows, ", ") ELSE "None") + "\n" TO output_document
+    APPEND "### Stages\n" TO output_document
+    FOR EACH st IN wf.stages DO:
+        APPEND "- " + st.name + "\n" TO output_document
+        APPEND "  - Intent: " + st.intent + "\n" TO output_document
+        APPEND "  - Actor Candidates: " + JOIN(st.actor_candidates, ", ") + "\n" TO output_document
+        APPEND "  - Features: " + JOIN(st.feature_links, "; ") + "\n" TO output_document
+        APPEND "  - Entry Events: " + (IF LENGTH(st.entry_events)>0 THEN JOIN(st.entry_events, "; ") ELSE "None") + "\n" TO output_document
+        APPEND "  - Exit Events: " + (IF LENGTH(st.exit_events)>0 THEN JOIN(st.exit_events, "; ") ELSE "None") + "\n" TO output_document
+    END_FOR
+    APPEND "- Exit Conditions: " + (IF LENGTH(wf.exit_conditions)>0 THEN JOIN(wf.exit_conditions, "; ") ELSE "None") + "\n\n" TO output_document
+END_FOR
+
+# Sub-Workflows
+IF LENGTH(sub_workflows) > 0 THEN:
+    APPEND "# Sub-Workflows\n\n" TO output_document
+    FOR EACH sw IN sub_workflows DO:
+        APPEND "## " + sw.id + ": " + sw.name + "\n" TO output_document
+        APPEND "- Purpose: " + (IF sw.purpose THEN sw.purpose ELSE "Reusable operational sequence") + "\n" TO output_document
+        APPEND "### Stages\n" TO output_document
+        FOR EACH s IN sw.stages DO:
+            APPEND "- " + s.name + "\n" TO output_document
+        END_FOR
+        APPEND "\n" TO output_document
+    END_FOR
+END_IF
+
+# Use Cases
+APPEND "# Use Cases\n\n" TO output_document
+FOR EACH uc IN use_cases DO:
+    APPEND "## " + uc.id + ": " + uc.name + "\n" TO output_document
+    APPEND "- Primary Actor: " + uc.primary_actor + "\n" TO output_document
+    APPEND "- Stakeholders: " + JOIN(uc.stakeholders, ", ") + "\n" TO output_document
+    APPEND "- Preconditions: " + (IF LENGTH(uc.preconditions)>0 THEN JOIN(uc.preconditions, "; ") ELSE "None") + "\n" TO output_document
+    APPEND "- Trigger(s): " + (IF LENGTH(uc.triggers)>0 THEN JOIN(uc.triggers, "; ") ELSE "None") + "\n" TO output_document
+    APPEND "- Main Flow:\n" TO output_document
+    IF LENGTH(uc.main_flow) = 0 THEN:
+        APPEND "  1. Execute primary intent\n" TO output_document
+    ELSE:
+        SET idx TO 1
+        FOR EACH step IN uc.main_flow DO:
+            APPEND "  " + STRING(idx) + ". " + step + "\n" TO output_document
+            SET idx TO idx + 1
+        END_FOR
+    END_IF
+    IF LENGTH(uc.alternate_flows) > 0 THEN:
+        APPEND "- Alternate Flows:\n" TO output_document
+        FOR EACH alt IN uc.alternate_flows DO:
+            APPEND "  - " + alt + "\n" TO output_document
+        END_FOR
+    END_IF
+    APPEND "- Postconditions: " + (IF LENGTH(uc.postconditions)>0 THEN JOIN(uc.postconditions, "; ") ELSE "None") + "\n" TO output_document
+    IF LENGTH(uc.business_rules) > 0 THEN:
+        APPEND "- Business Rules: " + JOIN(uc.business_rules, "; ") + "\n" TO output_document
+    END_IF
+    APPEND "\n" TO output_document
+END_FOR
+
+# User Stories (Persona-on-the-fly)
+APPEND "# User Stories (Persona-on-the-fly)\n\n" TO output_document
+FOR EACH s IN user_stories DO:
+    APPEND "## " + s.title + "\n" TO output_document
+    APPEND "- Persona: **" + s.persona_snapshot.name + "** (Role: " + s.persona_snapshot.role + "; Values: " + JOIN(s.persona_snapshot.values, ", ") + "; Familiarity: " + s.persona_snapshot.domain_familiarity + "; Compliance: " + s.persona_snapshot.compliance_sensitivity + ")\n" TO output_document
+    APPEND "- Acceptance Criteria:\n" TO output_document
+    FOR EACH c IN s.acceptance_criteria DO:
+        APPEND "  - " + c + "\n" TO output_document
+    END_FOR
+    APPEND "- Definition of Done:\n" TO output_document
+    FOR EACH d IN s.definition_of_done DO:
+        APPEND "  - " + d + "\n" TO output_document
+    END_FOR
+    APPEND "\n" TO output_document
+END_FOR
+
+
+############################################
+# 4) OUTPUT
+############################################
+SEND output_document TO "workflows-usecases-userstories.md"
