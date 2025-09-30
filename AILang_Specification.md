@@ -1889,7 +1889,6 @@ All mathematical blocks follow consistent termination patterns:
 - Optimization: `OPTIMIZE ... END_OPTIMIZE`
 - PDE solving: `SOLVE_PDE ... END_SOLVE`
 - Integration regions: `OVER_REGION { ... }`
-- Conditional blocks within math: `IF ... THEN ... ELSE ... END_IF`
 
 ##### Logarithm Notation
 - **`ln(x)`**: Natural logarithm (base e)
