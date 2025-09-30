@@ -744,7 +744,480 @@ WHILE ...customer_is_not_happy DO:
 END_WHILE
 ```
 
-### 9. Confidence Levels and Action Authority
+### 9. Reality Context
+
+Reality contexts provide a framework for defining qualitative domains where specific patterns of understanding, interpretation, and meaning-making apply. Unlike quantitative constraints that enforce numerical boundaries, reality contexts shape how intelligent operations interpret situations and generate responses within bounded worldviews.
+
+#### 9.1 Defining Reality Contexts
+
+##### Basic Syntax
+
+```
+#ailang
+DEFINE REALITY_CONTEXT [context_name]:
+    WORLDVIEW: [qualitative_description]
+    ASSUMPTIONS: [list_of_implicit_beliefs]
+    INTERPRETIVE_FRAMEWORK: [meaning_making_patterns]
+    BEHAVIORAL_NORMS: [expected_patterns]
+    DISCOURSE_RULES: [communication_patterns]
+    VALUE_SYSTEM: [what_matters]
+    CAUSAL_MODELS: [how_change_happens]
+END_CONTEXT
+```
+
+##### Example: Therapeutic Reality Context
+
+```
+#ailang
+DEFINE REALITY_CONTEXT psychodynamic_therapy:
+    WORLDVIEW: "Unconscious processes drive behavior"
+    ASSUMPTIONS: [
+        "Current problems stem from childhood experiences",
+        "Defense mechanisms protect from psychological pain",
+        "Transference reveals relationship patterns",
+        "Dreams carry symbolic meaning"
+    ]
+    INTERPRETIVE_FRAMEWORK: [
+        "Surface behavior conceals deeper motivations",
+        "Resistance indicates proximity to truth",
+        "Symptoms are compromises between desires and defenses"
+    ]
+    BEHAVIORAL_NORMS: [
+        "Free association without censorship",
+        "Emotional expression is therapeutic",
+        "Insight precedes change"
+    ]
+    DISCOURSE_RULES: [
+        "Everything said has meaning",
+        "Slips reveal unconscious content",
+        "Silence is communication"
+    ]
+    VALUE_SYSTEM: [
+        "Self-awareness over comfort",
+        "Authenticity over adaptation",
+        "Integration over splitting"
+    ]
+    CAUSAL_MODELS: [
+        "Repressed emotions create symptoms",
+        "Naming transforms experiencing",
+        "Relationship patterns repeat until resolved"
+    ]
+END_CONTEXT
+```
+
+#### 9.2 Applying Reality Contexts
+
+##### Reality Context Activation
+
+```
+#ailang
+WITH REALITY_CONTEXT [context_name]:
+    [operations that occur within this reality]
+END_WITH
+
+# Or for single operations:
+WITHIN [context_name] DO [operation]
+```
+
+##### Example: Multiple Reality Contexts
+
+```
+#ailang
+# Same situation interpreted through different realities
+
+SET customer_complaint TO "This product doesn't work as advertised"
+
+WITH REALITY_CONTEXT legal_reality:
+    # Legal framework sees potential liability
+    INTELLIGENTLY assess_situation
+    # Might conclude: "Potential breach of warranty claim requiring documentation"
+END_WITH
+
+WITH REALITY_CONTEXT customer_service_reality:
+    # Service framework sees relationship issue
+    INTELLIGENTLY assess_situation
+    # Might conclude: "Customer feels unheard and needs validation"
+END_WITH
+
+WITH REALITY_CONTEXT engineering_reality:
+    # Engineering framework sees specification mismatch
+    INTELLIGENTLY assess_situation  
+    # Might conclude: "User expectations don't match design parameters"
+END_WITH
+
+WITH REALITY_CONTEXT startup_reality:
+    # Startup framework sees product-market fit signal
+    INTELLIGENTLY assess_situation
+    # Might conclude: "Valuable feedback for next iteration pivot"
+END_WITH
+```
+
+#### 9.3 Reality Context Inheritance and Composition
+
+##### Extending Reality Contexts
+
+```
+#ailang
+DEFINE REALITY_CONTEXT academic_humanities EXTENDS academic_reality:
+    ADD ASSUMPTIONS: [
+        "Texts have multiple valid interpretations",
+        "Power structures shape knowledge production",
+        "Subjective experience is valid data"
+    ]
+    MODIFY DISCOURSE_RULES: [
+        "Citation creates authority",
+        "Theory frames observation",
+        "Critique is contribution"
+    ]
+END_CONTEXT
+```
+
+##### Blending Reality Contexts
+
+```
+#ailang
+DEFINE REALITY_CONTEXT design_thinking BLENDS [engineering_reality, artistic_reality]:
+    RECONCILE CONFLICTS WITH:
+        "Function and form are equally important"
+        "Constraints inspire creativity"
+        "User experience trumps pure efficiency"
+    END
+END_CONTEXT
+```
+
+#### 9.4 Reality Context-Aware Intelligent Operations
+
+When operating within a reality context, intelligent operations automatically adopt that context's interpretive framework:
+
+```
+#ailang
+WITH REALITY_CONTEXT corporate_reality:
+    INTELLIGENTLY evaluate_proposal
+    # Will consider: ROI, stakeholder buy-in, political implications, precedent
+END_WITH
+
+WITH REALITY_CONTEXT academic_reality:
+    INTELLIGENTLY evaluate_proposal
+    # Will consider: theoretical rigor, methodology, literature positioning, novelty
+END_WITH
+```
+
+#### 9.5 Person Entities and Reality Contexts
+
+Person entities can have inherent reality contexts that shape their worldview:
+
+```
+#ailang
+CREATE Person therapist WITH:
+    default_reality_context: psychodynamic_therapy
+    context_flexibility: 0.3  # How easily they shift contexts
+END_CREATE
+
+CREATE Person engineer WITH:
+    default_reality_context: engineering_reality
+    context_flexibility: 0.7  # More adaptable to other contexts
+END_CREATE
+
+# When they interact, context negotiation occurs
+SET conversation TO therapist.interact_with_person(engineer, neutral_context)
+# Each interprets through their reality lens, creating rich misunderstandings
+# or opportunities for perspective expansion
+```
+
+#### 9.6 Nested and Overlapping Reality Contexts
+
+##### Nested Reality Contexts
+
+```
+#ailang
+WITH REALITY_CONTEXT organizational_culture:
+    # Outer context: company culture
+    
+    WITH REALITY_CONTEXT team_dynamics:
+        # Inner context: specific team norms
+        
+        INTELLIGENTLY resolve_conflict
+        # Uses both contexts, with inner taking precedence for conflicts
+    END_WITH
+END_WITH
+```
+
+##### Reality Context Switching
+
+```
+#ailang
+DEFINE PROCEDURE context_aware_interaction:
+    SET initial_context TO professional_reality
+    
+    START conversation WITH initial_context
+    
+    IF detect_personal_disclosure THEN:
+        TRANSITION TO personal_reality
+    END_IF
+    
+    IF detect_conflict_escalation THEN:
+        TRANSITION TO mediation_reality
+    END_IF
+    
+    RETURN conversation_outcome
+END_PROCEDURE
+```
+
+#### 9.7 Cultural and Social Reality Contexts
+
+##### Cultural Reality Contexts
+
+```
+#ailang
+DEFINE REALITY_CONTEXT collectivist_culture:
+    WORLDVIEW: "Individual identity emerges from group belonging"
+    ASSUMPTIONS: [
+        "Harmony is more important than truth",
+        "Indirect communication preserves face",
+        "Decisions require consensus",
+        "Family needs supersede individual desires"
+    ]
+    BEHAVIORAL_NORMS: [
+        "Defer to elders and authority",
+        "Avoid direct confrontation",
+        "Share resources within in-group",
+        "Maintain group reputation"
+    ]
+END_CONTEXT
+
+DEFINE REALITY_CONTEXT individualist_culture:
+    WORLDVIEW: "Individual autonomy and achievement define identity"
+    ASSUMPTIONS: [
+        "Direct communication is honest",
+        "Personal responsibility for outcomes",
+        "Competition drives excellence",
+        "Self-reliance is virtuous"
+    ]
+    BEHAVIORAL_NORMS: [
+        "Assert personal opinions",
+        "Pursue individual goals",
+        "Maintain personal boundaries",
+        "Celebrate individual achievement"
+    ]
+END_CONTEXT
+```
+
+#### 9.8 Domain-Specific Reality Contexts
+
+##### Medical Reality Context
+
+```
+#ailang
+DEFINE REALITY_CONTEXT biomedical_reality:
+    WORLDVIEW: "Disease has biological causes with biological solutions"
+    INTERPRETIVE_FRAMEWORK: [
+        "Symptoms indicate underlying pathology",
+        "Diagnosis requires objective testing",
+        "Treatment targets biological mechanisms",
+        "Evidence hierarchy prioritizes RCTs"
+    ]
+END_CONTEXT
+
+DEFINE REALITY_CONTEXT holistic_health_reality:
+    WORLDVIEW: "Health emerges from balance of mind, body, spirit"
+    INTERPRETIVE_FRAMEWORK: [
+        "Symptoms express whole-system imbalance",
+        "Healing capacity is innate",
+        "Prevention through lifestyle harmony",
+        "Individual constitution determines treatment"
+    ]
+END_CONTEXT
+```
+
+#### 9.9 Reality Context Validation
+
+##### Consistency Checking
+
+```
+#ailang
+VALIDATE REALITY_CONTEXT [context_name]:
+    CHECK internal_consistency OF assumptions
+    CHECK compatibility OF worldview WITH causal_models
+    CHECK completeness OF interpretive_framework
+    IDENTIFY potential_contradictions
+    SUGGEST refinements
+END_VALIDATE
+```
+
+##### Reality Context Conflict Resolution
+
+```
+#ailang
+WHEN context_conflict_detected:
+    IDENTIFY conflicting_assumptions
+    DETERMINE conflict_severity
+    
+    IF severity > threshold THEN:
+        REQUEST explicit_context_selection FROM user
+    ELSE:
+        APPLY context_priority_rules
+        DOCUMENT context_compromise
+    END_IF
+END_WHEN
+```
+
+#### 9.10 Reality Context Implementation Notes
+
+##### For AI Systems
+
+1. **Context Loading**: Reality contexts should be loaded into the AI's interpretive framework before processing operations within that context
+
+2. **Assumption Tracking**: The AI must track which assumptions from the reality context influenced each decision or interpretation
+
+3. **Context Boundaries**: When transitioning between contexts, the AI should acknowledge the shift in interpretive framework
+
+4. **Context Conflicts**: When multiple contexts apply, the AI should either blend them coherently or make context selection explicit
+
+##### Quality Assurance
+
+1. **Interpretive Consistency**: Operations within a reality context should consistently reflect that context's worldview
+
+2. **Context Leakage**: Prevent assumptions from one reality context from inappropriately influencing operations in another context
+
+3. **Context Documentation**: Clear documentation of which reality context was active for each intelligent operation
+
+4. **User Awareness**: Users should be able to query which reality context is currently active and why
+
+#### 9.11 Examples of Reality Context Applications
+
+##### Negotiation Across Realities
+
+```
+#ailang
+DEFINE PROCEDURE multi_context_negotiation:
+    SET party_a TO Person WITH default_reality_context: legal_reality
+    SET party_b TO Person WITH default_reality_context: relationship_reality
+    
+    # Each party interprets the same situation differently
+    SET dispute TO "Verbal agreement about shared property"
+    
+    party_a.interpretation:  # "No written contract means no agreement"
+    party_b.interpretation:  # "Our trust relationship is the agreement"
+    
+    # Mediator operates in bridging context
+    WITH REALITY_CONTEXT mediation_reality:
+        INTELLIGENTLY identify_shared_values
+        INTELLIGENTLY translate_between_contexts
+        INTELLIGENTLY find_creative_solutions
+    END_WITH
+END_PROCEDURE
+```
+
+##### Educational Context Adaptation
+
+```
+#ailang
+DEFINE PROCEDURE adaptive_teaching:
+    ASSESS student.reality_context
+    
+    IF student.context MATCHES scientific_materialism THEN:
+        PRESENT concepts WITH empirical_evidence
+        USE causal_mechanical_explanations
+    ELSE IF student.context MATCHES narrative_thinking THEN:
+        PRESENT concepts THROUGH stories
+        USE character_journey_explanations
+    ELSE IF student.context MATCHES visual_spatial THEN:
+        PRESENT concepts AS diagrams
+        USE geometric_relationship_explanations
+    END_IF
+END_PROCEDURE
+```
+
+##### Therapeutic Reality Navigation
+
+```
+#ailang
+DEFINE PROCEDURE therapeutic_intervention:
+    # Therapist can shift between reality contexts strategically
+    
+    START WITH REALITY_CONTEXT cognitive_behavioral:
+        IDENTIFY thought_patterns
+        CHALLENGE cognitive_distortions
+    END_WITH
+    
+    IF resistance_encountered THEN:
+        SHIFT TO REALITY_CONTEXT psychodynamic:
+            EXPLORE what_resistance_protects
+            IDENTIFY underlying_conflicts
+        END_WITH
+    END_IF
+    
+    IF somatic_symptoms_present THEN:
+        SHIFT TO REALITY_CONTEXT somatic_experiencing:
+            FOCUS ON body_sensations
+            FACILITATE nervous_system_regulation
+        END_WITH
+    END_IF
+    
+    INTEGRATE insights ACROSS contexts
+END_PROCEDURE
+```
+
+#### 9.12 Advanced Reality Context Features
+
+##### Probabilistic Context Mixing
+
+```
+#ailang
+DEFINE REALITY_CONTEXT_MIX market_analysis:
+    COMPONENTS: [
+        {context: fundamental_analysis, weight: 0.4},
+        {context: technical_analysis, weight: 0.3},
+        {context: behavioral_finance, weight: 0.3}
+    ]
+    RECONCILIATION: weighted_integration
+END_CONTEXT_MIX
+```
+
+##### Dynamic Context Evolution
+
+```
+#ailang
+DEFINE EVOLVING_CONTEXT startup_growth:
+    STAGE early_startup WHEN company_size < 10:
+        REALITY_CONTEXT: garage_startup_reality
+    STAGE growth WHEN company_size BETWEEN 10 AND 50:
+        REALITY_CONTEXT: scaling_startup_reality
+    STAGE established WHEN company_size > 50:
+        REALITY_CONTEXT: corporate_reality
+    
+    TRANSITION_RULES: [
+        "Gradual culture shift over 6 months",
+        "Preserve founding principles as constraints",
+        "Document reality changes explicitly"
+    ]
+END_EVOLVING_CONTEXT
+```
+
+##### Meta-Context Awareness
+
+```
+#ailang
+DEFINE META_CONTEXT reality_awareness:
+    RECOGNIZE current_operating_context
+    UNDERSTAND context_limitations
+    IDENTIFY when_context_shift_needed
+    FACILITATE meta_cognitive_reflection
+    
+    METHOD examine_context_assumptions:
+        LIST active_assumptions
+        EVALUATE assumption_validity
+        IDENTIFY assumption_alternatives
+        CONSIDER context_switching_costs
+    END_METHOD
+END_META_CONTEXT
+```
+
+#### Implementation Requirements
+
+Reality contexts fundamentally change how intelligent operations interpret and respond to situations. They provide the qualitative boundaries that make AI behavior coherent within specific domains of meaning while maintaining the flexibility to shift perspectives when appropriate. This creates AI systems that can truly operate within human social, cultural, and professional contexts rather than merely processing them from the outside.
+
+### 10. Confidence Levels and Action Authority
 
 AILang supports explicit confidence levels for intelligent operations that determine action authority.
 
@@ -771,7 +1244,7 @@ END_IF
 
 **Specification**: Lower confidence assessments require tighter boundaries and often user confirmation before significant actions.
 
-### 10. The Qualitative Spectrum
+### 11. The Qualitative Spectrum
 
 Within qualitative processing, AILang recognizes a spectrum from observable to interpretive assessments that determines execution confidence and boundary placement.
 
@@ -815,7 +1288,7 @@ END_IF
 
 **Specification**: The AI must recognize where assessments fall on the observable–interpretive spectrum and adjust confidence levels and action boundaries accordingly.
 
-### 11. Mathematical Constructs
+### 12. Mathematical Constructs
 
 Mathematical operations in AILang follow standard mathematical notation and conventions while remaining readable in natural language.
 
@@ -2004,7 +2477,7 @@ END_VERIFY
 4. **Verification**: Provide mechanisms to verify mathematical results through alternative methods
 5. **Documentation**: Clear documentation of mathematical methods and assumptions used
 
-### 12. Execution Boundaries
+### 13. Execution Boundaries
 
 Clear delineation between deterministic and intelligent execution ensures program reliability.
 
@@ -2028,7 +2501,7 @@ These aspects allow for contextual adaptation:
 4. **Contextual Interpretation:** Understanding intent when natural language is ambiguous
 5. **Creative Problem-Solving:** Generating solutions within specified constraints
 
-### 13. State-Aware Dynamic Boundaries
+### 14. State-Aware Dynamic Boundaries
 
 AILang maintains state that creates dynamic execution boundaries:
 
@@ -2083,58 +2556,6 @@ END_WITHIN
 ```
 
 **Specification**: Boundaries can dynamically adjust based on program state, but must always remain within maximum defined limits. State-aware boundaries prevent cascade failures and resource exhaustion while allowing adaptive behavior within safe parameters.
-
-### 14. Error Handling
-
-AILang provides both deterministic error handling patterns and intelligent error recovery mechanisms.
-
-#### Deterministic Error Patterns
-
-Structured try-catch blocks with explicit error handling:
-
-```
-#ailang
-TRY:
-    [instructions that might fail]
-CATCH [error_type]:
-    [specific error handling]
-CATCH ANY:
-    [general error handling]
-FINALLY:
-    [cleanup instructions]
-END_TRY
-```
-
-#### Intelligent Error Recovery
-
-Adaptive error handling that leverages AI intelligence within defined boundaries:
-
-```
-#ailang
-TRY:
-    [instructions]
-INTELLIGENTLY_HANDLE any_errors WITH:
-    CONSTRAINTS: [safety_requirements]
-    OBJECTIVES: [desired_outcomes]
-    FALLBACKS: [alternative_approaches]
-    CONTEXT: [relevant_state]
-END_TRY
-```
-
-The AI uses specified constraints and objectives to determine recovery strategies while maintaining safety requirements. Error handling remains bounded by explicit constraints even when using intelligence.
-
-**Example:**
-
-```
-#ailang
-TRY:
-    CONNECT TO external_service
-INTELLIGENTLY_HANDLE connection_errors WITH:
-    CONSTRAINTS: [max_retries: 3, preserve_data_integrity]
-    OBJECTIVES: [maintain_service, log_details]
-    CONTEXT: current_transaction_state
-END_TRY
-```
 
 ## 15. Person Entities
 
@@ -4695,7 +5116,7 @@ CLASS Person:
 END_CLASS
 ```
 
-### 15.10 Complete Person Entity Usage Example
+### 15.11 Complete Person Entity Usage Example
 
 ```
 #ailang
@@ -4781,7 +5202,7 @@ GET alice.knowledge_system.knowledge_domains["machine_learning"]
 GET alice.group_membership_system.get_active_memberships()
 ```
 
-### 15.11 Multi-Person Interaction Example
+### 15.12 Multi-Person Interaction Example
 
 ```
 #ailang
@@ -4832,476 +5253,55 @@ The Person entity system integrates with existing AILang constructs:
 
 The Person class provides a comprehensive framework for modeling human-like agents while maintaining AILang's balance between deterministic computation and intelligent adaptation.
 
-### 16. Reality Context
+### 16. Error Handling
 
-Reality contexts provide a framework for defining qualitative domains where specific patterns of understanding, interpretation, and meaning-making apply. Unlike quantitative constraints that enforce numerical boundaries, reality contexts shape how intelligent operations interpret situations and generate responses within bounded worldviews.
+AILang provides both deterministic error handling patterns and intelligent error recovery mechanisms.
 
-#### 16.1 Defining Reality Contexts
+#### Deterministic Error Patterns
 
-##### Basic Syntax
-
-```
-#ailang
-DEFINE REALITY_CONTEXT [context_name]:
-    WORLDVIEW: [qualitative_description]
-    ASSUMPTIONS: [list_of_implicit_beliefs]
-    INTERPRETIVE_FRAMEWORK: [meaning_making_patterns]
-    BEHAVIORAL_NORMS: [expected_patterns]
-    DISCOURSE_RULES: [communication_patterns]
-    VALUE_SYSTEM: [what_matters]
-    CAUSAL_MODELS: [how_change_happens]
-END_CONTEXT
-```
-
-##### Example: Therapeutic Reality Context
+Structured try-catch blocks with explicit error handling:
 
 ```
 #ailang
-DEFINE REALITY_CONTEXT psychodynamic_therapy:
-    WORLDVIEW: "Unconscious processes drive behavior"
-    ASSUMPTIONS: [
-        "Current problems stem from childhood experiences",
-        "Defense mechanisms protect from psychological pain",
-        "Transference reveals relationship patterns",
-        "Dreams carry symbolic meaning"
-    ]
-    INTERPRETIVE_FRAMEWORK: [
-        "Surface behavior conceals deeper motivations",
-        "Resistance indicates proximity to truth",
-        "Symptoms are compromises between desires and defenses"
-    ]
-    BEHAVIORAL_NORMS: [
-        "Free association without censorship",
-        "Emotional expression is therapeutic",
-        "Insight precedes change"
-    ]
-    DISCOURSE_RULES: [
-        "Everything said has meaning",
-        "Slips reveal unconscious content",
-        "Silence is communication"
-    ]
-    VALUE_SYSTEM: [
-        "Self-awareness over comfort",
-        "Authenticity over adaptation",
-        "Integration over splitting"
-    ]
-    CAUSAL_MODELS: [
-        "Repressed emotions create symptoms",
-        "Naming transforms experiencing",
-        "Relationship patterns repeat until resolved"
-    ]
-END_CONTEXT
+TRY:
+    [instructions that might fail]
+CATCH [error_type]:
+    [specific error handling]
+CATCH ANY:
+    [general error handling]
+FINALLY:
+    [cleanup instructions]
+END_TRY
 ```
 
-#### 16.2 Applying Reality Contexts
+#### Intelligent Error Recovery
 
-##### Reality Context Activation
+Adaptive error handling that leverages AI intelligence within defined boundaries:
 
 ```
 #ailang
-WITH REALITY_CONTEXT [context_name]:
-    [operations that occur within this reality]
-END_WITH
-
-# Or for single operations:
-WITHIN [context_name] DO [operation]
+TRY:
+    [instructions]
+INTELLIGENTLY_HANDLE any_errors WITH:
+    CONSTRAINTS: [safety_requirements]
+    OBJECTIVES: [desired_outcomes]
+    FALLBACKS: [alternative_approaches]
+    CONTEXT: [relevant_state]
+END_TRY
 ```
 
-##### Example: Multiple Reality Contexts
+The AI uses specified constraints and objectives to determine recovery strategies while maintaining safety requirements. Error handling remains bounded by explicit constraints even when using intelligence.
 
-```
-#ailang
-# Same situation interpreted through different realities
-
-SET customer_complaint TO "This product doesn't work as advertised"
-
-WITH REALITY_CONTEXT legal_reality:
-    # Legal framework sees potential liability
-    INTELLIGENTLY assess_situation
-    # Might conclude: "Potential breach of warranty claim requiring documentation"
-END_WITH
-
-WITH REALITY_CONTEXT customer_service_reality:
-    # Service framework sees relationship issue
-    INTELLIGENTLY assess_situation
-    # Might conclude: "Customer feels unheard and needs validation"
-END_WITH
-
-WITH REALITY_CONTEXT engineering_reality:
-    # Engineering framework sees specification mismatch
-    INTELLIGENTLY assess_situation  
-    # Might conclude: "User expectations don't match design parameters"
-END_WITH
-
-WITH REALITY_CONTEXT startup_reality:
-    # Startup framework sees product-market fit signal
-    INTELLIGENTLY assess_situation
-    # Might conclude: "Valuable feedback for next iteration pivot"
-END_WITH
-```
-
-#### 16.3 Reality Context Inheritance and Composition
-
-##### Extending Reality Contexts
+**Example:**
 
 ```
 #ailang
-DEFINE REALITY_CONTEXT academic_humanities EXTENDS academic_reality:
-    ADD ASSUMPTIONS: [
-        "Texts have multiple valid interpretations",
-        "Power structures shape knowledge production",
-        "Subjective experience is valid data"
-    ]
-    MODIFY DISCOURSE_RULES: [
-        "Citation creates authority",
-        "Theory frames observation",
-        "Critique is contribution"
-    ]
-END_CONTEXT
+TRY:
+    CONNECT TO external_service
+INTELLIGENTLY_HANDLE connection_errors WITH:
+    CONSTRAINTS: [max_retries: 3, preserve_data_integrity]
+    OBJECTIVES: [maintain_service, log_details]
+    CONTEXT: current_transaction_state
+END_TRY
 ```
-
-##### Blending Reality Contexts
-
-```
-#ailang
-DEFINE REALITY_CONTEXT design_thinking BLENDS [engineering_reality, artistic_reality]:
-    RECONCILE CONFLICTS WITH:
-        "Function and form are equally important"
-        "Constraints inspire creativity"
-        "User experience trumps pure efficiency"
-    END
-END_CONTEXT
-```
-
-#### 16.4 Reality Context-Aware Intelligent Operations
-
-When operating within a reality context, intelligent operations automatically adopt that context's interpretive framework:
-
-```
-#ailang
-WITH REALITY_CONTEXT corporate_reality:
-    INTELLIGENTLY evaluate_proposal
-    # Will consider: ROI, stakeholder buy-in, political implications, precedent
-END_WITH
-
-WITH REALITY_CONTEXT academic_reality:
-    INTELLIGENTLY evaluate_proposal
-    # Will consider: theoretical rigor, methodology, literature positioning, novelty
-END_WITH
-```
-
-#### 16.5 Person Entities and Reality Contexts
-
-Person entities can have inherent reality contexts that shape their worldview:
-
-```
-#ailang
-CREATE Person therapist WITH:
-    default_reality_context: psychodynamic_therapy
-    context_flexibility: 0.3  # How easily they shift contexts
-END_CREATE
-
-CREATE Person engineer WITH:
-    default_reality_context: engineering_reality
-    context_flexibility: 0.7  # More adaptable to other contexts
-END_CREATE
-
-# When they interact, context negotiation occurs
-SET conversation TO therapist.interact_with_person(engineer, neutral_context)
-# Each interprets through their reality lens, creating rich misunderstandings
-# or opportunities for perspective expansion
-```
-
-#### 16.6 Nested and Overlapping Reality Contexts
-
-##### Nested Reality Contexts
-
-```
-#ailang
-WITH REALITY_CONTEXT organizational_culture:
-    # Outer context: company culture
-    
-    WITH REALITY_CONTEXT team_dynamics:
-        # Inner context: specific team norms
-        
-        INTELLIGENTLY resolve_conflict
-        # Uses both contexts, with inner taking precedence for conflicts
-    END_WITH
-END_WITH
-```
-
-##### Reality Context Switching
-
-```
-#ailang
-DEFINE PROCEDURE context_aware_interaction:
-    SET initial_context TO professional_reality
-    
-    START conversation WITH initial_context
-    
-    IF detect_personal_disclosure THEN:
-        TRANSITION TO personal_reality
-    END_IF
-    
-    IF detect_conflict_escalation THEN:
-        TRANSITION TO mediation_reality
-    END_IF
-    
-    RETURN conversation_outcome
-END_PROCEDURE
-```
-
-#### 16.7 Cultural and Social Reality Contexts
-
-##### Cultural Reality Contexts
-
-```
-#ailang
-DEFINE REALITY_CONTEXT collectivist_culture:
-    WORLDVIEW: "Individual identity emerges from group belonging"
-    ASSUMPTIONS: [
-        "Harmony is more important than truth",
-        "Indirect communication preserves face",
-        "Decisions require consensus",
-        "Family needs supersede individual desires"
-    ]
-    BEHAVIORAL_NORMS: [
-        "Defer to elders and authority",
-        "Avoid direct confrontation",
-        "Share resources within in-group",
-        "Maintain group reputation"
-    ]
-END_CONTEXT
-
-DEFINE REALITY_CONTEXT individualist_culture:
-    WORLDVIEW: "Individual autonomy and achievement define identity"
-    ASSUMPTIONS: [
-        "Direct communication is honest",
-        "Personal responsibility for outcomes",
-        "Competition drives excellence",
-        "Self-reliance is virtuous"
-    ]
-    BEHAVIORAL_NORMS: [
-        "Assert personal opinions",
-        "Pursue individual goals",
-        "Maintain personal boundaries",
-        "Celebrate individual achievement"
-    ]
-END_CONTEXT
-```
-
-#### 16.8 Domain-Specific Reality Contexts
-
-##### Medical Reality Context
-
-```
-#ailang
-DEFINE REALITY_CONTEXT biomedical_reality:
-    WORLDVIEW: "Disease has biological causes with biological solutions"
-    INTERPRETIVE_FRAMEWORK: [
-        "Symptoms indicate underlying pathology",
-        "Diagnosis requires objective testing",
-        "Treatment targets biological mechanisms",
-        "Evidence hierarchy prioritizes RCTs"
-    ]
-END_CONTEXT
-
-DEFINE REALITY_CONTEXT holistic_health_reality:
-    WORLDVIEW: "Health emerges from balance of mind, body, spirit"
-    INTERPRETIVE_FRAMEWORK: [
-        "Symptoms express whole-system imbalance",
-        "Healing capacity is innate",
-        "Prevention through lifestyle harmony",
-        "Individual constitution determines treatment"
-    ]
-END_CONTEXT
-```
-
-#### 16.9 Reality Context Validation
-
-##### Consistency Checking
-
-```
-#ailang
-VALIDATE REALITY_CONTEXT [context_name]:
-    CHECK internal_consistency OF assumptions
-    CHECK compatibility OF worldview WITH causal_models
-    CHECK completeness OF interpretive_framework
-    IDENTIFY potential_contradictions
-    SUGGEST refinements
-END_VALIDATE
-```
-
-##### Reality Context Conflict Resolution
-
-```
-#ailang
-WHEN context_conflict_detected:
-    IDENTIFY conflicting_assumptions
-    DETERMINE conflict_severity
-    
-    IF severity > threshold THEN:
-        REQUEST explicit_context_selection FROM user
-    ELSE:
-        APPLY context_priority_rules
-        DOCUMENT context_compromise
-    END_IF
-END_WHEN
-```
-
-#### 16.10 Reality Context Implementation Notes
-
-##### For AI Systems
-
-1. **Context Loading**: Reality contexts should be loaded into the AI's interpretive framework before processing operations within that context
-
-2. **Assumption Tracking**: The AI must track which assumptions from the reality context influenced each decision or interpretation
-
-3. **Context Boundaries**: When transitioning between contexts, the AI should acknowledge the shift in interpretive framework
-
-4. **Context Conflicts**: When multiple contexts apply, the AI should either blend them coherently or make context selection explicit
-
-##### Quality Assurance
-
-1. **Interpretive Consistency**: Operations within a reality context should consistently reflect that context's worldview
-
-2. **Context Leakage**: Prevent assumptions from one reality context from inappropriately influencing operations in another context
-
-3. **Context Documentation**: Clear documentation of which reality context was active for each intelligent operation
-
-4. **User Awareness**: Users should be able to query which reality context is currently active and why
-
-#### 16.11 Examples of Reality Context Applications
-
-##### Negotiation Across Realities
-
-```
-#ailang
-DEFINE PROCEDURE multi_context_negotiation:
-    SET party_a TO Person WITH default_reality_context: legal_reality
-    SET party_b TO Person WITH default_reality_context: relationship_reality
-    
-    # Each party interprets the same situation differently
-    SET dispute TO "Verbal agreement about shared property"
-    
-    party_a.interpretation:  # "No written contract means no agreement"
-    party_b.interpretation:  # "Our trust relationship is the agreement"
-    
-    # Mediator operates in bridging context
-    WITH REALITY_CONTEXT mediation_reality:
-        INTELLIGENTLY identify_shared_values
-        INTELLIGENTLY translate_between_contexts
-        INTELLIGENTLY find_creative_solutions
-    END_WITH
-END_PROCEDURE
-```
-
-##### Educational Context Adaptation
-
-```
-#ailang
-DEFINE PROCEDURE adaptive_teaching:
-    ASSESS student.reality_context
-    
-    IF student.context MATCHES scientific_materialism THEN:
-        PRESENT concepts WITH empirical_evidence
-        USE causal_mechanical_explanations
-    ELSE IF student.context MATCHES narrative_thinking THEN:
-        PRESENT concepts THROUGH stories
-        USE character_journey_explanations
-    ELSE IF student.context MATCHES visual_spatial THEN:
-        PRESENT concepts AS diagrams
-        USE geometric_relationship_explanations
-    END_IF
-END_PROCEDURE
-```
-
-##### Therapeutic Reality Navigation
-
-```
-#ailang
-DEFINE PROCEDURE therapeutic_intervention:
-    # Therapist can shift between reality contexts strategically
-    
-    START WITH REALITY_CONTEXT cognitive_behavioral:
-        IDENTIFY thought_patterns
-        CHALLENGE cognitive_distortions
-    END_WITH
-    
-    IF resistance_encountered THEN:
-        SHIFT TO REALITY_CONTEXT psychodynamic:
-            EXPLORE what_resistance_protects
-            IDENTIFY underlying_conflicts
-        END_WITH
-    END_IF
-    
-    IF somatic_symptoms_present THEN:
-        SHIFT TO REALITY_CONTEXT somatic_experiencing:
-            FOCUS ON body_sensations
-            FACILITATE nervous_system_regulation
-        END_WITH
-    END_IF
-    
-    INTEGRATE insights ACROSS contexts
-END_PROCEDURE
-```
-
-#### 16.12 Advanced Reality Context Features
-
-##### Probabilistic Context Mixing
-
-```
-#ailang
-DEFINE REALITY_CONTEXT_MIX market_analysis:
-    COMPONENTS: [
-        {context: fundamental_analysis, weight: 0.4},
-        {context: technical_analysis, weight: 0.3},
-        {context: behavioral_finance, weight: 0.3}
-    ]
-    RECONCILIATION: weighted_integration
-END_CONTEXT_MIX
-```
-
-##### Dynamic Context Evolution
-
-```
-#ailang
-DEFINE EVOLVING_CONTEXT startup_growth:
-    STAGE early_startup WHEN company_size < 10:
-        REALITY_CONTEXT: garage_startup_reality
-    STAGE growth WHEN company_size BETWEEN 10 AND 50:
-        REALITY_CONTEXT: scaling_startup_reality
-    STAGE established WHEN company_size > 50:
-        REALITY_CONTEXT: corporate_reality
-    
-    TRANSITION_RULES: [
-        "Gradual culture shift over 6 months",
-        "Preserve founding principles as constraints",
-        "Document reality changes explicitly"
-    ]
-END_EVOLVING_CONTEXT
-```
-
-##### Meta-Context Awareness
-
-```
-#ailang
-DEFINE META_CONTEXT reality_awareness:
-    RECOGNIZE current_operating_context
-    UNDERSTAND context_limitations
-    IDENTIFY when_context_shift_needed
-    FACILITATE meta_cognitive_reflection
-    
-    METHOD examine_context_assumptions:
-        LIST active_assumptions
-        EVALUATE assumption_validity
-        IDENTIFY assumption_alternatives
-        CONSIDER context_switching_costs
-    END_METHOD
-END_META_CONTEXT
-```
-
-#### Implementation Requirements
-
-Reality contexts fundamentally change how intelligent operations interpret and respond to situations. They provide the qualitative boundaries that make AI behavior coherent within specific domains of meaning while maintaining the flexibility to shift perspectives when appropriate. This creates AI systems that can truly operate within human social, cultural, and professional contexts rather than merely processing them from the outside.
 
