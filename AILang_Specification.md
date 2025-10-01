@@ -1251,31 +1251,6 @@ Thus, managing data flow across the qualitative-quantitative boundary is the cor
 #### Information Flow Architecture
 Information flows bidirectionally between execution modes, with each transition requiring explicit handling:
 
-**INTELLIGENT → CODE: Qualitative to Quantitative**
-
-Instead of:
-
-```
-INTELLIGENTLY SET market_volatility TO 0.7  # Arbitrary!
-```
-Use parameter exploration:
-```ailang
-INTELLIGENTLY EXPLORE market_strategy:
-    PARAMETERS:
-        volatility_assumption: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    
-    EXECUTE_CODE python:
-        results = {v: calculate_returns(volatility=v) for v in volatility_range}
-    END_EXECUTE
-    
-    ANALYZE:
-        "Below 0.5: unrealistically optimistic, strategies would fail in practice"
-        "0.5-0.7: reasonable range given current market conditions"
-        "Above 0.7: overly conservative, misses opportunities"
-        "Strategy robust across 0.55-0.65 range"
-END_EXPLORE
-```
-
 **CODE → INTELLIGENT: Quantitative to Qualitative**
 
 Code produces numbers; AI interprets meaning:
@@ -1334,6 +1309,27 @@ END_IF
 
 INTELLIGENTLY respond_to_situation WITH priority: priority
 ```
+
+**INTELLIGENT → CODE: Qualitative to Quantitative**
+
+Using parameter-range exploration:
+```ailang
+INTELLIGENTLY EXPLORE market_strategy:
+    PARAMETERS:
+        volatility_assumption: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    
+    EXECUTE_CODE python:
+        results = {v: calculate_returns(volatility=v) for v in volatility_range}
+    END_EXECUTE
+    
+    ANALYZE:
+        "Below 0.5: unrealistically optimistic, strategies would fail in practice"
+        "0.5-0.7: reasonable range given current market conditions"
+        "Above 0.7: overly conservative, misses opportunities"
+        "Strategy robust across 0.55-0.65 range"
+END_EXPLORE
+```
+**Note:** See next section for a further explanation of this example.
 
 #### The Qualitative-Quantitative Interface Problem
 ##### When Simple Computation Works
