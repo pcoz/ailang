@@ -1,6 +1,6 @@
 **AILang: Complete Language Specification**
 
-**Version 0.4.1**
+**Version 0.5.0**
 
 **Author**: Edward Chalk (fleetingswallow.com)
 
@@ -8,10 +8,9 @@
 
 ## Introduction 
 
-AILang is a natural language programming system designed for execution by AI systems. It allows users to write computational logic using structured English that AI can reliably interpret and execute.
+AILang is a natural language programming system designed for execution by AI systems. It allows users to write computational logic using structured English that AI can reliably interpret and execute. AILang programs are written in controlled natural language that balances human readability with computational precision. Unlike traditional programming languages, AILang is executed directly by AI systems using this specification as a reference guide.
 
-AILang programs are written in controlled natural language that balances human readability with computational precision. Unlike traditional programming languages that require compilation, AILang is executed directly by AI systems using this specification as a reference guide.
-
+AILang serves as both a production language for AI-executed programs and a rapid prototyping tool that can later be converted to traditional programming languages when needed.
 
 ## Technical Foundation and Architecture 
 
@@ -46,159 +45,28 @@ AILang represents a significant advance over existing approaches:
     
 * **Versus Unstructured AI Prompts**: Raw AI prompts produce unpredictable outputs. AILang provides structured frameworks that ensure consistent behavior while preserving AI intelligence where appropriate.
 
+### Three Execution Modes
 
-### Hybrid Deterministic-Intelligent-Mathematical Architecture 
+AILang programs operate across three distinct execution modes, each with different guarantees and appropriate use cases:
 
-AILang operates on a three-layer model:
+**1. INTELLIGENT Operations**
+- Executed by AI reasoning and interpretation
+- Contextual, adaptive, creative decision-making
+- Non-deterministic by design
+- Appropriate for: ambiguous situations, creative tasks, strategic decisions, natural language processing
 
-* **Deterministic Layer**: Core operations (variables, control flow, I/O) execute identically every time, providing reliability  
-    
-* **Intelligent Layer**: Specific constructs delegate decision-making to AI intelligence, using the deterministic data as context
+**2. DETERMINISTIC Operations** (Pseudo-Deterministic)
+- Interpreted by AI following strict structural rules
+- High consistency but not absolute determinism due to natural language interpretation
+- Appropriate for: control flow, state management, I/O operations, structured logic
+- Note: These operations are more accurately "highly structured AI interpretations" rather than truly guaranteed computation
 
-* **Mathematical Layer**: Pure mathematical operations that follow mathematical laws and produce exact or high-precision results. Real-world systems are fundamentally governed by mathematical laws. Without native mathematical constructs, AILang would be unable to ensure precision, since many domains require exact symbolic computation or high-precision numerical analysis that cannot be approximated.
+**3. CODE Blocks**
+- Executed as actual programming language code via interpreter
+- Genuinely deterministic (same code + inputs = same outputs)
+- Appropriate for: mathematical operations, algorithmic computation, data processing, performance-critical operations
 
-The Mathematical Processing Layer provides:
-
-1. **Symbolic Mathematics**: Exact symbolic computation without numerical approximation
-2. **Numerical Analysis**: High-precision numerical methods when symbolic solutions aren't feasible
-3. **Mathematical Context**: Understanding of mathematical domains and their constraints
-4. **Physical Modeling**: Direct expression of physical laws and constraints
-
-This hybrid approach means that when the program moves to non-deterministic (intelligent) operations, the AI has access to all the deterministic calculations, mathematical results, and data as context, ensuring intelligent decisions are grounded in concrete program state rather than arbitrary reasoning.
-
-## Benefits and Applications 
-
-### Purpose and Applications 
-
-AILang has broad applicability across numerous domains, including but not limited to:
-
-* Process automation and workflow design
-* Data analysis and transformation
-* System integration and coordination
-* Algorithm prototyping and testing
-* Educational tools and demonstrations
-* Research and experimental programming
-* Business logic implementation
-* Content generation and processing
-* Scientific computing and modeling
-* Engineering calculations and simulations
-* Financial derivatives and risk modeling
-* Physics simulations and quantum computing
-
-AILang serves as both a production language for AI-executed programs and a rapid prototyping tool that can later be converted to traditional programming languages when needed.
-
-
-### Advantages 
-
-* **Accessibility**: No programming background required  
-    
-* **Readability**: Self-documenting code  
-    
-* **Flexibility**: Natural language allows for varied expression  
-    
-* **AI-Native**: Designed specifically for AI interpretation  
-    
-* **Domain Agnostic**: Works across different problem spaces  
-    
-* **Rapid Prototyping**: Quick iteration on ideas before converting to traditional code  
-    
-* **Educational Value**: Teaching computational thinking without syntax barriers
-
-### Extended Use Cases 
-
-* **Algorithm Development**: Prototype complex algorithms before implementation  
-    
-* **Research Tools**: Experimental programming for academic research  
-    
-* **Business Process Documentation**: Living documentation that can execute  
-    
-* **Decision Support Systems**: Encoding expert knowledge for automated decisions  
-    
-* **Workflow Orchestration**: Coordinating multi-system processes  
-    
-* **Data Pipeline Design**: Prototyping ETL processes  
-    
-* **API Integration Testing**: Rapid testing of service integrations  
-    
-* **Computational Modeling**: Quick modeling of complex systems  
-    
-* **Interactive Demonstrations**: Educational and training applications
-
-
-## Execution Model 
-
-AILang uses a **Retrieval-Augmented Generation (RAG) execution model**. The complete language specification is provided to the AI system as a knowledge base. When executing AILang programs, the AI:
-
-1. **Retrieves** the exact definition of each construct from this specification  
-     
-2. **Applies** the specified behavior patterns consistently  
-     
-3. **Fills intelligent gaps** where the specification explicitly allows flexibility  
-     
-4. **Maintains state** according to the defined rules
-
-This ensures that core language constructs behave predictably while allowing AI intelligence to handle contextual decisions and creative problem-solving where appropriate.
-
-
-## Language Architecture and RAG Integration 
-
-### Language Architecture 
-
-AILang operates on two complementary layers:
-
-#### Deterministic Layer (RAG-Enforced) 
-
-Core constructs that execute identically every time, following exact specification patterns:
-
-* Input/Output operations  
-    
-* Variable assignment and access  
-    
-* Control flow structures  
-    
-* Object creation and manipulation  
-    
-* Error handling patterns
-
-#### Intelligent Layer (AI-Adaptive) 
-
-Constructs that delegate decision-making to AI intelligence within defined boundaries:
-
-* Contextual interpretation of underspecified parameters  
-    
-* Creative problem-solving approaches  
-    
-* Adaptive responses to unexpected situations  
-    
-* Intelligent defaults and optimizations
-
-
-### Enhanced RAG Integration Requirements 
-
-#### Specification Attachment Process 
-
-1. **Complete Specification Loading**: The entire AILang specification document must be loaded into the AI system's RAG knowledge base before any program execution  
-     
-2. **Construct Definition Retrieval**: For each AILang instruction, the AI must retrieve the exact behavioral specification from the knowledge base  
-     
-3. **Consistency Enforcement**: Deterministic constructs must produce identical results when given identical inputs and program state  
-     
-4. **Boundary Recognition**: The AI must distinguish between deterministic operations (which must follow exact specifications) and intelligent operations (which may adapt within defined constraints)
-
-#### State-Aware Intelligent Processing 
-
-When processing intelligent constructs, the AI must:
-
-1. **Load Current State**: Retrieve all current variable values and program context  
-     
-2. **Apply Domain Knowledge**: Use relevant expertise while respecting program constraints  
-     
-3. **Maintain Boundaries**: Ensure intelligent decisions align with program objectives and safety requirements  
-     
-4. **Preserve Determinism**: Avoid modifying deterministic program state through intelligent operations
-
-This approach transforms AI from an unpredictable creative system into a reliable hybrid processor that combines computational precision with contextual intelligence.
-
+The power of AILang lies in seamlessly combining these three modes, using each where it provides maximum value. 
 
 ## Core Language Constructs 
 
@@ -1288,1196 +1156,675 @@ END_IF
 
 **Specification**: The AI must recognize where assessments fall on the observable–interpretive spectrum and adjust confidence levels and action boundaries accordingly.
 
-### 12. Mathematical Constructs
+### 12. Code Execution Blocks
 
-Mathematical operations in AILang follow standard mathematical notation and conventions while remaining readable in natural language.
-
-#### Basic Mathematical Operations
-
-##### Algebraic Operations
-
-Standard algebraic operations with enhanced notation:
+#### Basic Syntax
 
 ```
-#ailang
-# Basic operations (extends existing operators)
-SET result TO (a + b) * (c - d) / e^2
-
-# Advanced operations
-SET root TO sqrt(x^2 + y^2)
-SET logarithm TO log(x, base=10)
-SET natural_log TO ln(x)
-SET factorial TO factorial(n)
-SET combination TO C(n, k)
-SET permutation TO P(n, k)
+EXECUTE_CODE [language]:
+    [native code in specified language]
+END_EXECUTE
 ```
 
-##### Calculus Operations
+#### Supported Languages:
+* python (primary support)
+* Additional languages may be added based on execution environment capabilities
 
-###### Differentiation
+#### Specification
 
-```
-#ailang
-# Simple differentiation
-DIFFERENTIATE f(x) = x^3 + 2*x WITH_RESPECT_TO x
-# Result: 3*x^2 + 2
+1. **Execution Guarantee**: Code blocks MUST be executed as actual code in the specified language interpreter, not interpreted as natural language by the AI
 
-# Partial differentiation
-PARTIAL_DIFFERENTIATE f(x,y) = x^2*y + sin(x*y) WITH_RESPECT_TO x
-# Result: 2*x*y + y*cos(x*y)
+2. **Variable Scope:**
+    * AILang variables are accessible within code blocks
+    * Variables created/modified in code blocks become available to subsequent AILang operations
+    * Type conversion occurs automatically where possible
 
-# Higher-order derivatives
-DIFFERENTIATE f(x) = sin(x) WITH_RESPECT_TO x ORDER 2
-# Result: -sin(x)
+3. **Error Handling**: Exceptions in code blocks throw AILang catchable errors
 
-# Chain rule application
-DIFFERENTIATE f(g(x)) WITH_RESPECT_TO x USING chain_rule
-```
+4. **Isolation**: Code blocks execute in sandboxed environments with appropriate security constraints
 
-###### Integration
+#### Simple Example
 
 ```
-#ailang
-# Definite integration
-INTEGRATE f(x) = x^2 FROM 0 TO 1 WITH_RESPECT_TO x
-# Result: 1/3
+# AILang variable
+SET dataset TO load_csv("customer_data.csv")
 
-# Indefinite integration
-INTEGRATE f(x) = e^x * sin(x) WITH_RESPECT_TO x
-# Result: (e^x * (sin(x) - cos(x)))/2 + C
-
-# Multiple integration (double, triple, n-fold)
-DOUBLE_INTEGRATE f(x,y) = x*y OVER_REGION {0 <= x <= 1, 0 <= y <= x} 
-WITH_RESPECT_TO x THEN y
-# Result: 1/8
-
-# Triple integration with conditional bounds
-TRIPLE_INTEGRATE f(x,y,z) = x*y*z 
-OVER_REGION {
-    0 <= x <= 1,
-    0 <= y <= sqrt(1-x^2),
-    0 <= z <= x+y
-}
-WITH_RESPECT_TO x THEN y THEN z
-# Integrates over a complex 3D region
-
-# N-fold integration with dynamic bounds
-N_INTEGRATE f(x1,x2,...,xn) 
-OVER_REGION {
-    a1 <= x1 <= b1,  # Constants or functions
-    a2(x1) <= x2 <= b2(x1),  # Functions of x1
-    a3(x1,x2) <= x3 <= b3(x1,x2),  # Functions of x1, x2
-    ...
-    an(x1,...,xn-1) <= xn <= bn(x1,...,xn-1)  # Functions of all previous
-}
-WITH_RESPECT_TO [x1, x2, ..., xn]
-
-# Nested integration with conditional logic
-INTEGRATE (
-    IF x > 0 THEN:
-        INTEGRATE y^2 FROM 0 TO x WITH_RESPECT_TO y
-    ELSE:
-        INTEGRATE -y^2 FROM x TO 0 WITH_RESPECT_TO y
-    END_IF
-) FROM -1 TO 1 WITH_RESPECT_TO x
-
-# Integration with summation inside
-INTEGRATE (
-    SUM(k=1 TO floor(x)) OF k*sin(k*x)
-) FROM 0 TO pi WITH_RESPECT_TO x
-
-# Conditional integration with dynamic bounds
-INTEGRATE f(x) FROM a TO b WITH_RESPECT_TO x WHERE:
-    f(x) = MATCH x WITH:
-        CASE x < 0: x^2
-        CASE 0 <= x < 1: sin(x)
-        CASE x >= 1: e^(-x)
-    END_MATCH
+# Deterministic computation in code
+EXECUTE_CODE python:
+    import pandas as pd
     
-# Recursive integration
-DEFINE FUNCTION repeated_integral(f, n, bounds):
-    IF n = 1 THEN:
-        RETURN INTEGRATE f FROM bounds[0] TO bounds[1]
-    ELSE:
-        RETURN INTEGRATE (
-            repeated_integral(f, n-1, bounds[2:])
-        ) FROM bounds[0] TO bounds[1]
-    END_IF
-END_FUNCTION
-
-# Complex contour integration
-CONTOUR_INTEGRATE f(z) = 1/(z-a) ALONG circle(center=0, radius=2)
-WHERE a INSIDE circle
-# Result: 2*pi*i
-
-# Line integral with vector fields
-LINE_INTEGRATE F·dr ALONG path FROM point_a TO point_b
-WHERE F = [P(x,y), Q(x,y)] AND path = parametric_curve(t)
-
-# Surface integral
-SURFACE_INTEGRATE F·n dS OVER surface
-WHERE F = vector_field AND n = unit_normal
-
-# Volume integral with conditional density
-VOLUME_INTEGRATE (
-    IF sqrt(x^2 + y^2 + z^2) <= R THEN:
-        density(x,y,z)
-    ELSE:
-        0
-    END_IF
-) OVER_REGION {-R <= x,y,z <= R}
-```
-
-###### Differentiation with Nested and Conditional Operations
-
-```
-#ailang
-# Simple differentiation
-DIFFERENTIATE f(x) = x^3 + 2*x WITH_RESPECT_TO x
-# Result: 3*x^2 + 2
-
-# Partial differentiation
-PARTIAL_DIFFERENTIATE f(x,y) = x^2*y + sin(x*y) WITH_RESPECT_TO x
-# Result: 2*x*y + y*cos(x*y)
-
-# Higher-order derivatives
-DIFFERENTIATE f(x) = sin(x) WITH_RESPECT_TO x ORDER 2
-# Result: -sin(x)
-
-# Mixed partial derivatives
-PARTIAL_DIFFERENTIATE f(x,y,z) = x*y*z 
-WITH_RESPECT_TO x THEN y THEN z
-# Result: 1
-
-# Differentiation of integrals (Leibniz rule)
-DIFFERENTIATE (
-    INTEGRATE g(x,t) FROM a(x) TO b(x) WITH_RESPECT_TO t
-) WITH_RESPECT_TO x
-# Result: ∫(∂g/∂x)dt + g(x,b(x))*b'(x) - g(x,a(x))*a'(x)
-
-# Conditional differentiation
-DIFFERENTIATE f(x) WITH_RESPECT_TO x WHERE:
-    f(x) = IF x > 0 THEN:
-        x^2 * sin(1/x)
-    ELSE:
-        0
-    END_IF
-# Handles discontinuities appropriately
-
-# Differentiation with summation
-DIFFERENTIATE (
-    SUM(n=1 TO infinity) OF x^n/n!
-) WITH_RESPECT_TO x
-# Result: The same sum (derivative of e^x is e^x)
-
-# Functional derivatives (calculus of variations)
-FUNCTIONAL_DERIVATIVE (
-    INTEGRATE L(y, y', x) FROM a TO b WITH_RESPECT_TO x
-) WITH_RESPECT_TO y
-# Result: ∂L/∂y - d/dx(∂L/∂y')
-
-# Directional derivatives
-DIRECTIONAL_DERIVATIVE f(x,y,z) 
-IN_DIRECTION [u1, u2, u3] 
-AT_POINT (x0, y0, z0)
-
-# Total derivative with chain rule
-TOTAL_DIFFERENTIATE f(x(t), y(t), z(t)) WITH_RESPECT_TO t
-# Result: ∂f/∂x * dx/dt + ∂f/∂y * dy/dt + ∂f/∂z * dz/dt
-```
-
-###### Advanced Summation and Product Operations
-
-```
-#ailang
-# Basic summation
-SUM(k=1 TO n) OF k^2
-# Result: n*(n+1)*(2*n+1)/6
-
-# Conditional summation
-SUM(k=1 TO 100) OF k WHERE k MOD 3 = 0
-# Sums only multiples of 3
-
-# Nested summation
-SUM(i=1 TO n) OF (
-    SUM(j=1 TO i) OF i*j
-)
-
-# Summation with integration inside
-SUM(n=1 TO infinity) OF (
-    INTEGRATE x^n FROM 0 TO 1 WITH_RESPECT_TO x
-) / n!
-# Result: e - 1
-
-# Conditional nested summation
-SUM(i=1 TO n) OF (
-    IF i IS_PRIME THEN:
-        SUM(j=1 TO i) OF gcd(i,j)
-    ELSE:
-        i
-    END_IF
-)
-
-# Product notation
-PRODUCT(k=1 TO n) OF (1 + 1/k)
-# Result: (n+1)
-
-# Conditional product
-PRODUCT(p IN primes_less_than(n)) OF (1 - 1/p^2)
-
-# Mixed sum and product
-SUM(n=1 TO infinity) OF (
-    PRODUCT(k=1 TO n) OF k
-) / n!
-# Involves factorial within summation
-
-# Summation with dynamic bounds
-SUM(k=f(n) TO g(n)) OF h(k,n)
-WHERE f, g, h ARE_FUNCTIONS
-
-# Infinite series with convergence testing
-SUM(n=1 TO infinity) OF a_n WITH_CONVERGENCE_TEST:
-    METHOD: ratio_test
-    IF limit(|a_{n+1}/a_n|) < 1 THEN:
-        CONVERGES
-    ELSE IF limit(|a_{n+1}/a_n|) > 1 THEN:
-        DIVERGES
-    ELSE:
-        INCONCLUSIVE
-    END_IF
-END_SUM
-```
-
-###### Iterative Integration and Differentiation
-
-```
-#ailang
-# Iterated integrals with conditional bounds
-ITERATE_INTEGRATE:
-    START_WITH: f_0(x) = x
-    FOR n FROM 1 TO 10 DO:
-        SET f_n(x) TO INTEGRATE f_{n-1}(t) FROM 0 TO x WITH_RESPECT_TO t
-    END_FOR
-    RETURN f_10(x)
-END_ITERATE
-
-# Solving integro-differential equations
-SOLVE_INTEGRO_DIFFERENTIAL:
-    EQUATION: dy/dx + INTEGRATE K(x,t)*y(t) FROM 0 TO x = f(x)
-    INITIAL_CONDITION: y(0) = y_0
-    METHOD: successive_approximations
-END_SOLVE
-
-# Fractional calculus (non-integer order derivatives/integrals)
-FRACTIONAL_DERIVATIVE f(x) ORDER alpha WITH_RESPECT_TO x
-WHERE alpha = 1/2  # Half-derivative
-
-FRACTIONAL_INTEGRATE f(x) ORDER alpha FROM a TO x
-WHERE alpha = 1/2  # Half-integral
-
-# Nested differentiation with conditions
-DIFFERENTIATE (
-    IF x > 0 THEN:
-        DIFFERENTIATE g(x,y) WITH_RESPECT_TO y AT y=x
-    ELSE:
-        DIFFERENTIATE h(x,y) WITH_RESPECT_TO y AT y=-x
-    END_IF
-) WITH_RESPECT_TO x
-```
-
-###### Path and Contour Integration with Logic
-
-```
-#ailang
-# Path integral with conditional integrand
-PATH_INTEGRATE (
-    IF curve.curvature > threshold THEN:
-        f_1(x,y,z)
-    ELSE:
-        f_2(x,y,z)
-    END_IF
-) ALONG curve FROM t=0 TO t=2*pi
-
-# Green's theorem with conditional region
-APPLY_GREENS_THEOREM:
-    LINE_INTEGRAL: ∮(P dx + Q dy)
-    CONVERTS_TO: ∬(∂Q/∂x - ∂P/∂y) dA
-    OVER_REGION: {
-        IF polar_angle < pi THEN:
-            r <= 2
-        ELSE:
-            r <= 1 + cos(theta)
-        END_IF
+    # AILang variable 'dataset' is accessible
+    df = pd.DataFrame(dataset)
+    
+    # Statistical computation
+    women_over_65 = len(df[(df['gender'] == 'female') & (df['age'] > 65)])
+    total_records = len(df)
+    percentage = (women_over_65 / total_records) * 100
+    
+    # Results available to AILang
+    analysis_results = {
+        'count': women_over_65,
+        'total': total_records,
+        'percentage': percentage
     }
-END_APPLY
+END_EXECUTE
 
-# Stokes' theorem with mixed boundaries
-APPLY_STOKES_THEOREM:
-    SURFACE_INTEGRAL: ∬(∇ × F) · n dS
-    CONVERTS_TO: ∮F · dr
-    WHERE boundary CONSISTS_OF:
-        IF z > 0 THEN:
-            circle_1
-        ELSE:
-            circle_2 WITH_OPPOSITE_ORIENTATION
-        END_IF
-END_APPLY
+# Continue in AILang with guaranteed-correct results
+SEND "Analysis found " + analysis_results.count + " women over 65" TO user_display
+
+IF analysis_results.percentage > 30 THEN:
+    INTELLIGENTLY recommend_targeted_marketing_strategy FOR demographic
+END_IF
 ```
 
-###### Monte Carlo Integration with Conditional Sampling
+##### Implementation Notes
+###### For AI Execution Engines:
+
+1. **Code Block Parsing**: Detect EXECUTE_CODE blocks and extract for direct execution
+2. **Language Runtime**: Maintain interpreter instances for supported languages
+3. **Variable Bridging**: Implement marshalling layer for AILang ↔ code variable access
+4. **Sandbox Security**: Execute code in isolated environments with appropriate constraints
+5. **Result Integration**: Capture code block outputs and make available to subsequent AILang operations
+
+###### For Parameter Exploration:
+
+1. **Grid Generation**: Smart parameter grid construction based on resolution setting
+2. **Result Structuring**: Format exploration results for effective AI pattern analysis
+3. **Visualization Support**: Enable graphical representation of parameter landscapes where helpful
+
+###### Type Conversion Guidelines:
+
+* Simple types (numbers, strings, booleans): automatic conversion
+* Collections (lists, dictionaries): structure-preserving conversion
+* Complex objects: serialize with schema preservation
+* Ambiguous cases: AI provides reasonable defaults with explicit documentation
+
+### 13. The Qualitative-Quantitative Interface
+Managing data flow across the qualitative-quantitative boundary **is the fundamental challenge in hybrid AI-code systems.** This is because:
+
+- **Humans reason qualitatively**: We assess situations using concepts like "high risk," "urgent priority," "moderate confidence," "strong relationship"
+- **Code operates quantitatively**: Algorithms require numbers—`risk_level = 0.7`, `priority = 3`, `confidence = 0.85`
+- **The translation is non-obvious**: There is no natural, universal mapping between "high risk" and a specific numeric value
+
+Thus, managing data flow across the qualitative-quantitative boundary is the core architectural challenge of human-AI-code integration.
+
+#### Information Flow Architecture
+Information flows bidirectionally between execution modes, with each transition requiring explicit handling:
+
+**INTELLIGENT → CODE: Qualitative to Quantitative**
+
+Instead of:
 
 ```
-#ailang
-# Monte Carlo integration with importance sampling
-MONTE_CARLO_INTEGRATE f(x) OVER_REGION R:
-    SET n_samples TO 1000000
-    SET sum TO 0
-    SET sum_squared TO 0
+INTELLIGENTLY SET market_volatility TO 0.7  # Arbitrary!
+Use parameter exploration:
+ailangINTELLIGENTLY EXPLORE market_strategy:
+    PARAMETERS:
+        volatility_assumption: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     
-    FOR i FROM 1 TO n_samples DO:
-        SET x TO SAMPLE_FROM importance_distribution
-        SET weight TO pdf_target(x) / pdf_importance(x)
-        
-        IF x IN R AND satisfies_constraints(x) THEN:
-            SET value TO f(x) * weight
-            SET sum TO sum + value
-            SET sum_squared TO sum_squared + value^2
-        END_IF
-    END_FOR
+    EXECUTE_CODE python:
+        results = {v: calculate_returns(volatility=v) for v in volatility_range}
+    END_EXECUTE
     
-    SET estimate TO sum / n_samples
-    SET variance TO (sum_squared/n_samples - estimate^2) / n_samples
-    SET confidence_interval TO [
-        estimate - 1.96*sqrt(variance),
-        estimate + 1.96*sqrt(variance)
-    ]
-    
-    RETURN {estimate: estimate, confidence_95: confidence_interval}
-END_MONTE_CARLO
+    ANALYZE:
+        "Below 0.5: unrealistically optimistic, strategies would fail in practice"
+        "0.5-0.7: reasonable range given current market conditions"
+        "Above 0.7: overly conservative, misses opportunities"
+        "Strategy robust across 0.55-0.65 range"
+END_EXPLORE
 ```
 
-##### Quaternion Operations
+**CODE → INTELLIGENT: Quantitative to Qualitative**
 
-Quaternions extend complex numbers for 3D rotations and orientation. A quaternion q = a + bi + cj + dk where i² = j² = k² = ijk = -1.
-
-```
-#ailang
-MATHEMATICAL_CONTEXT:
-    DOMAIN: quaternion
-END_CONTEXT
-
-# Quaternion construction
-SET q1 TO QUATERNION(1, 2, 3, 4)  # 1 + 2i + 3j + 4k
-SET q2 TO QUATERNION(scalar=1, vector=[2, 3, 4])  # Alternative form
-
-# Basic operations
-SET q_sum TO q1 + q2  # Component-wise addition
-SET q_product TO q1 * q2  # Hamilton product (non-commutative!)
-SET q_conjugate TO CONJUGATE(q1)  # a - bi - cj - dk
-SET q_norm TO ||q1||  # sqrt(a² + b² + c² + d²)
-SET q_inverse TO q_conjugate / (q_norm^2)
-
-# Unit quaternion for rotation
-SET axis TO [0, 0, 1]  # Rotation axis (z-axis)
-SET angle TO pi/4  # Rotation angle
-SET rotation_q TO QUATERNION(
-    scalar=cos(angle/2),
-    vector=sin(angle/2) * axis
-)
-
-# Rotate vector using quaternion
-SET v TO [1, 0, 0]  # Vector to rotate
-SET v_as_quaternion TO QUATERNION(0, v)
-SET rotated TO rotation_q * v_as_quaternion * CONJUGATE(rotation_q)
-SET result_vector TO VECTOR_PART(rotated)
-
-# Quaternion interpolation (SLERP)
-# Note: Requires unit quaternions (||q|| = 1)
-SET q1_normalized TO q1 / ||q1||  # Normalize to unit quaternion
-SET q2_normalized TO q2 / ||q2||  # Normalize to unit quaternion
-QUATERNION_SLERP q1_normalized TO q2_normalized WITH parameter=t
-# Spherical linear interpolation for smooth rotation
-```
-
-##### Vector and Tensor Operations
+Code produces numbers; AI interprets meaning:
 
 ```
-#ailang
-# Vector operations
-SET v1 TO VECTOR[1, 2, 3]
-SET v2 TO VECTOR[4, 5, 6]
-SET dot_product TO v1 DOT v2
-SET cross_product TO v1 CROSS v2
-SET magnitude TO ||v1||
-
-# Gradient, divergence, curl
-SET grad_f TO GRADIENT(f) AT_POINT (x0, y0, z0)
-SET div_F TO DIVERGENCE(F) AT_POINT (x0, y0, z0)
-SET curl_F TO CURL(F) AT_POINT (x0, y0, z0)
-
-# Tensor operations
-SET tensor_A TO TENSOR[[1,2],[3,4]]
-SET tensor_B TO TENSOR[[5,6],[7,8]]
-SET tensor_product TO tensor_A TENSOR_MULTIPLY tensor_B
-SET contraction TO CONTRACT tensor_A ALONG_INDICES (1,2)
-```
-
-##### Complex Number Operations and the Imaginary Unit i
-
-The imaginary unit `i` (where i² = -1) is available when working in complex domains.
-
-**Domain Rules for i:**
-- In `DOMAIN: complex` or `DOMAIN: quaternion`: `i` is directly available
-- In `DOMAIN: real`: Operations producing complex results (e.g., `sqrt(-1)`) either:
-  - Raise a `DOMAIN_ERROR` if `CONSTRAINTS` forbid complex promotion
-  - Auto-promote to `DOMAIN: complex` if allowed by constraints
-- Explicit domain promotion: `SET_DOMAIN complex` when complex arithmetic is needed
-
-###### Example: Complex Number Operations
-```
-#ailang
-WITH MATHEMATICAL_CONTEXT:
-    DOMAIN: complex  # Required for i
-    
-    SET i TO sqrt(-1)  # Now valid
-    ASSERT i^2 EQUALS -1
-    
-    # Complex number construction - multiple natural forms
-    SET z1 TO 3 + 4*i  # Rectangular form
-    SET z2 TO COMPLEX(3, 4)  # Explicit constructor
-    SET z3 TO 5 * e^(i*pi/4)  # Euler form
-    SET z4 TO 5 * (cos(pi/4) + i*sin(pi/4))  # Trigonometric form
-    
-    # Basic complex arithmetic
-    SET sum TO (3 + 4*i) + (1 - 2*i)  # = 4 + 2i
-    SET product TO (3 + 4*i) * (1 - 2*i)  # = 11 - 2i
-    SET quotient TO (3 + 4*i) / (1 - 2*i)  # = -1 + 2i
-    SET power TO (1 + i)^8  # = 16
-    
-    # Complex properties
-    SET conjugate TO CONJUGATE(3 + 4*i)  # = 3 - 4i
-    SET magnitude TO |3 + 4*i|  # = 5
-    SET argument TO ARG(3 + 4*i)  # = atan(4/3)
-    SET real_part TO REAL(z1)  # = 3
-    SET imaginary_part TO IMAG(z1)  # = 4
-    
-    # Euler's identity - the most beautiful equation in mathematics
-    ASSERT e^(i*pi) + 1 EQUALS 0
-    
-    # De Moivre's theorem
-    SET n TO 5
-    ASSERT (cos(theta) + i*sin(theta))^n EQUALS cos(n*theta) + i*sin(n*theta)
-    
-    # Complex roots and logarithms
-    SET cube_roots TO SOLVE z^3 = 1  # Returns 1, e^(2πi/3), e^(4πi/3)
-    SET complex_log TO ln(-1)  # = i*pi (principal branch)
-    SET multi_valued_log TO LOG(z) + 2*pi*i*k WHERE k IN integers
-    
-    # Complex analytic functions
-    SET complex_sin TO sin(x + i*y)  # = sin(x)*cosh(y) + i*cos(x)*sinh(y)
-    SET complex_exp TO e^(x + i*y)  # = e^x * (cos(y) + i*sin(y))
-        
-END_CONTEXT
-```
-
-###### Example: Mixed Contexts
-
-```
-#ailang
-# Default context for general calculations
-SET_MATHEMATICAL_CONTEXT:
-    DOMAIN: real
-    PRECISION: standard
-END_SET
-
-# Calculations use real domain
-SET x TO 5
-SET y TO sqrt(25)  # Valid
-
-# Override with complex context for specific operations
-WITH MATHEMATICAL_CONTEXT:
-    DOMAIN: complex
-    PRECISION: high
-    
-    SET z TO sqrt(-1)  # Valid only within this block
-    SET result TO e^(i*pi)
-    
-END_CONTEXT
-
-# Back to real domain (default context)
-SET a TO 10  # Uses real domain
-```
-
-##### Trigonometry and Extended Applications
-
-Trigonometry is fundamental to AILang's mathematical capabilities, supporting all standard and hyperbolic functions, their inverses, and specialized applications.
-
-```
-#ailang
-# Basic trigonometric functions
-# Unless otherwise specified, trigonometric functions expect radians
-# Use DEGREES() and RADIANS() helper functions to convert for I/O
-SET angle TO pi/4  # Radians by default
-SET sine TO sin(angle)  # = sqrt(2)/2
-SET cosine TO cos(angle)  # = sqrt(2)/2
-SET tangent TO tan(angle)  # = 1
-SET cosecant TO csc(angle)  # = 1/sin(angle)
-SET secant TO sec(angle)  # = 1/cos(angle)
-SET cotangent TO cot(angle)  # = 1/tan(angle)
-
-# Angle units conversion
-SET radians TO RADIANS(180)  # degrees to radians = pi
-SET degrees TO DEGREES(pi)  # radians to degrees = 180
-
-# Inverse trigonometric functions
-SET angle_from_sine TO arcsin(0.5)  # = pi/6
-SET angle_from_cosine TO arccos(0.5)  # = pi/3
-SET angle_from_tangent TO arctan(1)  # = pi/4
-SET angle_from_coords TO atan2(y, x)  # Four-quadrant arctangent
-
-# Hyperbolic functions
-SET sinh_x TO sinh(x)  # = (e^x - e^(-x))/2
-SET cosh_x TO cosh(x)  # = (e^x + e^(-x))/2
-SET tanh_x TO tanh(x)  # = sinh(x)/cosh(x)
-SET sech_x TO sech(x)  # = 1/cosh(x)
-SET csch_x TO csch(x)  # = 1/sinh(x)
-SET coth_x TO coth(x)  # = 1/tanh(x)
-
-# Inverse hyperbolic functions
-SET asinh_x TO arcsinh(x)  # = ln(x + sqrt(x^2 + 1))
-SET acosh_x TO arccosh(x)  # = ln(x + sqrt(x^2 - 1))
-SET atanh_x TO arctanh(x)  # = 0.5 * ln((1+x)/(1-x))
-
-# Trigonometric identities (automatically simplified)
-ASSERT sin^2(x) + cos^2(x) EQUALS 1
-ASSERT 1 + tan^2(x) EQUALS sec^2(x)
-ASSERT sin(2*x) EQUALS 2*sin(x)*cos(x)
-ASSERT cos(2*x) EQUALS cos^2(x) - sin^2(x)
-ASSERT sin(x + y) EQUALS sin(x)*cos(y) + cos(x)*sin(y)
-
-# Complex trigonometry
-SET complex_sine TO sin(3 + 4*i)  # Works with complex arguments
-SET complex_angle TO arcsin(2)  # Returns complex result when |arg| > 1
-
-# Trigonometric series expansions
-EXPAND sin(x) AS_SERIES WITH_TERMS 5  
-# Returns: x - x^3/3! + x^5/5! - x^7/7! + x^9/9!
-
-# Alternative: specify order
-EXPAND cos(x) AS_SERIES TO_ORDER 8
-# Returns all terms up to and including x^8
-
-# Trigonometric equation solving
-SOLVE sin(x) = 0.5 FOR x IN [0, 2*pi]  # Returns pi/6, 5*pi/6
-SOLVE cos(x) + sin(x) = 1 FOR x IN [0, 2*pi]  # Returns 0, pi/2
-# For general solution: add GENERAL_SOLUTION flag
-
-# Spherical trigonometry for navigation
-CALCULATE_GREAT_CIRCLE_DISTANCE:
-    FROM: (lat1, lon1) = (51.5074, -0.1278)  # London
-    TO: (lat2, lon2) = (40.7128, -74.0060)   # New York
-    USING: haversine_formula
-    # a = sin²(Δφ/2) + cos(φ1)*cos(φ2)*sin²(Δλ/2)
-    # c = 2*atan2(√a, √(1−a))
-    # d = R*c where R = Earth's radius
-END_CALCULATE
-
-# Trigonometric interpolation
-INTERPOLATE_TRIGONOMETRIC:
-    POINTS: [(x0,y0), (x1,y1), ..., (xn,yn)]
-    METHOD: fourier_interpolation
-    OUTPUT: f(x) = a0/2 + Σ(ak*cos(kx) + bk*sin(kx))
-END_INTERPOLATE
-```
-
-##### Extended Complex Applications with i
-
-```
-#ailang
-# Signal Processing with Complex Numbers
-DEFINE PROCEDURE complex_fourier_transform WITH PARAMETERS [signal]:
-    # Fourier Transform: F(ω) = ∫ f(t)*e^(-i*ω*t) dt
-    SET N TO LENGTH(signal)
-    SET spectrum TO []
-    
-    FOR k FROM 0 TO N-1 DO:
-        SET omega TO 2*pi*k/N
-        SET F_k TO 0
-        FOR n FROM 0 TO N-1 DO:
-            SET F_k TO F_k + signal[n] * e^(-i*omega*n)
-        END_FOR
-        APPEND F_k TO spectrum
-    END_FOR
-    
-    # Extract magnitude and phase
-    SET magnitude_spectrum TO [|F_k| FOR F_k IN spectrum]
-    SET phase_spectrum TO [ARG(F_k) FOR F_k IN spectrum]
-    
-    RETURN {spectrum: spectrum, magnitude: magnitude_spectrum, phase: phase_spectrum}
-END_PROCEDURE
-
-# Quantum Mechanics with i
-DEFINE PROCEDURE quantum_wavefunction WITH PARAMETERS [x, t, k, omega, m, V]:
-    # Plane wave: Ψ(x,t) = A*e^(i*(k*x - ω*t))
-    SET psi TO e^(i*(k*x - omega*t))
-    
-    # Define Hamiltonian operator for verification
-    SET hbar TO 1.054571817e-34  # Reduced Planck constant
-    SET hamiltonian TO -(hbar^2/(2*m))*d²/dx² + V(x)
-    
-    # Schrödinger equation: i*ℏ*∂Ψ/∂t = Ĥ*Ψ
-    SET time_derivative TO DIFFERENTIATE psi WITH_RESPECT_TO t
-    ASSERT i*hbar*time_derivative EQUALS hamiltonian APPLIED_TO psi
-    
-    # Probability density (Born rule)
-    SET probability_density TO psi * CONJUGATE(psi)  # |Ψ|²
-    
-    RETURN {wavefunction: psi, probability: probability_density}
-END_PROCEDURE
-
-# Electrical Engineering - AC Circuit Analysis
-DEFINE PROCEDURE analyze_ac_circuit WITH PARAMETERS [voltage_rms, frequency, R, L, C]:
-    # Using RMS phasor convention for voltage and current
-    # Power calculations: P = V_rms * I_rms * cos(φ)
-    
-    SET omega TO 2*pi*frequency
-    
-    # Component impedances
-    SET Z_R TO R  # Resistor (real)
-    SET Z_L TO i*omega*L  # Inductor (imaginary)
-    SET Z_C TO -i/(omega*C)  # Capacitor (negative imaginary)
-    
-    # Total impedance for RLC series circuit
-    SET Z_total TO Z_R + Z_L + Z_C
-    SET magnitude_Z TO |Z_total|
-    SET phase_angle TO ARG(Z_total)
-    
-    # Current (Ohm's law for AC) - RMS phasors
-    SET V_phasor TO voltage_rms * e^(i*0)  # Voltage phasor (reference phase)
-    SET I_phasor TO V_phasor / Z_total
-    SET current_rms TO |I_phasor|
-    SET current_phase TO ARG(I_phasor)
-    
-    # Power calculations (using RMS values)
-    SET real_power TO voltage_rms * current_rms * cos(phase_angle)
-    SET reactive_power TO voltage_rms * current_rms * sin(phase_angle)
-    SET complex_power TO V_phasor * CONJUGATE(I_phasor)
-    SET apparent_power TO |complex_power|  # Should equal voltage_rms * current_rms
-    
-    RETURN {
-        impedance: Z_total,
-        current: I_phasor,  # Complex current phasor
-        power: {real: real_power, reactive: reactive_power, apparent: apparent_power}
+EXECUTE_CODE python:
+    portfolio_results = {
+        'sharpe_ratio': 1.23,
+        'max_drawdown': -0.15,
+        'volatility': 0.18,
+        'var_95': -0.087
     }
-END_PROCEDURE
+END_EXECUTE
 
-# Control Systems - Complex Poles and Stability
-DEFINE PROCEDURE analyze_system_stability WITH PARAMETERS [transfer_function]:
-    # Find poles (roots of denominator)
-    SET poles TO SOLVE denominator(transfer_function) = 0
+INTELLIGENTLY INTERPRET portfolio_results AS investment_quality:
+    CONTEXT: client_risk_profile, market_conditions, regulatory_requirements
+    STAKEHOLDER: conservative_retiree
+END_INTERPRET
+
+# AI produces qualitative interpretation:
+# "Strong risk-adjusted returns (Sharpe 1.23) with acceptable drawdown for 
+# conservative investors. Volatility slightly elevated but within tolerance 
+# for growth-oriented retirees. Value-at-Risk indicates worst-case scenarios 
+# are manageable."
+```
+
+**DETERMINISTIC → CODE and CODE → DETERMINISTIC**
+
+Standard variable passing with type conversion:
+
+```
+SET customer_records TO load_database("customers")
+
+EXECUTE_CODE python:
+    import pandas as pd
+    df = pd.DataFrame(customer_records)
+    high_value_customers = df[df['lifetime_value'] > 10000]
+    count = len(high_value_customers)
+END_EXECUTE
+
+FOR EACH customer IN high_value_customers DO:
+    INTELLIGENTLY craft_personalized_offer FOR customer
+END_FOR
+```
+
+**INTELLIGENT → DETERMINISTIC and DETERMINISTIC → INTELLIGENT**
+
+Natural language interpretation handles this boundary:
+
+```
+INTELLIGENTLY ASSESS current_situation AS situation_description
+
+IF situation_description CONTAINS "critical" OR situation_description CONTAINS "urgent" THEN:
+    SET priority TO "high"
+END_IF
+
+INTELLIGENTLY respond_to_situation WITH priority: priority
+```
+
+#### The Qualitative-Quantitative Interface Problem
+##### When Simple Computation Works
+For well-defined problems with clear quantitative parameters, direct code execution is straightforward:
+
+```
+EXECUTE_CODE python:
+    # Clear, computable questions
+    record_count = len(database.records)
+    women_over_65 = sum(1 for r in records if r.gender == 'F' and r.age > 65)
+    average_transaction = sum(t.amount for t in transactions) / len(transactions)
+END_EXECUTE
+```
+
+These computations are deterministic and unambiguous because:
+
+* The question is well-defined ("how many records?")
+* The data has clear structure
+* The operation has established meaning
+* No qualitative judgment is required
+
+##### When the Interface Becomes Problematic
+Many real-world problems involve poorly-defined parameters where qualitative assessment must somehow inform quantitative computation. For example, consider a CEO evaluating a strategic decision:
+
+**Human reasoning (qualitative):**
+- "The market feels volatile right now"
+- "This acquisition seems risky but potentially transformative"
+- "The team's morale is fragile after recent changes"
+- "We need to move decisively but carefully"
+
+**Code requirements (quantitative):**
+- `market_volatility = ?` (what number?)
+- `acquisition_risk = ?` (on what scale?)
+- `team_morale = ?` (measured how?)
+- `decision_urgency = ?` (relative to what?)
+
+###### Problematic Approach: Point Estimation
+
+```
+# AI pulls a number from nowhere
+INTELLIGENTLY SET risk_tolerance TO 0.7  # What does 0.7 mean?
+
+EXECUTE_CODE python:
+    allocation = optimize_portfolio(risk_tolerance=0.7)
+END_EXECUTE
+
+# Result is meaningless because input was arbitrary
+```
+The fundamental issue here is that **a single point value (0.7) has no inherent meaning.** The AI has no principled way to choose 0.7 vs 0.65 vs 0.75, and the code operates on this arbitrary value as if it were meaningful. 
+
+In other words, the challenge is that **code requires numbers, and there's no principled way to assign them**:
+
+* **No natural scale**: Unlike "3 meters" or "5 seconds," there's no inherent unit for "risk tolerance"
+* **Context-dependent**: 0.7 might mean different things in different domains or situations
+* **False precision**: The single number implies certainty that doesn't exist
+* **Loses information**: The qualitative assessment contains nuance lost in conversion
+
+
+###### Parameter Space Exploration
+In order to address this issue, rather than forcing artificial qualitative-to-quantitative conversion, AILang is designed to explore parameter ranges and let the AI interpret patterns across the landscape. This allows AI to identify patterns and leverage what LLMs are good at: recognizing trends, thresholds, and regimes. It also allows AI to generate meaningful interpretations by assessing the material changes along a spectrum of data.
+
+**Range-Based Approach:**
+
+```
+INTELLIGENTLY EXPLORE portfolio_strategy:
+    PARAMETERS:
+        risk_tolerance: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+        rebalancing_frequency: ["monthly", "quarterly", "annually"]
     
-    # Stability criterion: all poles must have negative real parts
-    SET is_stable TO true
-    FOR EACH pole IN poles DO:
-        IF REAL(pole) >= 0 THEN:
-            SET is_stable TO false
-            BREAK
-        END_IF
+    EXECUTE_CODE python:
+        results = []
         
-        # Analyze pole characteristics
-        IF IMAG(pole) != 0 THEN:
-            # Complex conjugate pair - oscillatory response
-            SET natural_frequency TO |pole|
-            SET damping_ratio TO -REAL(pole) / |pole|
-            SET oscillation_frequency TO IMAG(pole)
-        END_IF
-    END_FOR
+        for risk in [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]:
+            for rebalance in ['monthly', 'quarterly', 'annually']:
+                outcome = monte_carlo_simulation(
+                    risk_tolerance=risk,
+                    rebalancing=rebalance,
+                    scenarios=10000
+                )
+                results.append({
+                    'risk': risk,
+                    'rebalancing': rebalance,
+                    'expected_return': outcome['mean'],
+                    'volatility': outcome['std'],
+                    'worst_case_5th_percentile': outcome['p05']
+                })
+    END_EXECUTE
     
-    RETURN {stable: is_stable, poles: poles}
-END_PROCEDURE
+    ANALYZE:
+        # AI identifies meaningful patterns across parameter space
+        "Below risk=0.4: Returns too low to meet growth goals"
+        "Risk 0.5-0.7: Sweet spot with acceptable volatility"
+        "Above risk=0.8: Volatility becomes concerning"
+        "Sharp transition at risk=0.6: portfolio behavior shifts"
+        "Monthly rebalancing adds cost without return benefit"
+        "Strategy is robust in 0.55-0.65 range (insensitive to exact value)"
+END_EXPLORE
 
-# Complex Integration - Residue Theorem
-DEFINE PROCEDURE evaluate_contour_integral WITH PARAMETERS [f, contour]:
-    # Cauchy's Residue Theorem: ∮ f(z)dz = 2πi * Σ(residues)
-    
-    # Find singularities inside contour
-    SET singularities TO FIND_POLES(f) WHERE INSIDE(contour)
-    
-    # Calculate residues
-    SET total_residue TO 0
-    FOR EACH singularity IN singularities DO:
-        SET residue TO LIMIT((z - singularity) * f(z)) AS z APPROACHES singularity
-        SET total_residue TO total_residue + residue
-    END_FOR
-    
-    # Apply residue theorem
-    SET integral_value TO 2*pi*i * total_residue
-    
-    RETURN integral_value
-END_PROCEDURE
-
-# Conformal Mapping with Complex Functions
-DEFINE PROCEDURE conformal_map WITH PARAMETERS [z, mapping_type]:
-    MATCH mapping_type WITH:
-        CASE "mobius":
-            # Möbius transformation: w = (az + b)/(cz + d)
-            SET w TO (a*z + b)/(c*z + d)
-        CASE "joukowski":
-            # Joukowski transformation (airfoil design)
-            SET w TO z + 1/z
-        CASE "exponential":
-            # Maps vertical strips to angular sectors
-            SET w TO e^z
-        CASE "logarithm":
-            # Maps angular sectors to vertical strips
-            SET w TO ln(z)
-        CASE "schwarz_christoffel":
-            # Maps upper half-plane to polygons
-            INTELLIGENTLY compute_schwarz_christoffel_map
-    END_MATCH
-    
-    RETURN w
-END_PROCEDURE
+INTELLIGENTLY DECIDE final_parameters BASED_ON:
+    EXPLORATION: portfolio_strategy_results
+    CONSTRAINTS: client_risk_profile, regulatory_requirements
+    CONTEXT: current_market_conditions
+END_DECIDE
 ```
 
-##### Advanced Trigonometric Applications
+###### Why Range Exploration Works
+
+1. **Trends Are Meaningful**: "Risk 0.5-0.7 produces stable returns" is interpretable; "risk = 0.7" is not
+2. **Sensitivity Analysis Is Natural**: The AI sees how outputs change with inputs, which aligns with human reasoning about parameters
+3. **Phase Transitions Become Visible**: "Below 0.4, strategy A dominates; above 0.6, strategy B dominates" provides actionable intelligence
+4. **Robustness Checking**: Similar results across parameter ranges indicate robust regions; wild swings indicate fragility
+5. **Eliminates Arbitrary Choices**: The AI doesn't guess a single "right" value; it maps the landscape and identifies operational regimes
+6. **Aligns With AI Strengths**: LLMs are good at pattern recognition and comparative analysis; poor at generating meaningful isolated numeric values
+7. **Preserves Qualitative Richness**: The interpretation captures nuance that would be lost in point conversion
+8. **Reveals Structure**: Discontinuities, thresholds, and interaction effects become visible
+
+###### Parameter Space Exploration Syntax
 
 ```
-#ailang
-# Navigation and GPS Calculations
-DEFINE PROCEDURE calculate_gps_position WITH PARAMETERS [satellite_signals]:
-    # Trilateration using spherical trigonometry
-    SET earth_radius TO 6371000  # meters
+INTELLIGENTLY EXPLORE [exploration_name]:
+    PARAMETERS:
+        [parameter1]: [range_or_list_of_values]
+        [parameter2]: [range_or_list_of_values]
+        ...
+    RESOLUTION: [coarse|medium|fine]  # Optional: controls granularity
     
-    FOR EACH signal IN satellite_signals DO:
-        # Convert time delay to distance
-        SET distance TO signal.time_delay * speed_of_light
+    EXECUTE_CODE [language]:
+        [code that explores parameter combinations]
+    END_EXECUTE
+    
+    ANALYZE:
+        [AI interpretation of patterns, trends, regimes]
+        [Identification of: sensitivities, plateaus, thresholds, optima]
+END_EXPLORE
+```
+
+###### Interpretation Patterns
+The AI can interpret parameter space results by identifying:
+
+* **Sensitivity**: "Small changes in X cause large changes in outcome" → critical parameter requiring careful setting
+* **Plateaus**: "Wide range of X produces similar outcomes" → robust region, exact value not critical
+* **Thresholds**: "Below X: regime A; above X: regime B" → phase transition, operational boundary
+* **Interactions**: "Effect of X depends on value of Y" → parameters are coupled, must consider together
+* **Optima**: "Maximum/minimum at X" → sweet spot or danger zone
+* **Infeasibility**: "No parameter combination satisfies constraints" → problem requires reformulation
+
+###### Complex Example: Strategic Decision-Making
+
+```
+# CEO scenario: workforce reduction planning
+
+INTELLIGENTLY ASSESS situation AS "Revenue shortfall requires cost reduction, 
+    but must preserve core capabilities and minimize talent loss"
+
+INTELLIGENTLY EXPLORE workforce_reduction_scenarios:
+    PARAMETERS:
+        budget_reduction_percent: [5, 10, 15, 20, 25]
+        reduction_method: ["across_board", "performance_based", "last_hired", "voluntary"]
+        retention_bonus_budget: [0, 100000, 250000, 500000]
+    RESOLUTION: medium
+    
+    EXECUTE_CODE python:
+        import pandas as pd
+        import numpy as np
         
-        # Spherical coordinates to Cartesian
-        SET x TO distance * sin(signal.theta) * cos(signal.phi)
-        SET y TO distance * sin(signal.theta) * sin(signal.phi)
-        SET z TO distance * cos(signal.theta)
-    END_FOR
-    
-    # Solve system of equations for position
-    SOLVE_NONLINEAR_SYSTEM:
-        sqrt((x-x1)^2 + (y-y1)^2 + (z-z1)^2) = d1
-        sqrt((x-x2)^2 + (y-y2)^2 + (z-z2)^2) = d2
-        sqrt((x-x3)^2 + (y-y3)^2 + (z-z3)^2) = d3
-        sqrt((x-x4)^2 + (y-y4)^2 + (z-z4)^2) = d4
-    END_SOLVE
-    
-    # Convert back to lat/lon
-    SET latitude TO arcsin(z/earth_radius)
-    SET longitude TO atan2(y, x)
-    
-    RETURN {lat: DEGREES(latitude), lon: DEGREES(longitude)}
-END_PROCEDURE
-
-# Computer Graphics - 3D Rotation Matrices
-DEFINE PROCEDURE rotate_3d WITH PARAMETERS [point, axis, angle]:
-    MATCH axis WITH:
-        CASE "x":
-            SET rotation_matrix TO [
-                [1, 0, 0],
-                [0, cos(angle), -sin(angle)],
-                [0, sin(angle), cos(angle)]
-            ]
-        CASE "y":
-            SET rotation_matrix TO [
-                [cos(angle), 0, sin(angle)],
-                [0, 1, 0],
-                [-sin(angle), 0, cos(angle)]
-            ]
-        CASE "z":
-            SET rotation_matrix TO [
-                [cos(angle), -sin(angle), 0],
-                [sin(angle), cos(angle), 0],
-                [0, 0, 1]
-            ]
-        CASE "arbitrary":
-            # Rodrigues' rotation formula
-            SET u TO NORMALIZE(axis)
-            SET rotation_matrix TO 
-                cos(angle)*I + sin(angle)*CROSS_PRODUCT_MATRIX(u) + 
-                (1-cos(angle))*OUTER_PRODUCT(u, u)
-    END_MATCH
-    
-    SET rotated_point TO rotation_matrix * point
-    RETURN rotated_point
-END_PROCEDURE
-
-# Wave Interference and Diffraction
-DEFINE PROCEDURE calculate_wave_interference WITH PARAMETERS [sources, observation_point]:
-    # Superposition of waves with phase differences
-    SET total_amplitude TO 0 + 0*i  # Complex amplitude
-    
-    FOR EACH source IN sources DO:
-        SET distance TO ||observation_point - source.position||
-        SET phase TO 2*pi*distance/source.wavelength + source.initial_phase
+        scenarios = []
         
-        # Complex representation of wave
-        SET wave_contribution TO source.amplitude * e^(i*phase)
-        SET total_amplitude TO total_amplitude + wave_contribution
-    END_FOR
+        for cut_pct in [0.05, 0.10, 0.15, 0.20, 0.25]:
+            for method in ['across_board', 'performance_based', 'last_hired', 'voluntary']:
+                for retention_budget in [0, 100000, 250000, 500000]:
+                    # Run workforce simulation
+                    result = simulate_layoff_impact(
+                        budget_reduction=cut_pct,
+                        method=method,
+                        retention_budget=retention_budget,
+                        employee_database=current_workforce,
+                        performance_data=performance_reviews
+                    )
+                    
+                    scenarios.append({
+                        'budget_cut': cut_pct,
+                        'method': method,
+                        'retention_budget': retention_budget,
+                        'employees_affected': result['headcount_reduction'],
+                        'cost_savings': result['annual_savings'],
+                        'key_talent_retained': result['high_performers_remaining'],
+                        'morale_impact_score': result['predicted_morale'],
+                        'productivity_impact': result['productivity_change'],
+                        'legal_risk_score': result['legal_exposure'],
+                        'time_to_implement': result['implementation_weeks']
+                    })
+        
+        df_scenarios = pd.DataFrame(scenarios)
+    END_EXECUTE
     
-    # Intensity is proportional to |amplitude|²
-    SET intensity TO |total_amplitude|^2
-    SET phase TO ARG(total_amplitude)
-    
-    RETURN {intensity: intensity, phase: phase}
-END_PROCEDURE
+    ANALYZE:
+        "Below 10% reduction: Insufficient savings, doesn't solve financial problem"
+        
+        "10-15% reduction range viable:"
+        "  - Performance-based: Preserves 87% of key talent, moderate morale impact"
+        "  - Last-hired: Severe skills gap, creates generational cliff"
+        "  - Across-board: Loses 31% of key talent, lowest legal risk"
+        "  - Voluntary: Unpredictable who leaves, takes 12+ weeks"
+        
+        "Above 15% reduction: Organizational capability collapse"
+        "  - Morale impact becomes severe across all methods"
+        "  - Productivity drops exceed cost savings in 18-month horizon"
+        
+        "Retention bonuses critical in performance-based approach:"
+        "  - $250K budget optimal: retains 6-8 critical individuals"
+        "  - Below $250K: insufficient to retain key talent"
+        "  - Above $250K: diminishing returns"
+        
+        "Threshold behavior at 12%:"
+        "  - Below 12%: Organization absorbs impact"
+        "  - Above 12%: Multiple teams lose critical mass"
+        
+        "OPERATIONAL SWEET SPOT: 11-13% reduction, performance-based, 
+         $250K retention budget"
+        
+        "RISK: Performance-based has moderate legal risk (discrimination claims),
+         requires rigorous documentation"
+END_EXPLORE
 
-# Digital Signal Processing - FFT with Twiddle Factors
-DEFINE PROCEDURE fast_fourier_transform WITH PARAMETERS [x]:
-    SET N TO LENGTH(x)
-    IF N <= 1 THEN:
-        RETURN x
-    END_IF
-    
-    # Divide
-    SET even TO [x[2*k] FOR k FROM 0 TO N/2-1]
-    SET odd TO [x[2*k+1] FOR k FROM 0 TO N/2-1]
-    
-    # Conquer
-    SET even_fft TO CALL fast_fourier_transform WITH [even]
-    SET odd_fft TO CALL fast_fourier_transform WITH [odd]
-    
-    # Combine using twiddle factors (powers of e^(-2πi/N))
-    SET result TO []
-    FOR k FROM 0 TO N/2-1 DO:
-        SET twiddle TO e^(-2*pi*i*k/N)
-        SET t TO twiddle * odd_fft[k]
-        APPEND even_fft[k] + t TO result
-    END_FOR
-    FOR k FROM 0 TO N/2-1 DO:
-        SET twiddle TO e^(-2*pi*i*k/N)
-        SET t TO twiddle * odd_fft[k]
-        APPEND even_fft[k] - t TO result
-    END_FOR
-    
-    RETURN result
-END_PROCEDURE
-
-# Robotics - Inverse Kinematics
-DEFINE PROCEDURE solve_inverse_kinematics WITH PARAMETERS [end_effector_pos, link_lengths]:
-    # 2-link planar arm
-    SET x TO end_effector_pos[0]
-    SET y TO end_effector_pos[1]
-    SET L1 TO link_lengths[0]
-    SET L2 TO link_lengths[1]
-    
-    # Using law of cosines
-    SET distance TO sqrt(x^2 + y^2)
-    
-    # Check reachability
-    IF distance > L1 + L2 OR distance < |L1 - L2| THEN:
-        ERROR "Target unreachable"
-    END_IF
-    
-    # Calculate joint angles
-    SET cos_theta2 TO (x^2 + y^2 - L1^2 - L2^2) / (2*L1*L2)
-    SET theta2 TO arccos(cos_theta2)  # Elbow angle
-    
-    SET k1 TO L1 + L2*cos(theta2)
-    SET k2 TO L2*sin(theta2)
-    SET theta1 TO atan2(y, x) - atan2(k2, k1)  # Shoulder angle
-    
-    # Alternative solution (elbow-up vs elbow-down)
-    SET theta2_alt TO -theta2
-    SET theta1_alt TO atan2(y, x) + atan2(k2, k1)
-    
-    RETURN {
-        solution1: {shoulder: theta1, elbow: theta2},
-        solution2: {shoulder: theta1_alt, elbow: theta2_alt}
-    }
-END_PROCEDURE
-```
-
-##### Linear Algebra
-
-```
-#ailang
-# Matrix operations
-SET matrix_A TO MATRIX[[4,2,3],[3,5,7],[8,2,6]]  # Non-singular matrix
-SET determinant TO DET(matrix_A)
-SET inverse TO INVERSE(matrix_A)  # Will succeed since det ≠ 0
-SET eigenvalues TO EIGENVALUES(matrix_A)
-SET eigenvectors TO EIGENVECTORS(matrix_A)
-
-# Matrix decompositions
-PERFORM LU_DECOMPOSITION ON matrix_A
-PERFORM SVD ON matrix_A  # Singular Value Decomposition
-PERFORM QR_DECOMPOSITION ON matrix_A
-
-# Solving linear systems
-SOLVE_LINEAR_SYSTEM:
-    A*x = b
-    WHERE A = [[2,1],[1,3]]
-    WHERE b = [5,7]
-END_SOLVE
-```
-
-##### Optimization and Constraints
-
-```
-#ailang
-# Optimization problems
-OPTIMIZE:
-    OBJECTIVE: minimize f(x,y) = x² + y² - 2*x - 4*y
+INTELLIGENTLY DECIDE final_plan BASED_ON:
+    EXPLORATION: workforce_reduction_scenarios_results
     CONSTRAINTS: 
-        x + y <= 5
-        x >= 0
-        y >= 0
-    METHOD: [quadratic_programming|interior_point|sequential_quadratic_programming]
-END_OPTIMIZE
+        legal_risk_tolerance: moderate
+        timeline: must_implement_within_8_weeks
+        strategic_priorities: preserve_engineering_and_product
+    CONTEXT:
+        labor_market: tight_market_for_technical_talent
+        company_morale: already_strained_from_recent_changes
+        board_pressure: urgent_action_required
+END_DECIDE
 
-# Lagrange multipliers
-FIND_EXTREMA:
-    FUNCTION: f(x,y,z) = x*y*z
-    CONSTRAINT: x² + y² + z² = 1
-    USING lagrange_multipliers
-END_FIND
+# Implement decision with monitoring
+EXECUTE final_plan WITH:
+    SAFEGUARDS: [legal_review, hr_oversight, manager_training]
+    MONITORING: [weekly_morale_surveys, talent_retention_tracking, productivity_metrics]
+    ADJUSTMENT_TRIGGERS: [key_talent_departure_threshold, morale_critical_low]
+END_EXECUTE
 ```
 
-##### Fourier Analysis
+#### Best Practices
+**Use CODE blocks for:**
 
-```
-#ailang
-# Fourier transforms
-SET fourier_transform TO FOURIER_TRANSFORM(f(t))
-SET inverse_fourier TO INVERSE_FOURIER(F(w))
+* Mathematical computations requiring precision
+* Algorithm implementations
+* Data processing and transformation
+* Statistical analysis
+* Optimization problems
+* Any operation where deterministic behavior is essential
 
-# Fourier series
-COMPUTE_FOURIER_SERIES:
-    FUNCTION: f(x) = x ON [-pi, pi]
-    TERMS: 10
-    OUTPUT: coefficients a_n, b_n
-END_COMPUTE
+**Use DETERMINISTIC operations for:**
 
-# Discrete Fourier Transform
-SET signal TO [data_points]
-SET frequency_domain TO DFT(signal)
-SET reconstructed TO IDFT(frequency_domain)
-```
+* Program control flow
+* State management
+* Input/output operations
+* Structured logic that benefits from readability
 
-##### Probability and Statistics
+**Use INTELLIGENT operations for:**
 
-```
-#ailang
-# Probability distributions
-SET normal_dist TO NORMAL(mean=0, std=1)
-SET probability TO P(X > 2) WHERE X ~ normal_dist
+* Ambiguous decisions
+* Creative problem-solving
+* Natural language processing
+* Strategic reasoning
+* Contextual interpretation
+* Pattern recognition in exploration results
 
-# Statistical operations
-SET expectation TO E[X²] WHERE X ~ exponential(lambda=2)
-SET variance TO VAR[X]
-SET covariance TO COV[X, Y]
+**Use Parameter Exploration when:**
 
-# Stochastic processes
-SIMULATE_STOCHASTIC:
-    PROCESS: geometric_brownian_motion  # dS = μS dt + σS dW
-    TIME_STEPS: 1000
-    DRIFT: 0.05
-    VOLATILITY: 0.2
-END_SIMULATE
+* Converting qualitative assessments to quantitative parameters
+* Parameters lack inherent natural units or scales
+* Understanding sensitivity and robustness is important
+* Identifying operational regimes and phase transitions
+* Multiple parameters interact in complex ways
+* The "right" value depends on trade-offs rather than calculation
 
-# Alternative processes:
-# PROCESS: brownian_motion  # dX = σ dW (no drift)
-# PROCESS: brownian_with_drift  # dX = μ dt + σ dW
-# PROCESS: ornstein_uhlenbeck  # dX = θ(μ - X) dt + σ dW
-```
+### 14. Mathematical Operations
+Complex mathematical operations should generally be implemented in executable code rather than as natural language constructs. This provides:
 
-#### Mathematical Proof Constructs
+- **Guaranteed precision** for numerical computations
+- **Access to mature libraries** (NumPy, SciPy, SymPy, etc.)
+- **Performance** for intensive calculations
+- **Reliability** for mission-critical computations
 
-```
-#ailang
-PROVE_BY_INDUCTION:
-    STATEMENT: sum(k=1 to n) of k = n*(n+1)/2
-    BASE_CASE: n = 1
-    INDUCTIVE_STEP: assume_true_for_n, prove_for_n_plus_1
-END_PROVE
+#### When to Use Code for Mathematics
 
-PROVE_BY_CONTRADICTION:
-    ASSUME: sqrt(2) is rational
-    DERIVE: contradiction
-    CONCLUDE: sqrt(2) is irrational
-END_PROVE
-```
+**Use EXECUTE_CODE blocks for:**
+- Symbolic mathematics (using SymPy)
+- Numerical analysis and scientific computing
+- Linear algebra operations
+- Calculus (differentiation, integration)
+- Differential equations
+- Optimization problems
+- Statistical analysis
+- Signal processing
+- Any computation requiring guaranteed precision
 
-#### Mathematical Contexts
-
-##### Mathematical Context Block
-Mathematical contexts **wrap** the operations they affect:
-
-```
-#ailang
-WITH MATHEMATICAL_CONTEXT:
-    DOMAIN: [real|complex|quaternion|tensor]
-    PRECISION: [symbolic|high|standard|adaptive]
-    CONSTRAINTS: [list_of_mathematical_constraints]
+**Example:**
+```ailang
+EXECUTE_CODE python:
+    import numpy as np
+    from scipy import integrate, optimize
+    from sympy import symbols, diff, integrate as sym_integrate
     
-    # Mathematical operations within this context
-    [mathematical operations]
+    # Symbolic differentiation
+    x = symbols('x')
+    f = x**3 + 2*x
+    derivative = diff(f, x)  # 3*x^2 + 2
     
-END_CONTEXT
-```
-##### Persistent Mathematical Context
-
-For setting a default mathematical context that remains active:
-
-```
-#ailang
-SET_MATHEMATICAL_CONTEXT:
-    DOMAIN: complex
-    PRECISION: high
-END_SET
-
-# Context remains active until changed
-# Can be overridden by WITH blocks
-```
-
-##### Context Scope Rules
-
-1. **WITH blocks**: Create scoped contexts that wrap operations
-   - Context applies only to operations within the block
-   - Context ends at END_CONTEXT or END_WITH
-   - Can be nested
-
-2. **SET blocks** (optional): Create persistent default contexts
-   - Remain active until explicitly changed
-   - Can be overridden by WITH blocks
-   - When a WITH block ends, returns to the persistent context
-
-3. **Context Priority**:
-   - Innermost WITH block takes precedence
-   - SET contexts provide defaults when no WITH block is active
-   - Explicit WITH always overrides SET
-
-#### Mathematical Conventions and Domain Rules
-
-##### Block Terminators
-All mathematical blocks follow consistent termination patterns:
-- Context blocks: `MATHEMATICAL_CONTEXT ... END_CONTEXT`
-- Optimization: `OPTIMIZE ... END_OPTIMIZE`
-- PDE solving: `SOLVE_PDE ... END_SOLVE`
-- Integration regions: `OVER_REGION { ... }`
-
-##### Logarithm Notation
-- **`ln(x)`**: Natural logarithm (base e)
-- **`log(x, base=b)`**: Logarithm with specified base b
-- **`log(x)`**: Defaults to base 10 unless otherwise specified
-- **`log2(x)`**: Binary logarithm (base 2)
-
-##### Mathematical Proof Notation
-Supports both symbolic and spelled-out quantifiers:
-- **Universal quantification**: `∀` or `FOR_ALL`
-- **Existential quantification**: `∃` or `THERE_EXISTS`
-- **Membership**: `∈` or `IN`
-- **Subset**: `⊆` or `SUBSET_OF`
-- **Implication**: `⟹` or `IMPLIES`
-
-##### Domain Transition Rules
-When operations cross domain boundaries:
-
-1. **Real to Complex Promotion**:
-   ```
-   MATHEMATICAL_CONTEXT:
-       DOMAIN: real
-       CONSTRAINTS: [allow_complex_promotion]
-   END_CONTEXT
-   SET result TO sqrt(-1)  # Auto-promotes to complex domain
-   ```
-
-2. **Domain Enforcement**:
-   ```
-   MATHEMATICAL_CONTEXT:
-       DOMAIN: real
-       CONSTRAINTS: [strict_real]
-   END_CONTEXT
-   SET result TO sqrt(-1)  # Raises DOMAIN_ERROR
-   ```
-
-3. **Explicit Domain Setting**:
-   ```
-   SET_DOMAIN complex  # Switch to complex domain
-   SET result TO sqrt(-1)  # Now valid
-   ```
-
-##### Numerical Precision Levels
-- **`symbolic`**: Maintain exact symbolic form when possible
-- **`high`**: Use highest available numerical precision (e.g., 128-bit)
-- **`standard`**: Default floating-point precision (e.g., 64-bit)
-- **`adaptive`**: Adjust precision based on problem requirements
-
-#### Mathematical Execution Guarantees
-
-1. **Symbolic Precision**: When possible, maintain exact symbolic representations
-2. **Numerical Stability**: Use stable algorithms for numerical computations
-3. **Domain Awareness**: Respect mathematical domains (e.g., no square root of negative numbers in real domain)
-4. **Conservation Laws**: Preserve mathematical invariants (e.g., energy conservation in physics simulations)
-
-#### Mathematical Execution Guidelines
-
-##### Precision Handling
-
-1. **Symbolic First**: Attempt symbolic computation before numerical approximation
-2. **Precision Tracking**: Maintain and report precision levels throughout calculations
-3. **Error Propagation**: Track uncertainty through mathematical operations
-4. **Stability Monitoring**: Detect and warn about numerically unstable operations
-
-##### Domain Enforcement
-
-```
-#ailang
-# Example of domain-aware execution
-TRY:
-    SET result TO sqrt(-1)
-CATCH DOMAIN_ERROR:
-    IF current_domain == "real" THEN:
-        ERROR "Cannot take square root of negative number in real domain"
-    ELSE IF current_domain == "complex" THEN:
-        SET result TO i  # Valid in complex domain
-    END_IF
-END_TRY
-```
-
-##### Mathematical Consistency Checks
-
-```
-#ailang
-# Automatic verification of mathematical properties
-VERIFY_PROPERTIES:
-    # Conservation laws
-    ASSERT energy_initial EQUALS energy_final WITHIN_TOLERANCE 1e-10
+    # Numerical integration
+    def integrand(x):
+        return x**2
+    result, error = integrate.quad(integrand, 0, 1)  # 1/3
     
-    # Symmetry properties
-    ASSERT TRANSPOSE(A) * A IS_POSITIVE_SEMIDEFINITE
-    
-    # Boundary conditions
-    ASSERT solution AT_BOUNDARY SATISFIES boundary_conditions
-END_VERIFY
+    # Optimization
+    def objective(x):
+        return x**2 + x + 1
+    minimum = optimize.minimize(objective, x0=0)
+END_EXECUTE
 ```
 
-#### Implementation Requirements for Mathematical Operations
+#### Simple Mathematical Expressions in AILang
+For basic arithmetic that doesn't require code execution overhead, AILang supports standard mathematical notation:
 
-##### AI System Requirements
+```ailang
+# Basic arithmetic
+SET result TO (a + b) * (c - d) / e
+SET power TO x^2
+SET root TO sqrt(x^2 + y^2)
 
-1. **Mathematical Knowledge Base**: Access to mathematical definitions, theorems, and computational methods
-2. **Symbolic Engine**: Capability for exact symbolic manipulation
-3. **Numerical Libraries**: High-precision numerical computation capabilities
-4. **Domain Awareness**: Understanding of mathematical domains and their constraints
-5. **Proof Verification**: Ability to verify mathematical proofs and derivations
+# These are interpreted by the AI for simple calculations
+SET total TO 5 + 3 * 2  # = 11
+SET percentage TO (achieved / target) * 100
+```
+**Use these simple expressions when:**
+* The calculation is straightforward and unambiguous
+* Precision requirements are modest
+* Performance is not critical
+* The expression serves primarily as program logic rather than scientific computation
 
-##### Quality Assurance for Mathematics
+#### Mathematical Context for Complex Domain
+When working with complex numbers, quaternions, or specialized mathematical domains, use CODE blocks with appropriate libraries:
+```ailang
+EXECUTE_CODE python:
+    import numpy as np
+    
+    # Complex number operations
+    z1 = 3 + 4j
+    z2 = 1 - 2j
+    
+    product = z1 * z2  # Complex multiplication
+    magnitude = abs(z1)  # |z1| = 5
+    phase = np.angle(z1)  # arg(z1)
+    
+    # Quaternions (using specialized library)
+    from pyquaternion import Quaternion
+    q1 = Quaternion(axis=[0, 0, 1], angle=np.pi/4)
+    q2 = Quaternion(axis=[1, 0, 0], angle=np.pi/2)
+    rotation = q1 * q2
+END_EXECUTE
+```
 
-1. **Correctness**: Mathematical operations must produce correct results according to mathematical laws
-2. **Precision**: Maintain specified precision levels or report when precision is lost
-3. **Stability**: Use numerically stable algorithms and warn about instabilities
-4. **Verification**: Provide mechanisms to verify mathematical results through alternative methods
-5. **Documentation**: Clear documentation of mathematical methods and assumptions used
+#### Domain-Specific Mathematical Operations
+For specialized mathematical operations, leverage domain-specific Python libraries within CODE blocks:
 
-### 13. Execution Boundaries
+##### Physics and Engineering:
+
+```ailang
+EXECUTE_CODE python:
+    from scipy import constants
+    from scipy.integrate import odeint
+    
+    # Physical constants
+    c = constants.speed_of_light
+    h = constants.Planck
+    
+    # Solve differential equations
+    def model(y, t):
+        dydt = -0.5 * y
+    return dydt
+    
+    y0 = 5
+    t = np.linspace(0, 10, 100)
+    solution = odeint(model, y0, t)
+END_EXECUTE
+```
+
+##### Signal Processing:
+```ailang
+EXECUTE_CODE python:
+    from scipy import signal
+    from scipy.fft import fft, fftfreq
+    
+    # Fourier transform
+    N = 1000
+    T = 1.0 / 800.0
+    x = np.linspace(0.0, N*T, N)
+    y = np.sin(50.0 * 2.0*np.pi*x) + 0.5*np.sin(80.0 * 2.0*np.pi*x)
+    
+    yf = fft(y)
+    xf = fftfreq(N, T)
+    
+    # Filter design
+    b, a = signal.butter(4, 100, 'low', fs=1000)
+    filtered = signal.filtfilt(b, a, y)
+END_EXECUTE
+```
+
+##### Optimization and Numerical Methods:
+```ailang
+EXECUTE_CODE python:
+    from scipy.optimize import minimize, differential_evolution
+    from scipy.linalg import solve, eig
+    
+    # Linear algebra
+    A = np.array([[4, 2, 3], [3, 5, 7], [8, 2, 6]])
+    eigenvalues, eigenvectors = eig(A)
+    
+    # Constrained optimization
+    def objective(x):
+        return x[0]**2 + x[1]**2
+    
+    def constraint(x):
+        return x[0] + x[1] - 1
+    
+    constraints = {'type': 'eq', 'fun': constraint}
+    result = minimize(objective, x0=[0.5, 0.5], constraints=constraints)
+END_EXECUTE
+```
+
+##### Best Practices for Mathematical Operations
+
+1. Default to CODE blocks for any mathematical operation beyond basic arithmetic
+2. Use established libraries rather than implementing numerical methods from scratch
+3. Document units and assumptions in comments within code blocks
+4. Validate results when precision is critical
+5. Consider numerical stability for ill-conditioned problems
+6. Use symbolic computation (SymPy) when exact results are needed
+
+##### Integration with AILang Workflow
+Mathematics typically fits into the broader AILang workflow like this:
+```ailang
+# AI assesses the problem qualitatively
+INTELLIGENTLY ASSESS problem_domain AS physics_simulation_requirements
+
+# Explore parameter space to understand behavior
+INTELLIGENTLY EXPLORE simulation_parameters:
+    PARAMETERS:
+        time_step: [0.001, 0.01, 0.1]
+        damping_coefficient: [0.1, 0.5, 1.0, 2.0]
+    
+    EXECUTE_CODE python:
+        import numpy as np
+        from scipy.integrate import odeint
+        
+        results = []
+        for dt in [0.001, 0.01, 0.1]:
+            for damping in [0.1, 0.5, 1.0, 2.0]:
+                # Simulate damped oscillator
+                def model(y, t, d):
+                    dydt = [y[1], -y[0] - d*y[1]]
+                    return dydt
+                
+                t = np.arange(0, 10, dt)
+                y0 = [1, 0]
+                solution = odeint(model, y0, t, args=(damping,))
+                
+                results.append({
+                    'dt': dt,
+                    'damping': damping,
+                    'final_amplitude': abs(solution[-1, 0]),
+                    'stability': is_stable(solution)
+                })
+    END_EXECUTE
+    
+    ANALYZE:
+        "Time step 0.001: Stable across all damping values"
+        "Time step 0.1: Numerical instability for low damping"
+        "Optimal range: dt=0.01, damping 0.5-1.0"
+END_EXPLORE
+
+# AI makes decision based on mathematical exploration
+INTELLIGENTLY DECIDE simulation_configuration BASED_ON:
+    EXPLORATION: simulation_parameters_results
+    REQUIREMENTS: accuracy_vs_performance_tradeoff
+END_DECIDE
+```
+In summary: let code handle computation, let AI handle interpretation and decision-making.
+
+### 15. Execution Boundaries
 
 Clear delineation between deterministic and intelligent execution ensures program reliability.
 
@@ -2501,7 +1848,7 @@ These aspects allow for contextual adaptation:
 4. **Contextual Interpretation:** Understanding intent when natural language is ambiguous
 5. **Creative Problem-Solving:** Generating solutions within specified constraints
 
-### 14. State-Aware Dynamic Boundaries
+### 16. State-Aware Dynamic Boundaries
 
 AILang maintains state that creates dynamic execution boundaries:
 
@@ -2557,14 +1904,14 @@ END_WITHIN
 
 **Specification**: Boundaries can dynamically adjust based on program state, but must always remain within maximum defined limits. State-aware boundaries prevent cascade failures and resource exhaustion while allowing adaptive behavior within safe parameters.
 
-## 15. Person Entities: Framework Overview
+### 17. Person Entities: Framework Overview
 This section provides the conceptual framework and usage patterns needed to understand and work with Person entities at a high level.
 
 **Note on Section Structure: Person entities represent one of AILang's most sophisticated domain modeling capabilities. Due to the comprehensive nature of human behavioral modeling—encompassing cognitive systems, personality dynamics, social interactions, and group memberships—the detailed specifications for all Person subsystems are provided in Appendix A.** 
 
 **This organizational choice reflects that while Person entities are a first-class language feature, their extensive implementation details would disrupt the flow of the core language specification. However, the AI executing AILang programs cannot intuit the complex interplay of human psychological and social systems; therefore, complete specifications are essential and provided in full detail in the appendix.**
 
-### 15.1 Person Class Architecture
+#### 17.1 Person Class Architecture
 
 Person entities are computational agents with human-like attributes that combine deterministic state management with intelligent behavioral modeling.
 
@@ -2605,7 +1952,7 @@ ailangCLASS Person:
         current_state: PersonState
 ```
 
-### 15.2 Core Systems Summary
+#### 17.2 Core Systems Summary
 
 **Cognitive Systems**
 
@@ -2640,12 +1987,12 @@ These three components interact dynamically, generating graded responses to even
 * IdentityAndContactSystem: Legal identifiers, contact information, digital identities, privacy
 * GroupMembershipSystem: Family, work, social group memberships and their influence
 
-### 15.3 Usage Patterns
+#### 17.3 Usage Patterns
 
 **Basic Person Creation**
 
 ```#ailang
-ailangCREATE Person alice WITH:
+CREATE Person alice WITH:
     name: "Alice Chen"
     age: 28
     gender: "female"
@@ -2665,7 +2012,7 @@ SET alice.personality.ethos.core_values TO ["integrity", "growth", "compassion"]
 **Person-to-Person Interaction**
 
 ```#ailang
-ailang# Two persons interact with full personality exchange
+# Two persons interact with full personality exchange
 SET conversation TO alice.interact_with_person(bob, meeting_context)
 
 # The interaction includes:
@@ -2715,7 +2062,7 @@ ailangDEFINE PROCEDURE social_gathering WITH PARAMETERS [attendees, location]:
 END_PROCEDURE
 ```
 
-### 15.4 Integration with AILang Constructs
+#### 17.4 Integration with AILang Constructs
 
 Person entities seamlessly integrate with core language features:
 
@@ -2729,7 +2076,7 @@ DECREMENT alice.action_system.energy_level BY 0.3
 **Intelligent Operations: Decisions use INTELLIGENTLY modifiers**
 
 ```#ailang
-ailangalice.knowledge_system.INTELLIGENTLY synthesize_knowledge(["psychology", "AI"])
+alice.knowledge_system.INTELLIGENTLY synthesize_knowledge(["psychology", "AI"])
 ```
 
 **Reality Contexts: Persons can have default reality contexts**
@@ -2760,7 +2107,7 @@ END_TRY
 
 For complete specifications of all Person subsystems, see Appendix A: Person Systems Reference.
 
-### 16. Error Handling
+### 18. Error Handling
 
 AILang provides both deterministic error handling patterns and intelligent error recovery mechanisms.
 
@@ -5497,7 +4844,7 @@ DEFINE PROCEDURE social_gathering WITH PARAMETERS [attendees, location]:
 END_PROCEDURE
 ```
 
-### Person Implementation Notes
+### A1.13 Person Implementation Notes
 
 The Person entity system integrates with existing AILang constructs:
 
