@@ -1257,8 +1257,10 @@ Instead of:
 
 ```
 INTELLIGENTLY SET market_volatility TO 0.7  # Arbitrary!
+```
 Use parameter exploration:
-ailangINTELLIGENTLY EXPLORE market_strategy:
+```ailang
+INTELLIGENTLY EXPLORE market_strategy:
     PARAMETERS:
         volatility_assumption: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     
