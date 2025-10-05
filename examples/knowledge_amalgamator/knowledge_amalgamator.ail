@@ -1,0 +1,527 @@
+#ailang
+TITLE: Knowledge Amalgamator — Archivist (Person-Based Ingestion & Persistence)
+VERSION: 0.2.0
+AUTHOR: Edward Chalk
+
+# =============================================================================
+# 0) EXECUTION MODE & SAFETY GUARDS
+# =============================================================================
+SET CONFIG TO {
+  run_id: generate_uuid(),
+  timezone: "UTC",
+  persona: {
+    id: "Archivist",
+    role: "virtual_person",
+    scope: "single_person_only",
+    allow_multiple_persons: false,
+    allowed_aliases: ["Archivist"],
+    file_namespace_prefix: "archivist"
+  },
+  input_roots: {
+    reports_dir: "/data/inbox/reports",
+    confluence_export_dir: "/data/inbox/confluence",
+    jira_export_file: "/data/inbox/jira/issues.json",
+    slack_export_dir: "/data/inbox/slack",
+    email_mbox_dir: "/data/inbox/email",
+    other_dir: "/data/inbox/other"
+  },
+  output_dir: "/data/out/person_memory_archivist",
+  ingestion_policy: {
+    # Qualitative structure classes (no numeric thresholds)
+    structure_classes: ["well_structured","semi_structured","loosely_structured","ambiguous"],
+    # Ingestion order: seed the Archivist’s mental model with well-structured first
+    ingestion_order: ["well_structured","semi_structured","ambiguous","loosely_structured"],
+    # Decision rule: more structure ⇒ less personal internalization; looser ⇒ more.
+    structured_rule: "retain outlines + anchors; minimal synthesis",
+    loose_rule: "perform synthesis into Archivist's semantic/procedural memory",
+    # Converters
+    prefer_outline_depth_well: 4,
+    prefer_outline_depth_semi: 3
+  }
+}
+
+# =============================================================================
+# 1) PERSON: Instantiate the single allowed Person (Archivist)
+#    Conforms to the AILang Person entity model (Person + MemorySystem + KnowledgeSystem)
+# =============================================================================
+CREATE Person Archivist WITH:
+  name: "Archivist"
+  age: 34
+  gender: "unspecified"
+  background: {
+    education_history: ["Information Science","HCI"],
+    work_history: ["Knowledge management","Technical writing"]
+  }
+  default_reality_context: "engineering_reality"
+  context_flexibility: "high"
+END_CREATE
+
+# Short handles to core subsystems (as per spec)
+SET M TO Archivist.memory_system       # Working / Episodic / Semantic / Procedural / Emotional
+SET K TO Archivist.knowledge_system    # Domains, acquisition, synthesis
+SET P TO Archivist.planning_system     # Goal navigation for ingestion order
+
+# =============================================================================
+# 2) RUNTIME GUARDS — Persona scope & output namespacing (Archivist only)
+# =============================================================================
+CREATE OBJECT PersonaGuard:
+  METHOD assert_single_archivist():
+    IF CONFIG.persona.id != "Archivist" THEN:
+      RAISE "PersonaGuard: Persona id must be 'Archivist'."
+    END_IF
+    IF CONFIG.persona.scope != "single_person_only" OR CONFIG.persona.allow_multiple_persons THEN:
+      RAISE "PersonaGuard: Multiple personas are not permitted."
+    END_IF
+  END_METHOD
+
+  METHOD assert_output_namespace_is_archivist():
+    EXECUTE_CODE python:
+      import os
+      out = CONFIG["output_dir"]
+      if "archivist" not in out.lower():
+          raise RuntimeError(f"Output dir must include 'archivist': {out}")
+      os.makedirs(out, exist_ok=True)
+      lock = os.path.join(out, ".persona.lock")
+      if os.path.exists(lock):
+          with open(lock,"r",encoding="utf-8") as f: current=f.read().strip()
+          if current and current!="Archivist":
+              raise RuntimeError(f"Output locked by '{current}'")
+      with open(lock,"w",encoding="utf-8") as f: f.write("Archivist")
+    END_EXECUTE
+  END_METHOD
+
+  METHOD stamp_owner(obj):
+    IF TYPEOF(obj) == OBJECT THEN:
+      SET obj._owner_persona TO "Archivist"
+    END_IF
+    RETURN obj
+  END_METHOD
+END_OBJECT
+
+CALL PersonaGuard.assert_single_archivist
+CALL PersonaGuard.assert_output_namespace_is_archivist
+
+# =============================================================================
+# 3) MEMORY FILES — What each memory is and how it is formulated on disk
+#    All files are persisted for THIS PERSON ONLY and stamped with _owner_persona="Archivist"
+# =============================================================================
+# 3.1 episodic_memory.jsonl  (LINE-DELIMITED JSON; one episode per line)
+#     Purpose: “what the Archivist did/saw/decided” during ingestion (like a lab notebook)
+#     Structure (required keys):
+#       { episode_id, timestamp, source:{artifact_type, artifact_id, uri, anchors[]},
+#         summary, salience, links[], tags[], _owner_persona }
+#
+# 3.2 semantic_memory.graph.json  (JSON Graph)
+#     Purpose: Archivist’s internalized “facts & relationships” derived from looser sources
+#     Structure:
+#       { schema_version, owner_persona:"Archivist",
+#         nodes:[{id,type,label,props,provenance:{artifact_id,uri,anchors[]}}],
+#         edges:[{from,to,relation,props,provenance:{artifact_id,uri,anchors[]}}] }
+#     Node types: section, concept, entity, metric, decision, risk, procedure_ref
+#     Edge types: about, references, contradicts, supports, owned_by, relates_to
+#
+# 3.3 procedural_memory.json  (JSON)
+#     Purpose: repeatable “how-to/runbook” chunks the Archivist distilled
+#     Structure:
+#       { schema_version, owner_persona:"Archivist", procedures:[
+#         { id, title, intent, preconditions[],
+#           steps:[ {ordinal, text, code?:{language,block}}, ],
+#           outputs[], provenance:{artifact_id,uri,anchors[]} } ] }
+#     Note: supports embedded code blocks for precise step execution.
+#
+# 3.4 outline_index.json  (JSON)
+#     Purpose: TOC/outline “backbone” for well/semi-structured sources (Confluence/Jira/Reports)
+#     Structure:
+#       { schema_version, owner_persona:"Archivist", documents:[
+#         { artifact_id, uri, title, structure_class, outline:[
+#           {level, heading, anchor, children:[...] } ] } ] }
+#
+# 3.5 citation_index.csv  (CSV)
+#     Purpose: global provenance table for quick cross-ref
+#     Columns (strict order):
+#       owner_persona, memory_type, memory_id, artifact_type, artifact_id, uri, anchor, run_id, timestamp
+#
+# 3.6 manifest.json  (JSON)
+#     Purpose: integrity & pointers
+#     Structure:
+#       { run_id, created_at, owner_persona:"Archivist", files:[{path,sha256}], inputs:{} }
+
+# =============================================================================
+# 4) IO HELPERS — Deterministic read/write (stamps owner)
+# =============================================================================
+CREATE OBJECT MemoryIO:
+  METHOD ensure_output_dir():
+    EXECUTE_CODE python:
+      import os
+      os.makedirs(CONFIG["output_dir"], exist_ok=True)
+    END_EXECUTE
+  END_METHOD
+
+  METHOD append_episode(episode):
+    SET episode TO PersonaGuard.stamp_owner(episode)
+    EXECUTE_CODE python:
+      import os, json
+      p = os.path.join(CONFIG["output_dir"], "episodic_memory.jsonl")
+      with open(p,"a",encoding="utf-8") as f:
+          f.write(json.dumps(episode, ensure_ascii=False)+"\n")
+    END_EXECUTE
+  END_METHOD
+
+  METHOD save_semantic_graph(graph):
+    EXECUTE_CODE python:
+      import os, json
+      graph["owner_persona"]="Archivist"
+      p=os.path.join(CONFIG["output_dir"],"semantic_memory.graph.json")
+      with open(p,"w",encoding="utf-8") as f: json.dump(graph,f,ensure_ascii=False,indent=2)
+    END_EXECUTE
+  END_METHOD
+
+  METHOD save_procedures(proc):
+    EXECUTE_CODE python:
+      import os, json
+      proc["owner_persona"]="Archivist"
+      p=os.path.join(CONFIG["output_dir"],"procedural_memory.json")
+      with open(p,"w",encoding="utf-8") as f: json.dump(proc,f,ensure_ascii=False,indent=2)
+    END_EXECUTE
+  END_METHOD
+
+  METHOD save_outline_index(idx):
+    EXECUTE_CODE python:
+      import os, json
+      idx["owner_persona"]="Archivist"
+      p=os.path.join(CONFIG["output_dir"],"outline_index.json")
+      with open(p,"w",encoding="utf-8") as f: json.dump(idx,f,ensure_ascii=False,indent=2)
+    END_EXECUTE
+  END_METHOD
+
+  METHOD append_citations(rows):
+    EXECUTE_CODE python:
+      import os, csv
+      p=os.path.join(CONFIG["output_dir"],"citation_index.csv")
+      write_header=not os.path.exists(p)
+      with open(p,"a",newline="",encoding="utf-8") as f:
+        w=csv.writer(f)
+        if write_header:
+          w.writerow(["owner_persona","memory_type","memory_id","artifact_type","artifact_id","uri","anchor","run_id","timestamp"])
+        for r in rows:
+          w.writerow(["Archivist"]+r)
+    END_EXECUTE
+  END_METHOD
+
+  METHOD write_manifest():
+    EXECUTE_CODE python:
+      import os, json, hashlib
+      out=CONFIG["output_dir"]
+      def sha(p):
+        h=hashlib.sha256()
+        with open(p,"rb") as f:
+          for b in iter(lambda:f.read(65536), b""): h.update(b)
+        return h.hexdigest()
+      names=["episodic_memory.jsonl","semantic_memory.graph.json","procedural_memory.json","outline_index.json","citation_index.csv"]
+      files=[]
+      for n in names:
+        p=os.path.join(out,n)
+        if os.path.exists(p): files.append({"path":n,"sha256":sha(p)})
+      manifest={"run_id":CONFIG["run_id"],"created_at":now_iso8601(),"owner_persona":"Archivist","files":files,"inputs":CONFIG}
+      with open(os.path.join(out,"manifest.json"),"w",encoding="utf-8") as f: json.dump(manifest,f,ensure_ascii=False,indent=2)
+    END_EXECUTE
+  END_METHOD
+END_OBJECT
+
+CALL MemoryIO.ensure_output_dir
+
+# =============================================================================
+# 5) SOURCE LOADING (paths only; contents handled by classifiers/parsers)
+# =============================================================================
+DO load_sources:
+  # Deterministic directory scans (implementation elided; assume ARTIFACTS[])
+  # Each artifact = {artifact_id, artifact_type, uri, title?, text?, fields?, structure_class:?}
+END
+
+# =============================================================================
+# 6) QUALITATIVE STRUCTURE CLASSIFIER
+#     (no numeric thresholds; purely descriptor-based heuristics)
+# =============================================================================
+DEFINE PROCEDURE classify_structure WITH PARAMETERS [art]:
+  # Signals for well_structured: explicit headings/anchors, tables, fielded JSON/CSV, Jira fields
+  IF art.artifact_type IN ["confluence","report","jira"] AND art.has_outline THEN:
+    RETURN "well_structured"
+  END_IF
+  IF art.has_sections OR art.has_tables OR art.is_formal_spec THEN:
+    RETURN "semi_structured"
+  END_IF
+  IF art.artifact_type IN ["slack","email"] AND NOT art.has_consistent_headers THEN:
+    RETURN "loosely_structured"
+  END_IF
+  RETURN "ambiguous"
+END_PROCEDURE
+
+# =============================================================================
+# 7) BACKBONE BUILD (from well/semi-structured) — minimal internalization
+# =============================================================================
+DEFINE PROCEDURE build_backbone WITH PARAMETERS [arts, depth]:
+  FOR EACH a IN arts DO:
+    # Extract outline only; keep anchors; DO NOT paraphrase concepts heavily
+    SET doc TO {
+      artifact_id: a.artifact_id,
+      uri: a.uri,
+      title: a.title,
+      structure_class: a.structure_class,
+      outline: extract_outline(a, depth)  # [{level, heading, anchor, children[]}]
+    }
+    APPEND doc TO OUTLINE_DOCS
+    # Graph nodes for sections (for later docking)
+    FOR EACH s IN flatten_outline(doc.outline) DO:
+      APPEND {
+        id: "SEC:"+a.artifact_id+":"+s.anchor,
+        type: "section",
+        label: s.heading,
+        props: {level: s.level, artifact_id: a.artifact_id},
+        provenance: {artifact_id: a.artifact_id, uri: a.uri, anchors:[s.anchor]}
+      } TO SEM_GRAPH.nodes
+      APPEND ["outline_index","SEC:"+a.artifact_id+":"+s.anchor,"document",a.artifact_id,a.uri,s.anchor,CONFIG.run_id,now_iso8601()] TO CITATION_BUFFER
+    END_FOR
+    CALL MemoryIO.append_episode WITH [{
+      episode_id: generate_uuid(),
+      timestamp: now_iso8601(),
+      source: {artifact_type: a.artifact_type, artifact_id: a.artifact_id, uri: a.uri, anchors: []},
+      summary: "Recorded outline and anchors (minimal personal internalization) for "+a.title,
+      salience: "clear",
+      links: [],
+      tags: ["structure:"+a.structure_class,"policy:structured_rule"]
+    }]
+  END_FOR
+END_PROCEDURE
+
+# =============================================================================
+# 8) INTERNALIZATION (for loose/ambiguous) — VERBOSE STRATEGY EXPLANATION
+# =============================================================================
+# PURPOSE
+#   This phase mirrors how a careful human (the Archivist) reads messy conversations,
+#   fragmented emails, and ambiguous notes: we DO NOT attempt to memorize verbatim,
+#   but we DO extract durable, queryable knowledge that the Archivist can recall later.
+#
+# WHY internalize?
+#   • Loose inputs are hard to “look up” later (no stable anchors, inconsistent headers).
+#   • Decisions, risks, tacit procedures, and cross-links are often implicit; they vanish
+#     unless we distill them into structured memory.
+#
+# WHAT we keep (retention policy):
+#   • Facts/Concepts: concise labels + minimal notes that capture the *semantic payload*.
+#   • Decisions: who decided what, and why (if stated), because these drive behavior.
+#   • Risks: statement, trigger/likelihood (if hinted), mitigation, and current status.
+#   • Procedures (runbooks): step lists with optional code blocks for repeatability.
+#   • Relations: how these items connect (supports/blocks/depends_on/about).
+#   • Provenance: ALWAYS attach artifact_id/uri and the best anchors we can infer.
+#
+# WHAT we deliberately DO NOT keep:
+#   • Full conversational text unless quoting a tiny, necessary clause for precision.
+#   • Personal/emotive color not relevant to facts or decisions.
+#   • Speculative leaps without tagging them as assumptions.
+#
+# HOW we transform (analysis pipeline):
+#   1) Triage: chunk the loose text into topical slices (thread, subject, or time window).
+#   2) Identify candidates: scan for verbs of decision (“agree”, “decide”, “approve”),
+#      risk language (“risk”, “concern”, “blocker”), and operational verbs (“deploy”,
+#      “rollback”, “page”).
+#   3) Normalize: rewrite candidates as compact, neutral statements suitable for nodes.
+#   4) Type them: concept | decision | risk | metric | entity | procedure.
+#   5) Link them: add edges to related sections (if a backbone exists) and between nodes.
+#   6) Stamp provenance: artifact_id, uri, and any anchor-like hint (timestamp, subject).
+#   7) Calibrate certainty: if the source is heated or unclear, mark low confidence and
+#      prefer to cite the original at answer time.
+#
+# HOW this supports later querying:
+#   • Users can ask “what changed?”, “what’s risky?”, “how do we…?” and the Archivist
+#     can answer from semantic/procedural memory, while still pointing to originals.
+#
+DEFINE PROCEDURE internalize_loose WITH PARAMETERS [a]:
+  # Extract claims, decisions, risks, procedures, entities; attach provenance anchors
+  SET distilled TO K.acquire_knowledge(topic: {domain:"project_billing"}, urgency:"moderate")
+  # Build semantic facts
+  SET facts TO extract_semantic_units(a)  # [{label, kind, anchors[], relations[]}]
+  FOR EACH f IN facts DO:
+    SET node_id TO "CPT:"+a.artifact_id+":"+hash(f.label)
+    APPEND {
+      id: node_id,
+      type: f.kind,  # concept|decision|risk|entity|metric
+      label: f.label,
+      props: {notes: f.notes},
+      provenance: {artifact_id: a.artifact_id, uri: a.uri, anchors: f.anchors}
+    } TO SEM_GRAPH.nodes
+    APPEND ["semantic","{node}",a.artifact_id,a.artifact_type,a.artifact_id,a.uri,join(f.anchors,"|"),CONFIG.run_id,now_iso8601()] TO CITATION_BUFFER
+    FOR EACH rel IN (f.relations OR []) DO:
+      APPEND {
+        from: node_id,
+        to: rel.to_id,
+        relation: rel.type,
+        props: rel.props,
+        provenance: {artifact_id: a.artifact_id, uri: a.uri, anchors: rel.anchors}
+      } TO SEM_GRAPH.edges
+    END_FOR
+  END_FOR
+  # Extract runbooks if present
+  SET procs TO extract_procedures(a)  # steps + optional code blocks
+  FOR EACH pr IN procs DO:
+    APPEND {
+      id: "PROC:"+a.artifact_id+":"+hash(pr.title),
+      title: pr.title,
+      intent: pr.intent,
+      preconditions: pr.preconditions,
+      steps: pr.steps,     # steps may include {ordinal,text,code:{language,block}}
+      outputs: pr.outputs,
+      provenance: {artifact_id: a.artifact_id, uri: a.uri, anchors: pr.anchors}
+    } TO PROC_LIST
+  END_FOR
+  CALL MemoryIO.append_episode WITH [{
+    episode_id: generate_uuid(),
+    timestamp: now_iso8601(),
+    source: {artifact_type: a.artifact_type, artifact_id: a.artifact_id, uri: a.uri, anchors: []},
+    summary: "Internalized unstructured content into semantic/procedural memory (facts, relations, runbooks).",
+    salience: "significant",
+    links: [],
+    tags: ["structure:"+a.structure_class,"policy:loose_rule"]
+  }]
+END_PROCEDURE
+
+# =============================================================================
+# 9) INGESTION DRIVER — VERBOSE STRATEGY EXPLANATION
+# =============================================================================
+# OVERVIEW
+#   The driver orchestrates ingestion like a disciplined human workflow:
+#   (A) Seed the Archivist’s mental map from stable, navigable sources (Confluence/Jira/Reports),
+#       storing *just enough* (titles, headings, anchors) to find things later without
+#       duplicating content.
+#   (B) Add semi-structured materials similarly, with limited local synthesis if a section
+#       lacks a clean anchor (e.g., a table summary).
+#   (C) For ambiguous and loose materials (Slack/Email), do **heavy internalization**:
+#       extract the durable semantics (decisions/risks/procedures) because these sources
+#       are not reliably retrievable by outline alone.
+#
+# RETENTION PRINCIPLES
+#   1) **Inverse Effort Rule** — The more structured the source, the less personal memory
+#      we commit: store outline & anchors; defer interpretation to query-time with citations.
+#   2) **Durability Bias** — We only internalize what will be useful months later *without*
+#      re-reading the entire source (decisions, risks, procedures, core concepts).
+#   3) **Provenance First** — Every memory item must be traceable to its origin; we prefer
+#      paraphrase + citation over long quotes.
+#   4) **Minimal Redundancy** — Do not re-copy well-structured content into semantic memory;
+#      link to sections instead (graph ‘about’ edges).
+#   5) **Safety on Ambiguity** — If wording is contested or numeric precision is required,
+#      we downgrade confidence and rely on opening the original at answer time.
+#
+# QUERY-TIME BENEFIT
+#   • The backbone gives fast “where is this” navigation.
+#   • The semantic/procedural memory gives “what does this mean/what do I do” answers.
+#   • Both are stitched with citations so the Archivist can prove every claim.
+#
+SET OUTLINE_DOCS TO []
+SET PROC_LIST TO []
+SET SEM_GRAPH TO {schema_version:"1.0", nodes:[], edges:[]}
+SET CITATION_BUFFER TO []
+
+# Persona banner (first episode)
+CALL MemoryIO.append_episode WITH [{
+  episode_id: generate_uuid(),
+  timestamp: now_iso8601(),
+  source: {artifact_type: "system", artifact_id: "persona_banner", uri: "", anchors: []},
+  summary: "All memories in this run belong to the single virtual person 'Archivist' (no stakeholders/employees).",
+  salience: "clear",
+  links: [],
+  tags: ["persona:Archivist","scope:single_person_only"]
+}]
+
+# Classify all artifacts qualitatively
+FOR EACH art IN ARTIFACTS DO:
+  SET art.structure_class TO classify_structure(art)
+END_FOR
+
+# Plan: seed backbone first
+P.decide_and_navigate(
+  "Seed mental model with well-structured docs, then semi, then ambiguous/loose.",
+  {time:"this session", constraints:["preserve provenance","minimize premature synthesis"]}
+)
+
+# Phase A: WELL-structured (minimal internalization → outlines only)
+SET A_WELL TO [a FOR a IN ARTIFACTS WHERE a.structure_class=="well_structured"]
+CALL build_backbone WITH [A_WELL, CONFIG.ingestion_policy.prefer_outline_depth_well]
+
+# Phase B: SEMI-structured (mostly outline; small local synthesis if needed)
+SET A_SEMI TO [a FOR a IN ARTIFACTS WHERE a.structure_class=="semi_structured"]
+CALL build_backbone WITH [A_SEMI, CONFIG.ingestion_policy.prefer_outline_depth_semi]
+
+# Phase C: AMBIGUOUS (light synthesis + attach to nearest backbone sections)
+SET A_AMBI TO [a FOR a IN ARTIFACTS WHERE a.structure_class=="ambiguous"]
+FOR EACH a IN A_AMBI DO:
+  CALL internalize_loose WITH [a]
+  # Optionally dock to nearest section by heading similarity
+  DO dock_to_nearest_section FOR a
+END_FOR
+
+# Phase D: LOOSE (Slack/Email) — heavy synthesis to semantic/procedural memory
+SET A_LOOSE TO [a FOR a IN ARTIFACTS WHERE a.structure_class=="loosely_structured"]
+FOR EACH a IN A_LOOSE DO:
+  CALL internalize_loose WITH [a]
+END_FOR
+
+# =============================================================================
+# 10) PERSIST — write all Archivist-owned files
+# =============================================================================
+CALL MemoryIO.save_outline_index WITH [{schema_version:"1.0", documents: OUTLINE_DOCS}]
+CALL MemoryIO.save_procedures WITH [{schema_version:"1.0", procedures: PROC_LIST}]
+CALL MemoryIO.save_semantic_graph WITH [SEM_GRAPH]
+CALL MemoryIO.append_citations WITH [CITATION_BUFFER]
+CALL MemoryIO.write_manifest
+
+SEND "Archivist memory export complete → "+CONFIG.output_dir TO user_display
+
+
+
+# --- AILANG EXTENSION: STRICT OUTPUT MODE ---
+OUTPUT_CONTRACT:
+  mode: STRICT
+  directory: /mnt/data/archivist_memory/
+  allowed_files:
+    - episodic_memory.jsonl
+    - semantic_memory.graph.json
+    - procedural_memory.json
+    - outline_index.json
+    - citation_index.csv
+    - manifest.json
+  on_violation: HALT_WITH_ERROR
+
+POLICY:
+  allow_general_advice: false
+  require_provenance_fields: true
+  require_source_anchor_or_artifact: true
+ON_POLICY_VIOLATION: HALT_WITH_ERROR
+
+FUNCTION guard_fs_write(path):
+  IF BASENAME(path) NOT IN OUTPUT_CONTRACT.allowed_files:
+    RAISE "OUTPUT_CONTRACT violation: attempt to write " + BASENAME(path)
+
+FUNCTION contract_postcheck():
+  set_dir = DIR_LIST(OUTPUT_CONTRACT.directory)
+  disallowed = DIFFERENCE(set_dir, OUTPUT_CONTRACT.allowed_files)
+  IF COUNT(disallowed) > 0:
+    RAISE "OUTPUT_CONTRACT violation: extraneous files: " + JOIN(disallowed, ", ")
+
+# Register guards
+HOOK before_write(file_path): guard_fs_write(file_path)
+HOOK after_run(): contract_postcheck()
+
+# Manifest builder — ensures verifiable closure of outputs
+STEP build_manifest:
+  manifest.run_id = UUID()
+  manifest.created_at = NOW_ISO8601()
+  manifest.owner_persona = "Archivist"
+  manifest.files = []
+  FOR f IN OUTPUT_CONTRACT.allowed_files:
+    full = OUTPUT_CONTRACT.directory + f
+    manifest.files += {
+      "path": f,
+      "sha256": SHA256(full),
+      "size_bytes": FILESIZE(full)
+    }
+  WRITE manifest TO /mnt/data/archivist_memory/manifest.json
+# --- END STRICT OUTPUT MODE ---

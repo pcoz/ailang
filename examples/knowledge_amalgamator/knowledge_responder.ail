@@ -1,0 +1,534 @@
+#ailang
+TITLE: Knowledge Responder (Conversational Person w/ Provenance-First Answers)
+VERSION: 0.3.0
+AUTHOR: Edward Chalk
+
+# ==============================================================================
+# CONFIG
+# ==============================================================================
+SET CONFIG TO {
+  # Set this to the Script-1 run folder (contains manifest.json)
+  person_memory_dir: "/data/out/person_memory_last_run",
+
+  person_profile: {
+    name: "Archivist",
+    temperament: "calm, evidence-driven, collaborative",
+    style: "clear, structured, cites sources"
+  },
+
+  answer_prefs: {
+    default_presentation: "expanded",
+    include_reasoning_outline: true,
+    include_limits_and_gaps: true,
+    include_actionables: true,
+    max_followup_suggestions: 3,
+
+    # NEW: provenancing/markup behavior
+    provenance_strict_mode: false,     # if true, suppress guidance unless user explicitly asks
+    show_fact_vs_advice_headers: true, # always show two distinct sections
+    prefix_markers: { fact: "[SOURCE]", advice: "[GUIDANCE]" }
+  },
+
+  retrieval_policy: {
+    question_levels: ["broad_overview","detail","detail_needs_overview","procedural_howto","investigative"],
+    consult_artifacts_if: [
+      "conflicting_memory_items_detected",
+      "precision_required",
+      "definitions_or_terms_disputed",
+      "question_level in ['detail','detail_needs_overview','procedural_howto']",
+      "episodic_refers_to_outline_only"
+    ],
+    k_episodic: 8,
+    k_semantic_nodes: 10,
+    k_semantic_edges: 20,
+    k_outline_docs: 6,
+    max_quotes_per_artifact: 1
+  },
+
+  conversation: {
+    ask_confirmation_when_ambiguous: true,
+    always_offer_depth_controls: true,
+    polite_checks: [
+      "Is that enough detail?",
+      "Want me to zoom in on a specific section?",
+      "Shall I pull the exact clause/number?"
+    ],
+    depth_levels: ["summary","standard","deep_dive"],
+    default_depth: "standard",
+    max_turns_without_new_info: 4
+  }
+}
+
+# ==============================================================================
+# PERSON
+# ==============================================================================
+CREATE Person respondent WITH:
+  name: CONFIG.person_profile.name
+  temperament: CONFIG.person_profile.temperament
+  style: CONFIG.person_profile.style
+END_CREATE
+
+# ==============================================================================
+# MEMORY IO (Script-1 contract)
+# ==============================================================================
+CREATE OBJECT MemIO:
+  METHOD load_all():
+    EXECUTE_CODE python:
+      import os, json, csv
+      root = CONFIG["person_memory_dir"]
+      def J(name, default):
+        p=os.path.join(root,name)
+        if not os.path.exists(p): return default
+        with open(p,"r",encoding="utf-8") as f: return json.load(f)
+      def JL(name):
+        p=os.path.join(root,name); out=[]
+        if os.path.exists(p):
+          with open(p,"r",encoding="utf-8") as f:
+            for line in f:
+              line=line.strip()
+              if line:
+                try: out.append(json.loads(line))
+                except: pass
+        return out
+      def CSV(name):
+        p=os.path.join(root,name); rows=[]
+        if os.path.exists(p):
+          with open(p,"r",encoding="utf-8") as f:
+            r=csv.reader(f); _=next(r,None)
+            for row in r: rows.append(row)
+        return rows
+      RESULT = {
+        "episodic": JL("episodic_memory.jsonl"),
+        "graph": J("semantic_memory.graph.json", {"schema_version":"1.0","nodes":[],"edges":[]}),
+        "procedures": J("procedural_memory.json", {"schema_version":"1.0","procedures":[]}),
+        "outlines": J("outline_index.json", {"schema_version":"1.0","documents":[]}),
+        "citations_csv": CSV("citation_index.csv"),
+        "manifest": J("manifest.json", {})
+      }
+    END_EXECUTE
+    RETURN RESULT
+  END_METHOD
+END_OBJECT
+
+# ==============================================================================
+# DIALOGUE STATE
+# ==============================================================================
+SET SESSION TO {
+  depth: CONFIG.conversation.default_depth,
+  turns_without_new_info: 0,
+  last_question_level: null,
+  last_terms: [],
+  history: [],
+  provenance_strict: CONFIG.answer_prefs.provenance_strict_mode
+}
+
+# ==============================================================================
+# ORIENTATION (mental “contents page”)
+# ==============================================================================
+DO orient_self:
+  SET MEM TO MemIO.load_all()
+  EXECUTE_CODE python:
+    data = MEM
+    episodic_keys = [{
+      "episode_id": e.get("episode_id"),
+      "summary": e.get("summary","")[:160],
+      "tags": e.get("tags",[]),
+      "artifact_id": (e.get("source") or {}).get("artifact_id"),
+      "uri": (e.get("source") or {}).get("uri"),
+    } for e in data["episodic"]]
+
+    outline_keys = [{
+      "doc_id": d.get("doc_id"),
+      "title": d.get("title"),
+      "uri": d.get("uri"),
+      "top_headings": [h.get("h") for h in d.get("headings",[])][:8]
+    } for d in data["outlines"].get("documents",[])]
+
+    concept_nodes = [n for n in data["graph"]["nodes"] if n.get("type")=="concept"]
+    concept_keys = [{"id": n["id"], "label": n.get("label"), "tags": n.get("tags",[])} for n in concept_nodes][:400]
+
+    RESULT = {"episodic_keys": episodic_keys, "outline_keys": outline_keys, "concept_keys": concept_keys}
+  END_EXECUTE
+  SET KEYS TO RESULT
+END
+
+# ==============================================================================
+# QUESTION ANALYSIS
+# ==============================================================================
+DEFINE FUNCTION assess_question_level(q) RETURNS text:
+  INTELLIGENTLY analyze q WITH:
+    CUES: [
+      {"level":"procedural_howto","keywords":["how do i","steps","runbook","procedure","checklist","deploy","configure","mitigate","resolve","alert","go/no-go"]},
+      {"level":"detail_needs_overview","keywords":["walk me through","end-to-end","architecture","overall then details","overview then detail"]},
+      {"level":"detail","keywords":["exact","number","sla","metric","threshold","owner","date","amount","rate","fee","formula"]},
+      {"level":"investigative","keywords":["why","root cause","compare","tradeoff","risk","impact","decision","should we"]},
+      {"level":"broad_overview","fallback":true}
+    ],
+    PRIOR: "procedural_howto > detail_needs_overview > detail > investigative > broad_overview"
+  END
+  RETURN inferred_level
+END_FUNCTION
+
+DEFINE FUNCTION extract_focus_terms(q) RETURNS LIST:
+  INTELLIGENTLY extract key_terms FROM q WITH:
+    INCLUDE: [entities, issue_keys, modules, domain_terms, metrics, money, dates],
+    NORMALIZE: true
+  END
+  RETURN key_terms
+END_FUNCTION
+
+# ==============================================================================
+# RETRIEVAL (episodic → semantic → outline)
+# ==============================================================================
+DEFINE PROCEDURE gather_candidates WITH PARAMETERS [level, terms]:
+  EXECUTE_CODE python:
+    import re
+    data = MEM
+    terms = [t.lower() for t in terms] if terms else []
+    def match(text):
+      if not terms: return 1
+      if not text: return 0
+      s=text.lower()
+      return sum(1 for t in terms if t in s)
+
+    epi = []
+    for e in data["episodic"]:
+      score = match(e.get("summary","")) + match(" ".join(e.get("tags",[]))) + match(str((e.get("source") or {}).get("artifact_id","")))
+      if score>0: epi.append((score, e))
+    epi = sorted(epi, key=lambda x: -x[0])[:CONFIG["retrieval_policy"]["k_episodic"]]
+
+    nodes=[]
+    for n in data["graph"]["nodes"]:
+      s = match(n.get("label","")) + match(" ".join(n.get("tags",[])))
+      if s>0: nodes.append((s, n))
+    nodes = sorted(nodes, key=lambda x: -x[0])[:CONFIG["retrieval_policy"]["k_semantic_nodes"]]
+
+    edges=[]
+    for e in data["graph"]["edges"]:
+      concat = f"{e.get('relation','')} {e.get('from','')} {e.get('to','')}"
+      s = match(concat)
+      if s>0: edges.append((s, e))
+    edges = sorted(edges, key=lambda x: -x[0])[:CONFIG["retrieval_policy"]["k_semantic_edges"]]
+
+    docs=[]
+    for d in data["outlines"].get("documents",[]):
+      s = match(d.get("title","")) + sum(match(h.get("h","")) for h in d.get("headings",[])[:20])
+      if s>0: docs.append((s, d))
+    docs = sorted(docs, key=lambda x:-x[0])[:CONFIG["retrieval_policy"]["k_outline_docs"]]
+
+    RESULT = {"episodic": epi, "nodes": nodes, "edges": edges, "docs": docs}
+  END_EXECUTE
+  SET CANDIDATES TO RESULT
+END_PROCEDURE
+
+# ==============================================================================
+# CONSULT ORIGINAL ARTIFACTS?
+# ==============================================================================
+DEFINE FUNCTION must_consult_artifacts(level, candidates) RETURNS boolean:
+  INTELLIGENTLY evaluate WITH:
+    CONDITIONS: CONFIG.retrieval_policy.consult_artifacts_if,
+    SIGNALS: [
+      "detail" IN level OR "procedural_howto" IN level OR "detail_needs_overview" IN level,
+      conflicting_memory_items_detected(candidates.nodes, candidates.edges),
+      needs_numeric_precision(USER_MESSAGE),
+      definition_or_term_lookup_needed(USER_MESSAGE, candidates.nodes),
+      episodic_refers_to_outline_only(candidates.episodic)
+    ]
+  END
+  RETURN decision_boolean
+END_FUNCTION
+
+# ==============================================================================
+# MENTAL WORKSPACE — form internal understanding first
+# ==============================================================================
+DEFINE PROCEDURE build_mental_workspace WITH PARAMETERS [level, terms, candidates] RETURNS OBJECT:
+  INTELLIGENTLY synthesize situational_model WITH:
+    INPUTS: {question: USER_MESSAGE, level: level, terms: terms, candidates: candidates},
+    PRODUCE: {
+      situation_brief: "<2–4 lines capturing what this is about>",
+      focal_concepts: LIST["C:..."],
+      supportive_concepts: LIST["C:..."],
+      likely_relations: LIST[{from,to,relation}],
+      assumptions: LIST["assumption ..."],
+      unknowns: LIST["unknown ..."],
+      precision_requirements: LIST["numbers|SLA|dates|owners|definitions"],
+      answer_shape_plan: "overview → detail → implication | steps | comparison",
+      citation_plan: "which memory ids to cite; which docs/sections to open if needed",
+      confidence: "high|medium|low"
+    }
+  END
+  RETURN situational_model
+END_PROCEDURE
+
+# ==============================================================================
+# EVIDENCE PACK (ONLY facts from memory/artifacts)
+# ==============================================================================
+CREATE OBJECT Provenance:
+  METHOD load_citations():
+    EXECUTE_CODE python:
+      import os, csv
+      root = CONFIG["person_memory_dir"]
+      path = os.path.join(root, "citation_index.csv")
+      rows=[]
+      if os.path.exists(path):
+        with open(path,"r",encoding="utf-8") as f:
+          r=csv.reader(f); _=next(r,None)
+          for row in r: rows.append(row)
+      RESULT = rows
+    END_EXECUTE
+    RETURN RESULT
+  END_METHOD
+
+  METHOD sources_for(mid):
+    EXECUTE_CODE python:
+      rows = Provenance.load_citations()
+      out=[]
+      for row in rows:
+        # [memory_type,memory_id,artifact_type,artifact_id,uri,anchor,run_id,timestamp]
+        if len(row)>=2 and row[1]==mid:
+          out.append({"artifact_type":row[2],"artifact_id":row[3],"uri":row[4],"anchor":row[5]})
+      RESULT = out
+    END_EXECUTE
+    RETURN RESULT
+  END_METHOD
+END_OBJECT
+
+DEFINE PROCEDURE assemble_evidence WITH PARAMETERS [candidates, consult]:
+  EXECUTE_CODE python:
+    concept_claims=[]
+    for s,n in candidates["nodes"][:6]:
+      concept_claims.append({"memory_id": n["id"], "label": n.get("label")})
+    relation_claims=[]
+    for s,e in candidates["edges"][:8]:
+      relation_claims.append({"relation": e.get("relation"), "from": e.get("from"), "to": e.get("to")})
+    RESULT = {"concepts":concept_claims, "relations":relation_claims}
+  END_EXECUTE
+  # Attach sources
+  FOR EACH c IN EVIDENCE.concepts DO:
+    SET c.sources TO Provenance.sources_for(c.memory_id)
+  END_FOR
+  FOR EACH r IN EVIDENCE.relations DO:
+    # attach any source we have for from/to ends
+    SET r.sources TO (Provenance.sources_for(r.from) + Provenance.sources_for(r.to))
+  END_FOR
+END_PROCEDURE
+
+# ==============================================================================
+# ADVICE GENERATOR (explicitly marked as guidance)
+# ==============================================================================
+DEFINE PROCEDURE generate_general_advice WITH PARAMETERS [level, workspace, evidence] RETURNS LIST:
+  # This NEVER invents facts; it gives conservative, generic guidance based on workspace shape.
+  INTELLIGENTLY propose guidance_items WITH:
+    CONTEXT: {level: level, workspace: workspace, evidence: evidence},
+    RULES: [
+      "Advice must not assert un-sourced figures or contractual clauses.",
+      "Advice must be phrased as guidance, not fact.",
+      "Prefer conditional language (e.g., 'If X, consider Y')."
+    ],
+    FORMAT: LIST["sentence…"]
+  END
+  RETURN guidance_items
+END_PROCEDURE
+
+# ==============================================================================
+# FOLLOW-UPS & CLARIFICATIONS
+# ==============================================================================
+DEFINE FUNCTION suggest_followups(level, evidence, depth) RETURNS LIST:
+  INTELLIGENTLY propose up_to CONFIG.answer_prefs.max_followup_suggestions FOLLOWUPS WITH:
+    TEMPLATES: [
+      "Pull exact clause/figure from source?",
+      "Map to specific sections (links) for records?",
+      "Do you want a quick runbook/checklist?",
+      "Prefer a risk/tradeoff deep dive?",
+      "Want an exec summary version?",
+      "Compare old vs new approach?"
+    ],
+    CONTEXT: {level: level, evidence: evidence, depth: depth}
+  END
+  RETURN FOLLOWUPS
+END_FUNCTION
+
+DEFINE FUNCTION maybe_clarify(USER_MESSAGE, level, evidence) RETURNS text:
+  IF CONFIG.conversation.ask_confirmation_when_ambiguous AND (ambiguous_intent(USER_MESSAGE) OR sparse_hits(evidence)) THEN:
+    RETURN "I can clarify or proceed. Are you after an overview, exact figures/owners, or a step-by-step? (You can also say ‘just answer’.)"
+  ELSE:
+    RETURN null
+  END_IF
+END_FUNCTION
+
+# ==============================================================================
+# ANSWER COMPOSITION — STRICT FACTS VS GUIDANCE
+# ==============================================================================
+DEFINE PROCEDURE compose_answer WITH PARAMETERS [level, evidence, consulted_docs, workspace]:
+  # Build the two clearly separated sections
+  EXECUTE_CODE python:
+    fact_prefix = CONFIG["answer_prefs"]["prefix_markers"]["fact"]
+    advice_prefix = CONFIG["answer_prefs"]["prefix_markers"]["advice"]
+    show_headers = CONFIG["answer_prefs"]["show_fact_vs_advice_headers"]
+    strict = SESSION["provenance_strict"]
+
+    # --- Build SOURCE-DERIVED FACTS & QUOTES ---
+    def format_sources(srcs):
+      out=[]
+      for s in srcs or []:
+        anchor = f"#{s['anchor']}" if s.get("anchor") else ""
+        out.append(f"{s.get('artifact_id','?')} ({s.get('uri','?')}{anchor})")
+      return out
+
+    facts_lines=[]
+    # Concepts
+    for c in EVIDENCE["concepts"]:
+      srcs = format_sources(c.get("sources"))
+      cite = (" — " + "; ".join(srcs)) if srcs else ""
+      facts_lines.append(f"{fact_prefix} {c.get('label','(concept)')}{cite}")
+    # Relations
+    for r in EVIDENCE["relations"]:
+      srcs = format_sources(r.get("sources"))
+      rel = r.get("relation","related_to")
+      facts_lines.append(f"{fact_prefix} Relation: {r.get('from')} {rel} {r.get('to')} — " + ("; ".join(srcs) if srcs else "source: memory graph"))
+
+    # --- Build GUIDANCE (optional / suppressed in strict mode) ---
+    guidance_lines=[]
+    if not strict:
+      # Use workspace & level to propose conservative, generic guidance
+      # (Actual sentences filled by generate_general_advice)
+      pass
+    RESULT = {"facts_lines": facts_lines, "guidance_lines": guidance_lines}
+  END_EXECUTE
+
+  # If not strict, generate general advice and append
+  IF NOT SESSION.provenance_strict THEN:
+    SET GUIDANCE_LIST TO generate_general_advice(level, workspace, EVIDENCE)
+    FOR EACH g IN GUIDANCE_LIST DO:
+      APPEND CONFIG.answer_prefs.prefix_markers.advice + " " + g TO RESULT.guidance_lines
+    END_FOR
+  END_IF
+
+  # Build a small reasoning/limits block (optional)
+  IF CONFIG.answer_prefs.include_reasoning_outline THEN:
+    SET reasoning_block TO "Reasoning: I formed an internal situation brief, selected focal concepts, checked likely relations, and decided whether to consult originals before drafting."
+  ELSE:
+    SET reasoning_block TO null
+  END_IF
+
+  IF CONFIG.answer_prefs.include_limits_and_gaps THEN:
+    SET limits_block TO "Limits: Guidance is general and not a substitute for policy/contractual text. For precision, we can pull exact sections/figures from the sources."
+  ELSE:
+    SET limits_block TO null
+  END_IF
+
+  # Assemble final text
+  EXECUTE_CODE python:
+    sections=[]
+    if CONFIG["answer_prefs"]["show_fact_vs_advice_headers"]:
+      sections.append("# SOURCE-DERIVED FACTS & QUOTES")
+    if len(RESULT["facts_lines"])>0:
+      sections += RESULT["facts_lines"]
+    else:
+      sections.append("[SOURCE] (No direct facts matched; consider opening source sections.)")
+
+    if not SESSION["provenance_strict"]:
+      if CONFIG["answer_prefs"]["show_fact_vs_advice_headers"]:
+        sections.append("")
+        sections.append("# GENERAL ADVICE (clearly marked as guidance)")
+      if len(RESULT["guidance_lines"])>0:
+        sections += RESULT["guidance_lines"]
+      else:
+        sections.append("[GUIDANCE] (No guidance included)")
+
+    if reasoning_block:
+      sections.append("")
+      sections.append("_" + reasoning_block + "_")
+    if limits_block:
+      sections.append("_" + limits_block + "_")
+
+    final_text = "\n".join(sections)
+  END_EXECUTE
+
+  RETURN final_text
+END_PROCEDURE
+
+# ==============================================================================
+# TURN MANAGER (Conversation Loop)
+# ==============================================================================
+DO greet:
+  SEND "Hi — I’ll clearly separate **SOURCE-DERIVED FACTS** from **GUIDANCE** in every answer. You can also say “strict mode on/off” to control guidance." TO user_display
+END
+
+LOOP CONVERSATION:
+  WAIT_FOR USER_MESSAGE
+
+  # Quick controls
+  IF USER_MESSAGE MATCHES /^(strict mode on|provenance strict on)$/i THEN:
+    SET SESSION.provenance_strict TO true
+    SEND "Provenance Strict Mode is now ON — I will only present **SOURCE-DERIVED FACTS** unless you explicitly ask for advice." TO user_display
+    CONTINUE
+  END_IF
+  IF USER_MESSAGE MATCHES /^(strict mode off|provenance strict off)$/i THEN:
+    SET SESSION.provenance_strict TO false
+    SEND "Provenance Strict Mode is now OFF — I will include clearly labeled **GUIDANCE** alongside the **SOURCE-DERIVED FACTS**." TO user_display
+    CONTINUE
+  END_IF
+  IF USER_MESSAGE IN ["more","deep","deep dive","details","zoom in"] THEN:
+    SET SESSION.depth TO "deep_dive"
+    SEND "Got it — I’ll go deeper." TO user_display
+    CONTINUE
+  END_IF
+  IF USER_MESSAGE IN ["less","summary","tl;dr","executive summary"] THEN:
+    SET SESSION.depth TO "summary"
+    SEND "Okay — I’ll keep it high-level." TO user_display
+    CONTINUE
+  END_IF
+
+  # Analyze question
+  SET level TO assess_question_level(USER_MESSAGE)
+  SET terms TO extract_focus_terms(USER_MESSAGE)
+  SET SESSION.last_question_level TO level
+  SET SESSION.last_terms TO terms
+
+  # Retrieve & decide consultation
+  CALL gather_candidates WITH [level, terms]
+  SET consult TO must_consult_artifacts(level, CANDIDATES)
+
+  # Build internal understanding first
+  SET WORKSPACE TO build_mental_workspace(level, terms, CANDIDATES)
+
+  # Optionally list consulted docs (metadata)
+  IF consult THEN:
+    EXECUTE_CODE python:
+      docs = [d for _,d in CANDIDATES["docs"]]
+      consulted=[{"doc_id": d.get("doc_id"), "title": d.get("title"), "uri": d.get("uri")} for d in docs[:3]]
+      RESULT = consulted
+    END_EXECUTE
+    SET CONSULTED TO RESULT
+  ELSE:
+    SET CONSULTED TO []
+  END_IF
+
+  # Assemble evidence (only sourced facts)
+  CALL assemble_evidence WITH [CANDIDATES, consult]
+
+  # Clarify if needed, but proceed
+  SET clarification TO maybe_clarify(USER_MESSAGE, level, EVIDENCE)
+  IF clarification IS NOT null THEN:
+    SEND clarification TO user_display
+  END_IF
+
+  # Compose split answer (facts vs guidance)
+  SET reply TO compose_answer(level, EVIDENCE, CONSULTED, WORKSPACE)
+  SEND reply TO user_display
+
+  # Offer follow-ups & checks
+  SET FUPS TO suggest_followups(level, EVIDENCE, SESSION.depth)
+  IF CONFIG.conversation.always_offer_depth_controls THEN:
+    SEND join_lines(FUPS + CONFIG.conversation.polite_checks) TO user_display
+  ELSE:
+    SEND join_lines(FUPS) TO user_display
+  END_IF
+
+  # Guardrails for stuck loops
+  SET SESSION.turns_without_new_info TO (SESSION.turns_without_new_info + 1 IF sparse_hits(EVIDENCE) ELSE 0)
+  IF SESSION.turns_without_new_info >= CONFIG.conversation.max_turns_without_new_info THEN:
+    SEND "I may need more context or a specific section. Want me to open a particular source document/heading?" TO user_display
+  END_IF
+END_LOOP
