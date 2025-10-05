@@ -87,13 +87,36 @@ timeline pressure increases
 
 ### Running This Example
 
-See the PDF transcripts in this directory showing the actual execution:
-- `knowledge_amalgamator - load data.pdf` - Ingestion execution
-- `knowledge_amalgamator - chat.pdf` - Query session
+#### Phase 1: Knowledge Ingestion
 
-The system processes 116 pages of heterogeneous documentation and enables precise, cited question-answering without inventing facts or losing source attribution.
+First, "execute" `knowledge_amalgamator.ail` together with the original project documentation to process the documentation and build the memory files:
 
-## Key Advantages Over Traditional Knowledge Graphs
+This generates six memory files:
+1. `episodic_memory.jsonl` - Processing history
+2. `semantic_memory.graph.json` - Extracted facts, decisions, risks
+3. `procedural_memory.json` - Runbooks and procedures
+4. `outline_index.json` - Document structure backbone
+5. `citation_index.csv` - Global provenance mapping
+6. `manifest.json` - Integrity verification
+
+See `knowledge_amalgamator - load data.pdf` for the actual execution transcript showing this ingestion process.
+
+#### Phase 2: Conversational Access
+
+Next, "execute" `knowledge_responder.ail` together with the original project documentation and also the memory files generated in Phase 1, to enable interactive querying. The responder provides conversational access with strict source attribution.
+
+See `knowledge_amalgamator - chat.pdf` for the actual query session transcript showing cited question-answering without inventing facts.
+
+#### Key Architectural Point
+
+This two-phase design mirrors how humans actually work with documentation:
+
+1. **Phase 1 (Ingestion)**: Deep reading and internalization—extracting durable knowledge from messy sources while maintaining strict provenance
+2. **Phase 2 (Access)**: Quick recall and synthesis—answering questions by combining internalized knowledge with direct source consultation when precision matters
+
+The memory files serve as the bridge: they contain distilled knowledge that's instantly accessible but always traceable back to original sources through the citation index.
+
+## Advantages Over Traditional Knowledge Graphs
 
 ### 1. Structure-Aware Processing
 
