@@ -1,0 +1,590 @@
+[
+  {
+    "document": "Meetings and Project Management.pdf",
+    "headings": [
+      "customer billing cycles monthly but suffers from multiple critical limitations",
+      "Specific Success Criteria",
+      "8 hours (current: 18-22 hours)",
+      "This project directly supports our corporate strategic pillars",
+      "Extended Team",
+      "Key Deliverables",
+      "Sprint Health Indicators",
+      "Key Risks This Sprint",
+      "Mitigation Plan"
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "summary": "Energy Billing System (EBS) Modernization Project Project Code: EBS-2025 Last Updated: October 3, 2025 Project Status: 🟡"
+      },
+      {
+        "page": 2,
+        "summary": "Primary Objective: Implement a scalable, cloud-native billing platform that reduces operational costs by 30%, decreases "
+      },
+      {
+        "page": 3,
+        "summary": "Operational Dashboards ● Production Monitoring Dashboard - Real-time system health metrics ● Build & Deployment Pipeline"
+      },
+      {
+        "page": 4,
+        "summary": "● QA Lead: Michelle Anderson - Test strategy, automation, and UAT coordination ● DevOps Lead: Carlos Martinez - Infrastr"
+      },
+      {
+        "page": 5,
+        "summary": "│ └─ Tech Lead - Frontend (+ 3 Engineers) │ └─ Quality & Operations ├─ QA Lead (+ 4 QA Engineers) ├─ DevOps Lead (+ 2 De"
+      },
+      {
+        "page": 6,
+        "summary": "Project Timeline & Milestones Project Duration: January 2025 - September 2026 (21 months) Current Phase: Phase 3 - Integ"
+      },
+      {
+        "page": 7,
+        "summary": "NoSQL alternatives. Impact: High - affects core billing calculation performance and data integrity D-048: Payment Gatewa"
+      },
+      {
+        "page": 8,
+        "summary": "Medium Priority Risks R7: Smart Meter API Rate Limiting Status: 🟡 YELLOW - Monitoring Probability: Medium (40%) Impact: "
+      },
+      {
+        "page": 9,
+        "summary": "Regular Meetings Daily Standup ● Time: 9:00 AM IDT, Monday-Friday ● Duration: 15 minutes ● Attendees: Development Team, "
+      },
+      {
+        "page": 10,
+        "summary": "● Slack #proj-ebs-status: Status updates, alerts, announcements ● Email: Formal communications, executive updates, exter"
+      }
+    ]
+  },
+  {
+    "document": "Functional Specification.pdf",
+    "headings": [
+      "1.1 Purpose",
+      "1.2 Scope",
+      "This specification covers",
+      "This specification does NOT cover",
+      "1.3 Key Stakeholders",
+      "1.4 Business Context",
+      "Critical business constraints",
+      "2.1 High-Level Process Flow",
+      "The billing process follows a six-stage pipeline architecture",
+      "2.2 System Architecture Context",
+      "2.3 Data Flow & Timing",
+      "Daily Processing Schedule",
+      "Billing Cycle Calendar",
+      "3.1 Input Data Sources",
+      "two data retrieval modes",
+      "3.2 Input Data Format",
+      "XML Schema Example",
+      "JSON Schema Example",
+      "3.3 Data Validation Rules",
+      "3.4 Data Normalization Process"
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "summary": "EBS - Core Billing & Rating Engine Functional Specification Document Document Version: 3.2 Last Updated: October 3, 2025"
+      },
+      {
+        "page": 2,
+        "summary": "- Application of rate plans and tariff structures - Calculation of billing amounts including taxes, fees, and adjustment"
+      },
+      {
+        "page": 3,
+        "summary": "Stage 1: Meter Data Acquisition Smart meters transmit usage data every 15 minutes to the grid management system. At bill"
+      },
+      {
+        "page": 4,
+        "summary": "[Billing Calculation Engine] → [Tax Calculation Service] ↓ [Invoice Generation Service] → [Invoice Repository] ↓ [Delive"
+      },
+      {
+        "page": 5,
+        "summary": "3.2 Input Data Format XML Schema Example: <MeterReadingBatch> <Header> <BatchID>MR-2025-10-03-0001</BatchID> <Transmissi"
+      },
+      {
+        "page": 6,
+        "summary": "<Usage> <TotalKWh>847.3</TotalKWh> <PeakKWh>412.5</PeakKWh> <OffPeakKWh>434.8</OffPeakKWh> <MaxDemandKW>4.2</MaxDemandKW"
+      },
+      {
+        "page": 7,
+        "summary": "{ \"batchId\": \"MR-2025-10-03-0001\", \"transmissionDateTime\": \"2025-10-03T02:15:30Z\", \"recordCount\": 82447, \"cycleCloseDate"
+      },
+      {
+        "page": 8,
+        "summary": "\"offPeakKWh\": 434.8, \"maxDemandKW\": 4.2, \"maxDemandDateTime\": \"2025-09-15T14:30:00Z\" }, \"previousReading\": { \"date\": \"20"
+      },
+      {
+        "page": 9,
+        "summary": "Validation Rule V-002: Customer Account Linkage - Rule: Customer Account ID must exist and be linked to the specified Me"
+      },
+      {
+        "page": 10,
+        "summary": "- Action on Failure: Reject reading, request corrected data from Smart Grid - Error Code: TOU_DATA_MISMATCH Validation R"
+      },
+      {
+        "page": 11,
+        "summary": "\"maxDemandDateTime\": \"DATETIME\", \"previousMeterReading\": \"DECIMAL(10,2)\", \"currentMeterReading\": \"DECIMAL(10,2)\", \"readi"
+      },
+      {
+        "page": 12,
+        "summary": "- Ensure true-up on next actual reading with adjustment line item Missing Meter Data: If meter data is not received with"
+      },
+      {
+        "page": 13,
+        "summary": "Special Program Rates: - SP1: Medical Baseline Allowance - SP2: Renewable Energy Premium Rate - SP3: Peak Time Rebate Pr"
+      },
+      {
+        "page": 14,
+        "summary": "1. Determine applicable season based on cycle end date 2. Retrieve seasonal tier rates for R1 3. Calculate Tier 1 consum"
+      },
+      {
+        "page": 15,
+        "summary": "Energy Subtotal: $59.90 + $37.45 = $97.35 Fixed Charges: Service Charge: $15.00 Infrastructure Fee: $3.50 Fixed Charges "
+      },
+      {
+        "page": 16,
+        "summary": "Fixed Monthly Charges: - Service Charge: $12.00 (reduced to incentivize TOU enrollment) - Infrastructure Maintenance Fee"
+      },
+      {
+        "page": 17,
+        "summary": "Total Consumption: 850 kWh Breakdown by Period: - Peak (2PM-8PM weekdays): 245 kWh - Off-Peak (other times): 425 kWh - S"
+      },
+      {
+        "page": 18,
+        "summary": "- $0.1095 per kWh (all consumption) Demand Charges: - $12.50 per kW of maximum demand recorded during billing period - M"
+      },
+      {
+        "page": 19,
+        "summary": "Fixed Charges: Service Charge: $35.00 Infrastructure Fee: $8.00 Fixed Charges Total: $43.00 Subtotal Before Tax: $355.88"
+      },
+      {
+        "page": 20,
+        "summary": "\"type\": \"TIERED_ENERGY\", \"tiers\": [ { \"tierNumber\": 1, \"thresholdKWh\": 500, \"rates\": { \"summer\": 0.1247, \"winter\": 0.119"
+      },
+      {
+        "page": 21,
+        "summary": "\"startDay\": 1, \"endMonth\": 9, \"endDay\": 30 }, \"winter\": { \"startMonth\": 10, \"startDay\": 1, \"endMonth\": 5, \"endDay\": 31 }"
+      },
+      {
+        "page": 22,
+        "summary": "} ], \"calculationRules\": { \"prorationMethod\": \"DAILY\", \"roundingPrecision\": 2, \"minimumBill\": 18.50 } } 4.6 Tax Calculat"
+      },
+      {
+        "page": 23,
+        "summary": "5. Retrieve applicable tax rates for jurisdiction 6. Calculate State Energy Tax: state_tax = energy_charges_subtotal × s"
+      },
+      {
+        "page": 24,
+        "summary": "Postal Code State Tax Local Tax Franchise Fee Env. Surcharge 4912001-49120 50 4912051-49121 00 4913001-49130 50 3.5% 1.8"
+      },
+      {
+        "page": 25,
+        "summary": "Step 5: Charge Calculation - Calculate energy charges by applying rates to consumption - Add all fixed monthly charges -"
+      },
+      {
+        "page": 26,
+        "summary": "2. Example: 15 days of service in 30-day cycle: prorated_tier1 = 500 × (15/30) = 250 kWh 3. Apply prorated thresholds to"
+      },
+      {
+        "page": 27,
+        "summary": "- Maximum back-bill period: 12 months per regulatory requirements - Customer must be notified before back-bill processin"
+      },
+      {
+        "page": 28,
+        "summary": "trueup = correct_amount - estimated_amount 4. Apply adjustment as line item on next invoice: If trueup > 0: Add \"Prior P"
+      },
+      {
+        "page": 29,
+        "summary": "- Previous balance - Payments received - Current charges - Total Amount Due Usage Comparison Section: - Current period u"
+      },
+      {
+        "page": 30,
+        "summary": "Energy Charges Subtotal $97.35 FIXED CHARGES Monthly Service Charge $15.00 Infrastructure Maintenance Fee $3.50 --------"
+      }
+    ]
+  },
+  {
+    "document": "Jira Epics and User Stories.pdf",
+    "headings": [
+      "EPICS",
+      "Epic Description",
+      "Business Value",
+      "Acceptance Criteria (Epic-Level)",
+      "Technical Architecture",
+      "Dependencies",
+      "Current Status & Risk Assessment",
+      "Mitigation Actions In Progress",
+      "Technical Complexity",
+      "Key Responsibilities",
+      "1.  Invoice Document Generation",
+      "2.  Invoice Data Management",
+      "3.  Delivery Coordination",
+      "4.  Compliance & Accessibility",
+      "Key Features",
+      "USER STORIES",
+      "Story Description",
+      "Acceptance Criteria",
+      "Technical Details",
+      "Definition of Done"
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "summary": "Energy Billing System - Jira Issue Tracker Project Key: EBS Project Type: Software Development Workflow: Agile/Scrum EPI"
+      },
+      {
+        "page": 2,
+        "summary": "✅ AC-2: Service correctly identifies R1 rate plan customers from Customer Account database 🔄 AC-3: System accurately app"
+      },
+      {
+        "page": 3,
+        "summary": "🔴 CRITICAL RISK - ESCALATED: Data quality issues worse than anticipated. Original estimate of 5% problematic records has"
+      },
+      {
+        "page": 4,
+        "summary": "This Epic is significantly more complex than tiered billing (EBS-E1) due to: ● Requires interval-level data processing ("
+      },
+      {
+        "page": 5,
+        "summary": "Priority: Highest Labels: invoice, pdf-generation, email-delivery, core-service Epic Description: Develop the Invoice Ge"
+      },
+      {
+        "page": 6,
+        "summary": "Invoice generation is the final critical step in the billing process - the customer-facing output that represents all up"
+      },
+      {
+        "page": 7,
+        "summary": "Develop a modern, responsive web application enabling customers to view billing history, make payments, manage account p"
+      },
+      {
+        "page": 8,
+        "summary": "✅ AC-2: Foreign key relationship established to rate_plan table ✅ AC-3: Indexes created on frequently queried columns (r"
+      },
+      {
+        "page": 9,
+        "summary": "Story Type: User Story Reporter: Marcus Rodriguez Assignee: Developer-2 (Michael Chen) Status: DONE ✅ Sprint: Sprint 11 "
+      },
+      {
+        "page": 10,
+        "summary": "● Configuration data validated by Finance team ● Test data available in all environments (dev, test, staging) ● API inte"
+      },
+      {
+        "page": 11,
+        "summary": "⏳ AC-5: Performance testing confirms script processes 2.35M records within 2 hours ⏳ AC-6: Rollback procedure tested to "
+      },
+      {
+        "page": 12,
+        "summary": "● Validation report confirms 100% success rate ● Documentation added to migration runbook Target Completion: October 11,"
+      },
+      {
+        "page": 13,
+        "summary": "⏳ AC-7: Automated email notifications sent when variance exceeds acceptable threshold Functional Requirements: ● Process"
+      },
+      {
+        "page": 14,
+        "summary": "As a Security Officer, I want all payment card data to be tokenized by the payment gateway (Stripe) so that the EBS appl"
+      },
+      {
+        "page": 15,
+        "summary": "Database Schema: CREATE TABLE customer_payment_method ( payment_method_id UUID PRIMARY KEY, customer_account_id UUID NOT"
+      },
+      {
+        "page": 16,
+        "summary": "Status: IN PROGRESS 🔄 Sprint: Sprint 14 Story Points: 5 Labels: dunning, late-fees, billing, collections Story Descripti"
+      },
+      {
+        "page": 17,
+        "summary": "- line_item_type = 'LATE_FEE' - description = 'Late Payment Fee' - amount = $5.00 - related_invoice_id = original_invoic"
+      },
+      {
+        "page": 18,
+        "summary": "Definition of Done: ● All acceptance criteria met ● Unit test coverage >90% Integration tests passing ● ● UAT sign-off f"
+      },
+      {
+        "page": 19,
+        "summary": "🔄 Task 2: Evaluate S3 sink connector options and data format (Parquet vs. Avro vs. JSON) 🔄 Task 3: Build minimal proof-o"
+      },
+      {
+        "page": 20,
+        "summary": "Target Completion: October 8, 2025 This comprehensive Jira structure provides detailed tracking for all aspects of the E"
+      },
+      {
+        "page": 21,
+        "summary": "This Epic tracks the extraction, transformation, loading (ETL), and comprehensive verification of all customer account d"
+      },
+      {
+        "page": 22,
+        "summary": "regulatory reporting requirements cannot be met. This Epic directly impacts project go-live timeline. Data Quality Chall"
+      },
+      {
+        "page": 23,
+        "summary": "⏳ AC-7: Spot-check validation of 1,000 randomly selected customer accounts confirms data accuracy at >99.5% field-level "
+      }
+    ]
+  },
+  {
+    "document": "Email Communications.pdf",
+    "headings": [
+      "Numbers",
+      "Options",
+      "Before the meeting, I need",
+      "EXECUTIVE SUMMARY",
+      "SITUATION ANALYSIS",
+      "What Happened",
+      "than initial sampling predicted",
+      "Why Initial Sampling Failed",
+      "IMPACT ASSESSMENT",
+      "Timeline Impact",
+      "Original schedule",
+      "Without mitigation",
+      "With Option 2 mitigation",
+      "Financial Impact",
+      "See attached detailed cost breakdown. Summary",
+      "OPTIONS ANALYSIS",
+      "Pros",
+      "Cons",
+      "Description",
+      "Detailed Cost Breakdown"
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "summary": "Energy Billing System - Email Communications EMAIL CHAIN 1: Data Migration Crisis Escalation Initial Problem Report From"
+      },
+      {
+        "page": 2,
+        "summary": "From: Lisa Thompson lisa.thompson@energyco.com To: Sarah Williams sarah.williams@energyco.com Date: October 2, 2025, 10:"
+      },
+      {
+        "page": 3,
+        "summary": "I'm drafting a detailed memo with analysis and recommendation. Can we schedule 30 minutes Thursday or Friday to discuss?"
+      },
+      {
+        "page": 4,
+        "summary": "David Chen Director of IT Operations Detailed Escalation Memo From: Sarah Williams sarah.williams@energyco.com To: Jenni"
+      },
+      {
+        "page": 5,
+        "summary": "Our March 2025 sampling methodology used a stratified random sample of 5,000 accounts. Investigation shows this sample w"
+      },
+      {
+        "page": 6,
+        "summary": "Option 1: Accept Delay, No Additional Cost Description: Continue with current 3-person data team, process all 352K probl"
+      },
+      {
+        "page": 7,
+        "summary": "● Enables on-time April cutover for 95% of customer base ● Maintains team morale (prevents 6-week death march) ● Post-cu"
+      },
+      {
+        "page": 8,
+        "summary": "1. Timeline Protection: 2-week delay is absorbed by existing buffers, maintaining April cutover date 2. Cost Reasonable:"
+      },
+      {
+        "page": 9,
+        "summary": "Thursday, October 3, 2:00 PM - Decision meeting (Conference Room A / Zoom) Attendees: ● Jennifer Morrison (decision auth"
+      },
+      {
+        "page": 10,
+        "summary": "We need confirmation by October 1 to finalize the detailed test schedule and prepare training materials. Thanks, Marcus "
+      },
+      {
+        "page": 11,
+        "summary": "UAT isn't just \"testing the software\" - your team needs to validate that every calculation matches your business rules a"
+      },
+      {
+        "page": 12,
+        "summary": "This is not optional testing - it's the control gate that protects the company from billing errors affecting 2.3M custom"
+      },
+      {
+        "page": 13,
+        "summary": "Finance UAT Resource Commitment: Team Members: ● Rachel Kim (Senior Billing Analyst, 10 years experience) - Lead UAT tes"
+      },
+      {
+        "page": 14,
+        "summary": "marcus.rodriguez@energyco.com, Michelle Anderson michelle.anderson@energyco.com Date: September 24, 2025, 11:08 AM IDT S"
+      },
+      {
+        "page": 15,
+        "summary": "From: Carlos Martinez carlos.martinez@energyco.com To: James Patterson james.patterson@energyco.com CC: Sarah Williams s"
+      },
+      {
+        "page": 16,
+        "summary": "The credentials request went through proper channels (submitted September 15 with all required approvals). This should b"
+      },
+      {
+        "page": 17,
+        "summary": "The security workflow requires the data owner to explicitly approve all access requests before we can provision credenti"
+      },
+      {
+        "page": 18,
+        "summary": "From: Carlos Martinez carlos.martinez@energyco.com To: Sarah Williams sarah.williams@energyco.com CC: Yael Goldstein yae"
+      },
+      {
+        "page": 19,
+        "summary": "Team, Credentials received at 12:45 PM. Connection tested and working. Integration testing now in progress. Will provide"
+      }
+    ]
+  },
+  {
+    "document": "Slack Conversations.pdf",
+    "headings": [
+      "Recommendation: It should be a distinct invoice_line_item with",
+      "This gives us",
+      "Spoke with Tom Richardson (Finance Rep). His preference",
+      "Indexing Strategy",
+      "Archival Strategy",
+      "Should we version this as",
+      "●  POST /api/billing/calculate with Accept",
+      "Rationale",
+      "Standards Document",
+      "Key points",
+      "Results",
+      "Detailed Metrics",
+      "Resource Utilization",
+      "calculation",
+      "Two optimization opportunities",
+      "Agreed. I'll create two stories",
+      "Results with 10% error rate",
+      "Full error injection test results",
+      "Summary",
+      "Changes"
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "summary": "Energy Billing System - Slack Communications CHANNEL: #proj-ebs-dev (Technical Discussions) Channel Purpose: Technical d"
+      },
+      {
+        "page": 2,
+        "summary": "● line_item_type = 'FIXED_CHARGE' ● description = 'Monthly Service Charge' ● amount = $15.00 ● rate_plan_component_id = "
+      },
+      {
+        "page": 3,
+        "summary": "Creating Jira story: EBS-195 \"Add FIXED_CHARGE line item type support to invoice generation\" Also updating the invoice g"
+      },
+      {
+        "page": 4,
+        "summary": "@Michael-Chen (Developer) - 11:24 AM One more consideration - what about the database query performance implications? If"
+      },
+      {
+        "page": 5,
+        "summary": "Thread: API Versioning Discussion Date: October 2, 2025 @Jennifer-Wong (Data Engineer) - 2:15 PM Quick question for the "
+      },
+      {
+        "page": 6,
+        "summary": "@Jennifer-Wong (Data Engineer) - 2:28 PM Perfect, that doc answers all my questions. I'll go with /api/v1/billing/calcul"
+      },
+      {
+        "page": 7,
+        "summary": "Detailed Metrics: ● Meter Ingestion Service: avg 12ms per record ● Rating Service: avg 41ms per calculation Invoice Gene"
+      },
+      {
+        "page": 8,
+        "summary": "4. Load any customer-specific adjustments/credits These could potentially be optimized with query consolidation or cachi"
+      },
+      {
+        "page": 9,
+        "summary": "@Carlos-Martinez (DevOps Lead) - 10:31 AM Good catch. The 50K test was all \"happy path\" data. I ran a separate test yest"
+      },
+      {
+        "page": 10,
+        "summary": "Reviewers: @James-Patterson @Michael-Chen @James-Patterson (Tech Lead - Backend) - 12:15 PM Looking at it now... @James-"
+      },
+      {
+        "page": 11,
+        "summary": "5. Error handling: What happens if the late fee creation fails (database error, validation error, etc.)? Should we: ● Sk"
+      },
+      {
+        "page": 12,
+        "summary": "@James-Patterson (Tech Lead - Backend) - 5:23 PM Re-reviewed. All concerns addressed. Code looks good now. Approved - re"
+      },
+      {
+        "page": 13,
+        "summary": "@Alex-Martinez (Developer) - 3:33 PM No worries. I'll update the migration script to be idempotent: INSERT INTO rate_tie"
+      },
+      {
+        "page": 14,
+        "summary": "I'll document the manual changes I made so we can incorporate them properly: https://confluence.energyco.com/display/EBS"
+      },
+      {
+        "page": 15,
+        "summary": "@Michelle-Anderson - can your team please announce load tests in advance? This helps us distinguish between real problem"
+      },
+      {
+        "page": 16,
+        "summary": "What are we showcasing? Here's what I have so far: Completed Stories (Demo Candidates): 1. EBS-24: Rate tier database st"
+      },
+      {
+        "page": 17,
+        "summary": "@Marcus-Rodriguez (Product Owner) - 9:41 AM Let's do live demo but have a recorded backup ready in case of technical iss"
+      },
+      {
+        "page": 18,
+        "summary": "3. Demo 2: Automated Late Fee Assessment (Sarah, 10 min) ○ Business process demonstration ○ Customer impact discussion 4"
+      },
+      {
+        "page": 19,
+        "summary": "Channel Purpose: Status updates, major announcements, production alerts, stakeholder communications Members: 47 (All pro"
+      },
+      {
+        "page": 20,
+        "summary": "@Sarah-Williams (Program Manager) - 4:48 PM Good question Tom. The data migration issue does NOT impact your staging acc"
+      },
+      {
+        "page": 21,
+        "summary": "Status Updates: Will post progress here throughout deployment window Bridge line for issues: https://zoom.us/j/987654321"
+      },
+      {
+        "page": 22,
+        "summary": "● Throughput: 1,470 accounts/min (target: 1,333) ● Error rate: 0.02% (10 errors, all test data related) ● CPU: 45% avg ●"
+      },
+      {
+        "page": 23,
+        "summary": "@Sarah-Williams @Marcus-Rodriguez @Sarah-Williams (Program Manager) - 10:45 AM Great timing to bring this up Rachel. Let"
+      },
+      {
+        "page": 24,
+        "summary": "@Rachel-Foster (Customer Support Manager) - 11:08 AM This timeline works well. March is typically our slower period, so "
+      },
+      {
+        "page": 25,
+        "summary": "@Rachel-Foster (Customer Support Manager) - 11:38 AM Will do! I'll compile the support call data and common scenarios by"
+      },
+      {
+        "page": 26,
+        "summary": "HIGH-2: PostgreSQL JDBC driver outdated (version 42.6.0, vulnerable to CVE-2024-1597) ● Risk: SQL injection in specific "
+      },
+      {
+        "page": 27,
+        "summary": "Also, I'm implementing automated security scanning in the CI/CD pipeline so these get caught earlier (at build time rath"
+      },
+      {
+        "page": 28,
+        "summary": "Revised Timeline: With automated tools doing the heavy lifting, we're back on track: ● Target completion: November 5, 20"
+      },
+      {
+        "page": 29,
+        "summary": "Code is in the repo: github.com/energyco/ebs-data-tools/address-standardization @Dr-Kumar (Principal Architect) - 10:28 "
+      },
+      {
+        "page": 30,
+        "summary": "1. Sprint 14 retrospective (30 min) 2. Sprint 15 backlog review (45 min) 3. Story estimation (60 min) 4. Sprint commitme"
+      },
+      {
+        "page": 31,
+        "summary": "@Marcus-Rodriguez (Product Owner) - 10:45 AM Perfect. Let's include it. @Michelle-Anderson (QA Lead) - 11:02 AM From QA "
+      },
+      {
+        "page": 32,
+        "summary": "Upcoming Events: ● Saturday 2 AM: Automated database backup (staging) ● Sunday 10 AM: Scheduled AWS maintenance window ("
+      },
+      {
+        "page": 33,
+        "summary": "● ✅ ebs-invoice-service: Build #156 PASSED (main branch) ● ⚠ ebs-customer-portal: Build #89 FAILED (develop branch) Test"
+      },
+      {
+        "page": 34,
+        "summary": "@Kevin-Park (Frontend Tech Lead) - 9:28 AM Fixed. Retriggering build now. @StatusBot - 9:35 AM BUILD UPDATE: ● ✅ ebs-cus"
+      }
+    ]
+  }
+]

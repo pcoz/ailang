@@ -1,0 +1,714 @@
+{
+  "procedures": [
+    {
+      "source_document": "Meetings and Project Management.pdf",
+      "page": 2,
+      "steps": [
+        "Cost Reduction: Achieve $650K annual operational savings through cloud",
+        "Error Rate Improvement: Reduce billing calculation errors from 0.8% to less than 0.1%",
+        "Processing Performance: Process complete billing cycles for 2.3M customers in under",
+        "Rate Plan Flexibility: Enable business users to configure and deploy new rate",
+        "Customer Self-Service: Launch customer portal with 80% adoption rate for online bill",
+        "Regulatory Compliance: Achieve full audit trail capability with immutable billing",
+        "Integration Capability: Establish robust API integrations with CRM (Salesforce),"
+      ]
+    },
+    {
+      "source_document": "Meetings and Project Management.pdf",
+      "page": 5,
+      "steps": [
+        "Integration between Rating Service and legacy CustomerDB (EBS-156)",
+        "Complete ETL validation for 50,000 test customer records (EBS-E2)",
+        "Implement Late Fee calculation logic for dunning process (EBS-76)",
+        "Deploy Invoice Generation Service to staging environment (EBS-189)"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 1,
+      "steps": [
+        "Introduction & Scope",
+        "Billing Process Overview",
+        "Meter Data Processing",
+        "Rate & Tariff Management",
+        "Billing Calculation Engine",
+        "Invoice Generation",
+        "Edge Cases & Exception Handling",
+        "Business Rules & Validation",
+        "Performance Requirements",
+        "Calculation Examples",
+        "Introduction & Scope",
+        "Meter data ingestion from smart grid infrastructure",
+        "Validation and normalization of usage data"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 2,
+      "steps": [
+        "Application of rate plans and tariff structures",
+        "Calculation of billing amounts including taxes, fees, and adjustments",
+        "Generation of invoice line items and supporting documentation",
+        "Handling of partial billing cycles, back-billing, and corrections",
+        "-",
+        "Physical meter reading processes (covered in Smart Grid Integration spec)",
+        "Payment processing (covered in Payment Gateway Integration spec)",
+        "Customer self-service portal (covered in Customer Portal Requirements)",
+        "Reporting and analytics (covered in Business Intelligence spec)",
+        "Finance Team: Revenue accuracy, audit compliance, tax calculation",
+        "Customer Support: Bill explanation, dispute resolution",
+        "Regulatory Compliance: Tariff approval processes, audit requirements",
+        "-",
+        "Accuracy Target: Less than 0.1% billing error rate (target: 2,300 or fewer errors per",
+        "Processing Window: Complete daily billing runs within 8-hour processing window",
+        "Regulatory Compliance: All calculations must maintain complete audit trail per PUC",
+        "Financial Impact: System processes approximately $145M in monthly billing",
+        "Billing Process Overview"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 4,
+      "steps": [
+        "00:00-02:00 IDT: Meter data acquisition from smart grid API",
+        "02:00-04:00 IDT: Data validation and normalization",
+        "04:00-09:00 IDT: Rating and billing calculation for daily batch",
+        "09:00-10:00 IDT: Invoice generation and quality assurance checks",
+        "10:00-11:00 IDT: Invoice delivery processing",
+        "11:00+ IDT: Exception handling and manual review queue processing",
+        "Meter Data Processing"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 8,
+      "steps": [
+        "Rule: Meter ID must exist in EBS Meter Registry and be in ACTIVE status",
+        "Action on Failure: Reject reading, log error, notify Smart Grid team",
+        "Error Code: METER_NOT_FOUND or METER_INACTIVE"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 9,
+      "steps": [
+        "Rule: Customer Account ID must exist and be linked to the specified Meter ID",
+        "Action on Failure: Reject reading, flag for manual resolution",
+        "Error Code: ACCOUNT_METER_MISMATCH",
+        "Rule: Total kWh must be > 0 and < 50,000 for residential (adjusted for commercial)",
+        "Rationale: Negative usage indicates data error; extremely high usage suggests meter",
+        "Action on Failure: Flag for manual review, do not auto-bill",
+        "Error Code: USAGE_OUT_OF_RANGE",
+        "Rule: Current billing period usage must be within 200% of historical average (calculated",
+        "Action on Failure: Flag for manual review but allow processing",
+        "Warning Code: USAGE_ANOMALY_DETECTED",
+        "Rule: Current reading value must be >= previous reading value (accounting for meter",
+        "Action on Failure: Reject reading, flag for meter inspection",
+        "Error Code: READING_REGRESSION",
+        "Rule: Days covered must be between 25-35 days for monthly billing cycles",
+        "Action on Failure: Flag for review but allow processing; adjust calculation methodology",
+        "Warning Code: PARTIAL_CYCLE",
+        "Rule: No more than 2 consecutive estimated readings allowed per account",
+        "Action on Failure: Escalate for actual meter reading; block further estimates",
+        "Error Code: EXCESSIVE_ESTIMATES",
+        "Rule: For TOU rate plans, peak + off-peak kWh must equal total kWh (within 0.1%"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 10,
+      "steps": [
+        "Action on Failure: Reject reading, request corrected data from Smart Grid",
+        "Error Code: TOU_DATA_MISMATCH",
+        "Rule: Meter data must be received within 72 hours of cycle close date",
+        "Action on Failure: Flag account for possible delayed billing",
+        "Warning Code: LATE_METER_DATA",
+        "Rule: Max demand kW must be > 0 for commercial accounts with demand charges",
+        "Action on Failure: Use calculated demand from interval data as fallback",
+        "Warning Code: DEMAND_READING_MISSING"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 11,
+      "steps": [
+        "Date Standardization: Convert all dates to ISO 8601 format, UTC timezone",
+        "Decimal Precision: Round all usage values to 2 decimal places",
+        "Unit Conversion: Ensure all consumption in kWh, demand in kW",
+        "Null Handling: Replace null values with appropriate defaults (0 for optional numeric",
+        "Account Linking: Enrich record with customer demographic data (rate class, service",
+        "Calculate average daily consumption from previous 12 months (excluding outliers)",
+        "Apply seasonal adjustment factor (winter months typically 15% higher for heating)",
+        "Multiply by billing cycle days to derive estimated consumption",
+        "Flag invoice prominently as \"ESTIMATED BILL\""
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 12,
+      "steps": [
+        "Ensure true-up on next actual reading with adjustment line item",
+        "Send automated alert to Smart Grid operations team",
+        "Hold billing for up to 7 days pending data receipt",
+        "After 7 days, generate estimated bill to maintain billing schedule",
+        "Track all delayed accounts for priority processing when data arrives",
+        "Calculate usage from old meter: (final reading - cycle start reading)",
+        "Calculate usage from new meter: (cycle end reading - installation reading)",
+        "Sum both components for total cycle usage",
+        "Document meter change in invoice notes",
+        "Apply standard validation rules to combined usage",
+        "Rate & Tariff Management",
+        "R1: Standard Residential Tiered Rate",
+        "R2: Time-of-Use Residential Rate",
+        "R3: Low-Income Assistance Rate (CARE program)",
+        "R4: Electric Vehicle Owner Rate",
+        "R5: Solar Net Metering Rate",
+        "C1: Small Commercial Flat Rate",
+        "C2: Medium Commercial Demand Rate",
+        "C3: Large Commercial Time-of-Use with Demand",
+        "C4: Industrial High Voltage Rate"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 13,
+      "steps": [
+        "SP1: Medical Baseline Allowance",
+        "SP2: Renewable Energy Premium Rate",
+        "SP3: Peak Time Rebate Program",
+        "Summer Rate (June 1 - September 30): $0.1247 per kWh",
+        "Winter Rate (October 1 - May 31): $0.1198 per kWh",
+        "Summer Rate: $0.1584 per kWh",
+        "Winter Rate: $0.1498 per kWh",
+        "Service Charge: $15.00 (covers meter reading, billing, and customer service)",
+        "-",
+        "-",
+        "-",
+        "For partial cycles spanning season boundaries: Prorate based on days in each season"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 14,
+      "steps": [
+        "Determine applicable season based on cycle end date",
+        "Retrieve seasonal tier rates for R1",
+        "Calculate Tier 1 consumption: MIN(total_kwh, 500)",
+        "Calculate Tier 2 consumption: MAX(0, total_kwh - 500)",
+        "Calculate Tier 1 charges: tier1_kwh × tier1_rate",
+        "Calculate Tier 2 charges: tier2_kwh × tier2_rate",
+        "Sum energy charges: tier1_charges + tier2_charges",
+        "Add fixed service charge: $15.00",
+        "Add infrastructure fee: $3.50",
+        "Calculate subtotal before taxes",
+        "Apply tax calculation (see section 4.6)"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 15,
+      "steps": [
+        "Summer: $0.2145 per kWh",
+        "Winter: $0.1987 per kWh",
+        "Summer: $0.0895 per kWh",
+        "Winter: $0.0847 per kWh",
+        "Summer: $0.0675 per kWh",
+        "Winter: $0.0652 per kWh"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 16,
+      "steps": [
+        "Service Charge: $12.00 (reduced to incentivize TOU enrollment)",
+        "-",
+        "New Year's Day",
+        "Memorial Day",
+        "-",
+        "Labor Day",
+        "Thanksgiving Day",
+        "Christmas Day",
+        "Any officially declared utility emergency days",
+        "Check if date is recognized holiday → classify as OFF_PEAK",
+        "Check day of week:",
+        "If Saturday or Sunday → classify as OFF_PEAK",
+        "If Monday-Friday:",
+        "Accumulate kWh consumption into respective period buckets",
+        "At cycle end, sum all intervals by period type"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 17,
+      "steps": [
+        "Peak (2PM-8PM weekdays): 245 kWh",
+        "Off-Peak (other times): 425 kWh",
+        "Super Off-Peak (12AM-6AM): 180 kWh"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 18,
+      "steps": [
+        "$0.1095 per kWh (all consumption)",
+        "$12.50 per kW of maximum demand recorded during billing period",
+        "Minimum billable demand: 10 kW",
+        "Demand is measured as the highest 15-minute average kW during the cycle",
+        "Service Charge: $35.00",
+        "-",
+        "Calculate average kW for interval: kWh_interval / 0.25 hours",
+        "Track maximum kW across all intervals",
+        "Round maximum kW to nearest 0.1 kW",
+        "Apply minimum demand threshold (10 kW)",
+        "Billable demand = MAX(10, recorded_maximum_kW)"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 22,
+      "steps": [
+        "State Energy Tax: Applied to total energy charges (not fixed charges)",
+        "Local Utility Tax: Applied to subtotal before taxes (energy + fixed)",
+        "Municipal Franchise Fee: Applied to subtotal, varies by city",
+        "Environmental Surcharge: Fixed amount per kWh",
+        "Calculate energy_charges_subtotal (all consumption-based charges)",
+        "Calculate fixed_charges_subtotal (all fixed monthly charges)",
+        "Calculate subtotal_before_tax = energy + fixed",
+        "Determine tax jurisdiction from service address postal code"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 23,
+      "steps": [
+        "Retrieve applicable tax rates for jurisdiction",
+        "Calculate State Energy Tax:",
+        "Calculate Local Utility Tax:",
+        "Calculate Municipal Franchise Fee (if applicable):",
+        "Calculate Environmental Surcharge:",
+        "Sum all taxes:",
+        "Calculate final amount due:"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 24,
+      "steps": [
+        "Billing Calculation Engine",
+        "Verify account is active and billable",
+        "Check for billing holds or payment plan modifications",
+        "Confirm rate plan assignment is valid for cycle dates",
+        "Load validated usage record from Usage Data Store",
+        "Verify data completeness for calculation requirements",
+        "Check for special handling flags (estimated, partial cycle, meter change)",
+        "Determine effective rate plan for billing cycle",
+        "Load rate configuration and calculation rules",
+        "Handle mid-cycle rate changes if applicable",
+        "Apply tier thresholds, TOU periods, or demand calculations per rate plan",
+        "Generate detailed consumption breakdown",
+        "Document which usage falls into each rate category"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 25,
+      "steps": [
+        "Calculate energy charges by applying rates to consumption",
+        "Add all fixed monthly charges",
+        "Apply any account-specific adjustments or credits",
+        "Determine tax jurisdiction",
+        "Calculate all applicable taxes and surcharges",
+        "Sum tax amounts",
+        "Retrieve any outstanding balance from previous cycles",
+        "Add late fees if applicable",
+        "Apply any payments or credits received since last bill",
+        "Create detailed line items for invoice presentation",
+        "Generate human-readable descriptions",
+        "Calculate running subtotals",
+        "Log complete calculation details",
+        "Store rate plan version used",
+        "Record all inputs and intermediate calculations",
+        "Create immutable audit record for regulatory compliance",
+        "Calculate prorated tier thresholds:"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 26,
+      "steps": [
+        "Example: 15 days of service in 30-day cycle:",
+        "Apply prorated thresholds to actual consumption:",
+        "Tier 1: 180 kWh (entirely within prorated baseline)",
+        "Tier 2: 0 kWh",
+        "Prorate fixed charges:",
+        "No threshold prorations needed",
+        "Simply apply TOU rates to actual consumption by period",
+        "Prorate fixed charges based on days of service",
+        "Residential: Minimum $5.00",
+        "Commercial: Minimum $15.00"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 27,
+      "steps": [
+        "Maximum back-bill period: 12 months per regulatory requirements",
+        "Customer must be notified before back-bill processing",
+        "Payment plans available for back-bills exceeding $150",
+        "Retrieve original bill details from Invoice Archive",
+        "Calculate correct charges using actual usage data",
+        "Determine adjustment amount:",
+        "Create adjustment line item on current invoice:",
+        "Positive adjustment: Additional charge",
+        "Negative adjustment: Credit to customer",
+        "Include detailed explanation in invoice notes:",
+        "Calculate what should have been billed:",
+        "Calculate what was estimated:",
+        "Calculate true-up adjustment:"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 28,
+      "steps": [
+        "Apply adjustment as line item on next invoice:",
+        "Invoice Generation",
+        "-",
+        "Customer account number",
+        "Service address",
+        "Billing period dates",
+        "-",
+        "Payment due date (21 days from invoice date)",
+        "Previous balance (if any)",
+        "Energy consumption line items (by tier or TOU period)",
+        "Demand charges (if applicable)",
+        "Fixed charges (service charge, fees)",
+        "Taxes and surcharges",
+        "Current charges subtotal",
+        "Prior period adjustments",
+        "Credits or refunds",
+        "Late payment fees",
+        "Payment plan adjustments"
+      ]
+    },
+    {
+      "source_document": "Functional Specification.pdf",
+      "page": 29,
+      "steps": [
+        "Previous balance",
+        "Payments received",
+        "Current charges",
+        "Total Amount Due",
+        "Current period usage vs. same period last year",
+        "12-month usage history graph",
+        "Average daily usage comparison",
+        "Payment options and methods",
+        "Budget billing program information",
+        "Energy efficiency tips",
+        "Customer service contact information"
+      ]
+    },
+    {
+      "source_document": "Jira Epics and User Stories.pdf",
+      "page": 3,
+      "steps": [
+        "Focused strategy: Migrate only active customers (95% of volume) in Phase 1",
+        "Secured approval for 2 additional data analysts (4-week contract)",
+        "Created \"quarantine database\" for problematic records requiring manual review",
+        "Automated data quality validation scripts to accelerate remediation",
+        "Weekly data quality review meetings with Finance team"
+      ]
+    },
+    {
+      "source_document": "Jira Epics and User Stories.pdf",
+      "page": 5,
+      "steps": [
+        "Invoice Document Generation:",
+        "Invoice Data Management:",
+        "Delivery Coordination:",
+        "Compliance & Accessibility:"
+      ]
+    },
+    {
+      "source_document": "Jira Epics and User Stories.pdf",
+      "page": 14,
+      "steps": [
+        "Customer Portal (Frontend)",
+        "Stripe.js captures card data (client-side, never touches EBS backend)",
+        "Stripe API returns secure token (tok_xxxxxxxxx)",
+        "EBS backend receives only token + metadata",
+        "EBS stores token in encrypted payment_methods table",
+        "For payments: EBS sends token to Stripe API with charge amount",
+        "Stripe processes payment and returns transaction ID"
+      ]
+    },
+    {
+      "source_document": "Jira Epics and User Stories.pdf",
+      "page": 16,
+      "steps": [
+        "invoice_status = 'UNPAID'",
+        "payment_due_date < (CURRENT_DATE - 15 days)",
+        "NOT EXISTS late_fee for this invoice",
+        "Create invoice_line_item:"
+      ]
+    },
+    {
+      "source_document": "Jira Epics and User Stories.pdf",
+      "page": 17,
+      "steps": [
+        "line_item_type = 'LATE_FEE'",
+        "description = 'Late Payment Fee'",
+        "amount = $5.00",
+        "related_invoice_id = original_invoice_id",
+        "Update account balance:",
+        "Create customer notification:",
+        "template = 'LATE_FEE_ASSESSED'",
+        "delivery_method = EMAIL + SMS",
+        "Log audit trail:",
+        "action = 'LATE_FEE_APPLIED'",
+        "reason = 'Payment overdue 15 days'",
+        "Payment Plan Customers: Late fees waived for customers on approved payment plans",
+        "Disputed Bills: Late fees not assessed while billing dispute is under investigation",
+        "Bankruptcy Protection: Late fees not assessed for customers with active bankruptcy",
+        "Regulatory Maximum: Verify $5.00 fee complies with state regulations (some states"
+      ]
+    },
+    {
+      "source_document": "Jira Epics and User Stories.pdf",
+      "page": 19,
+      "steps": [
+        "Technical Recommendation Document:",
+        "Proof-of-Concept:",
+        "Implementation Estimate:"
+      ]
+    },
+    {
+      "source_document": "Jira Epics and User Stories.pdf",
+      "page": 22,
+      "steps": [
+        "Incomplete Service Addresses (12% of records):",
+        "Orphaned Records (3% of data):",
+        "Data Type Inconsistencies (5% of fields):",
+        "Duplicate Records (2% of accounts):"
+      ]
+    },
+    {
+      "source_document": "Email Communications.pdf",
+      "page": 2,
+      "steps": [
+        "Accept 4-week delay, stay within budget (high risk to downstream milestones)",
+        "Spend $48K for contract resources, contain delay to 2 weeks (my recommendation)",
+        "Reduce scope to active customers only, defer problem accounts (requires policy"
+      ]
+    },
+    {
+      "source_document": "Email Communications.pdf",
+      "page": 3,
+      "steps": [
+        "Detailed cost breakdown of the $48K option",
+        "Risk assessment if we go with option 3 (reduced scope)",
+        "Your honest assessment of whether there are other surprises lurking"
+      ]
+    },
+    {
+      "source_document": "Email Communications.pdf",
+      "page": 8,
+      "steps": [
+        "Timeline Protection: 2-week delay is absorbed by existing buffers, maintaining April",
+        "Cost Reasonable: $48K (1.1% of project budget) is appropriate mitigation for schedule",
+        "Scope Pragmatic: 95% coverage for cutover, complete coverage within 3-6 months",
+        "Team Health: Prevents burnout from unrealistic schedule compression",
+        "Quality Maintained: Adequate time for proper data validation and testing",
+        "Sampling strategy did not account for age-based data quality variations",
+        "Need more comprehensive data profiling in discovery phase",
+        "Consider engaging data quality specialists earlier in future projects"
+      ]
+    },
+    {
+      "source_document": "Email Communications.pdf",
+      "page": 9,
+      "steps": [
+        "Which Finance team members will participate?",
+        "Are they available for dedicated UAT during these dates?",
+        "Any conflicts or constraints I should know about?"
+      ]
+    },
+    {
+      "source_document": "Email Communications.pdf",
+      "page": 10,
+      "steps": [
+        "Full-time commitment for 3 weeks is aggressive - can we do half-day sessions instead?",
+        "December 16-20 is particularly bad timing (we're in the middle of Q4 preliminary closing"
+      ]
+    },
+    {
+      "source_document": "Email Communications.pdf",
+      "page": 13,
+      "steps": [
+        "Training: Rachel and David need 2 days of hands-on training before UAT starts (Nov",
+        "Early Access: Provide staging environment access by November 15 for exploration",
+        "Test Materials: All test cases, expected results, and procedures documented by",
+        "Support: Dedicated developer support during UAT to answer questions and fix bugs",
+        "Flexibility: If critical year-end issues arise Dec 16-20, we may need to reduce hours"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 2,
+      "steps": [
+        "Reporting flexibility - Finance can easily sum all FIXED_CHARGE items vs",
+        "Audit trail - Each charge is explicitly documented with provenance",
+        "Rate plan evolution - Easy to add/modify/remove fixed charges without schema",
+        "Invoice clarity - Customers see itemized breakdown of charges",
+        "Promotional campaigns - Can easily implement \"3 months free service charge\""
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 3,
+      "steps": [
+        "Show energy charges first (these are the biggest numbers, should be prominent)",
+        "Within energy charges: sort by tier/period (Tier 1, Tier 2, etc.)",
+        "Then show ALL fixed charges",
+        "Within fixed charges: sort by amount descending (largest fee first)",
+        "Then show adjustments/credits if any",
+        "Then show taxes",
+        "Finally show total"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 5,
+      "steps": [
+        "Visibility - Version is immediately obvious in logs, documentation, and API calls",
+        "Simplicity - Easier for consumers to understand and implement",
+        "Caching - CDN and proxy caching works cleanly with different paths",
+        "Deprecation - Clear separation when we need to run v1 and v2 simultaneously"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 7,
+      "steps": [
+        "Load customer rate plan assignment",
+        "Load tariff tier structure",
+        "Load tax jurisdiction data"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 8,
+      "steps": [
+        "Load any customer-specific adjustments/credits",
+        "Redis Caching for Tariff Data Tariff structures rarely change (maybe monthly). We can",
+        "Customer Data Denormalization We're doing multiple joins to get customer rate plan + tax"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 10,
+      "steps": [
+        "Potential race condition (line 143):",
+        "Hardcoded late fee amount (line 89):",
+        "Missing audit log (line 167): The code creates the late fee but doesn't log to the audit trail.",
+        "Test coverage gap: I don't see tests for the \"disputed bill\" exclusion logic. Need test cases:"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 11,
+      "steps": [
+        "Error handling: What happens if the late fee creation fails (database error, validation error,",
+        "Adding unique constraint - good catch on race condition",
+        "Moving late fee amount to config table - makes sense",
+        "Adding audit logging - will implement this afternoon",
+        "Adding disputed bill test cases - oversight on my part",
+        "Error handling - I'll implement retry with alert after 3 failures"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 16,
+      "steps": [
+        "EBS-24: Rate tier database structure",
+        "EBS-25: R1 rate configuration",
+        "EBS-156: Rating Service integration with legacy DB",
+        "EBS-76: Late fee calculation logic",
+        "EBS-156: Rating Service integration - Show end-to-end flow from meter data through",
+        "EBS-76: Late fee calculation - Finance team specifically asked about this. Demo the",
+        "Show meter data coming from Smart Grid API (use Postman or curl)",
+        "Show data validation and ingestion",
+        "Show rating calculation being triggered",
+        "Show invoice line items being generated",
+        "Show the complete invoice in the database"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 17,
+      "steps": [
+        "Sprint Overview (Amanda, 5 min)",
+        "Demo 1: End-to-End Billing Flow (James, 15 min)"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 18,
+      "steps": [
+        "Demo 2: Automated Late Fee Assessment (Sarah, 10 min)",
+        "Performance Testing Results (Carlos, 10 min)",
+        "Q&A (All, 15 min)",
+        "Sprint 15 Preview (Marcus, 5 min)"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 22,
+      "steps": [
+        "When will training materials be available?",
+        "How different is the new system from the old one?",
+        "How long should we plan for training? (we have 45 agents)",
+        "Will there be a test environment where agents can practice?"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 23,
+      "steps": [
+        "Training Materials Timeline:",
+        "System Differences: Significant changes in:",
+        "Training Duration: Recommend 2-day intensive training per agent:",
+        "Practice Environment: Yes - we'll have a dedicated training environment with realistic test"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 24,
+      "steps": [
+        "Super Users: Can we identify 5-6 \"super users\" from our team who get advanced training",
+        "Quick Reference Guides: Our agents heavily rely on quick reference cards for common"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 29,
+      "steps": [
+        "EBS-189: Deploy Invoice Generation Service to staging",
+        "EBS-191: Integrate Invoice Service with Rating Service",
+        "EBS-193: PDF invoice template implementation",
+        "EBS-201: Redis caching for tariff lookups (perf optimization)",
+        "EBS-210: Begin TOU rate plan data model"
+      ]
+    },
+    {
+      "source_document": "Slack Conversations.pdf",
+      "page": 30,
+      "steps": [
+        "Sprint 14 retrospective (30 min)",
+        "Sprint 15 backlog review (45 min)",
+        "Story estimation (60 min)",
+        "Sprint commitment and goal finalization (15 min)"
+      ]
+    }
+  ]
+}

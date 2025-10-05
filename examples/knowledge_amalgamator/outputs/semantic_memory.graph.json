@@ -1,0 +1,7724 @@
+{
+  "nodes": [
+    {
+      "id": "document:1",
+      "kind": "document",
+      "name": "Meetings and Project Management.pdf",
+      "meta": {
+        "sha256": "6458de943ab84457c046662a417b89d21aa61d34e205ae851af3d9b29dae8743",
+        "pages": 10
+      }
+    },
+    {
+      "id": "concept:2",
+      "kind": "concept",
+      "name": "Billing"
+    },
+    {
+      "id": "concept:3",
+      "kind": "concept",
+      "name": "Risk"
+    },
+    {
+      "id": "concept:4",
+      "kind": "concept",
+      "name": "API"
+    },
+    {
+      "id": "amount:5",
+      "kind": "amount",
+      "name": "$1"
+    },
+    {
+      "id": "amount:6",
+      "kind": "amount",
+      "name": "$800"
+    },
+    {
+      "id": "concept:7",
+      "kind": "concept",
+      "name": "Rate"
+    },
+    {
+      "id": "amount:8",
+      "kind": "amount",
+      "name": "$650"
+    },
+    {
+      "id": "concept:9",
+      "kind": "concept",
+      "name": "Performance"
+    },
+    {
+      "id": "concept:10",
+      "kind": "concept",
+      "name": "Data Migration"
+    },
+    {
+      "id": "concept:11",
+      "kind": "concept",
+      "name": "UAT"
+    },
+    {
+      "id": "concept:12",
+      "kind": "concept",
+      "name": "Invoice"
+    },
+    {
+      "id": "concept:13",
+      "kind": "concept",
+      "name": "Staging"
+    },
+    {
+      "id": "concept:14",
+      "kind": "concept",
+      "name": "Cutover"
+    },
+    {
+      "id": "amount:15",
+      "kind": "amount",
+      "name": "$685"
+    },
+    {
+      "id": "document:16",
+      "kind": "document",
+      "name": "Functional Specification.pdf",
+      "meta": {
+        "sha256": "4b4cb30b845773d60c3c16cb2bb0ec1787a7d4848c9689157aaa892f911f12c7",
+        "pages": 30
+      }
+    },
+    {
+      "id": "amount:17",
+      "kind": "amount",
+      "name": "$145"
+    },
+    {
+      "id": "amount:18",
+      "kind": "amount",
+      "name": "$0.12"
+    },
+    {
+      "id": "amount:19",
+      "kind": "amount",
+      "name": "$0.11"
+    },
+    {
+      "id": "amount:20",
+      "kind": "amount",
+      "name": "$0.15"
+    },
+    {
+      "id": "amount:21",
+      "kind": "amount",
+      "name": "$0.14"
+    },
+    {
+      "id": "amount:22",
+      "kind": "amount",
+      "name": "$15.00"
+    },
+    {
+      "id": "amount:23",
+      "kind": "amount",
+      "name": "$3.50"
+    },
+    {
+      "id": "amount:24",
+      "kind": "amount",
+      "name": "$59.90"
+    },
+    {
+      "id": "amount:25",
+      "kind": "amount",
+      "name": "$37.45"
+    },
+    {
+      "id": "amount:26",
+      "kind": "amount",
+      "name": "$97.35"
+    },
+    {
+      "id": "amount:27",
+      "kind": "amount",
+      "name": "$18.50"
+    },
+    {
+      "id": "amount:28",
+      "kind": "amount",
+      "name": "$115.85"
+    },
+    {
+      "id": "amount:29",
+      "kind": "amount",
+      "name": "$4.05"
+    },
+    {
+      "id": "amount:30",
+      "kind": "amount",
+      "name": "$2.09"
+    },
+    {
+      "id": "amount:31",
+      "kind": "amount",
+      "name": "$6.14"
+    },
+    {
+      "id": "amount:32",
+      "kind": "amount",
+      "name": "$121.99"
+    },
+    {
+      "id": "amount:33",
+      "kind": "amount",
+      "name": "$0.21"
+    },
+    {
+      "id": "amount:34",
+      "kind": "amount",
+      "name": "$0.19"
+    },
+    {
+      "id": "amount:35",
+      "kind": "amount",
+      "name": "$0.08"
+    },
+    {
+      "id": "amount:36",
+      "kind": "amount",
+      "name": "$0.06"
+    },
+    {
+      "id": "amount:37",
+      "kind": "amount",
+      "name": "$12.00"
+    },
+    {
+      "id": "amount:38",
+      "kind": "amount",
+      "name": "$52.55"
+    },
+    {
+      "id": "amount:39",
+      "kind": "amount",
+      "name": "$38.04"
+    },
+    {
+      "id": "amount:40",
+      "kind": "amount",
+      "name": "$12.15"
+    },
+    {
+      "id": "amount:41",
+      "kind": "amount",
+      "name": "$102.74"
+    },
+    {
+      "id": "amount:42",
+      "kind": "amount",
+      "name": "$15.50"
+    },
+    {
+      "id": "amount:43",
+      "kind": "amount",
+      "name": "$118.24"
+    },
+    {
+      "id": "amount:44",
+      "kind": "amount",
+      "name": "$6.27"
+    },
+    {
+      "id": "amount:45",
+      "kind": "amount",
+      "name": "$124.51"
+    },
+    {
+      "id": "amount:46",
+      "kind": "amount",
+      "name": "$0.10"
+    },
+    {
+      "id": "amount:47",
+      "kind": "amount",
+      "name": "$12.50"
+    },
+    {
+      "id": "amount:48",
+      "kind": "amount",
+      "name": "$35.00"
+    },
+    {
+      "id": "amount:49",
+      "kind": "amount",
+      "name": "$8.00"
+    },
+    {
+      "id": "amount:50",
+      "kind": "amount",
+      "name": "$355.88"
+    },
+    {
+      "id": "amount:51",
+      "kind": "amount",
+      "name": "$591.25"
+    },
+    {
+      "id": "amount:52",
+      "kind": "amount",
+      "name": "$43.00"
+    },
+    {
+      "id": "amount:53",
+      "kind": "amount",
+      "name": "$990.13"
+    },
+    {
+      "id": "amount:54",
+      "kind": "amount",
+      "name": "$61.39"
+    },
+    {
+      "id": "amount:55",
+      "kind": "amount",
+      "name": "$1,051.52"
+    },
+    {
+      "id": "amount:56",
+      "kind": "amount",
+      "name": "$0.00"
+    },
+    {
+      "id": "amount:57",
+      "kind": "amount",
+      "name": "$7.50"
+    },
+    {
+      "id": "amount:58",
+      "kind": "amount",
+      "name": "$1.75"
+    },
+    {
+      "id": "amount:59",
+      "kind": "amount",
+      "name": "$5.00"
+    },
+    {
+      "id": "amount:60",
+      "kind": "amount",
+      "name": "$150"
+    },
+    {
+      "id": "document:61",
+      "kind": "document",
+      "name": "Jira Epics and User Stories.pdf",
+      "meta": {
+        "sha256": "e244270b9fb11c451ee1fc6021386c96dc95e92293f8f245497f940a1a81a0f3",
+        "pages": 23
+      }
+    },
+    {
+      "id": "amount:62",
+      "kind": "amount",
+      "name": "$95"
+    },
+    {
+      "id": "amount:63",
+      "kind": "amount",
+      "name": "$0.50"
+    },
+    {
+      "id": "amount:64",
+      "kind": "amount",
+      "name": "$200"
+    },
+    {
+      "id": "document:65",
+      "kind": "document",
+      "name": "Email Communications.pdf",
+      "meta": {
+        "sha256": "1732b26b109f60d9b54179f9bf0deee0c184613c047eb4cfff1c1ee89bf6b0f0",
+        "pages": 19
+      }
+    },
+    {
+      "id": "person:66",
+      "kind": "person",
+      "name": "Lisa Thompson",
+      "meta": {
+        "email": "lisa.thompson@energyco.com"
+      }
+    },
+    {
+      "id": "person:67",
+      "kind": "person",
+      "name": "Sarah Williams",
+      "meta": {
+        "email": "sarah.williams@energyco.com"
+      }
+    },
+    {
+      "id": "person:68",
+      "kind": "person",
+      "name": "Jennifer Morrison",
+      "meta": {
+        "email": "jennifer.morrison@energyco.com"
+      }
+    },
+    {
+      "id": "person:69",
+      "kind": "person",
+      "name": "David Chen",
+      "meta": {
+        "email": "david.chen@energyco.com"
+      }
+    },
+    {
+      "id": "amount:70",
+      "kind": "amount",
+      "name": "$48"
+    },
+    {
+      "id": "person:71",
+      "kind": "person",
+      "name": "Robert Kumar",
+      "meta": {
+        "email": "robert.kumar@energyco.com"
+      }
+    },
+    {
+      "id": "amount:72",
+      "kind": "amount",
+      "name": "$4"
+    },
+    {
+      "id": "amount:73",
+      "kind": "amount",
+      "name": "$2"
+    },
+    {
+      "id": "amount:74",
+      "kind": "amount",
+      "name": "$420"
+    },
+    {
+      "id": "amount:75",
+      "kind": "amount",
+      "name": "$0"
+    },
+    {
+      "id": "amount:76",
+      "kind": "amount",
+      "name": "$48,000"
+    },
+    {
+      "id": "amount:77",
+      "kind": "amount",
+      "name": "$120"
+    },
+    {
+      "id": "amount:78",
+      "kind": "amount",
+      "name": "$38,400"
+    },
+    {
+      "id": "amount:79",
+      "kind": "amount",
+      "name": "$2,400"
+    },
+    {
+      "id": "amount:80",
+      "kind": "amount",
+      "name": "$3,200"
+    },
+    {
+      "id": "amount:81",
+      "kind": "amount",
+      "name": "$4,000"
+    },
+    {
+      "id": "person:82",
+      "kind": "person",
+      "name": "Marcus Rodriguez",
+      "meta": {
+        "email": "marcus.rodriguez@energyco.com"
+      }
+    },
+    {
+      "id": "person:83",
+      "kind": "person",
+      "name": "Tom Richardson",
+      "meta": {
+        "email": "tom.richardson@energyco.com"
+      }
+    },
+    {
+      "id": "person:84",
+      "kind": "person",
+      "name": "Michelle Anderson",
+      "meta": {
+        "email": "michelle.anderson@energyco.com"
+      }
+    },
+    {
+      "id": "person:85",
+      "kind": "person",
+      "name": "Linda Chen",
+      "meta": {
+        "email": "linda.chen@energyco.com"
+      }
+    },
+    {
+      "id": "person:86",
+      "kind": "person",
+      "name": "Carlos Martinez",
+      "meta": {
+        "email": "carlos.martinez@energyco.com"
+      }
+    },
+    {
+      "id": "person:87",
+      "kind": "person",
+      "name": "James Patterson",
+      "meta": {
+        "email": "james.patterson@energyco.com"
+      }
+    },
+    {
+      "id": "person:88",
+      "kind": "person",
+      "name": "Security",
+      "meta": {
+        "email": "security@energyco.com"
+      }
+    },
+    {
+      "id": "person:89",
+      "kind": "person",
+      "name": "Yael Goldstein",
+      "meta": {
+        "email": "yael.goldstein@energyco.com"
+      }
+    },
+    {
+      "id": "document:90",
+      "kind": "document",
+      "name": "Slack Conversations.pdf",
+      "meta": {
+        "sha256": "d90eabec882b8725067519775f314ebfe5277c680d69521e5209bf8e4e53f831",
+        "pages": 34
+      }
+    },
+    {
+      "id": "amount:91",
+      "kind": "amount",
+      "name": "$15"
+    },
+    {
+      "id": "amount:92",
+      "kind": "amount",
+      "name": "$121"
+    },
+    {
+      "id": "amount:93",
+      "kind": "amount",
+      "name": "$97"
+    },
+    {
+      "id": "amount:94",
+      "kind": "amount",
+      "name": "$5"
+    }
+  ],
+  "edges": [
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "amount:5",
+      "target": "document:1",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:6",
+      "target": "document:1",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "amount:8",
+      "target": "document:1",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "amount:15",
+      "target": "document:1",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:8",
+      "target": "document:1",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:1",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "amount:17",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "amount:18",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "amount:19",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "amount:20",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "amount:21",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "amount:22",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "amount:23",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "amount:22",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:23",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:19",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "amount:19",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:24",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:21",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "amount:21",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:25",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:24",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:25",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:26",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:22",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:23",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:27",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:26",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:27",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:28",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:28",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:29",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:28",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:30",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:31",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:32",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "amount:33",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:34",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:35",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:35",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:36",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:36",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:37",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:23",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "amount:33",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:38",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:35",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:39",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:36",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:40",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:38",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:39",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:40",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:41",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:37",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:23",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:42",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:41",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:42",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:43",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:44",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:45",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "amount:46",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:47",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "amount:48",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:49",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "amount:46",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:50",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:47",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:51",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:48",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:49",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:52",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:50",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:51",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:52",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:53",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:54",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:55",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 22
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 22
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "amount:56",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:56",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:56",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "amount:22",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:57",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "amount:23",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:58",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "amount:59",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:22",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "amount:60",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 27
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 27
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 27
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 27
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 27
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 27
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 28
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 28
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 28
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 28
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 28
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 28
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 28
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 28
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 28
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:16",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "amount:19",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:24",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:21",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:25",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:26",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:22",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:23",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:27",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:29",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:30",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:31",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:32",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:56",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:56",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:32",
+      "target": "document:16",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "amount:62",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "amount:18",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:19",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "amount:20",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:21",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "amount:22",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:23",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "amount:19",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:24",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:21",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:25",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:26",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:22",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:23",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:27",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:28",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "amount:63",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "amount:63",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "amount:59",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "amount:59",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "amount:59",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "amount:59",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "amount:59",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "amount:59",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "amount:59",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "amount:64",
+      "target": "document:61",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 22
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 22
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 22
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 22
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:61",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "person:66",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:66",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:66",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:68",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:69",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:10",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "amount:70",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "person:68",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:69",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:10",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "amount:70",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "person:69",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:68",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:10",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:68",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:69",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:66",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:71",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "amount:70",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "amount:72",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:5",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:73",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:74",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:70",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:75",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:10",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "amount:70",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "amount:76",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:77",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:78",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:79",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:80",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:81",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:76",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "amount:75",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "amount:70",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "amount:76",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "person:82",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:83",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:84",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "person:83",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:82",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:84",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "person:82",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:83",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:84",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:85",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:83",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:82",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "amount:17",
+      "target": "document:65",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:85",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:83",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:82",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:68",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "person:85",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:85",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:83",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:82",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:84",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "person:86",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:87",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:10",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "person:88",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "person:87",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:86",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:69",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:3",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "person:69",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:87",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:86",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:89",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:89",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:69",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:87",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:86",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:89",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:89",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:69",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:87",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:86",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:86",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:89",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:69",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:87",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:11",
+      "target": "document:65",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "person:89",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:69",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:86",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:87",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "person:67",
+      "target": "document:65",
+      "rel": "mentioned_in"
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "amount:91",
+      "target": "document:90",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 1
+      }
+    },
+    {
+      "source": "amount:22",
+      "target": "document:90",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "amount:92",
+      "target": "document:90",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:93",
+      "target": "document:90",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "amount:91",
+      "target": "document:90",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 2
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 3
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 4
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 5
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 6
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 7
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 8
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "amount:94",
+      "target": "document:90",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 9
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 10
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 11
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 12
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 13
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 14
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 15
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 16
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "amount:94",
+      "target": "document:90",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 17
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 18
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 19
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 20
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 21
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 22
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 22
+      }
+    },
+    {
+      "source": "concept:9",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 22
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 22
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:14",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 23
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 24
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 25
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "concept:3",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 26
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 27
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 27
+      }
+    },
+    {
+      "source": "amount:70",
+      "target": "document:90",
+      "rel": "referenced_in"
+    },
+    {
+      "source": "concept:4",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 28
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:10",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:7",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 29
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 30
+      }
+    },
+    {
+      "source": "concept:11",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 30
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 31
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 31
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 32
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 32
+      }
+    },
+    {
+      "source": "concept:12",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 33
+      }
+    },
+    {
+      "source": "concept:2",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 33
+      }
+    },
+    {
+      "source": "concept:13",
+      "target": "document:90",
+      "rel": "discussed_in",
+      "meta": {
+        "page": 33
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "generated_at_utc": "2025-10-05T07:39:55.518548Z",
+  "source_pdfs": [
+    {
+      "filename": "Meetings and Project Management.pdf",
+      "path": "/mnt/data/Meetings and Project Management.pdf",
+      "pages": 10,
+      "sha256": "6458de943ab84457c046662a417b89d21aa61d34e205ae851af3d9b29dae8743",
+      "bytes": 247929
+    },
+    {
+      "filename": "Functional Specification.pdf",
+      "path": "/mnt/data/Functional Specification.pdf",
+      "pages": 30,
+      "sha256": "4b4cb30b845773d60c3c16cb2bb0ec1787a7d4848c9689157aaa892f911f12c7",
+      "bytes": 373722
+    },
+    {
+      "filename": "Jira Epics and User Stories.pdf",
+      "path": "/mnt/data/Jira Epics and User Stories.pdf",
+      "pages": 23,
+      "sha256": "e244270b9fb11c451ee1fc6021386c96dc95e92293f8f245497f940a1a81a0f3",
+      "bytes": 318655
+    },
+    {
+      "filename": "Email Communications.pdf",
+      "path": "/mnt/data/Email Communications.pdf",
+      "pages": 19,
+      "sha256": "1732b26b109f60d9b54179f9bf0deee0c184613c047eb4cfff1c1ee89bf6b0f0",
+      "bytes": 238785
+    },
+    {
+      "filename": "Slack Conversations.pdf",
+      "path": "/mnt/data/Slack Conversations.pdf",
+      "pages": 34,
+      "sha256": "d90eabec882b8725067519775f314ebfe5277c680d69521e5209bf8e4e53f831",
+      "bytes": 426026
+    }
+  ],
+  "generator": "knowledge_amalgamator-lite",
+  "outputs": [
+    "episodic_memory.jsonl",
+    "semantic_memory.graph.json",
+    "procedural_memory.json",
+    "outline_index.json",
+    "citation_index.csv",
+    "manifest.json"
+  ],
+  "notes": "Generated per request; no project summary produced."
+}
