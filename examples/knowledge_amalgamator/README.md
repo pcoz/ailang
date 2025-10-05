@@ -4,6 +4,8 @@
 
 This example demonstrates AILang's approach to knowledge ingestion and conversational retrieval from heterogeneous document sources. The implementation uses a **lightweight Person entity** as an organizational framework for processing information according to document structure characteristics, with strict provenance tracking throughout.
 
+**For a complete worked example**, see this [ChatGPT conversation](https://chatgpt.com/share/68e22df5-4f1c-8000-9eaa-842f4c5993de) demonstrating both the ingestion and query phases in action with real documentation.
+
 ## What This Example Does
 
 The system consists of two AILang programs:
