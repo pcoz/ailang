@@ -143,7 +143,9 @@ Unlike rigid templates, the program researches and constructs the legal dimensio
 
 **Key Insight**: Consumer Duty's "price & value" outcome provided strong legal leverage, while evidence-based pressure moved opponent through emotional states efficiently.
 
-[Full simulation: `punitive_overdraft_fees.md`]
+[**Full Simulation:** punitive_overdraft_fees.md](punitive_overdraft_fees.md)
+
+---
 
 ### Scenario 2: Tesla Auto-Park Crash (Australia)
 
@@ -157,7 +159,9 @@ Unlike rigid templates, the program researches and constructs the legal dimensio
 
 **Key Insight**: Strong consumer law (ACL major failure = consumer's choice) combined with safety evidence created favorable positioning for replacement demand.
 
-[Full simulation: `tesla_crash.md`]
+[**Full Simulation:** tesla_crash.md](tesla_crash.md)
+
+---
 
 ## Philosophical Grounding
 
