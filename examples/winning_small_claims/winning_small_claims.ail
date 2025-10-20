@@ -1,0 +1,1539 @@
+# Universal Small Claims Legal Advisory Journey Simulation
+# Two-dimensional integrated space: Legal Process × Emotional-Persuasion State
+# Dynamic feedback loop between legal progression and opponent's psychological state
+
+## 1. Two-Dimensional Integrated Space Framework
+
+CLASS IntegratedClaimsSpace:
+    # Cross-matrix of legal process stages and emotional-persuasion states
+    
+    PROPERTIES:
+        legal_dimension: LegalProcessDimension
+        emotional_dimension: EmotionalPersuasionDimension
+        current_position: {legal_stage: text, emotional_state: text}
+        navigation_history: LIST
+        feedback_loops: FeedbackSystem
+        
+    CLASS LegalProcessDimension:
+        # Formal legal stages (a priori structure)
+        PROPERTIES:
+            stages: LIST  # Dynamically constructed based on jurisdiction
+            current_stage: text
+            stage_transitions: GRAPH
+            
+        # Stages discovered through jurisdiction research
+        # Examples: fact_clarification → strategy → pre_litigation → negotiation → filing → hearing
+    END_CLASS
+    
+    CLASS EmotionalPersuasionDimension:
+        # Opponent's psychological journey through claim process (a posteriori states)
+        PROPERTIES:
+            states: LIST
+            current_state: text
+            state_transitions: GRAPH
+            
+        # Emotional-Persuasion States (universal psychological progression)
+        emotional_states: [
+            "denial",              # "This isn't valid" / "They have no case"
+            "defensive_resistance", # "We did nothing wrong" / Justify actions
+            "irritation",          # "This is annoying" / Dismiss as nuisance
+            "concern",             # "This might be serious" / Initial worry
+            "evaluation",          # "Let's assess our exposure" / Rational analysis
+            "negotiation_openness", # "Maybe we should settle" / Open to resolution
+            "resignation",         # "We should resolve this" / Accept need to settle
+            "acceptance"           # "Let's close this fairly" / Ready to conclude
+        ]
+        
+        # Alternate negative progression if mishandled
+        negative_states: [
+            "entrenchment",        # "We won't back down" / Dig in
+            "hostility",           # "We'll fight this hard" / Aggressive defense
+            "escalation_commitment" # "We're taking this all the way" / All-out war
+        ]
+    END_CLASS
+    
+    CLASS FeedbackSystem:
+        # How actions in legal dimension affect emotional dimension (and vice versa)
+        
+        METHOD legal_action_affects_emotional_state(legal_action, current_emotional_state, opposing_party):
+            # Each legal action pushes opponent along emotional journey
+            RETURN INTELLIGENTLY predict_emotional_transition WITH:
+                CURRENT_EMOTIONAL_STATE: current_emotional_state,
+                LEGAL_ACTION: legal_action,
+                OPPONENT_PERSONALITY: {
+                    logos: opposing_party.organizational_logos,
+                    energiae: opposing_party.organizational_energiae,
+                    ethos: opposing_party.organizational_ethos
+                },
+                ACTION_CHARACTERISTICS: {
+                    pressure_intensity: legal_action.pressure_level,
+                    formality: legal_action.formality,
+                    threat_level: legal_action.escalation_signals,
+                    reasonableness: legal_action.fairness_perception,
+                    evidence_strength: legal_action.factual_support
+                },
+                PREDICT: [
+                    "likely_next_emotional_state",
+                    "probability_of_positive_progression",
+                    "risk_of_negative_entrenchment",
+                    "optimal_next_legal_action"
+                ]
+            END
+        END_METHOD
+        
+        METHOD emotional_state_constrains_legal_options(emotional_state, legal_context):
+            # Current emotional state determines which legal actions are viable
+            RETURN INTELLIGENTLY assess WITH:
+                EMOTIONAL_STATE: emotional_state,
+                AVAILABLE_LEGAL_ACTIONS: legal_context.possible_next_steps,
+                DETERMINE: [
+                    "actions_likely_to_advance_positively",
+                    "actions_likely_to_cause_entrenchment",
+                    "optimal_timing_for_each_action",
+                    "required_emotional_preparation_before_action"
+                ]
+            END
+        END_METHOD
+        
+        METHOD calculate_integrated_position(legal_stage, emotional_state):
+            # Combined state determines strategic possibilities
+            RETURN {
+                position: {legal: legal_stage, emotional: emotional_state},
+                favorable_outcomes_accessible: assess_settlement_accessibility(legal_stage, emotional_state),
+                optimal_next_moves: identify_moves_that_advance_both_dimensions(legal_stage, emotional_state),
+                risk_assessment: evaluate_risks_of_available_actions(legal_stage, emotional_state),
+                estimated_distance_to_resolution: calculate_remaining_journey(legal_stage, emotional_state)
+            }
+        END_METHOD
+    END_CLASS
+    
+    METHOD navigate_integrated_space(current_pos, target_pos, case_context):
+        # Navigate through 2D space toward resolution
+        RETURN INTELLIGENTLY chart_course WITH:
+            CURRENT_POSITION: current_pos,
+            TARGET_POSITION: target_pos,  # e.g., {legal: "settlement", emotional: "acceptance"}
+            CONSTRAINTS: [
+                "cannot_skip_mandatory_legal_stages",
+                "cannot_force_emotional_state_jumps",
+                "must_manage_risk_of_negative_emotional_spirals",
+                "must_maintain_legal_procedural_integrity"
+            ],
+            OPTIMIZE_FOR: [
+                "shortest_path_to_resolution",
+                "highest_probability_of_favorable_settlement",
+                "lowest_cost_and_time",
+                "maintained_client_leverage"
+            ]
+        END
+    END_METHOD
+END_CLASS
+
+
+## 2. Emotional State Tracking and Prediction
+
+CLASS EmotionalStateTracker:
+    # Tracks opponent's journey through emotional-persuasion dimension
+    
+    PROPERTIES:
+        case_id: text
+        current_emotional_state: text
+        emotional_history: LIST
+        state_transition_probabilities: MAP
+        
+    METHOD initialize_emotional_state(opposing_party, case_facts):
+        # Determine starting emotional state based on case characteristics
+        SET initial_state TO INTELLIGENTLY assess WITH:
+            OPPONENT_TYPE: opposing_party.entity_type,
+            OPPONENT_PERSONALITY: {
+                logos: opposing_party.organizational_logos,
+                energiae: opposing_party.organizational_energiae,
+                ethos: opposing_party.organizational_ethos
+            },
+            CASE_CHARACTERISTICS: {
+                claim_strength: case_facts.case_strength,
+                amount: case_facts.claim_amount,
+                publicity_risk: case_facts.reputational_exposure,
+                legal_clarity: case_facts.legal_grounds_clarity
+            },
+            TYPICAL_INITIAL_STATES: {
+                strong_case_high_exposure: "concern",
+                strong_case_low_exposure: "denial",
+                weak_case: "irritation",
+                ambiguous_case: "defensive_resistance"
+            }
+        END
+        
+        SET this.current_emotional_state TO initial_state
+        
+        RETURN initial_state
+    END_METHOD
+    
+    METHOD predict_emotional_response(legal_action, communication):
+        # Predict how opponent will emotionally respond to our action
+        SET prediction TO INTELLIGENTLY analyze WITH:
+            CURRENT_STATE: this.current_emotional_state,
+            ACTION: legal_action,
+            COMMUNICATION_TONE: communication.tone,
+            COMMUNICATION_CONTENT: communication.substance,
+            
+            # Hidden tripartite analysis informs prediction
+            LOGOS_IMPACT: {
+                evidence_presented: communication.evidence_strength,
+                logical_coherence: communication.reasoning_quality,
+                factual_pressure: communication.facts_emphasized
+            },
+            
+            ENERGIAE_IMPACT: {
+                pressure_intensity: legal_action.pressure_level,
+                urgency_signals: communication.deadlines,
+                cost_implications: legal_action.expense_threats,
+                effort_required: legal_action.complexity_for_them
+            },
+            
+            ETHOS_IMPACT: {
+                moral_framing: communication.values_invoked,
+                reputation_threats: legal_action.publicity_implications,
+                fairness_perception: communication.reasonableness,
+                shame_activation: communication.ethical_pressure
+            },
+            
+            PREDICT: [
+                "most_likely_next_emotional_state",
+                "probability_of_positive_movement",
+                "probability_of_negative_entrenchment",
+                "estimated_time_in_next_state",
+                "triggers_for_further_movement"
+            ]
+        END
+        
+        RETURN prediction
+    END_METHOD
+    
+    METHOD update_emotional_state(opponent_response, prediction):
+        # Update based on actual opponent response
+        SET actual_emotional_state TO INTELLIGENTLY infer FROM:
+            RESPONSE_CONTENT: opponent_response.message,
+            RESPONSE_TONE: opponent_response.tone,
+            RESPONSE_SUBSTANCE: opponent_response.position,
+            ACTIONS_TAKEN: opponent_response.actions,
+            TIMING: opponent_response.response_delay,
+            
+            EMOTIONAL_INDICATORS: {
+                denial: ["no merit", "frivolous", "no basis", "reject entirely"],
+                defensive_resistance: ["disagree", "dispute", "our position", "justified"],
+                irritation: ["harassment", "waste of time", "unreasonable"],
+                concern: ["reviewing", "considering", "assessing"],
+                evaluation: ["propose discussion", "explore options", "willing to talk"],
+                negotiation_openness: ["counter offer", "meet halfway", "compromise"],
+                resignation: ["resolve amicably", "put this behind us"],
+                acceptance: ["agree to", "settle for", "acceptable terms"],
+                entrenchment: ["will not", "refuse to", "stand firm"],
+                hostility: ["sue us", "see you in court", "aggressive language"],
+                escalation_commitment: ["fight this", "all the way", "principle"]
+            }
+        END
+        
+        # Save state transition
+        EXECUTE_CODE python:
+            import json
+            import os
+            from datetime import datetime
+            
+            case_id = this.case_id
+            os.makedirs(f"case_data/{case_id}/emotional_journey", exist_ok=True)
+            
+            history_file = f"case_data/{case_id}/emotional_journey/state_history.json"
+            
+            if os.path.exists(history_file):
+                with open(history_file, 'r') as f:
+                    history = json.load(f)
+            else:
+                history = []
+            
+            history.append({
+                'timestamp': datetime.now().isoformat(),
+                'previous_state': this.current_emotional_state,
+                'new_state': actual_emotional_state,
+                'trigger': opponent_response.summary,
+                'prediction_accuracy': 'correct' if actual_emotional_state == prediction.most_likely_next_emotional_state else 'diverged'
+            })
+            
+            with open(history_file, 'w') as f:
+                json.dump(history, f, indent=2)
+        END_EXECUTE
+        
+        SET this.current_emotional_state TO actual_emotional_state
+        APPEND {state: actual_emotional_state, timestamp: current_time} TO this.emotional_history
+        
+        RETURN actual_emotional_state
+    END_METHOD
+    
+    METHOD assess_settlement_readiness():
+        # Determine if opponent is emotionally ready to settle
+        RETURN INTELLIGENTLY evaluate WITH:
+            CURRENT_STATE: this.current_emotional_state,
+            STATE_HISTORY: this.emotional_history,
+            TRAJECTORY: analyze_emotional_trajectory(this.emotional_history),
+            
+            READINESS_INDICATORS: {
+                high_readiness: ["negotiation_openness", "resignation", "acceptance"],
+                moderate_readiness: ["evaluation", "concern"],
+                low_readiness: ["denial", "defensive_resistance", "irritation"],
+                negative_trajectory: ["entrenchment", "hostility", "escalation_commitment"]
+            },
+            
+            ASSESS: [
+                "settlement_readiness_level",
+                "optimal_settlement_window",
+                "actions_to_increase_readiness",
+                "risks_of_premature_settlement_push",
+                "risks_of_delayed_settlement_attempt"
+            ]
+        END
+    END_METHOD
+END_CLASS
+
+
+## 3. Integrated Navigation Strategy
+
+CLASS IntegratedNavigationEngine:
+    # Navigates 2D space: legal process × emotional state
+    
+    PROPERTIES:
+        integrated_space: IntegratedClaimsSpace
+        emotional_tracker: EmotionalStateTracker
+        case_memory: CaseMemorySystem
+        
+    METHOD plan_next_move(current_legal_stage, current_emotional_state, case_context):
+        # Determine optimal action in 2D space
+        
+        SET integrated_position TO integrated_space.feedback_loops.calculate_integrated_position(
+            current_legal_stage,
+            current_emotional_state
+        )
+        
+        SET available_legal_actions TO determine_legal_options(current_legal_stage, case_context.legal_context)
+        
+        # Filter legal actions by emotional appropriateness
+        SET emotionally_viable_actions TO integrated_space.feedback_loops.emotional_state_constrains_legal_options(
+            current_emotional_state,
+            case_context.legal_context
+        )
+        
+        SET viable_actions TO INTERSECT available_legal_actions WITH emotionally_viable_actions.actions_likely_to_advance_positively
+        
+        # Evaluate each viable action's impact on both dimensions
+        SET action_evaluations TO []
+        FOR EACH action IN viable_actions DO:
+            SET evaluation TO {
+                action: action,
+                
+                legal_advancement: assess_legal_progress(action, current_legal_stage),
+                
+                emotional_impact: integrated_space.feedback_loops.legal_action_affects_emotional_state(
+                    action,
+                    current_emotional_state,
+                    case_context.opposing_party
+                ),
+                
+                integrated_benefit: calculate_combined_advancement(
+                    legal_progress: assess_legal_progress(action, current_legal_stage),
+                    emotional_progress: emotional_impact.likely_next_emotional_state,
+                    current_position: integrated_position
+                ),
+                
+                risk_assessment: evaluate_action_risks(
+                    action,
+                    current_emotional_state,
+                    current_legal_stage
+                )
+            }
+            
+            APPEND evaluation TO action_evaluations
+        END_FOR
+        
+        # Select optimal action considering both dimensions
+        SET optimal_action TO INTELLIGENTLY select WITH:
+            EVALUATIONS: action_evaluations,
+            OPTIMIZATION_CRITERIA: [
+                "maximize_probability_of_positive_emotional_movement",
+                "advance_legal_process_appropriately",
+                "minimize_risk_of_emotional_entrenchment",
+                "maintain_client_leverage",
+                "move_toward_settlement_readiness"
+            ],
+            CONSTRAINTS: [
+                "must_be_legally_sound",
+                "must_not_trigger_negative_emotional_spiral",
+                "must_be_within_client_budget_and_timeline",
+                "must_preserve_escalation_options"
+            ]
+        END
+        
+        RETURN {
+            recommended_action: optimal_action,
+            rationale: optimal_action.integrated_benefit,
+            expected_legal_outcome: optimal_action.legal_advancement,
+            expected_emotional_transition: optimal_action.emotional_impact,
+            alternative_actions: TOP_3(action_evaluations),
+            risks: optimal_action.risk_assessment
+        }
+    END_METHOD
+    
+    METHOD generate_action_with_emotional_calibration(action_type, case_facts, strategy, target_emotional_effect):
+        # Generate specific communication/action calibrated for emotional impact
+        
+        RETURN INTELLIGENTLY compose WITH:
+            ACTION_TYPE: action_type,
+            CASE_FACTS: case_facts,
+            STRATEGY: strategy,
+            
+            # Emotional calibration parameters
+            TARGET_EMOTIONAL_TRANSITION: target_emotional_effect,
+            CURRENT_EMOTIONAL_STATE: emotional_tracker.current_emotional_state,
+            
+            # Tripartite calibration (hidden from user)
+            LOGOS_CALIBRATION: {
+                evidence_emphasis: determine_evidence_level(target_emotional_effect),
+                logical_structure: determine_argument_style(target_emotional_effect),
+                factual_tone: determine_factual_emphasis(target_emotional_effect)
+            },
+            
+            ENERGIAE_CALIBRATION: {
+                urgency_level: determine_urgency_signals(target_emotional_effect),
+                pressure_intensity: determine_pressure_level(target_emotional_effect),
+                deadline_firmness: determine_deadline_approach(target_emotional_effect),
+                consequence_visibility: determine_escalation_visibility(target_emotional_effect)
+            },
+            
+            ETHOS_CALIBRATION: {
+                moral_framing: determine_values_emphasis(target_emotional_effect),
+                reasonableness_signals: determine_fairness_projection(target_emotional_effect),
+                reputation_implications: determine_shame_activation(target_emotional_effect),
+                good_faith_demonstration: determine_cooperation_signals(target_emotional_effect)
+            },
+            
+            COMMUNICATION_GUIDELINES: case_context.legal_context.communication_guidelines,
+            
+            QUALITY_CRITERIA: [
+                "legally_sound",
+                "emotionally_calibrated_for_target_effect",
+                "culturally_appropriate",
+                "professionally_presented",
+                "strategically_effective_in_2d_space"
+            ]
+        END
+    END_METHOD
+END_CLASS
+
+
+## 4. Dynamic Process Space Builder (Enhanced)
+
+CLASS LegalProcessSpaceBuilder:
+    PROPERTIES:
+        jurisdiction: text
+        claim_type: text
+        legal_context: LegalContext
+        emotional_dimension: EmotionalPersuasionDimension
+        
+    METHOD construct_integrated_journey(case_initial_info):
+        # Research jurisdiction
+        SET jurisdiction_analysis TO INTELLIGENTLY determine WITH:
+            CLIENT_LOCATION: case_initial_info.client_location,
+            OPPOSING_PARTY_LOCATION: case_initial_info.opposing_party_location,
+            WEB_SEARCH: research_jurisdiction_specifics()
+        END
+        
+        SET legal_context TO INTELLIGENTLY research WITH:
+            JURISDICTION: jurisdiction_analysis.applicable_jurisdiction,
+            CLAIM_TYPE: case_initial_info.nature_of_claim,
+            AMOUNT: case_initial_info.claim_amount,
+            RESOURCES: [
+                "web_search_for_local_procedures",
+                "web_search_for_monetary_limits",
+                "web_search_for_escalation_routes",
+                "web_search_for_communication_norms"
+            ]
+        END
+        
+        # Build legal dimension
+        SET legal_stages TO this.generate_legal_stages(legal_context)
+        
+        # Build emotional dimension (universal)
+        SET emotional_dimension TO NEW EmotionalPersuasionDimension()
+        
+        # Create integrated 2D space
+        CREATE IntegratedClaimsSpace integrated_space WITH:
+            legal_dimension: NEW LegalProcessDimension(
+                stages: legal_stages,
+                current_stage: legal_stages[0]
+            ),
+            emotional_dimension: emotional_dimension,
+            current_position: {
+                legal_stage: legal_stages[0].name,
+                emotional_state: "to_be_determined"  # Set after case analysis
+            },
+            feedback_loops: NEW FeedbackSystem()
+        END_CREATE
+        
+        # Save integrated structure
+        EXECUTE_CODE python:
+            import json
+            import os
+            
+            case_id = case_initial_info.case_id
+            os.makedirs(f"case_data/{case_id}/integrated_journey", exist_ok=True)
+            
+            journey_structure = {
+                'legal_dimension': {
+                    'stages': [stage.to_dict() for stage in legal_stages],
+                    'jurisdiction': legal_context.jurisdiction,
+                    'escalation_routes': legal_context.escalation_options
+                },
+                'emotional_dimension': {
+                    'states': emotional_dimension.emotional_states,
+                    'negative_states': emotional_dimension.negative_states,
+                    'current_state': 'pending_initialization'
+                },
+                'integration': 'two_dimensional_feedback_system'
+            }
+            
+            with open(f"case_data/{case_id}/integrated_journey/structure.json", 'w') as f:
+                json.dump(journey_structure, f, indent=2)
+        END_EXECUTE
+        
+        RETURN integrated_space
+    END_METHOD
+    
+    METHOD generate_legal_stages(legal_context):
+        SET stages TO []
+        
+        # Always required
+        APPEND this.create_fact_clarification_stage(legal_context) TO stages
+        APPEND this.create_strategy_stage(legal_context) TO stages
+        
+        # Jurisdiction-specific
+        IF legal_context.requires_mandatory_mediation THEN:
+            APPEND this.create_mediation_stage(legal_context) TO stages
+        END_IF
+        
+        IF legal_context.requires_regulatory_complaint THEN:
+            APPEND this.create_regulatory_complaint_stage(legal_context) TO stages
+        END_IF
+        
+        IF legal_context.requires_ombudsman_referral THEN:
+            APPEND this.create_ombudsman_stage(legal_context) TO stages
+        END_IF
+        
+        # Usually required
+        APPEND this.create_negotiation_stage(legal_context) TO stages
+        APPEND this.create_filing_stage(legal_context) TO stages
+        APPEND this.create_hearing_stage(legal_context) TO stages
+        
+        RETURN stages
+    END_METHOD
+END_CLASS
+
+
+## 5. Create Universal Lawyer Person Entity
+
+CREATE Person lawyer WITH:
+    name: "Legal Advisor"
+    age: 38
+    gender: "unspecified"
+    background: {
+        education: ["Law Degree", "Consumer Rights Specialization"],
+        specialization: "consumer_protection_and_small_claims"
+    }
+END_CREATE
+
+# Initialize lawyer's personality (for hidden strategic analysis)
+SET lawyer.personality.logos.reasoning_style TO "analytical"
+SET lawyer.personality.logos.pattern_recognition TO "strong"
+SET lawyer.personality.energiae.primary_drives TO ["justice", "client_advocacy"]
+SET lawyer.personality.energiae.drive_intensity TO {client_advocacy: "dominant"}
+SET lawyer.personality.ethos.core_values TO ["fairness", "integrity", "client_empowerment"]
+SET lawyer.planning_system.strategic_orientation TO "highly_strategic"
+SET lawyer.planning_system.flexibility_preference TO "adaptable"
+
+
+## 6. Dynamic Opposing Party Model
+
+CREATE OBJECT opposing_party:
+    entity_name: text
+    entity_type: text
+    
+    # Personality (inferred, not exposed to user)
+    organizational_logos: {reasoning_style: text, consistency: text, cognitive_state: text}
+    organizational_energiae: {primary_drives: LIST, drive_intensity: MAP, energetic_state: text}
+    organizational_ethos: {stated_values: LIST, actual_values: LIST, moral_state: text}
+    
+    METHOD initialize_from_case_facts(case_data):
+        SET this.entity_name TO case_data.opposing_party_name
+        SET this.entity_type TO case_data.opposing_party_type
+        
+        # Infer personality (hidden)
+        SET inferred_personality TO INTELLIGENTLY analyze WITH:
+            CASE_FACTS: case_data,
+            ENTITY_TYPE: this.entity_type
+        END
+        
+        SET this.organizational_logos TO inferred_personality.logos
+        SET this.organizational_energiae TO inferred_personality.energiae
+        SET this.organizational_ethos TO inferred_personality.ethos
+    END_METHOD
+    
+    METHOD generate_response_in_emotional_state(our_communication, current_emotional_state, legal_context):
+        # Generate response consistent with current emotional state
+        RETURN INTELLIGENTLY compose_response WITH:
+            EMOTIONAL_STATE: current_emotional_state,
+            RECEIVED_COMMUNICATION: our_communication,
+            PERSONALITY: {
+                logos: this.organizational_logos,
+                energiae: this.organizational_energiae,
+                ethos: this.organizational_ethos
+            },
+            ENTITY_TYPE: this.entity_type,
+            LEGAL_CONTEXT: legal_context,
+            
+            STATE_RESPONSE_PATTERNS: {
+                denial: {tone: "dismissive", substance: "reject_claim_basis", offers: "none"},
+                defensive_resistance: {tone: "defensive", substance: "justify_actions", offers: "minimal_if_any"},
+                irritation: {tone: "annoyed", substance: "characterize_as_nuisance", offers: "token_to_end"},
+                concern: {tone: "cautious", substance: "request_more_information", offers: "none_yet"},
+                evaluation: {tone: "businesslike", substance: "assess_exposure", offers: "exploratory"},
+                negotiation_openness: {tone: "cooperative", substance: "propose_settlement", offers: "reasonable"},
+                resignation: {tone: "conciliatory", substance: "seek_resolution", offers: "fair"},
+                acceptance: {tone: "professional", substance: "agree_terms", offers: "acceptable"},
+                entrenchment: {tone: "defiant", substance: "reject_all", offers: "none"},
+                hostility: {tone: "aggressive", substance: "counter_threaten", offers: "none"},
+                escalation_commitment: {tone: "combative", substance: "dig_in", offers: "none"}
+            }
+        END
+    END_METHOD
+END_OBJECT
+
+
+## 7. File-Based Memory Systems
+
+CLASS CaseMemorySystem:
+    PROPERTIES:
+        case_id: text
+        
+    METHOD save_integrated_state(legal_stage, emotional_state, action_taken, result):
+        EXECUTE_CODE python:
+            import json
+            import os
+            from datetime import datetime
+            
+            case_id = this.case_id
+            os.makedirs(f"case_data/{case_id}/integrated_journey", exist_ok=True)
+            
+            state_file = f"case_data/{case_id}/integrated_journey/position_history.json"
+            
+            if os.path.exists(state_file):
+                with open(state_file, 'r') as f:
+                    history = json.load(f)
+            else:
+                history = []
+            
+            history.append({
+                'timestamp': datetime.now().isoformat(),
+                'position': {
+                    'legal_stage': legal_stage,
+                    'emotional_state': emotional_state
+                },
+                'action_taken': action_taken,
+                'result': result
+            })
+            
+            with open(state_file, 'w') as f:
+                json.dump(history, f, indent=2)
+        END_EXECUTE
+    END_METHOD
+    
+    METHOD save_case_facts(facts_data):
+        EXECUTE_CODE python:
+            import json
+            import os
+            from datetime import datetime
+            
+            case_id = this.case_id
+            os.makedirs(f"case_data/{case_id}", exist_ok=True)
+            facts_data['last_updated'] = datetime.now().isoformat()
+            
+            with open(f"case_data/{case_id}/case_facts.json", 'w') as f:
+                json.dump(facts_data, f, indent=2)
+        END_EXECUTE
+    END_METHOD
+    
+    METHOD load_case_facts():
+        EXECUTE_CODE python:
+            import json
+            case_id = this.case_id
+            if os.path.exists(f"case_data/{case_id}/case_facts.json"):
+                with open(f"case_data/{case_id}/case_facts.json", 'r') as f:
+                    case_facts = json.load(f)
+            else:
+                case_facts = None
+        END_EXECUTE
+        RETURN case_facts
+    END_METHOD
+    
+    METHOD save_communication(comm_data):
+        EXECUTE_CODE python:
+            import json
+            import os
+            from datetime import datetime
+            
+            case_id = this.case_id
+            os.makedirs(f"case_data/{case_id}/communications", exist_ok=True)
+            
+            comms_file = f"case_data/{case_id}/communications/exchanges.json"
+            
+            if os.path.exists(comms_file):
+                with open(comms_file, 'r') as f:
+                    comms = json.load(f)
+            else:
+                comms = []
+            
+            comm_data['timestamp'] = datetime.now().isoformat()
+            comms.append(comm_data)
+            
+            with open(comms_file, 'w') as f:
+                json.dump(comms, f, indent=2)
+        END_EXECUTE
+    END_METHOD
+    
+    METHOD load_communication_history():
+        EXECUTE_CODE python:
+            import json
+            case_id = this.case_id
+            if os.path.exists(f"case_data/{case_id}/communications/exchanges.json"):
+                with open(f"case_data/{case_id}/communications/exchanges.json", 'r') as f:
+                    comms = json.load(f)
+            else:
+                comms = []
+        END_EXECUTE
+        RETURN comms
+    END_METHOD
+END_CLASS
+
+
+## 8. Main Journey Execution Through 2D Space
+
+METHOD execute_integrated_legal_journey(case_id):
+    
+    OUTPUT "Legal Advisor: Thank you for reaching out. I'm here to help you resolve your dispute."
+    OUTPUT "\nTo get started, I need to understand your situation:"
+    OUTPUT "  • Where are you located?"
+    OUTPUT "  • Who is the other party?"
+    OUTPUT "  • What happened?"
+    OUTPUT "  • What resolution do you want?"
+    OUTPUT "  • How much money is involved?"
+    
+    GET client_initial_details FROM user_input
+    
+    # Initialize systems
+    SET case_memory TO NEW CaseMemorySystem(case_id: case_id)
+    SET space_builder TO NEW LegalProcessSpaceBuilder()
+    
+    # Research and construct integrated 2D space
+    OUTPUT "\nResearching procedures for your situation..."
+    
+    SET integrated_space TO space_builder.construct_integrated_journey({
+        case_id: case_id,
+        client_location: client_initial_details.client_location,
+        opposing_party_location: client_initial_details.opposing_party_location,
+        nature_of_claim: client_initial_details.claim_type,
+        claim_amount: client_initial_details.amount,
+        initial_narrative: client_initial_details.what_happened
+    })
+    
+    # Initialize emotional tracking
+    SET emotional_tracker TO NEW EmotionalStateTracker(case_id: case_id)
+    
+    # Initialize navigation engine
+    SET navigation_engine TO NEW IntegratedNavigationEngine(
+        integrated_space: integrated_space,
+        emotional_tracker: emotional_tracker,
+        case_memory: case_memory
+    )
+    
+    OUTPUT "\nI've mapped out both the legal process and how to guide the other party toward resolution."
+    OUTPUT "Let's begin.\n"
+    
+    
+    ## STAGE 1: FACT CLARIFICATION
+    OUTPUT "=== Understanding Your Case ==="
+    
+    SET fact_clarification_result TO execute_fact_clarification(case_memory, lawyer)
+    SET case_facts TO fact_clarification_result.case_facts
+    
+    # Initialize opposing party
+    opposing_party.initialize_from_case_facts(case_facts)
+    
+    # Initialize emotional state
+    SET initial_emotional_state TO emotional_tracker.initialize_emotional_state(
+        opposing_party,
+        case_facts
+    )
+    
+    # Set starting position in 2D space
+    SET integrated_space.current_position TO {
+        legal_stage: "strategy_development",
+        emotional_state: initial_emotional_state
+    }
+    
+    OUTPUT "\n✓ Facts clarified"
+    # Note: We don't expose emotional state to user, but track it internally
+    
+    case_memory.save_integrated_state(
+        "fact_clarification_complete",
+        initial_emotional_state,
+        "gathered_facts",
+        fact_clarification_result
+    )
+    
+    
+    ## STAGE 2: STRATEGY DEVELOPMENT WITH EMOTIONAL MAPPING
+    OUTPUT "\n=== Developing Strategy ==="
+    
+    SET strategy_result TO execute_integrated_strategy_development(
+        case_memory,
+        lawyer,
+        opposing_party,
+        navigation_engine,
+        integrated_space
+    )
+    
+    OUTPUT "\nHere's my recommended approach:"
+    OUTPUT strategy_result.strategy_summary
+    OUTPUT "\nDoes this make sense to you?"
+    
+    GET client_approval FROM user_input
+    
+    IF NOT client_approval THEN:
+	
+	OUTPUT "What concerns do you have?"
+        GET client_concerns FROM user_input
+        # Adjust strategy based on client input
+        SET strategy_result TO refine_strategy(strategy_result, client_concerns)
+    END_IF
+    
+    case_memory.save_integrated_state(
+        "strategy_development",
+        emotional_tracker.current_emotional_state,
+        "strategy_created",
+        strategy_result
+    )
+    
+    
+    ## INTEGRATED 2D NAVIGATION LOOP
+    OUTPUT "\n=== Beginning Resolution Process ===\n"
+    
+    SET resolution_achieved TO false
+    SET iteration TO 0
+    SET max_iterations TO 20  # Safety limit
+    
+    WHILE NOT resolution_achieved AND iteration < max_iterations DO:
+        INCREMENT iteration BY 1
+        
+        # Get current position in 2D space
+        SET current_legal_stage TO integrated_space.current_position.legal_stage
+        SET current_emotional_state TO integrated_space.current_position.emotional_state
+        
+        # Plan next move considering both dimensions
+        SET next_move TO navigation_engine.plan_next_move(
+            current_legal_stage,
+            current_emotional_state,
+            {
+                case_facts: case_memory.load_case_facts(),
+                opposing_party: opposing_party,
+                legal_context: integrated_space.legal_dimension,
+                communication_history: case_memory.load_communication_history()
+            }
+        )
+        
+        OUTPUT "\n--- Step " + iteration + " ---"
+        OUTPUT "Current stage: " + current_legal_stage
+        # Note: Emotional state tracked internally, not shown to user
+        
+        OUTPUT "\nRecommended action: " + next_move.recommended_action.description
+        OUTPUT "Rationale: " + next_move.rationale
+        
+        # Check if client approval needed for major decisions
+        IF next_move.recommended_action.requires_client_approval THEN:
+            OUTPUT "\nThis action requires your approval. Proceed?"
+            GET client_decision FROM user_input
+            
+            IF NOT client_decision THEN:
+                OUTPUT "What would you prefer to do?"
+                GET client_alternative FROM user_input
+                # Adjust action based on client preference
+                SET next_move.recommended_action TO adapt_action(
+                    next_move.recommended_action,
+                    client_alternative
+                )
+            END_IF
+        END_IF
+        
+        # Generate action calibrated for emotional impact
+        SET action_execution TO navigation_engine.generate_action_with_emotional_calibration(
+            action_type: next_move.recommended_action.type,
+            case_facts: case_memory.load_case_facts(),
+            strategy: strategy_result,
+            target_emotional_effect: next_move.expected_emotional_transition
+        )
+        
+        OUTPUT "\nExecuting action..."
+        
+        # Present communication to user (if applicable)
+        IF action_execution.has_communication THEN:
+            OUTPUT "\nCommunication to send:"
+            OUTPUT "---"
+            OUTPUT action_execution.communication_text
+            OUTPUT "---"
+        END_IF
+        
+        # Execute action
+        MATCH next_move.recommended_action.type WITH:
+            CASE "send_demand_letter":
+                SET result TO execute_demand_letter_sending(
+                    action_execution,
+                    opposing_party,
+                    case_memory
+                )
+                
+            CASE "negotiation_communication":
+                SET result TO execute_negotiation_round(
+                    action_execution,
+                    opposing_party,
+                    emotional_tracker,
+                    case_memory,
+                    integrated_space
+                )
+                
+            CASE "escalate_to_regulator":
+                SET result TO execute_regulatory_escalation(
+                    action_execution,
+                    case_memory,
+                    integrated_space.legal_dimension
+                )
+                
+            CASE "escalate_to_ombudsman":
+                SET result TO execute_ombudsman_escalation(
+                    action_execution,
+                    case_memory,
+                    integrated_space.legal_dimension
+                )
+                
+            CASE "file_court_claim":
+                SET result TO execute_court_filing(
+                    action_execution,
+                    case_memory,
+                    integrated_space.legal_dimension
+                )
+                
+            CASE "accept_settlement":
+                SET result TO execute_settlement_acceptance(
+                    action_execution,
+                    case_memory
+                )
+                SET resolution_achieved TO true
+                
+            DEFAULT:
+                SET result TO execute_generic_action(
+                    action_execution,
+                    case_memory
+                )
+        END_MATCH
+        
+        OUTPUT "\n" + result.outcome_summary
+        
+        # Update emotional state based on opponent response
+        IF result.has_opponent_response THEN:
+            OUTPUT "\nTheir response: " + result.opponent_response.summary
+            
+            IF result.opponent_response.has_offer THEN:
+                OUTPUT "They've offered: " + result.opponent_response.offer_details
+            END_IF
+            
+            # Predict emotional transition
+            SET emotional_prediction TO emotional_tracker.predict_emotional_response(
+                next_move.recommended_action,
+                action_execution
+            )
+            
+            # Update emotional state based on actual response
+            SET new_emotional_state TO emotional_tracker.update_emotional_state(
+                result.opponent_response,
+                emotional_prediction
+            )
+            
+            # Provide strategic assessment to user (without exposing emotional mechanics)
+            SET strategic_assessment TO INTELLIGENTLY assess WITH:
+                RESPONSE: result.opponent_response,
+                HISTORY: case_memory.load_communication_history(),
+                HIDDEN_ANALYSIS: {
+                    emotional_state: new_emotional_state,
+                    trajectory: emotional_tracker.emotional_history
+                }
+            END
+            
+            OUTPUT "\nMy assessment: " + strategic_assessment.user_facing_summary
+            
+            # Check settlement readiness
+            SET settlement_readiness TO emotional_tracker.assess_settlement_readiness()
+            
+            IF settlement_readiness.readiness_level IN ["high_readiness", "moderate_readiness"] AND
+               result.opponent_response.has_offer THEN:
+                
+                # Evaluate offer
+                SET offer_evaluation TO INTELLIGENTLY evaluate WITH:
+                    OFFER: result.opponent_response.offer_details,
+                    CLIENT_MINIMUM: strategy_result.minimum_acceptable,
+                    CASE_STRENGTH: case_memory.load_case_facts().case_strength,
+                    LITIGATION_ALTERNATIVE: estimate_litigation_outcome(),
+                    SETTLEMENT_TIMING: settlement_readiness
+                END
+                
+                OUTPUT "\nOffer evaluation:"
+                OUTPUT "Their offer: " + result.opponent_response.offer_details.amount
+                OUTPUT "Your minimum: " + strategy_result.minimum_acceptable
+                OUTPUT "My recommendation: " + offer_evaluation.recommendation
+                OUTPUT "\nReasoning: " + offer_evaluation.reasoning
+                
+                IF offer_evaluation.recommendation == "accept" OR
+                   offer_evaluation.recommendation == "strongly_recommend_accept" THEN:
+                    
+                    OUTPUT "\nDo you want to accept this settlement?"
+                    GET client_settlement_decision FROM user_input
+                    
+                    IF client_settlement_decision THEN:
+                        SET settlement_result TO finalize_settlement(
+                            result.opponent_response.offer_details,
+                            case_memory
+                        )
+                        
+                        OUTPUT "\n✓ Settlement reached!"
+                        OUTPUT "Settlement amount: " + settlement_result.final_amount
+                        OUTPUT "Terms: " + settlement_result.terms_summary
+                        
+                        SET resolution_achieved TO true
+                    ELSE:
+                        OUTPUT "Understood. We'll continue negotiating."
+                    END_IF
+                END_IF
+            END_IF
+        END_IF
+        
+        # Update position in 2D space
+        SET integrated_space.current_position TO {
+            legal_stage: result.new_legal_stage,
+            emotional_state: emotional_tracker.current_emotional_state
+        }
+        
+        # Save state
+        case_memory.save_integrated_state(
+            result.new_legal_stage,
+            emotional_tracker.current_emotional_state,
+            next_move.recommended_action.type,
+            result
+        )
+        
+        # Check for negative emotional spiral
+        IF emotional_tracker.current_emotional_state IN ["entrenchment", "hostility", "escalation_commitment"] THEN:
+            OUTPUT "\nWarning: The situation has become adversarial."
+            OUTPUT "They appear entrenched in their position."
+            OUTPUT "\nOptions:"
+            OUTPUT "  1. Continue with escalation to formal process"
+            OUTPUT "  2. Pause and attempt different approach"
+            OUTPUT "  3. Reassess settlement terms"
+            
+            GET client_direction FROM user_input
+            
+            # Adapt strategy based on client choice
+            SET adapted_strategy TO handle_negative_emotional_state(
+                client_direction,
+                emotional_tracker.current_emotional_state,
+                integrated_space
+            )
+        END_IF
+        
+        # Check if legal process requires mandatory next step
+        SET mandatory_next_step TO check_mandatory_requirements(
+            integrated_space.current_position.legal_stage,
+            integrated_space.legal_dimension
+        )
+        
+        IF mandatory_next_step EXISTS THEN:
+            OUTPUT "\nProcedural requirement: " + mandatory_next_step.description
+            OUTPUT "We must complete: " + mandatory_next_step.action_required
+            
+            # Execute mandatory step
+            SET mandatory_result TO execute_mandatory_step(
+                mandatory_next_step,
+                case_memory,
+                integrated_space
+            )
+            
+            # Update position
+            SET integrated_space.current_position.legal_stage TO mandatory_result.new_stage
+        END_IF
+        
+        # Check for resolution conditions
+        IF result.case_resolved THEN:
+            SET resolution_achieved TO true
+            OUTPUT "\n✓ Case resolved!"
+            OUTPUT "Resolution: " + result.resolution_details
+        END_IF
+        
+        # Prevent infinite loop on stalemate
+        IF iteration >= max_iterations - 2 THEN:
+            OUTPUT "\nWe've been in extended negotiations."
+            OUTPUT "Current situation: " + summarize_current_state(integrated_space, case_memory)
+            OUTPUT "\nRecommendation: " + lawyer.thought_system.INTELLIGENTLY assess WITH:
+                CONTEXT: {
+                    legal_position: integrated_space.current_position.legal_stage,
+                    negotiation_history: case_memory.load_communication_history(),
+                    time_elapsed: calculate_time_since_start(),
+                    costs_incurred: calculate_costs_to_date()
+                }
+            END
+            
+            OUTPUT "\nHow would you like to proceed?"
+            GET client_final_direction FROM user_input
+            
+            # Execute client's final decision
+            SET final_action TO execute_client_decision(
+                client_final_direction,
+                integrated_space,
+                case_memory
+            )
+            
+            IF final_action.resolves_case THEN:
+                SET resolution_achieved TO true
+            END_IF
+        END_IF
+        
+    END_WHILE
+    
+    
+    ## JOURNEY COMPLETE
+    OUTPUT "\n=== Journey Complete ==="
+    
+    # Generate journey summary
+    SET journey_summary TO INTELLIGENTLY summarize WITH:
+        LEGAL_PATH: reconstruct_legal_journey(case_memory),
+        EMOTIONAL_JOURNEY: emotional_tracker.emotional_history,
+        COMMUNICATIONS: case_memory.load_communication_history(),
+        OUTCOME: determine_final_outcome(integrated_space, case_memory),
+        INSIGHTS: extract_lessons(case_memory, emotional_tracker)
+    END
+    
+    OUTPUT "\nJourney Summary:"
+    OUTPUT "Started: " + journey_summary.start_date
+    OUTPUT "Completed: " + journey_summary.end_date
+    OUTPUT "Legal stages traversed: " + journey_summary.legal_stages_count
+    OUTPUT "Negotiation rounds: " + journey_summary.negotiation_rounds
+    OUTPUT "Final outcome: " + journey_summary.outcome
+    
+    IF journey_summary.outcome == "settlement" THEN:
+        OUTPUT "Settlement amount: " + journey_summary.settlement_amount
+        OUTPUT "Settlement achieved at stage: " + journey_summary.resolution_stage
+    ELSE IF journey_summary.outcome == "court_judgment" THEN:
+        OUTPUT "Judgment amount: " + journey_summary.judgment_amount
+    ELSE IF journey_summary.outcome == "abandoned" THEN:
+        OUTPUT "Reason: " + journey_summary.abandonment_reason
+    END_IF
+    
+    OUTPUT "\nKey insights:"
+    FOR EACH insight IN journey_summary.insights DO:
+        OUTPUT "  • " + insight
+    END_FOR
+    
+    # Save final journey visualization
+    EXECUTE_CODE python:
+        import json
+        import os
+        
+        case_id = case_id
+        
+        journey_data = {
+            'summary': journey_summary,
+            'legal_path': journey_summary.legal_stages,
+            'emotional_journey': [
+                {'state': state, 'timestamp': timestamp}
+                for state, timestamp in emotional_tracker.emotional_history
+            ],
+            'integrated_trajectory': case_memory.load_integrated_state_history(),
+            'outcome': journey_summary.outcome
+        }
+        
+        with open(f"case_data/{case_id}/journey_complete.json", 'w') as f:
+            json.dump(journey_data, f, indent=2)
+    END_EXECUTE
+    
+    RETURN {
+        status: "journey_complete",
+        outcome: journey_summary.outcome,
+        details: journey_summary
+    }
+END_METHOD
+
+
+## 9. Specialized Execution Methods
+
+METHOD execute_integrated_strategy_development(case_memory, lawyer, opposing_party, navigation_engine, integrated_space):
+    
+    SET case_facts TO case_memory.load_case_facts()
+    SET current_emotional_state TO integrated_space.current_position.emotional_state
+    
+    # Develop strategy considering both legal and emotional dimensions
+    SET strategy TO lawyer.planning_system.INTELLIGENTLY create_plan WITH:
+        OBJECTIVE: case_facts.claim_amount,
+        CASE_FACTS: case_facts,
+        LEGAL_CONTEXT: integrated_space.legal_dimension,
+        
+        # Hidden emotional dimension informs strategy
+        OPPONENT_EMOTIONAL_STATE: current_emotional_state,
+        OPPONENT_PERSONALITY: {
+            logos: opposing_party.organizational_logos,
+            energiae: opposing_party.organizational_energiae,
+            ethos: opposing_party.organizational_ethos
+        },
+        
+        # Emotional journey mapping
+        EMOTIONAL_PATHWAY_PLANNING: {
+            current_state: current_emotional_state,
+            target_state: "acceptance",
+            intermediate_targets: plan_emotional_waypoints(
+                current_emotional_state,
+                "acceptance"
+            ),
+            tactics_for_each_transition: map_tactics_to_transitions(
+                current_emotional_state,
+                "acceptance"
+            )
+        },
+        
+        # Integrated optimization
+        OPTIMIZE_FOR: [
+            "shortest_path_in_2d_space",
+            "highest_settlement_probability",
+            "minimize_emotional_entrenchment_risk",
+            "maintain_legal_leverage"
+        ]
+    END
+    
+    RETURN {
+        strategy_summary: strategy.user_facing_summary,
+        minimum_acceptable: strategy.minimum_acceptable,
+        ideal_outcome: strategy.ideal_outcome,
+        escalation_path: strategy.legal_escalation_path,
+        emotional_tactics: strategy.hidden_emotional_approach,  # Not shown to user
+        timeline: strategy.expected_timeline
+    }
+END_METHOD
+
+
+METHOD execute_negotiation_round(action_execution, opposing_party, emotional_tracker, case_memory, integrated_space):
+    
+    # Send communication
+    SEND action_execution.communication_text TO opposing_party
+    
+    # Save our communication
+    case_memory.save_communication({
+        direction: "outbound",
+        type: "negotiation",
+        content: action_execution.communication_text,
+        legal_stage: integrated_space.current_position.legal_stage,
+        emotional_state_at_send: emotional_tracker.current_emotional_state
+    })
+    
+    # Wait for response (simulated or actual)
+    OUTPUT "\nWaiting for their response..."
+    
+    # Generate opponent response based on current emotional state
+    SET opponent_response TO opposing_party.generate_response_in_emotional_state(
+        action_execution.communication_text,
+        emotional_tracker.current_emotional_state,
+        integrated_space.legal_dimension
+    )
+    
+    # Save opponent response
+    case_memory.save_communication({
+        direction: "inbound",
+        type: "response",
+        content: opponent_response.message,
+        offer: opponent_response.offer IF opponent_response.has_offer ELSE null,
+        tone: opponent_response.tone
+    })
+    
+    RETURN {
+        has_opponent_response: true,
+        opponent_response: opponent_response,
+        outcome_summary: "Negotiation communication exchanged",
+        new_legal_stage: integrated_space.current_position.legal_stage,  # Stays in negotiation
+        case_resolved: false
+    }
+END_METHOD
+
+
+METHOD execute_demand_letter_sending(action_execution, opposing_party, case_memory):
+    
+    OUTPUT "\nSending formal demand letter via appropriate channel..."
+    
+    # Send demand
+    SEND action_execution.communication_text TO opposing_party
+    
+    # Save communication
+    case_memory.save_communication({
+        direction: "outbound",
+        type: "demand_letter",
+        content: action_execution.communication_text,
+        deadline: action_execution.deadline
+    })
+    
+    OUTPUT "✓ Demand letter sent"
+    OUTPUT "Response deadline: " + action_execution.deadline
+    
+    # Wait for response period
+    OUTPUT "\nWaiting for response (typically " + action_execution.response_period + ")..."
+    
+    # Generate initial response
+    SET opponent_response TO opposing_party.generate_response_in_emotional_state(
+        action_execution.communication_text,
+        emotional_tracker.current_emotional_state,
+        integrated_space.legal_dimension
+    )
+    
+    case_memory.save_communication({
+        direction: "inbound",
+        type: "demand_response",
+        content: opponent_response.message,
+        received_within_deadline: opponent_response.timely
+    })
+    
+    RETURN {
+        has_opponent_response: true,
+        opponent_response: opponent_response,
+        outcome_summary: "Demand letter sent and response received",
+        new_legal_stage: "negotiation",
+        case_resolved: false
+    }
+END_METHOD
+
+
+METHOD execute_regulatory_escalation(action_execution, case_memory, legal_dimension):
+    
+    OUTPUT "\nEscalating to regulatory body: " + action_execution.regulator_name
+    OUTPUT "Preparing formal complaint..."
+    
+    # Generate complaint document
+    SET complaint_document TO INTELLIGENTLY compose WITH:
+        GUIDELINES: action_execution.regulatory_guidelines,
+        CASE_FACTS: case_memory.load_case_facts(),
+        NEGOTIATION_HISTORY: case_memory.load_communication_history(),
+        REGULATORY_REQUIREMENTS: action_execution.regulatory_requirements
+    END
+    
+    OUTPUT "\nComplaint document:"
+    OUTPUT "---"
+    OUTPUT complaint_document
+    OUTPUT "---"
+    
+    OUTPUT "\nSubmitting to " + action_execution.regulator_name + "..."
+    
+    # File complaint
+    SET filing_result TO file_regulatory_complaint(
+        complaint_document,
+        action_execution.regulator_name
+    )
+    
+    case_memory.save_communication({
+        direction: "regulatory",
+        type: "complaint_filed",
+        regulator: action_execution.regulator_name,
+        reference_number: filing_result.reference_number
+    })
+    
+    OUTPUT "✓ Complaint filed"
+    OUTPUT "Reference number: " + filing_result.reference_number
+    OUTPUT "Expected response time: " + filing_result.typical_response_time
+    
+    RETURN {
+        has_opponent_response: false,
+        outcome_summary: "Regulatory complaint filed",
+        new_legal_stage: "regulatory_review",
+        case_resolved: false
+    }
+END_METHOD
+
+
+METHOD execute_ombudsman_escalation(action_execution, case_memory, legal_dimension):
+    
+    OUTPUT "\nEscalating to ombudsman: " + action_execution.ombudsman_name
+    OUTPUT "Preparing referral..."
+    
+    SET referral_document TO INTELLIGENTLY compose WITH:
+        GUIDELINES: action_execution.ombudsman_guidelines,
+        CASE_FACTS: case_memory.load_case_facts(),
+        NEGOTIATION_HISTORY: case_memory.load_communication_history(),
+        OMBUDSMAN_REQUIREMENTS: action_execution.ombudsman_requirements
+    END
+    
+    OUTPUT "\nOmbudsman referral:"
+    OUTPUT "---"
+    OUTPUT referral_document
+    OUTPUT "---"
+    
+    OUTPUT "\nSubmitting to " + action_execution.ombudsman_name + "..."
+    
+    SET referral_result TO file_ombudsman_complaint(
+        referral_document,
+        action_execution.ombudsman_name
+    )
+    
+    case_memory.save_communication({
+        direction: "ombudsman",
+        type: "referral_filed",
+        ombudsman: action_execution.ombudsman_name,
+        case_number: referral_result.case_number
+    })
+    
+    OUTPUT "✓ Ombudsman referral filed"
+    OUTPUT "Case number: " + referral_result.case_number
+    OUTPUT "The ombudsman will now review and contact both parties."
+    
+    RETURN {
+        has_opponent_response: false,
+        outcome_summary: "Ombudsman referral filed",
+        new_legal_stage: "ombudsman_review",
+        case_resolved: false
+    }
+END_METHOD
+
+
+METHOD execute_court_filing(action_execution, case_memory, legal_dimension):
+    
+    OUTPUT "\nPreparing court filing documents..."
+    
+    SET court_documents TO INTELLIGENTLY compose WITH:
+        GUIDELINES: action_execution.court_filing_guidelines,
+        CASE_FACTS: case_memory.load_case_facts(),
+        JURISDICTION_REQUIREMENTS: legal_dimension.court_requirements,
+        NEGOTIATION_HISTORY: case_memory.load_communication_history()
+    END
+    
+    OUTPUT "\nCourt documents prepared:"
+    OUTPUT "  • Complaint form"
+    OUTPUT "  • Evidence exhibits (" + LENGTH(court_documents.exhibits) + " items)"
+    OUTPUT "  • Witness list"
+    OUTPUT "  • Filing fee: " + court_documents.filing_fee
+    
+    OUTPUT "\nFiling with court..."
+    
+    SET filing_result TO file_with_court(
+        court_documents,
+        legal_dimension.jurisdiction
+    )
+    
+    OUTPUT "✓ Case filed with court"
+    OUTPUT "Case number: " + filing_result.case_number
+    OUTPUT "Hearing date: " + filing_result.hearing_date
+    OUTPUT "Court location: " + filing_result.court_location
+    
+    case_memory.save_communication({
+        direction: "court",
+        type: "claim_filed",
+        case_number: filing_result.case_number,
+        hearing_date: filing_result.hearing_date
+    })
+    
+    RETURN {
+        has_opponent_response: false,
+        outcome_summary: "Court claim filed - hearing scheduled for " + filing_result.hearing_date,
+        new_legal_stage: "pre_hearing",
+        case_resolved: false
+    }
+END_METHOD
+
+
+METHOD finalize_settlement(offer_details, case_memory):
+    
+    OUTPUT "\nFinalizing settlement agreement..."
+    
+    SET settlement_agreement TO INTELLIGENTLY compose WITH:
+        OFFER: offer_details,
+        CASE_FACTS: case_memory.load_case_facts(),
+        LEGAL_STANDARDS: standard_settlement_clauses()
+    END
+    
+    OUTPUT "\nSettlement agreement:"
+    OUTPUT "---"
+    OUTPUT settlement_agreement
+    OUTPUT "---"
+    
+    OUTPUT "\nThis agreement:"
+    OUTPUT "  • Resolves all claims"
+    OUTPUT "  • Payment: " + offer_details.amount
+    OUTPUT "  • Payment timeline: " + offer_details.payment_terms
+    OUTPUT "  • Confidentiality: " + offer_details.confidentiality_terms
+    
+    case_memory.save_communication({
+        direction: "settlement",
+        type: "agreement_finalized",
+        amount: offer_details.amount,
+        terms: settlement_agreement
+    })
+    
+    RETURN {
+        final_amount: offer_details.amount,
+        terms_summary: offer_details.summary,
+        agreement_document: settlement_agreement
+    }
+END_METHOD
+
+
+## 10. Helper Functions
+
+METHOD plan_emotional_waypoints(start_state, end_state):
+    # Plan intermediate emotional states to traverse
+    RETURN INTELLIGENTLY determine_path WITH:
+        START: start_state,
+        END: end_state,
+        POSITIVE_PROGRESSION: [
+            "denial" → "defensive_resistance" → "irritation" → "concern" → 
+            "evaluation" → "negotiation_openness" → "resignation" → "acceptance"
+        ],
+        AVOID: ["entrenchment", "hostility", "escalation_commitment"],
+        OUTPUT: "list_of_intermediate_target_states"
+    END
+END_METHOD
+
+
+METHOD check_mandatory_requirements(current_stage, legal_dimension):
+    # Check if jurisdiction requires mandatory steps
+    RETURN INTELLIGENTLY assess WITH:
+        STAGE: current_stage,
+        JURISDICTION_RULES: legal_dimension.mandatory_requirements,
+        CHECK_FOR: [
+            "mandatory_mediation",
+            "cooling_off_period",
+            "mandatory_negotiation_attempt",
+            "regulatory_clearance"
+        ]
+    END
+END_METHOD
+
+
+METHOD summarize_current_state(integrated_space, case_memory):
+    RETURN INTELLIGENTLY summarize WITH:
+        LEGAL_POSITION: integrated_space.current_position.legal_stage,
+        COMMUNICATION_HISTORY: case_memory.load_communication_history(),
+        TIME_ELAPSED: calculate_duration(),
+        PROGRESS_ASSESSMENT: "qualitative_summary"
+    END
+END_METHOD
