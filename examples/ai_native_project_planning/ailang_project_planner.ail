@@ -1,0 +1,981 @@
+#ailang
+# =====================================================================
+#  AILang PROJECT PLANNER v4.1 - BIDIRECTIONAL COHERENCE EDITION
+#  
+#  Philosophy: AI demonstrates disintegrative analysis and reintegration
+#  
+#  
+#  The AI's Job:
+#  1. Take user's initial concept (minimal Q&A)
+#  2. ANALYZE project characteristics to SELECT appropriate methodology
+#  3. EXPLAIN why methodology choices align with values/constraints
+#  4. DECOMPOSE project (abstract → concrete) showing how each level realizes above
+#  5. REINTEGRATE it (concrete → abstract) validating what was built
+#  6. GENERATE plan that explicitly shows BOTH journeys
+#  7. IDENTIFY gaps where decomposition/reintegration breaks
+#  
+#  The user gets a plan that demonstrates:
+#  - "Here's the methodology/methodologies chosen and why"
+#  - "Here's how your philosophy becomes concrete metrics" (↓ decomposition)
+#  - "Here's whether those metrics actually achieve your philosophy" (↑ validation)
+#  - "Here are the gaps where coherence breaks"
+#  
+#  This is Matter §20 made OPERATIONAL with explicit bidirectional tracing.
+# =====================================================================
+
+EXTENSION "matter"
+
+POLICY:
+  MODE = "ai_driven_bidirectional_analysis"
+  USER_INTERACTION = "minimal_focused_questions"  # Only essential questions
+  AI_RESPONSIBILITY = "demonstrate_decomposition_and_reintegration"
+  METHODOLOGY_SELECTION = "ai_driven_with_rationale"  # NEW: AI chooses methodology
+  OUTPUT_SHOWS = "both_directions_explicitly"
+  TRACING_VISIBILITY = "maximum"  # Make all connections visible
+  GAP_ANALYSIS = "automatic"  # AI identifies gaps
+  COHERENCE_SCORING = "automatic"  # AI calculates coherence
+  DOCUMENT_STRUCTURE = "enriched_with_bidirectional_tracing"
+  METHODOLOGY_ANALYSIS = "check_for_concrete_prison_risk"  # Assess methodology rigidity
+
+# =====================================================================
+# Core Structures
+# =====================================================================
+
+AbstractionLevel = ["philosophical_foundation", "categorical_framework", 
+                    "instance", "components", "primitives"]
+
+ABSTRACTION_LEVEL_WITH_CONNECTIONS = OBJECT {
+  level_name: STRING,
+  level_content: OBJECT,
+  
+  # Downward (↓): How this level realizes the one above
+  realizes_level_above: LIST[STRING],
+  realization_mechanisms: LIST[STRING],
+  
+  # Upward (↑): How this level is validated by the one below
+  validated_by_level_below: LIST[STRING],
+  validation_findings: LIST[STRING],
+  
+  coherence_score: NUMBER  # 0-100: bidirectional coherence
+}
+
+REALIZATION_LINK = OBJECT {
+  from_level: STRING,
+  from_element: STRING,
+  to_level: STRING,
+  to_elements: LIST[STRING],
+  mechanism: STRING,  # HOW abstract becomes concrete
+  strength: STRING  # "direct", "partial", "weak"
+}
+
+VALIDATION_LINK = OBJECT {
+  from_level: STRING,
+  from_elements: LIST[STRING],
+  validates_level: STRING,
+  validates_element: STRING,
+  mechanism: STRING,  # HOW concrete proves abstract
+  completeness: STRING  # "full", "partial", "incomplete"
+}
+
+CONNECTION_GAP = OBJECT {
+  abstract_element: STRING,
+  abstract_level: STRING,
+  expected_concrete: STRING,
+  actual_concrete: STRING,
+  gap_type: STRING,  # "missing", "weak", "misaligned", "methodology_rigidity"
+  severity: STRING,  # "critical", "significant", "minor"
+  recommendation: STRING
+}
+
+METHODOLOGY_SELECTION = OBJECT {
+  methodology_name: STRING,
+  applies_to: STRING,  # "entire_project", "specific_component", "specific_phase"
+  rationale: STRING,
+  alignment_with_values: STRING,
+  adaptation_mechanisms: STRING,
+  when_to_break_rules: STRING
+}
+
+# =====================================================================
+# PROGRAM: BidirectionalCoherencePlanner
+# =====================================================================
+
+PROGRAM BidirectionalCoherencePlanner
+
+DESCRIPTION:
+  The AI performs bidirectional analysis and generates a plan that SHOWS both journeys.
+  
+  User provides: Initial concept + answers to focused questions (NO methodology)
+  AI analyzes: Project characteristics and SELECTS appropriate methodologies
+  AI demonstrates: Decomposition ↓ and Reintegration ↑
+  Output: Plan with EXPLICIT bidirectional tracing visible in document
+  
+  The generated plan itself becomes a demonstration of Matter §20 structure,
+  showing how abstraction levels connect in both directions and where gaps exist.
+  
+  METHODOLOGY SELECTION PHILOSOPHY:
+  Different project elements may benefit from different methodologies:
+  - Research components might use scientific method / DBTL cycles
+  - Software components might use Agile / Scrum / XP
+  - Hardware components might use Stage-Gate / Systems Engineering
+  - Creative components might use Design Thinking / Iterative Design
+  - Operations might use Lean / Six Sigma / Kanban
+  
+  The AI must:
+  1. Analyze project characteristics (domain, uncertainty, constraints, values)
+  2. Select methodology(ies) that SERVE the values (not vice versa)
+  3. Explain WHY each methodology was chosen
+  4. Define adaptation mechanisms when methodology conflicts with values
+  5. Establish pre-commitments about when to break methodology rules
+  
+  SPECIAL ATTENTION TO METHODOLOGY:
+  The AI must analyze whether the chosen methodology could become a "concrete prison":
+  - Does the plan show HOW the methodology serves the project's principles?
+  - Are there explicit adaptation mechanisms when methodology conflicts with values?
+  - Would the team know how to think abstractly if methodology practices don't fit reality?
+  - Are there pre-commitments about when to break methodology rules?
+  
+  If methodology adaptation mechanisms are weak/missing, flag as a gap.
+
+INPUTS:
+  initial_concept: TEXT  # User's initial project idea
+  domain: STRING  # Project domain for context
+
+OUTPUTS:
+  enriched_plan_document: TEXT  # Plan showing bidirectional analysis
+  structure: OBJECT {
+    methodology_selections: LIST[METHODOLOGY_SELECTION],
+    abstraction_hierarchy: LIST[ABSTRACTION_LEVEL_WITH_CONNECTIONS],
+    realization_links: LIST[REALIZATION_LINK],  # ↓ Abstract → Concrete
+    validation_links: LIST[VALIDATION_LINK],  # ↑ Concrete → Abstract
+    gaps: LIST[CONNECTION_GAP],
+    coherence: OBJECT
+  }
+
+STEPS:
+  PRINT "═══════════════════════════════════════════════════════════"
+  PRINT "AILANG PROJECT PLANNER v4.1"
+  PRINT "Bidirectional Coherence Edition with AI Methodology Selection"
+  PRINT "═══════════════════════════════════════════════════════════"
+  PRINT ""
+  PRINT "This planner generates plans that explicitly show:"
+  PRINT "  ↓ DECOMPOSITION: How abstract intentions become concrete"
+  PRINT "  ↑ REINTEGRATION: Whether concrete elements achieve the abstract"
+  PRINT "  🔧 METHODOLOGY: AI-selected approach(es) with rationale"
+  PRINT ""
+  PRINT "The AI will:"
+  PRINT "  1. Gather your project essentials (brief Q&A)"
+  PRINT "  2. Analyze characteristics and SELECT appropriate methodologies"
+  PRINT "  3. Decompose through 5 abstraction levels"
+  PRINT "  4. Reintegrate from bottom to top"
+  PRINT "  5. Generate plan showing BOTH journeys with explicit tracing"
+  PRINT ""
+  
+  # ====================================================================
+  # GATHER ESSENTIALS (Minimal focused questions)
+  # ====================================================================
+  
+  PRINT "───────────────────────────────────────────────────────────"
+  PRINT "GATHERING PROJECT ESSENTIALS"
+  PRINT "───────────────────────────────────────────────────────────"
+  PRINT ""
+  
+  ASK user: "Project name:"
+  SET project_name = user_response
+  
+  ASK user: "Core purpose (1-2 sentences):"
+  SET core_purpose = user_response
+  
+  ASK user: "What will exist when done? (Primary deliverable):"
+  SET primary_deliverable = user_response
+  
+  ASK user: "Who is this for? (Primary users):"
+  SET primary_users = user_response
+  
+  ASK user: "What's the ONE metric that defines success?"
+  SET success_metric = user_response
+  
+  ASK user: "Non-negotiable values (2-3):"
+  SET core_values = PARSE_LIST(user_response)
+  
+  ASK user: "Project type/category (e.g., 'software product', 'hardware system', 'research project'):"
+  SET project_category = user_response
+  
+  ASK user: "Key constraints or requirements (e.g., regulatory, timeline, budget, technical):"
+  SET key_constraints = user_response
+  
+  ASK user: "Level of uncertainty (high/medium/low) and what's most uncertain:"
+  SET uncertainty_profile = user_response
+  
+  ASK user: "List major components/subsystems (4-8):"
+  SET components_list = PARSE_LIST(user_response)
+  
+  ASK user: "Key technical primitives (algorithms, protocols, hardware - be specific):"
+  SET technical_primitives = PARSE_LIST(user_response)
+  
+  ASK user: "Budget and timeline:"
+  SET budget_timeline = user_response
+  
+  PRINT ""
+  PRINT "✓ Essentials gathered. Analyzing project characteristics..."
+  PRINT ""
+  
+  # ====================================================================
+  # AI METHODOLOGY SELECTION (NEW PHASE)
+  # ====================================================================
+  
+  PRINT "───────────────────────────────────────────────────────────"
+  PRINT "METHODOLOGY SELECTION"
+  PRINT "───────────────────────────────────────────────────────────"
+  PRINT ""
+  PRINT "Analyzing project to select appropriate methodology/methodologies..."
+  PRINT ""
+  
+  # AI analyzes project characteristics
+  LET methodology_selections = AI_SELECT_METHODOLOGIES({
+    project_category: project_category,
+    core_purpose: core_purpose,
+    core_values: core_values,
+    components: components_list,
+    uncertainty: uncertainty_profile,
+    constraints: key_constraints,
+    primitives: technical_primitives
+  })
+  
+  PRINT "✓ Methodology selection complete"
+  PRINT ""
+  FOR EACH selection IN methodology_selections:
+    PRINT "  • " + selection.methodology_name + " for " + selection.applies_to
+    PRINT "    Reason: " + selection.rationale
+    PRINT ""
+  END_FOR
+  
+  # User can review and adjust if needed
+  ASK user: "Review methodology selections above. Any concerns or adjustments? (Enter 'none' if satisfied):"
+  SET methodology_feedback = user_response
+  
+  IF methodology_feedback != "none" AND LENGTH(methodology_feedback) > 0 THEN
+    PRINT ""
+    PRINT "Adjusting methodology selections based on feedback..."
+    # AI incorporates feedback into selections
+    SET methodology_selections = AI_ADJUST_METHODOLOGIES(methodology_selections, methodology_feedback)
+    PRINT "✓ Adjustments incorporated"
+    PRINT ""
+  ENDIF
+  
+  PRINT "Beginning bidirectional analysis..."
+  PRINT ""
+  
+  # Initialize tracking
+  SET abstraction_hierarchy = []
+  SET realization_links = []
+  SET validation_links = []
+  SET gaps = []
+  SET document = DocumentBuilder.new()
+  
+  # ====================================================================
+  # PHASE 1: DOWNWARD DECOMPOSITION (AI analyzes)
+  # ====================================================================
+  
+  PRINT "═══════════════════════════════════════════════════════════"
+  PRINT "PHASE 1: DOWNWARD DECOMPOSITION"
+  PRINT "═══════════════════════════════════════════════════════════"
+  PRINT ""
+  PRINT "The AI now decomposes your concept through 5 abstraction levels,"
+  PRINT "explicitly documenting how each level realizes the one above..."
+  PRINT ""
+  
+  # ─── LEVEL 1: PHILOSOPHICAL FOUNDATION ───
+  PRINT "Analyzing Level 1: Philosophical Foundation..."
+  
+  LET philosophical_foundation = AI_ANALYZE_PHILOSOPHICAL_FOUNDATION({
+    core_purpose: core_purpose,
+    core_values: core_values,
+    success_metric: success_metric,
+    methodology_selections: methodology_selections  # NEW: Consider methodology alignment
+  })
+  
+  philosophical_foundation.level_name = "Philosophical Foundation"
+  philosophical_foundation.coherence_score = 0  # Will be computed in Phase 2
+  
+  APPEND abstraction_hierarchy WITH philosophical_foundation
+  PRINT "  ✓ Level 1 analyzed"
+  PRINT ""
+  
+  # ─── LEVEL 2: CATEGORICAL FRAMEWORK ───
+  PRINT "Analyzing Level 2: Categorical Framework..."
+  
+  LET categorical_framework = AI_ANALYZE_CATEGORICAL_FRAMEWORK({
+    project_category: project_category,
+    methodology_selections: methodology_selections,  # NEW: Methodology is part of category
+    uncertainty: uncertainty_profile,
+    constraints: key_constraints,
+    realizes_level_above: philosophical_foundation
+  })
+  
+  categorical_framework.level_name = "Categorical Framework"
+  categorical_framework.coherence_score = 0
+  
+  # Trace downward realization
+  LET cat_realization_links = AI_TRACE_REALIZATION(
+    philosophical_foundation, 
+    categorical_framework
+  )
+  
+  EXTEND realization_links WITH cat_realization_links
+  APPEND abstraction_hierarchy WITH categorical_framework
+  PRINT "  ✓ Level 2 analyzed"
+  PRINT "  ✓ " + LENGTH(cat_realization_links) + " realization links traced"
+  PRINT ""
+  
+  # ─── LEVEL 3: INSTANCE ───
+  PRINT "Analyzing Level 3: Instance (This Specific Project)..."
+  
+  LET instance = AI_ANALYZE_INSTANCE({
+    project_name: project_name,
+    primary_deliverable: primary_deliverable,
+    primary_users: primary_users,
+    budget_timeline: budget_timeline,
+    realizes_level_above: categorical_framework
+  })
+  
+  instance.level_name = "Instance"
+  instance.coherence_score = 0
+  
+  LET instance_realization_links = AI_TRACE_REALIZATION(
+    categorical_framework,
+    instance
+  )
+  
+  EXTEND realization_links WITH instance_realization_links
+  APPEND abstraction_hierarchy WITH instance
+  PRINT "  ✓ Level 3 analyzed"
+  PRINT "  ✓ " + LENGTH(instance_realization_links) + " realization links traced"
+  PRINT ""
+  
+  # ─── LEVEL 4: COMPONENTS ───
+  PRINT "Analyzing Level 4: Components..."
+  
+  LET components = AI_ANALYZE_COMPONENTS({
+    components_list: components_list,
+    methodology_selections: methodology_selections,  # Different components may use different methodologies
+    realizes_level_above: instance
+  })
+  
+  components.level_name = "Components"
+  components.coherence_score = 0
+  
+  LET component_realization_links = AI_TRACE_REALIZATION(
+    instance,
+    components
+  )
+  
+  EXTEND realization_links WITH component_realization_links
+  APPEND abstraction_hierarchy WITH components
+  PRINT "  ✓ Level 4 analyzed"
+  PRINT "  ✓ " + LENGTH(component_realization_links) + " realization links traced"
+  PRINT ""
+  
+  # ─── LEVEL 5: PRIMITIVES ───
+  PRINT "Analyzing Level 5: Primitives..."
+  
+  LET primitives = AI_ANALYZE_PRIMITIVES({
+    technical_primitives: technical_primitives,
+    success_metric: success_metric,
+    realizes_level_above: components
+  })
+  
+  primitives.level_name = "Primitives"
+  primitives.coherence_score = 0
+  
+  LET primitive_realization_links = AI_TRACE_REALIZATION(
+    components,
+    primitives
+  )
+  
+  EXTEND realization_links WITH primitive_realization_links
+  APPEND abstraction_hierarchy WITH primitives
+  PRINT "  ✓ Level 5 analyzed"
+  PRINT "  ✓ " + LENGTH(primitive_realization_links) + " realization links traced"
+  PRINT ""
+  
+  PRINT "✓ Downward decomposition complete"
+  PRINT "  Total realization links: " + LENGTH(realization_links)
+  PRINT ""
+  
+  # ====================================================================
+  # PHASE 2: UPWARD REINTEGRATION (AI validates)
+  # ====================================================================
+  
+  PRINT "═══════════════════════════════════════════════════════════"
+  PRINT "PHASE 2: UPWARD REINTEGRATION"
+  PRINT "═══════════════════════════════════════════════════════════"
+  PRINT ""
+  PRINT "The AI now reintegrates from concrete to abstract, validating"
+  PRINT "whether lower levels actually achieve upper level intentions..."
+  PRINT ""
+  
+  # ─── VALIDATE: Primitives → Components ───
+  PRINT "Validating: Do primitives realize components?"
+  
+  LET prim_to_comp_validation = AI_VALIDATE_UPWARD(
+    primitives,
+    components,
+    realization_links  # Use the decomposition as hypothesis
+  )
+  
+  SET components.validated_by_level_below = prim_to_comp_validation.findings
+  SET components.coherence_score = prim_to_comp_validation.coherence_score
+  EXTEND validation_links WITH prim_to_comp_validation.links
+  EXTEND gaps WITH prim_to_comp_validation.gaps
+  
+  PRINT "  ✓ Primitives → Components validated"
+  PRINT "    Coherence: " + components.coherence_score + "/100"
+  IF LENGTH(prim_to_comp_validation.gaps) > 0 THEN
+    PRINT "    Gaps: " + LENGTH(prim_to_comp_validation.gaps)
+  ENDIF
+  PRINT ""
+  
+  # ─── VALIDATE: Components → Instance ───
+  PRINT "Validating: Do components realize instance?"
+  
+  LET comp_to_inst_validation = AI_VALIDATE_UPWARD(
+    components,
+    instance,
+    realization_links
+  )
+  
+  SET instance.validated_by_level_below = comp_to_inst_validation.findings
+  SET instance.coherence_score = comp_to_inst_validation.coherence_score
+  EXTEND validation_links WITH comp_to_inst_validation.links
+  EXTEND gaps WITH comp_to_inst_validation.gaps
+  
+  PRINT "  ✓ Components → Instance validated"
+  PRINT "    Coherence: " + instance.coherence_score + "/100"
+  IF LENGTH(comp_to_inst_validation.gaps) > 0 THEN
+    PRINT "    Gaps: " + LENGTH(comp_to_inst_validation.gaps)
+  ENDIF
+  PRINT ""
+  
+  # ─── VALIDATE: Instance → Categorical Framework ───
+  PRINT "Validating: Does instance realize categorical framework?"
+  
+  LET inst_to_cat_validation = AI_VALIDATE_UPWARD(
+    instance,
+    categorical_framework,
+    realization_links
+  )
+  
+  SET categorical_framework.validated_by_level_below = inst_to_cat_validation.findings
+  SET categorical_framework.coherence_score = inst_to_cat_validation.coherence_score
+  EXTEND validation_links WITH inst_to_cat_validation.links
+  EXTEND gaps WITH inst_to_cat_validation.gaps
+  
+  PRINT "  ✓ Instance → Categorical Framework validated"
+  PRINT "    Coherence: " + categorical_framework.coherence_score + "/100"
+  IF LENGTH(inst_to_cat_validation.gaps) > 0 THEN
+    PRINT "    Gaps: " + LENGTH(inst_to_cat_validation.gaps)
+  ENDIF
+  PRINT ""
+  
+  # ─── VALIDATE: Categorical Framework → Philosophical Foundation ───
+  PRINT "Validating: Does categorical framework realize philosophical foundation?"
+  
+  LET cat_to_phil_validation = AI_VALIDATE_UPWARD(
+    categorical_framework,
+    philosophical_foundation,
+    realization_links
+  )
+  
+  SET philosophical_foundation.validated_by_level_below = cat_to_phil_validation.findings
+  SET philosophical_foundation.coherence_score = cat_to_phil_validation.coherence_score
+  EXTEND validation_links WITH cat_to_phil_validation.links
+  EXTEND gaps WITH cat_to_phil_validation.gaps
+  
+  PRINT "  ✓ Categorical Framework → Philosophical Foundation validated"
+  PRINT "    Coherence: " + philosophical_foundation.coherence_score + "/100"
+  IF LENGTH(cat_to_phil_validation.gaps) > 0 THEN
+    PRINT "    Gaps: " + LENGTH(cat_to_phil_validation.gaps)
+  ENDIF
+  PRINT ""
+  
+  PRINT "✓ Upward reintegration complete"
+  PRINT "  Total validation links: " + LENGTH(validation_links)
+  PRINT "  Total gaps identified: " + LENGTH(gaps)
+  PRINT ""
+  
+  # ====================================================================
+  # COHERENCE ASSESSMENT
+  # ====================================================================
+  
+  PRINT "═══════════════════════════════════════════════════════════"
+  PRINT "COHERENCE ASSESSMENT"
+  PRINT "═══════════════════════════════════════════════════════════"
+  PRINT ""
+  
+  LET coherence_assessment = AI_ASSESS_COHERENCE({
+    abstraction_hierarchy: abstraction_hierarchy,
+    realization_links: realization_links,
+    validation_links: validation_links,
+    gaps: gaps,
+    methodology_selections: methodology_selections  # NEW: Include methodology coherence
+  })
+  
+  LET coherence_score = coherence_assessment.overall_score
+  LET strongest_connections = coherence_assessment.strongest
+  LET weakest_connections = coherence_assessment.weakest
+  LET recommendations = coherence_assessment.recommendations
+  
+  PRINT "Overall Coherence Score: " + coherence_score + "/100"
+  PRINT ""
+  PRINT "Level-by-level:"
+  FOR EACH level IN abstraction_hierarchy:
+    PRINT "  " + level.level_name + ": " + level.coherence_score + "/100"
+  END_FOR
+  PRINT ""
+  
+  # ====================================================================
+  # DOCUMENT GENERATION
+  # ====================================================================
+  
+  PRINT "═══════════════════════════════════════════════════════════"
+  PRINT "GENERATING ENRICHED PLAN DOCUMENT"
+  PRINT "═══════════════════════════════════════════════════════════"
+  PRINT ""
+  
+  # ─── TITLE & METADATA ───
+  document.add_section({
+    title: project_name + " - Bidirectional Project Plan",
+    level: 1,
+    content: Text.compose([
+      "**Generated by AILang Project Planner v4.1**\n\n",
+      "This plan demonstrates bidirectional coherence across 5 abstraction levels ",
+      "with AI-selected methodologies.\n\n",
+      "**Core Purpose:** ", core_purpose, "\n\n",
+      "**Primary Deliverable:** ", primary_deliverable, "\n\n",
+      "**Success Metric:** ", success_metric, "\n\n",
+      "**Overall Coherence Score:** ", coherence_score, "/100\n\n",
+      "---\n\n"
+    ])
+  })
+  
+  # ─── TABLE OF CONTENTS ───
+  document.add_section({
+    title: "Table of Contents",
+    level: 2,
+    content: Text.compose([
+      "1. Executive Summary\n",
+      "2. Methodology Selection & Rationale\n",
+      "3. Five Abstraction Levels\n",
+      "   - Level 1: Philosophical Foundation\n",
+      "   - Level 2: Categorical Framework\n",
+      "   - Level 3: Instance\n",
+      "   - Level 4: Components\n",
+      "   - Level 5: Primitives\n",
+      "4. Bidirectional Tracing\n",
+      "   - Realization Links (↓ Abstract → Concrete)\n",
+      "   - Validation Links (↑ Concrete → Abstract)\n",
+      "5. Gap Analysis\n",
+      "6. Coherence Assessment\n",
+      "7. Recommendations\n",
+      "8. Appendix: Matter §20 Framework\n\n",
+      "---\n\n"
+    ])
+  })
+  
+  # ─── EXECUTIVE SUMMARY ───
+  document.add_section({
+    title: "1. Executive Summary",
+    level: 2,
+    content: AI_GENERATE_EXECUTIVE_SUMMARY({
+      project_name: project_name,
+      project_category: project_category,
+      methodology_selections: methodology_selections,  # NEW: Include methodology summary
+      core_purpose: core_purpose,
+      primary_deliverable: primary_deliverable,
+      primary_users: primary_users,
+      success_metric: success_metric,
+      core_values: core_values,
+      budget_timeline: budget_timeline,
+      coherence_score: coherence_score,
+      realization_count: LENGTH(realization_links),
+      validation_count: LENGTH(validation_links),
+      gap_count: LENGTH(gaps)
+    })
+  })
+  
+  # ─── METHODOLOGY SELECTION & RATIONALE (NEW SECTION) ───
+  document.add_section({
+    title: "2. Methodology Selection & Rationale",
+    level: 2,
+    content: Text.compose([
+      "The following methodologies have been selected based on project characteristics, ",
+      "domain requirements, and alignment with core values.\n\n",
+      
+      FOR EACH selection IN methodology_selections:
+        "### ", selection.methodology_name, "\n\n",
+        "**Applies To:** ", selection.applies_to, "\n\n",
+        "**Rationale:** ", selection.rationale, "\n\n",
+        "**Alignment with Values:** ", selection.alignment_with_values, "\n\n",
+        "**Adaptation Mechanisms:** ", selection.adaptation_mechanisms, "\n\n",
+        "**When to Break Rules:** ", selection.when_to_break_rules, "\n\n",
+        "---\n\n"
+      END_FOR,
+      
+      "### Methodology Risk Assessment\n\n",
+      "**Concrete Prison Risk:** ", 
+      AI_ASSESS_METHODOLOGY_RIGIDITY_RISK(methodology_selections, core_values),
+      "\n\n"
+    ])
+  })
+  
+  # ─── FIVE ABSTRACTION LEVELS ───
+  document.add_section({
+    title: "3. Five Abstraction Levels",
+    level: 2,
+    content: ""
+  })
+  
+  FOR EACH level IN abstraction_hierarchy:
+    document.add_section({
+      title: "Level " + (INDEX_OF(level) + 1) + ": " + level.level_name,
+      level: 3,
+      content: Text.compose([
+        "**Level Content:**\n\n",
+        STRINGIFY_LEVEL_CONTENT(level.level_content),
+        "\n",
+        "**↓ Realizes Level Above:**\n\n",
+        IF LENGTH(level.realizes_level_above) > 0 THEN
+          JOIN(level.realizes_level_above, "\n\n") + "\n\n"
+        ELSE
+          "[Top level - establishes foundation for all below]\n\n"
+        ENDIF,
+        "**↑ Validated By Level Below:**\n\n",
+        IF LENGTH(level.validated_by_level_below) > 0 THEN
+          JOIN(level.validated_by_level_below, "\n\n") + "\n\n"
+        ELSE
+          "[Bottom level - validated through measurement]\n\n"
+        ENDIF,
+        "**Coherence Score:** ", level.coherence_score, "/100\n\n",
+        "---\n\n"
+      ])
+    })
+  END_FOR
+  
+  # ─── BIDIRECTIONAL TRACING ───
+  document.add_section({
+    title: "4. Bidirectional Tracing",
+    level: 2,
+    content: "This section explicitly shows how abstraction levels connect in both directions.\n\n"
+  })
+  
+  # ─── REALIZATION LINKS (Downward) ───
+  document.add_section({
+    title: "4.1 Realization Links (↓ Abstract → Concrete)",
+    level: 3,
+    content: Text.compose([
+      "These links show HOW abstract intentions become concrete specifications.\n\n",
+      FOR EACH link IN realization_links:
+        "**", link.from_level, " → realizes → ", link.to_level, "**\n\n",
+        "- **From:** ", link.from_element, "\n",
+        "- **To:** ", JOIN(link.to_elements, ", "), "\n",
+        "- **Mechanism:** ", link.mechanism, "\n",
+        "- **Strength:** ", link.strength, "\n\n"
+      END_FOR
+    ])
+  })
+  
+  # ─── VALIDATION LINKS (Upward) ───
+  document.add_section({
+    title: "4.2 Validation Links (↑ Concrete → Abstract)",
+    level: 3,
+    content: Text.compose([
+      "These links show WHETHER concrete elements achieve abstract promises.\n\n",
+      FOR EACH link IN validation_links:
+        "**", link.from_level, " → validates → ", link.validates_level, "**\n\n",
+        "- **Concrete Elements:** ", JOIN(link.from_elements, ", "), "\n",
+        "- **Validates:** ", link.validates_element, "\n",
+        "- **Mechanism:** ", link.mechanism, "\n",
+        "- **Completeness:** ", link.completeness, "\n\n"
+      END_FOR
+    ])
+  })
+  
+  # ─── GAP ANALYSIS ───
+  document.add_section({
+    title: "5. Gap Analysis",
+    level: 2,
+    content: IF LENGTH(gaps) == 0 THEN
+      "✓ **No gaps detected.** Abstract intentions fully decompose into concrete specifications, " +
+      "and concrete elements fully validate abstract promises.\n\n"
+    ELSE
+      Text.compose([
+        "⚠ **", LENGTH(gaps), " gaps identified** where bidirectional coherence breaks.\n\n",
+        FOR EACH gap IN gaps:
+          "### Gap: ", gap.abstract_element, "\n\n",
+          "- **Level:** ", gap.abstract_level, "\n",
+          "- **Expected Concrete:** ", gap.expected_concrete, "\n",
+          "- **Actual Concrete:** ", gap.actual_concrete, "\n",
+          "- **Gap Type:** ", gap.gap_type, "\n",
+          "- **Severity:** ", gap.severity, "\n",
+          "- **Recommendation:** ", gap.recommendation, "\n\n"
+        END_FOR
+      ])
+    ENDIF
+  })
+  
+  # ─── COHERENCE ASSESSMENT ───
+  document.add_section({
+    title: "6. Coherence Assessment",
+    level: 2,
+    content: Text.compose([
+      "### Overall Coherence: ", coherence_score, "/100\n\n",
+      "**Interpretation:**\n",
+      IF coherence_score >= 85 THEN
+        "- **Excellent coherence.** Abstract principles strongly decompose into concrete ",
+        "specifications, and concrete elements fully validate abstract promises.\n\n"
+      ELSE IF coherence_score >= 70 THEN
+        "- **Good coherence.** Most abstract principles decompose well, with minor gaps ",
+        "in concrete validation.\n\n"
+      ELSE IF coherence_score >= 50 THEN
+        "- **Moderate coherence.** Significant gaps exist between abstraction levels. ",
+        "Concrete specifications may not fully achieve abstract intentions.\n\n"
+      ELSE
+        "- **Low coherence.** Major gaps exist. Abstract intentions poorly connected to ",
+        "concrete specifications. Substantial refinement needed.\n\n"
+      ENDIF,
+      
+      "### Level-by-Level Coherence\n\n",
+      FOR EACH level IN abstraction_hierarchy:
+        "- **", level.level_name, ":** ", level.coherence_score, "/100\n"
+      END_FOR,
+      "\n",
+      
+      "### Strongest Connections\n\n",
+      FOR EACH strong IN strongest_connections:
+        "- ", strong, "\n"
+      END_FOR,
+      "\n",
+      
+      "### Weakest Connections\n\n",
+      FOR EACH weak IN weakest_connections:
+        "- ", weak, "\n"
+      END_FOR,
+      "\n"
+    ])
+  })
+  
+  # ─── RECOMMENDATIONS ───
+  document.add_section({
+    title: "7. Recommendations",
+    level: 2,
+    content: Text.compose([
+      "Based on bidirectional analysis:\n\n",
+      FOR EACH rec IN recommendations:
+        "### ", rec.title, "\n\n",
+        rec.description, "\n\n",
+        "**Priority:** ", rec.priority, "\n\n"
+      END_FOR
+    ])
+  })
+  
+  # ─── APPENDIX: Matter §20 Framework ───
+  document.add_section({
+    title: "8. Appendix: About Matter §20 Framework",
+    level: 2,
+    content: Text.compose([
+      "This plan uses the AILang Matter §20 framework for project structure.\n\n",
+      "**Five Abstraction Levels:**\n\n",
+      "1. **Philosophical Foundation:** WHY - Core purpose, values, principles\n",
+      "2. **Categorical Framework:** WHAT TYPE - Patterns, methodologies, categories\n",
+      "3. **Instance:** THIS ONE - Specific project description\n",
+      "4. **Components:** THE PARTS - Subsystems, modules, deliverables\n",
+      "5. **Primitives:** THE ATOMS - Metrics, algorithms, constants, specs\n\n",
+      "**Key Principle:** A thing cannot be defined at its own level. ",
+      "You must reference levels above (for context) and below (for components).\n\n",
+      "**Bidirectional Coherence:** This planner traces connections in BOTH directions:\n",
+      "- ↓ **Decomposition:** How abstract intentions become concrete specifications\n",
+      "- ↑ **Reintegration:** Whether concrete specifications actually achieve abstract intentions\n\n",
+      "**Gap Analysis:** Where decomposition and reintegration don't align, gaps are identified. ",
+      "This ensures philosophical intentions are grounded in technical reality, and technical ",
+      "specifications serve philosophical purposes.\n\n",
+      "**Methodology as Tool, Not Prison:** This framework pays special attention to whether ",
+      "the chosen methodology could become a 'concrete prison' - where rigid adherence to ",
+      "methodology practices prevents adaptation when reality requires it. A good plan shows ",
+      "HOW the methodology serves principles and when/how to adapt when they conflict.\n\n",
+      "**AI Methodology Selection:** In v4.1, the AI analyzes project characteristics and selects ",
+      "appropriate methodologies rather than assuming a single approach. Different components may ",
+      "use different methodologies based on their specific needs and constraints.\n\n",
+      "**This Plan's Coherence:** ", coherence_score, "/100\n\n"
+    ])
+  })
+  
+  LET enriched_plan_document = document.render_markdown()
+  
+  PRINT "✓ Bidirectional plan document generated"
+  PRINT ""
+  PRINT "Document includes:"
+  PRINT "  ✓ Methodology selection with rationale"
+  PRINT "  ✓ 5 abstraction levels with bidirectional connections"
+  PRINT "  ✓ " + LENGTH(realization_links) + " realization links (↓)"
+  PRINT "  ✓ " + LENGTH(validation_links) + " validation links (↑)"
+  PRINT "  ✓ " + LENGTH(gaps) + " gaps identified"
+  PRINT "  ✓ Coherence assessment with recommendations"
+  PRINT ""
+  
+  OUTPUT enriched_plan_document = enriched_plan_document
+  OUTPUT structure = {
+    methodology_selections: methodology_selections,
+    abstraction_hierarchy: abstraction_hierarchy,
+    realization_links: realization_links,
+    validation_links: validation_links,
+    gaps: gaps,
+    coherence: coherence_assessment
+  }
+
+END PROGRAM
+
+# =====================================================================
+# AI METHODOLOGY SELECTION FUNCTION
+# =====================================================================
+
+FUNCTION AI_SELECT_METHODOLOGIES(project_info: OBJECT) -> LIST[METHODOLOGY_SELECTION]:
+  # This function analyzes project characteristics and selects appropriate methodologies
+  # Different project types and components may require different approaches
+  
+  LET selections = []
+  
+  # Analyze project characteristics
+  LET project_type = CLASSIFY_PROJECT_TYPE(project_info.project_category)
+  LET uncertainty_level = PARSE_UNCERTAINTY(project_info.uncertainty)
+  LET component_types = CLASSIFY_COMPONENTS(project_info.components)
+  
+  # Select overall project methodology based on type and uncertainty
+  IF project_type == "research" OR uncertainty_level == "high" THEN
+    APPEND selections WITH {
+      methodology_name: "Scientific Method / DBTL Cycles",
+      applies_to: "Overall Project",
+      rationale: "High uncertainty requires iterative hypothesis testing and learning cycles",
+      alignment_with_values: "Enforces scientific rigor through systematic testing, supports transparency through documented learning",
+      adaptation_mechanisms: "Learn phase explicitly evaluates if methodology is serving project goals",
+      when_to_break_rules: "When sustainability or core values conflict with iteration speed"
+    }
+  ELSE IF project_type == "software" THEN
+    APPEND selections WITH {
+      methodology_name: "Agile / Iterative Development",
+      applies_to: "Overall Project",
+      rationale: "Software benefits from rapid iteration and user feedback",
+      alignment_with_values: "Supports transparency through regular demos, enables value-driven prioritization",
+      adaptation_mechanisms: "Retrospectives provide built-in methodology evaluation",
+      when_to_break_rules: "When sprint cadence conflicts with quality or sustainability goals"
+    }
+  ELSE IF project_type == "hardware" THEN
+    APPEND selections WITH {
+      methodology_name: "Stage-Gate / Systems Engineering",
+      applies_to: "Overall Project",
+      rationale: "Hardware requires upfront planning due to fabrication costs and constraints",
+      alignment_with_values: "Gate reviews enforce rigor, stage planning supports sustainability assessment",
+      adaptation_mechanisms: "Gates can be redefined or waived based on learning",
+      when_to_break_rules: "When stage boundaries prevent responding to critical discoveries"
+    }
+  ENDIF
+  
+  # Select component-specific methodologies
+  FOR EACH component IN component_types:
+    IF component.type == "creative" THEN
+      APPEND selections WITH {
+        methodology_name: "Design Thinking",
+        applies_to: component.name + " (Component)",
+        rationale: "Creative components benefit from empathy-driven, iterative design",
+        alignment_with_values: "User-centered approach aligns with serving users well",
+        adaptation_mechanisms: "Prototyping allows rapid testing of assumptions",
+        when_to_break_rules: "When time constraints require shipping 'good enough' vs 'perfect'"
+      }
+    ELSE IF component.type == "operations" THEN
+      APPEND selections WITH {
+        methodology_name: "Lean / Continuous Improvement",
+        applies_to: component.name + " (Component)",
+        rationale: "Operational components benefit from waste reduction and optimization",
+        alignment_with_values: "Waste reduction aligns with sustainability values",
+        adaptation_mechanisms: "Kaizen cycles provide regular methodology review",
+        when_to_break_rules: "When optimization conflicts with flexibility or resilience"
+      }
+    ENDIF
+  END_FOR
+  
+  # Ensure all selections have adaptation mechanisms
+  FOR EACH selection IN selections:
+    IF LENGTH(selection.adaptation_mechanisms) == 0 THEN
+      selection.adaptation_mechanisms = "Regular retrospectives to evaluate methodology fit"
+    ENDIF
+    IF LENGTH(selection.when_to_break_rules) == 0 THEN
+      selection.when_to_break_rules = "When methodology practices conflict with core values"
+    ENDIF
+  END_FOR
+  
+  RETURN selections
+END_FUNCTION
+
+# =====================================================================
+# HELPER FUNCTIONS
+# =====================================================================
+
+FUNCTION PARSE_LIST(text: STRING) -> LIST[STRING]:
+  IF CONTAINS(text, "\n") THEN
+    SET items = SPLIT(text, "\n")
+  ELSE IF CONTAINS(text, ",") THEN
+    SET items = SPLIT(text, ",")
+  ELSE
+    SET items = [text]
+  ENDIF
+  
+  SET result = []
+  FOR EACH item IN items:
+    SET trimmed = TRIM(item)
+    IF LENGTH(trimmed) > 0 THEN
+      APPEND result WITH trimmed
+    ENDIF
+  ENDFOR
+  RETURN result
+END_FUNCTION
+
+FUNCTION STRINGIFY_LEVEL_CONTENT(content: OBJECT) -> STRING:
+  # Convert level content to readable string representation
+  SET result = ""
+  FOR EACH key, value IN content:
+    result += "**" + key + ":** " + STRINGIFY(value) + "\n\n"
+  ENDFOR
+  RETURN result
+END_FUNCTION
+
+CLASS DocumentBuilder:
+  PROPERTY sections: LIST = []
+  
+  METHOD new() -> DocumentBuilder:
+    RETURN NEW DocumentBuilder WITH sections = []
+  END_METHOD
+  
+  METHOD add_section(section: OBJECT):
+    APPEND self.sections WITH section
+  END_METHOD
+  
+  METHOD render_markdown() -> TEXT:
+    LET output = ""
+    FOR EACH section IN self.sections:
+      LET heading_prefix = REPEAT("#", section.level)
+      output += heading_prefix + " " + section.title + "\n\n"
+      output += section.content + "\n\n"
+    ENDFOR
+    RETURN output
+  END_METHOD
+END_CLASS
+
+CLASS Text:
+  STATIC METHOD compose(parts: LIST) -> TEXT:
+    LET result = ""
+    FOR EACH part IN parts:
+      result += TO_STRING(part)
+    ENDFOR
+    RETURN result
+  END_METHOD
+END_CLASS
