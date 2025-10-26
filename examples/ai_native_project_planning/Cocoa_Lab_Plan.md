@@ -2378,7 +2378,7 @@ Based on bidirectional analysis, the following recommendations will close identi
 
 ## 8. Appendix: About the AILang Matter Framework
 
-This plan uses the AILang Matter §20 framework for project structure.
+This plan uses the AILang Matter framework for project structure.
 
 ### Five Abstraction Levels
 
