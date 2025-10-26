@@ -1,6 +1,6 @@
 **AILang: Complete Language Specification**
 
-**Version 0.6.0**
+**Version 0.7.0**
 
 **Author**: Edward Chalk (fleetingswallow.com)
 
@@ -3101,8 +3101,786 @@ AILang’s Space & Journey framework is more than a modeling convenience—it en
 
 By honoring this structure, AI systems can model physical logistics, operational processes, and institutional navigation with **one coherent machinery**, cleanly distinguishing **formal impossibility** from **empirical infeasibility**, enabling **adaptation and learning**, and producing **auditably intelligent** decisions.
 
+---
 
-### 19. Error Handling
+### 19. Matter Entities: Framework Overview
+
+This section provides the conceptual framework and usage patterns needed to understand and work with Matter entities at a high level.
+
+**⚠️ IMPORTANT: Matter entities represent one of AILang's most sophisticated domain modeling capabilities for representing human concerns and their multi-level abstraction structure. Due to the comprehensive nature of categorical cognition, abstraction level dynamics, actor positioning, lifecycle management, and conceptual mediation—the detailed specifications for all Matter subsystems are provided in the [Matter Extension Document](https://github.com/pcoz/ailang/blob/main/AILang_Specification_Matter_Extension.md).**
+
+#### 19.1 Matter Class Architecture
+
+Matter entities model units of human concern that exist at the intersection of objective reality and subjective experience. Matters are how humans structure their engagement with reality through categorical constructs that organize attention, action, and understanding.
+
+**Critical Insight: A matter cannot be fully defined or understood at its own level of abstraction.** Definition and verification require vertical movement through abstraction levels—moving downward to concrete grounding and upward to categorical frameworks.
+
+Use Matter entities when you need to:
+- Model projects, initiatives, or organizational efforts with proper abstraction structure
+- Represent concerns that evolve through lifecycle stages (recognition, becoming, completion, memorial)
+- Track how actors positioned at different levels (IN-system vs ON-system) engage with the same matter
+- Manage the translation from abstract intentions to concrete artifacts (corporealisation)
+- Preserve patterns after matter cessation through multi-level perpetuation
+- Validate claims about matters through adjacent-level checking
+- Understand how conceptual frameworks mediate actor engagement across abstraction levels
+
+**Core Architecture**
+
+```#ailang
+CLASS Matter:
+    PROPERTIES:
+        # Identity and Classification
+        matter_id: unique_identifier
+        matter_name: text
+        matter_type: text  # "project", "initiative", "organization", "democracy", etc.
+        
+        # Abstraction Hierarchy Structure
+        abstraction_hierarchy: AbstractionHierarchy
+        primary_level: abstraction_level  # The level where this matter "lives"
+        
+        # Lifecycle Management
+        lifecycle_stage: text  # "recognition", "becoming", "completion", "cessation", "memorial"
+        lifecycle_tracker: LifecycleTracker
+        
+        # Actor Configuration
+        actor_configuration: ActorConfiguration
+        
+        # Conceptual Framework
+        conceptual_framework: ConceptualFramework
+        
+        # State Dimensions
+        objective_state: ObjectiveState
+        subjective_state: SubjectiveState
+        
+        # Corporealisation Process
+        corporealisation_state: CorporealisationState
+        
+        # Memorial Persistence
+        memorial_state: MemorialState
+        
+        current_status: MatterStatus
+```
+
+#### 19.2 The Five-Layer Abstraction Hierarchy
+
+Every matter exists within a predefined abstraction hierarchy for its domain. Understanding this structure is essential for proper matter representation:
+
+**PHILOSOPHICAL FOUNDATION**
+- Deepest abstractions about the nature of concern itself
+- Theories and fundamental principles
+- Example: "What makes something matter-worthy?", theories about why humans organize
+
+**CATEGORICAL FRAMEWORK**
+- Patterns, types, and organizing structures that define kinds of matters
+- Methodologies, design patterns, matter classifications
+- Example: "Legacy modernization project", "distributed organization", "participatory democracy"
+
+**INSTANCE**
+- The specific matter itself as experienced and recognized
+- The matter as a recognizable entity
+- Example: "Our Q4 platform migration", "Acme Corporation", "The Athenian polis"
+
+**COMPONENTS**
+- Concrete parts, mechanisms, and observable properties
+- Specific modules, teams, processes, artifacts
+- Example: "The authentication module", "The finance team", "The weekly assembly meetings"
+
+**PRIMITIVES**
+- Atomic facts, singular events, individual data points
+- Individual actions, discrete observations
+- Example: "The 2pm standup on Tuesday", "Sarah's commit at 3:47pm", "327 votes cast"
+
+#### 19.3 Core Principles Summary
+
+The Matter framework is built on several foundational principles that explain why multi-level representation is necessary rather than convenient. These principles reveal deep insights about the nature of definition, validation, and human cognition. Understanding these principles is essential before working with Matter entities, as they explain the "why" behind the framework's structure.
+
+**The Impossibility of Self-Definition**
+
+At its own level of abstraction, a thing can only be itself. Attempts to define at the same level produce:
+1. **Tautology**: "A project is a project" (useless)
+2. **Level-characterization**: "Projects have goals and timelines" (defines the category, not the instance)
+3. **Instance-comparison**: "This project is larger" (assumes understanding, provides only relative positioning)
+
+Genuine definition requires vertical movement between abstraction levels.
+
+**The Adjacency Principle**
+
+To understand or verify anything at a given level, examine the **immediately adjacent levels**:
+- **One level more concrete**: Provides grounding in verifiable specifics
+- **One level more abstract**: Provides categorical framework that makes sense of specifics
+- **Validation power decreases with distance**: Adjacent levels optimal, distant levels degrade
+
+**Categorical Cognition**
+
+Human engagement with matters operates through categorical assembly:
+- Categories exist at the Categorical Framework level
+- Specific matters exist at the Instance level
+- Categorization is inherently an Instance → Categorical Framework operation
+- Conceptual frameworks span multiple levels, mediating how actors recognize and engage with matters
+
+**Actor Position Determines Abstraction Access**
+
+- **IN-system actors**: Strong access to Primitives/Components, weak to Categorical Framework/Philosophical
+- **ON-system actors**: Strong access to Categorical Framework/Philosophical, weak to Primitives/Components
+- Neither position alone provides complete understanding
+- Both perspectives required for full validation
+
+**Corporealisation as Level Translation**
+
+The process of materializing abstract intentions as concrete fragments involves:
+- Translating Categorical/Philosophical intentions → Instance design → Component fragments
+- Learning to "see" Categorical Framework patterns in Component artifacts
+- Reducing intention-dependency as actors internalize level bridging
+- Tracking fragment assembly progress and coherence
+
+#### 19.4 Lifecycle Stages and Level Operations
+
+Matters are not static—they move through a lifecycle from pre-existence through memorial persistence. Each lifecycle stage involves specific operations across abstraction levels. Understanding this lifecycle reveals how matters come into being (recognition), materialize (corporealisation), stabilize (completion), dissolve (cessation), and persist as patterns (memorial). Each stage requires different types of engagement with the abstraction hierarchy.
+
+```#ailang
+CLASS LifecycleStage:
+    # Stage 0: Pre-Recognition
+    # Matter does not yet exist as a recognizable entity
+    # Only Categorical Framework patterns available
+    
+    # Stage 1: Recognition
+    recognition_event: RecognitionEvent
+    # Operation: Categorical Framework → Instance
+    # Actor identifies formal category and recognizes specific instance
+    
+    # Stage 2: Becoming (Corporealisation)
+    becoming_process: BecomingProcess
+    # Operation: Categorical Framework → Instance → Components
+    # Abstract intentions translated to concrete fragments
+    # Components assembled while maintaining Categorical coherence
+    
+    # Stage 3: Completion
+    completion_state: CompletionState
+    # Stabilization across all levels
+    # Full Instance with complete Component grounding
+    
+    # Stage 4: Cessation
+    cessation_event: CessationEvent
+    # Primitives/Components/Instance dissolve
+    # Categorical Framework patterns persist
+    
+    # Stage 5: Memorial
+    memorial_persistence: MemorialPersistence
+    # Categorical Framework patterns perpetuated through:
+    #   - Artifacts (documents, code)
+    #   - Analogies ("like that project")
+    #   - Templates (methodologies)
+    #   - Principles (theoretical insights)
+    
+    # Stage 6: Template Application
+    template_activation: TemplateActivation
+    # Operation: Categorical Framework → new Instance
+    # Patterns guide new matter recognition/creation
+    
+    # Stage 7: Evolution
+    framework_evolution: FrameworkEvolution
+    # Categorical Framework refinement feeds back to Stage 0
+    # Learning from experience enriches available patterns
+```
+
+#### 19.5 Actor Configuration and Position
+
+Actors engage with matters from different positions, and these positions fundamentally shape which abstraction levels they can naturally access. IN-system actors (those working within the matter's concrete operations) have strong access to Primitives and Components but struggle with Categorical Framework and Philosophical Foundation. ON-system actors (those working on the matter's design and strategy) have the opposite access pattern. This section provides the machinery for representing these position-dependent access patterns and ensuring complete actor coverage.
+
+```#ailang
+CLASS ActorConfiguration:
+    PROPERTIES:
+        actors: LIST[Actor]
+        actor_positions: MAP[actor_id -> position_type]  # "in_system", "on_system"
+        abstraction_access_profiles: MAP[actor_id -> AbstractionAccessProfile]
+        coordination_mechanisms: LIST[CoordinationMechanism]
+        
+    CLASS AbstractionAccessProfile:
+        PROPERTIES:
+            actor_position: text  # "in_system", "on_system"
+            strong_levels: LIST[abstraction_level]
+            weak_levels: LIST[abstraction_level]
+            natural_operations: LIST[operation_type]
+            difficult_operations: LIST[operation_type]
+            
+        METHOD can_naturally_access(level):
+            RETURN level IN this.strong_levels
+        END_METHOD
+        
+        METHOD requires_assistance_for(level):
+            RETURN level IN this.weak_levels
+        END_METHOD
+    END_CLASS
+    
+    METHOD validate_actor_coverage():
+        # Ensure both IN-system and ON-system perspectives present
+        SET in_system_actors TO actors WHERE position == "in_system"
+        SET on_system_actors TO actors WHERE position == "on_system"
+        
+        IF in_system_actors.EMPTY OR on_system_actors.EMPTY THEN:
+            RETURN {complete: false, missing: "complementary_perspectives"}
+        END_IF
+        
+        RETURN {complete: true, coverage: "full_abstraction_access"}
+    END_METHOD
+END_CLASS
+```
+
+#### 19.6 Conceptual Framework and Mediation
+
+Actors don't engage with matters directly—they engage through conceptual frameworks that mediate their understanding. Concepts that span multiple abstraction levels enable actors to recognize patterns, translate between levels, and bridge their position-limited access. This section shows how conceptual frameworks operate as the cognitive infrastructure that makes multi-level engagement possible.
+
+```#ailang
+CLASS ConceptualFramework:
+    PROPERTIES:
+        concepts: LIST[Concept]
+        level_mappings: MAP[concept_id -> LIST[abstraction_level]]
+        recognition_patterns: LIST[RecognitionPattern]
+        interpretive_schemas: LIST[InterpretiveSchema]
+        
+    CLASS Concept:
+        PROPERTIES:
+            concept_id: unique_identifier
+            concept_name: text
+            abstraction_levels: LIST[abstraction_level]
+            definition_by_level: MAP[abstraction_level -> definition]
+            application_context: text
+            
+        METHOD spans_levels():
+            RETURN length(this.abstraction_levels) > 1
+        END_METHOD
+        
+        METHOD enables_level_bridging():
+            # Concepts that span levels enable actors to move between them
+            RETURN this.spans_levels() AND 
+                   this.has_operational_guidance_for_translation
+        END_METHOD
+    END_CLASS
+    
+    METHOD mediate_recognition(stimulus, actor):
+        # How conceptual frameworks enable actors to recognize matters
+        RETURN INTELLIGENTLY evaluate WITH:
+            STIMULUS: stimulus,
+            ACTOR_CONCEPTS: actor.available_concepts,
+            CATEGORICAL_PATTERNS: this.recognition_patterns,
+            ACTOR_POSITION: actor.position
+        END
+    END_METHOD
+    
+    METHOD support_level_translation(source_level, target_level, actor):
+        # How concepts enable movement between abstraction levels
+        SET bridging_concepts TO find_concepts_spanning(source_level, target_level)
+        
+        RETURN INTELLIGENTLY construct_translation WITH:
+            SOURCE: source_level,
+            TARGET: target_level,
+            BRIDGING_CONCEPTS: bridging_concepts,
+            ACTOR_UNDERSTANDING: actor.conceptual_framework
+        END
+    END_METHOD
+END_CLASS
+```
+
+#### 19.7 Corporealisation Process
+
+Corporealisation is the process of translating abstract intentions into concrete fragments—moving from Categorical Framework and Philosophical Foundation down through Instance to Components. This is not a simple rendering but a learning process where actors must develop the ability to "see" whether concrete fragments correctly embody abstract intentions. The framework tracks this learning through intention-dependency measures and fragment assembly states.
+
+```#ailang
+CLASS CorporealisationState:
+    PROPERTIES:
+        fragments_status: text  # "scattered", "partial", "verified"
+        intention_dependency: text  # "constant_reference_required", "frequent_consultation", 
+                                    # "occasional_checking", "intuitive_recognition"
+        fragment_assembly: FragmentAssembly
+        level_translation_tracking: LevelTranslationTracker
+        
+    CLASS FragmentAssembly:
+        PROPERTIES:
+            fragments: LIST[Fragment]
+            assembly_state: text  # "scattered", "partial", "coherent", "complete"
+            categorical_coherence: text  # "aligned", "partially_aligned", "misaligned"
+            
+        CLASS Fragment:
+            PROPERTIES:
+                fragment_id: unique_identifier
+                fragment_type: text
+                abstraction_level: abstraction_level  # Usually Components
+                created_by: actor_id
+                requires_intention: boolean
+                categorical_alignment: text  # "high_fidelity", "moderate_fidelity", 
+                                            # "low_fidelity", "distorted"
+                
+            METHOD is_self_evident():
+                # Can ON-system actors recognize pattern without creator explanation?
+                RETURN NOT this.requires_intention
+            END_METHOD
+        END_CLASS
+    END_CLASS
+    
+    CLASS LevelTranslationTracker:
+        PROPERTIES:
+            translations: LIST[Translation]
+            
+        CLASS Translation:
+            PROPERTIES:
+                source_level: abstraction_level
+                target_level: abstraction_level
+                translation_mechanism: text
+                fidelity: text  # "high_fidelity", "moderate_fidelity", "low_fidelity", "distorted"
+                learning_progress: text  # "intuitive", "developing", "nascent", "absent"
+        END_CLASS
+    END_CLASS
+    
+    METHOD assess_corporealisation_stage():
+        IF this.fragments_status == "scattered" THEN:
+            RETURN "early_fragmentation"
+        ELSE IF this.intention_dependency IN ["constant_reference_required", "frequent_consultation"] THEN:
+            RETURN "intention_dependent"
+        ELSE IF this.fragment_assembly.categorical_coherence == "aligned" THEN:
+            RETURN "pattern_emergence"
+        ELSE:
+            RETURN "mature_corporealisation"
+        END_IF
+    END_METHOD
+END_CLASS
+```
+
+#### 19.8 Memorial Persistence and Pattern Perpetuation
+
+When matters cease to exist as active entities, their patterns can persist as memorial—but only if perpetuated through multiple mechanisms across multiple abstraction levels. A pattern preserved at only one level is fragile; robust memorial requires redundant perpetuation. This section provides the machinery for representing how patterns endure after the matter itself dissolves, and for assessing memorial robustness.
+
+```#ailang
+CLASS MemorialState:
+    PROPERTIES:
+        existence_status: text  # "active", "completed", "ceased", "memorial"
+        perpetuation_means: LIST[PerpetuationMechanism]
+        pattern_robustness: text  # "fragile", "moderate", "robust", "highly_robust"
+        
+    CLASS PerpetuationMechanism:
+        PROPERTIES:
+            mechanism_type: text  # "artifact", "analogy", "template", "principle"
+            abstraction_level: abstraction_level
+            carrier: text  # What carries the pattern (document, story, methodology, theory)
+            access_requirements: LIST[requirement]
+            decay_rate: text  # "rapid", "moderate", "slow", "minimal"
+            
+        METHOD assess_robustness():
+            # Patterns perpetuated at multiple levels are more robust
+            RETURN INTELLIGENTLY evaluate WITH:
+                LEVEL: this.abstraction_level,
+                CARRIER_DURABILITY: this.carrier,
+                ACCESS_BARRIERS: this.access_requirements,
+                DECAY: this.decay_rate
+            END
+        END_METHOD
+    END_CLASS
+    
+    METHOD calculate_memorial_robustness():
+        # Multi-level perpetuation increases robustness
+        SET level_coverage TO count_distinct_levels(this.perpetuation_means)
+        SET mechanism_diversity TO count_distinct_types(this.perpetuation_means)
+        
+        IF level_coverage >= 4 AND mechanism_diversity >= 3 THEN:
+            RETURN "highly_robust"
+        ELSE IF level_coverage >= 3 OR mechanism_diversity >= 2 THEN:
+            RETURN "robust"
+        ELSE IF level_coverage >= 2 THEN:
+            RETURN "moderate"
+        ELSE:
+            RETURN "fragile"
+        END_IF
+    END_METHOD
+    
+    METHOD identify_vulnerable_patterns():
+        # Patterns perpetuated at only one level are fragile
+        SET single_level_patterns TO perpetuation_means WHERE 
+            count_mechanisms_at_same_level == 1
+            
+        RETURN single_level_patterns
+    END_METHOD
+END_CLASS
+```
+
+#### 19.9 Validation Through Adjacent Levels
+
+The core validation principle: to verify any claim about a matter, you must check adjacent abstraction levels, not the same level. Checking one level down provides concrete grounding; checking one level up provides categorical framework coherence. This section implements systematic adjacent-level validation patterns that prevent same-level validation traps (tautology, level-characterization, and instance-comparison).
+
+```#ailang
+METHOD validate_matter(matter):
+    # Validation requires checking adjacent abstraction levels
+    
+    SET target_level TO matter.primary_level
+    SET adjacent_lower TO get_adjacent_lower_level(target_level)
+    SET adjacent_higher TO get_adjacent_higher_level(target_level)
+    
+    # Check concrete grounding at lower level
+    SET lower_validation TO validate_lower_level(matter, adjacent_lower)
+    IF NOT lower_validation.valid THEN:
+        RETURN {valid: false, 
+                reason: "insufficient_concrete_grounding",
+                missing_at_level: adjacent_lower}
+    END_IF
+    
+    # Check categorical framework at higher level
+    SET higher_validation TO validate_higher_level(matter, adjacent_higher)
+    IF NOT higher_validation.valid THEN:
+        RETURN {valid: false, 
+                reason: "missing_categorical_framework",
+                missing_at_level: adjacent_higher}
+    END_IF
+    
+    # Check vertical coherence
+    SET coherence TO check_vertical_coherence(
+        matter, 
+        adjacent_lower, 
+        target_level, 
+        adjacent_higher
+    )
+    
+    IF NOT coherence.valid THEN:
+        RETURN {valid: false, 
+                reason: "vertical_incoherence",
+                details: coherence.issues}
+    END_IF
+    
+    RETURN {valid: true, 
+            validation_quality: "adjacent_level_verified",
+            grounding: lower_validation.details,
+            framework: higher_validation.details}
+END_METHOD
+
+METHOD validate_lower_level(matter, lower_level):
+    # Verify concrete grounding exists and supports Instance claims
+    IF lower_level == "components" THEN:
+        SET components TO matter.abstraction_hierarchy.components
+        
+        IF components.EMPTY THEN:
+            RETURN {valid: false, reason: "no_component_grounding"}
+        END_IF
+        
+        SET component_support TO assess_component_support(matter, components)
+        RETURN component_support
+        
+    ELSE IF lower_level == "primitives" THEN:
+        SET primitives TO matter.abstraction_hierarchy.primitives
+        
+        IF primitives.EMPTY THEN:
+            RETURN {valid: false, reason: "no_primitive_data"}
+        END_IF
+        
+        RETURN {valid: true, evidence: primitives}
+    END_IF
+END_METHOD
+
+METHOD validate_higher_level(matter, higher_level):
+    # Verify categorical framework exists and provides coherent patterns
+    IF higher_level == "categorical_framework" THEN:
+        SET framework TO matter.abstraction_hierarchy.categorical_framework
+        
+        IF framework IS NULL THEN:
+            RETURN {valid: false, reason: "no_categorical_framework"}
+        END_IF
+        
+        SET pattern_coherence TO assess_pattern_coherence(matter, framework)
+        RETURN pattern_coherence
+        
+    ELSE IF higher_level == "philosophical_foundation" THEN:
+        SET foundation TO matter.abstraction_hierarchy.philosophical_foundation
+        
+        IF foundation IS NULL THEN:
+            RETURN {valid: false, reason: "no_philosophical_grounding"}
+        END_IF
+        
+        RETURN {valid: true, foundation: foundation}
+    END_IF
+END_METHOD
+
+METHOD check_vertical_coherence(matter, lower, target, higher):
+    # Verify that lower level supports target within higher framework
+    RETURN INTELLIGENTLY evaluate WITH:
+        LOWER_EVIDENCE: matter.abstraction_hierarchy[lower],
+        TARGET_CLAIMS: matter.abstraction_hierarchy[target],
+        HIGHER_PATTERNS: matter.abstraction_hierarchy[higher],
+        COHERENCE_CRITERIA: abstraction_coherence_rules
+    END
+END_METHOD
+```
+
+#### 19.10 Usage Patterns and Examples
+
+Theory becomes practical through examples. This section demonstrates the Matter framework in action through complete examples: creating a software project matter with proper multi-level structure, tracking corporealisation progress as code is written, validating architecture claims through adjacent-level checking, and preparing robust memorial perpetuation after project completion. These patterns can be adapted to any domain where matters need representation.
+
+**Creating a Software Project Matter**
+
+```#ailang
+METHOD create_software_project_matter():
+    SET project TO CREATE Matter WITH:
+        matter_name: "Q4 Platform Migration"
+        matter_type: "software_project"
+        primary_level: "instance"
+        
+        abstraction_hierarchy: CREATE AbstractionHierarchy WITH:
+            philosophical_foundation: {
+                principles: ["modular_design", "separation_of_concerns"],
+                theories: ["software_evolution_theory"]
+            }
+            
+            categorical_framework: {
+                project_type: "legacy_modernization",
+                methodology: "iterative_migration",
+                patterns: ["strangler_fig_pattern", "anti_corruption_layer"]
+            }
+            
+            instance: {
+                specific_project: "Q4 Platform Migration",
+                start_date: "2024-10-01",
+                target_completion: "2024-12-31",
+                team_size: 8
+            }
+            
+            components: {
+                modules: ["authentication", "data_layer", "api_gateway"],
+                teams: ["backend_team", "frontend_team"],
+                processes: ["daily_standup", "weekly_review", "sprint_planning"]
+            }
+            
+            primitives: {
+                events: [],  # Will populate as project progresses
+                commits: [],
+                meetings: []
+            }
+        END
+        
+        actor_configuration: CREATE ActorConfiguration WITH:
+            actors: [
+                {id: "dev_team", position: "in_system"},
+                {id: "architect", position: "on_system"},
+                {id: "product_owner", position: "on_system"}
+            ]
+            
+            abstraction_access_profiles: {
+                "dev_team": {
+                    strong_levels: ["primitives", "components"],
+                    weak_levels: ["categorical_framework", "philosophical_foundation"]
+                },
+                "architect": {
+                    strong_levels: ["categorical_framework", "instance"],
+                    weak_levels: ["primitives"]
+                },
+                "product_owner": {
+                    strong_levels: ["instance", "categorical_framework"],
+                    weak_levels: ["components", "primitives"]
+                }
+            }
+        END
+        
+        lifecycle_stage: "recognition"
+        
+        conceptual_framework: CREATE ConceptualFramework WITH:
+            concepts: [
+                {name: "migration", levels: ["categorical_framework", "instance", "components"]},
+                {name: "strangler_pattern", levels: ["categorical_framework", "components"]},
+                {name: "api_contract", levels: ["components", "primitives"]}
+            ]
+        END
+    END
+    
+    RETURN project
+END_METHOD
+```
+
+**Tracking Corporealisation Progress**
+
+```#ailang
+METHOD track_project_corporealisation(project):
+    # Check how abstract intentions are being translated to concrete code
+    
+    SET fragments TO project.corporealisation_state.fragment_assembly.fragments
+    
+    FOR EACH fragment IN fragments:
+        # Test if ON-system actors can recognize pattern without explanation
+        SET self_evident TO test_self_evidence(fragment, project.actor_configuration.on_system_actors)
+        
+        IF self_evident THEN:
+            fragment.requires_intention = false
+            fragment.categorical_alignment = "high_fidelity"
+        ELSE:
+            fragment.requires_intention = true
+            # Need to improve translation or provide documentation
+        END_IF
+    END_FOR
+    
+    # Assess overall intention-dependency
+    SET requires_intention_count TO COUNT(fragments WHERE requires_intention == true)
+    SET total_count TO COUNT(fragments)
+    
+    IF requires_intention_count == total_count THEN:
+        project.corporealisation_state.intention_dependency = "constant_reference_required"
+    ELSE IF requires_intention_count > (total_count * 0.5) THEN:
+        project.corporealisation_state.intention_dependency = "frequent_consultation"
+    ELSE IF requires_intention_count > 0 THEN:
+        project.corporealisation_state.intention_dependency = "occasional_checking"
+    ELSE:
+        project.corporealisation_state.intention_dependency = "intuitive_recognition"
+    END_IF
+    
+    RETURN project.corporealisation_state
+END_METHOD
+```
+
+**Validating Matter Claims**
+
+```#ailang
+METHOD validate_project_success_claim(project, claim):
+    # Claim: "The Q4 migration project is well-architected"
+    # Must validate at adjacent levels
+    
+    # Check Components level (one level down from Instance)
+    SET component_validation TO INTELLIGENTLY assess WITH:
+        MODULES: project.abstraction_hierarchy.components.modules,
+        CRITERIA: ["modularity", "coupling", "cohesion", "testability"],
+        EVIDENCE: project.abstraction_hierarchy.primitives
+    END
+    
+    IF component_validation.assessment == "poor" THEN:
+        RETURN {
+            valid: false,
+            reason: "Components do not support 'well-architected' claim",
+            evidence: component_validation.issues
+        }
+    END_IF
+    
+    # Check Categorical Framework level (one level up from Instance)
+    SET framework_validation TO INTELLIGENTLY assess WITH:
+        CLAIMED_PATTERNS: project.abstraction_hierarchy.categorical_framework.patterns,
+        ACTUAL_IMPLEMENTATION: project.abstraction_hierarchy.components,
+        ALIGNMENT_CHECK: "Do components follow stated patterns?"
+    END
+    
+    IF framework_validation.alignment == "misaligned" THEN:
+        RETURN {
+            valid: false,
+            reason: "Implementation does not align with Categorical Framework patterns",
+            evidence: framework_validation.misalignments
+        }
+    END_IF
+    
+    # Check vertical coherence
+    IF component_validation.assessment == "good" AND 
+       framework_validation.alignment == "aligned" THEN:
+        RETURN {
+            valid: true,
+            confidence: "high",
+            grounding: "Components demonstrate good architecture",
+            framework: "Implementation follows stated architectural patterns"
+        }
+    END_IF
+END_METHOD
+```
+
+**Managing Matter Memorial After Project Completion**
+
+```#ailang
+METHOD prepare_project_memorial(completed_project):
+    # Ensure patterns persist at multiple levels after project ends
+    
+    SET memorial TO CREATE MemorialState WITH:
+        existence_status: "memorial"
+        perpetuation_means: []
+    END
+    
+    # Primitives/Components level: Preserve artifacts
+    ADD TO memorial.perpetuation_means:
+        CREATE PerpetuationMechanism WITH:
+            mechanism_type: "artifact"
+            abstraction_level: "components"
+            carrier: "code_repository"
+            access_requirements: ["repository_access"]
+            decay_rate: "minimal"  # Code persists well
+        END
+    END_ADD
+    
+    ADD TO memorial.perpetuation_means:
+        CREATE PerpetuationMechanism WITH:
+            mechanism_type: "artifact"
+            abstraction_level: "primitives"
+            carrier: "project_documentation"
+            access_requirements: ["wiki_access"]
+            decay_rate: "moderate"  # Docs can become outdated
+        END
+    END_ADD
+    
+    # Instance level: Create analogy references
+    ADD TO memorial.perpetuation_means:
+        CREATE PerpetuationMechanism WITH:
+            mechanism_type: "analogy"
+            abstraction_level: "instance"
+            carrier: "organizational_memory"
+            access_requirements: ["team_membership", "historical_context"]
+            decay_rate: "moderate"  # "Remember the Q4 migration?" fades
+        END
+    END_ADD
+    
+    # Categorical Framework level: Extract methodology template
+    ADD TO memorial.perpetuation_means:
+        CREATE PerpetuationMechanism WITH:
+            mechanism_type: "template"
+            abstraction_level: "categorical_framework"
+            carrier: "migration_playbook"
+            access_requirements: ["engineering_team_access"]
+            decay_rate: "slow"  # Playbooks persist well
+        END
+    END_ADD
+    
+    # Philosophical Foundation level: Document principles learned
+    ADD TO memorial.perpetuation_means:
+        CREATE PerpetuationMechanism WITH:
+            mechanism_type: "principle"
+            abstraction_level: "philosophical_foundation"
+            carrier: "architecture_guidelines"
+            access_requirements: ["architect_role"]
+            decay_rate: "minimal"  # Principles endure
+        END
+    END_ADD
+    
+    # Assess robustness
+    memorial.pattern_robustness = memorial.calculate_memorial_robustness()
+    # Result: "highly_robust" (5 levels, 4 mechanism types)
+    
+    completed_project.memorial_state = memorial
+    
+    RETURN memorial
+END_METHOD
+```
+
+#### 19.11 Key Takeaways
+
+The Matter framework encodes profound insights about how humans engage with reality through abstraction hierarchies. This summary crystallizes the essential understanding requirements: why multi-level structure is necessary, how validation must work, what actor position means for access patterns, how corporealisation translates levels, why memorial needs redundancy, and which same-level operations are insufficient. These takeaways provide the conceptual foundation needed to apply the framework effectively.
+
+**Critical Understanding Requirements:**
+
+1. **Multi-Level Structure is Essential**: Matters cannot be represented at a single abstraction level. Full representation requires explicit multi-level architecture with clear identification of which level each aspect belongs to.
+
+2. **Validation Requires Adjacent Levels**: To verify any claim about a matter, you must check both one level more concrete (for grounding) and one level more abstract (for categorical framework). Same-level verification is insufficient.
+
+3. **Actor Position Determines Perspective**: IN-system actors have strong access to Primitives/Components but weak access to Categorical Framework/Philosophical. ON-system actors have the opposite pattern. Both perspectives are required for complete understanding.
+
+4. **Corporealisation is Level Translation**: Creating a matter involves translating abstract intentions (Categorical Framework/Philosophical) through Instance design into concrete Components. This requires learning to bridge levels, tracked by reducing intention-dependency.
+
+5. **Memorial Robustness Through Multi-Level Perpetuation**: When matters cease, their patterns persist most robustly when perpetuated across multiple abstraction levels through diverse mechanisms (artifacts, analogies, templates, principles).
+
+6. **The Three Insufficient Same-Level Operations**: 
+   - Tautology: "X is X" (circular)
+   - Level-characterization: "X has properties of X-type things" (defines category, not instance)
+   - Instance-comparison: "This X is bigger than that X" (relative only)
+
+7. **Conceptual Frameworks Span Levels**: Concepts that enable effective engagement with matters are those that span multiple abstraction levels, providing bridges for actors to move between levels and translate between them.
+
+**For complete details on all Matter subsystems, implementation patterns, and philosophical foundations, refer to the [Matter Extension Document](https://github.com/pcoz/ailang/blob/main/AILang_Specification_Matter_Extension.md).**
+
+---
+
+### 20. Error Handling
 
 AILang provides both deterministic error handling patterns and intelligent error recovery mechanisms.
 
