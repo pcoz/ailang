@@ -1,6 +1,6 @@
 **AILang: Complete Language Specification**
 
-**Version 0.7.0**
+**Version 0.7.1**
 
 **Author**: Edward Chalk (fleetingswallow.com)
 
@@ -497,6 +497,7 @@ ADAPTIVELY handle_errors WHEN standard_procedures_fail
 ##### `CONTEXTUALLY`
 
 Make decisions using calculated program state:
+**Specification:** `CONTEXTUALLY` is equivalent to `INTELLIGENTLY` with a requirement to use the **current program state** (variables, prior results, and any active `REALITY_CONTEXT`); it introduces no new boundary keys.
 
 ```
 #ailang
@@ -686,6 +687,47 @@ END_WITH
 # Or for single operations:
 WITHIN [context_name] DO [operation]
 ```
+**Syntax:** `WITHIN <context> DO <stmt>` is a single-statement form.
+`WITHIN <context>:` introduces a block terminated by `END`. Parsers **MUST** accept both forms.
+##### Context Resolution Precedence
+
+When multiple reality contexts could potentially apply to an operation, engines MUST resolve precedence as follows (highest to lowest priority):
+
+1. **Block context** - Explicit `WITH REALITY_CONTEXT ... END_WITH` block enclosing the operation
+2. **Single-operation context** - `WITHIN context DO operation` applied to the specific operation
+3. **Person default context** - `default_reality_context` property of a Person entity performing the operation
+4. **Global program default** - Program-level default context if specified
+
+**Example demonstrating precedence:**
+
+```
+#ailang
+# Program default (lowest priority)
+SET PROGRAM_DEFAULT_CONTEXT TO general_professional
+
+# Person with default context
+CREATE Person analyst WITH:
+    default_reality_context: financial_analysis
+END_CREATE
+
+# Person's default context applies here (priority 3)
+analyst.INTELLIGENTLY evaluate_investment
+# Uses financial_analysis context
+
+# Block context overrides person default (priority 1)
+WITH REALITY_CONTEXT legal_compliance:
+    analyst.INTELLIGENTLY evaluate_investment
+    # Uses legal_compliance context, not financial_analysis
+END_WITH
+
+# Single-operation context (priority 2)
+WITHIN risk_management DO:
+    analyst.INTELLIGENTLY evaluate_investment
+END
+# Uses risk_management context
+```
+
+**Specification**: Engines MUST apply the highest-priority context that is active for the operation. Lower-priority contexts are ignored when a higher-priority context is present.
 
 ##### Example: Multiple Reality Contexts
 
@@ -697,25 +739,37 @@ SET customer_complaint TO "This product doesn't work as advertised"
 
 WITH REALITY_CONTEXT legal_reality:
     # Legal framework sees potential liability
-    INTELLIGENTLY assess_situation
+    INTELLIGENTLY assess_situation WITH:
+        OUTPUT_FORMAT: {assessment: TEXT}
+        MAX_SCOPE: legal_implications
+    END
     # Might conclude: "Potential breach of warranty claim requiring documentation"
 END_WITH
 
 WITH REALITY_CONTEXT customer_service_reality:
     # Service framework sees relationship issue
-    INTELLIGENTLY assess_situation
+    INTELLIGENTLY assess_situation WITH:
+        OUTPUT_FORMAT: {assessment: TEXT}
+        MAX_SCOPE: customer_relationship
+    END
     # Might conclude: "Customer feels unheard and needs validation"
 END_WITH
 
 WITH REALITY_CONTEXT engineering_reality:
     # Engineering framework sees specification mismatch
-    INTELLIGENTLY assess_situation  
+    INTELLIGENTLY assess_situation WITH:
+        OUTPUT_FORMAT: {assessment: TEXT}
+        MAX_SCOPE: product_specifications
+    END
     # Might conclude: "User expectations don't match design parameters"
 END_WITH
 
 WITH REALITY_CONTEXT startup_reality:
     # Startup framework sees product-market fit signal
-    INTELLIGENTLY assess_situation
+    INTELLIGENTLY assess_situation WITH:
+        OUTPUT_FORMAT: {assessment: TEXT}
+        MAX_SCOPE: product_market_fit
+    END
     # Might conclude: "Valuable feedback for next iteration pivot"
 END_WITH
 ```
@@ -1109,32 +1163,98 @@ END_META_CONTEXT
 
 Reality contexts fundamentally change how intelligent operations interpret and respond to situations. They provide the qualitative boundaries that make AI behavior coherent within specific domains of meaning while maintaining the flexibility to shift perspectives when appropriate. This creates AI systems that can truly operate within human social, cultural, and professional contexts rather than merely processing them from the outside.
 
+---
+
 ### 10. Confidence Levels and Action Authority
 
-AILang supports explicit confidence levels for intelligent operations that determine action authority.
+AILang supports explicit confidence levels for intelligent operations that inform action authority. Confidence is reported through the output structure rather than declared as a separate control parameter.
 
 #### Confidence Declaration
+
+Confidence is requested as part of the OUTPUT_FORMAT structure:
 
 ```
 #ailang
 INTELLIGENTLY assess_situation WITH:
-    OUTPUT: assessment
-    CONFIDENCE_LEVEL: [high|moderate|low]
-    ALTERNATIVE_INTERPRETATIONS: [list_of_possibilities]
+    MUST_INCLUDE: [key_factors, assessment_basis]
+    OUTPUT_FORMAT: {
+        assessment: TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"],
+        alternative_interpretations: LIST,
+        reasoning: TEXT
+    }
+    MAX_SCOPE: situation_assessment
 END
 ```
 
+**Specification**: Engines MUST populate the `confidence_level` field when requested in OUTPUT_FORMAT. The field accepts three categorical values:
+- `"high"` - Assessment grounded in observable phenomena or clear evidence
+- `"moderate"` - Assessment based on reasonable inference with some uncertainty
+- `"low"` - Assessment involving significant interpretation or limited evidence
+
+The AI determines the appropriate confidence level based on the observable-interpretive spectrum (see Section 11).
+
 #### Confidence-Based Branching
+
+Programs can branch on the categorical confidence level returned in the output:
 
 ```
 #ailang
-IF interpretation_confidence < high THEN:
-    CONFIRM WITH user: "I understand [interpretation]. Is this correct?"
+INTELLIGENTLY assess_situation WITH:
+    OUTPUT_FORMAT: {
+        interpretation: TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"]
+    }
+    MAX_SCOPE: current_situation
+END
+
+IF assessment.confidence_level EQUALS "low" THEN:
+    CONFIRM WITH user: "I understand [assessment.interpretation]. Is this correct?"
     WAIT for_confirmation BEFORE proceeding
+ELSE IF assessment.confidence_level EQUALS "moderate" THEN:
+    LOG "Proceeding with moderate confidence"
+    PROCEED WITH assessment.interpretation
+ELSE IF assessment.confidence_level EQUALS "high" THEN:
+    PROCEED WITH assessment.interpretation
 END_IF
 ```
 
-**Specification**: Lower confidence assessments require tighter boundaries and often user confirmation before significant actions.
+**Specification**: Lower confidence assessments typically require tighter boundaries and often user confirmation before significant actions. Programs should branch on categorical confidence levels (`"high"`, `"moderate"`, `"low"`) rather than numeric thresholds.
+
+#### Confidence and Action Authority
+
+The confidence level informs what actions are appropriate:
+
+```
+#ailang
+INTELLIGENTLY assess_emotional_state FROM behavior WITH:
+    OUTPUT_FORMAT: {
+        state: TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"],
+        indicators: LIST
+    }
+    MAX_SCOPE: observable_behavior
+END
+
+# High confidence (observable phenomena) - direct action may be appropriate
+IF emotional_assessment.state EQUALS "distressed" AND emotional_assessment.confidence_level EQUALS "high" THEN:
+    OFFER support_resources
+    SAY "I can see you're upset. Would you like to talk?"
+END_IF
+
+# Low confidence (interpretive) - constrained action authority
+IF emotional_assessment.state EQUALS "depressed" AND emotional_assessment.confidence_level EQUALS "low" THEN:
+    ONLY SUGGEST: "Is everything okay? I'm here if you want to talk."
+    CANNOT:
+        - diagnose_condition
+        - prescribe_treatment
+        - assume_underlying_causes
+END_IF
+```
+
+**Specification**: Observable assessments (typically yielding high confidence) can authorize more direct actions. Interpretive assessments (typically yielding moderate or low confidence) should restrict to suggestions and require tighter boundaries.
+
+---
 
 ### 11. The Qualitative Spectrum
 
@@ -1179,6 +1299,9 @@ END_IF
 ```
 
 **Specification**: The AI must recognize where assessments fall on the observable–interpretive spectrum and adjust confidence levels and action boundaries accordingly.
+Engines **SHOULD** map *observable* assessments to `"high"` confidence by default, and *interpretive* assessments to `"moderate"` or `"low"` depending on inference depth.
+
+---
 
 ### 12. Code Execution Blocks
 
