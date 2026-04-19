@@ -1,0 +1,118 @@
+#ailang v0.8
+# TEST 02: Exercise All Six Reasoning Types on a Unified Scenario
+# Scenario: A company is evaluating whether to migrate from on-premise to cloud infrastructure
+# Each reasoning type handles a different aspect of the same decision
+
+SET company TO "Acme Manufacturing"
+SET current_infrastructure TO "on-premise data center, 200 servers, 15 years old"
+SET proposed_change TO "migrate to AWS cloud"
+SET budget TO 2000000
+SET timeline TO "18 months"
+
+# ============================================================
+# 1. RETRIEVE — Gather baseline facts
+# ============================================================
+RETRIEVE cloud_migration_facts FOR manufacturing_sector WITH:
+    DOMAIN: "enterprise IT infrastructure"
+    MUST_INCLUDE: [average_migration_timeline, common_failure_points, industry_benchmarks]
+    OUTPUT_FORMAT: {
+        avg_timeline_months: NUMBER,
+        success_rate_percent: NUMBER,
+        common_risks: LIST OF TEXT,
+        industry_benchmarks: LIST OF TEXT
+    }
+END
+
+# ============================================================
+# 2. COMPARE — Evaluate alternatives
+# ============================================================
+COMPARE infrastructure_options AGAINST business_requirements WITH:
+    DIMENSIONS: [cost_5yr_tco, scalability, security, maintenance_burden, disaster_recovery]
+    MUST_INCLUDE: [quantified_comparison_per_dimension, trade_off_summary]
+    OUTPUT_FORMAT: {
+        ranking: LIST OF OBJECT { option: TEXT, score_summary: TEXT },
+        trade_off_analysis: TEXT,
+        clear_winner: TEXT,
+        caveats: LIST OF TEXT
+    }
+END
+
+# ============================================================
+# 3. WEIGH — Evaluate conflicting expert opinions
+# ============================================================
+SET cto_opinion TO "Cloud migration is essential for competitive survival"
+SET cfo_opinion TO "The ROI is uncertain and capex is already sunk in current infrastructure"
+SET external_consultant TO "Hybrid approach minimizes risk while capturing 70% of cloud benefits"
+
+WEIGH migration_opinions ON strategic_value WITH:
+    SOURCES: [cto_opinion, cfo_opinion, external_consultant]
+    MUST_INCLUDE: [credibility_basis_per_source, bias_identification, synthesis]
+    OUTPUT_FORMAT: {
+        dominant_perspective: TEXT,
+        credibility_ranking: LIST OF OBJECT { source: TEXT, credibility: QUALITATIVE, bias: TEXT },
+        recommendation: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# 4. DEDUCE — Apply logical rules to compliance requirements
+# ============================================================
+SET premises TO [
+    "Manufacturing companies handling defense contracts require ITAR compliance",
+    "ITAR compliance requires data to reside on US-soil servers",
+    "AWS GovCloud provides US-soil server guarantees",
+    "Standard AWS regions do NOT guarantee US-soil data residency",
+    "Acme Manufacturing holds 3 active defense contracts"
+]
+
+DEDUCE cloud_compliance FROM premises WITH:
+    MUST_INCLUDE: [each_inference_step, final_conclusion, validity_assessment]
+    CANNOT_INCLUDE: [assumptions_not_in_premises]
+    OUTPUT_FORMAT: {
+        conclusion: TEXT,
+        inference_chain: LIST OF TEXT,
+        validity: BOOLEAN,
+        required_constraint: TEXT
+    }
+END
+
+# ============================================================
+# 5. TRACE — Map the causal chain of a recent outage
+# ============================================================
+SET outage_timeline TO [
+    "Day 1 09:00: Routine firmware update applied to SAN controller",
+    "Day 1 09:15: SAN controller rebooted successfully",
+    "Day 1 09:30: Secondary SAN failover triggered unexpectedly",
+    "Day 1 09:31: Database cluster lost quorum",
+    "Day 1 09:32: ERP system became unresponsive",
+    "Day 1 09:35: Production line halted — no work orders available",
+    "Day 1 12:00: Manual failback completed, services restored"
+]
+
+TRACE outage_root_cause FROM outage_timeline WITH:
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [evidence_at_each_step, why_failover_triggered, prevention_recommendation]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT, evidence: TEXT },
+        prevention: LIST OF TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# 6. SYNTHESIZE — Integrate all findings into executive recommendation
+# ============================================================
+SYNTHESIZE migration_decision INTO executive_recommendation WITH:
+    SOURCES: [cloud_migration_facts, infrastructure_options, migration_opinions, cloud_compliance, outage_root_cause]
+    MUST_INCLUDE: [areas_of_agreement, unresolved_tensions, go_no_go_recommendation, conditions_for_success]
+    OUTPUT_FORMAT: {
+        recommendation: TEXT IN ["proceed", "proceed_with_conditions", "defer", "reject"],
+        conditions: LIST OF TEXT,
+        key_risks: LIST OF TEXT,
+        areas_of_agreement: LIST OF TEXT,
+        unresolved_tensions: LIST OF TEXT,
+        executive_summary: TEXT
+    }
+END

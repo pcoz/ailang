@@ -1,0 +1,33 @@
+#ailang v0.8.2
+# TEST 13: EXECUTE_CODE block compatibility test
+# Purpose: Validate that AIEX correctly parses and routes a program
+#          containing an EXECUTE_CODE block alongside typed reasoning.
+
+SET sales_data TO {
+    quarter: "Q1-2026",
+    regions: ["NA", "EU", "APAC"],
+    revenue_by_region: [1250000, 980000, 1420000]
+}
+
+EXECUTE_CODE python:
+    # AILang variable sales_data is accessible
+    total = sum(sales_data["revenue_by_region"])
+    leader_idx = sales_data["revenue_by_region"].index(max(sales_data["revenue_by_region"]))
+    leader_region = sales_data["regions"][leader_idx]
+
+    sales_summary = {
+        "total_revenue": total,
+        "leader_region": leader_region,
+        "leader_share_pct": round(100 * max(sales_data["revenue_by_region"]) / total, 2)
+    }
+END_EXECUTE
+
+DEDUCE next_quarter_focus FROM sales_summary WITH:
+    DEPTH: STANDARD
+    MUST_INCLUDE: [recommended_region, rationale]
+    OUTPUT_FORMAT: {
+        recommended_region: TEXT,
+        rationale: TEXT,
+        risk_level: TEXT IN ["low", "medium", "high"]
+    }
+END

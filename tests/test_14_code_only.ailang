@@ -1,0 +1,31 @@
+#ailang v0.8.2
+# TEST 14: EXECUTE_CODE end-to-end through the AIEX engine.
+# Pure code execution, no reasoning operations -- exercises the
+# no-LLM dispatch path so it can run without API credentials.
+
+SET inventory TO {
+    sku_a: 120,
+    sku_b: 45,
+    sku_c: 8,
+    sku_d: 230,
+    sku_e: 0
+}
+
+SET reorder_threshold TO 50
+
+EXECUTE_CODE python:
+    # Identify SKUs at or below the reorder threshold.
+    needs_reorder = [
+        sku for sku, qty in inventory.items()
+        if qty <= reorder_threshold
+    ]
+    out_of_stock = [sku for sku, qty in inventory.items() if qty == 0]
+    total_units = sum(inventory.values())
+
+    reorder_report = {
+        "total_skus": len(inventory),
+        "total_units": total_units,
+        "skus_to_reorder": needs_reorder,
+        "out_of_stock_count": len(out_of_stock),
+    }
+END_EXECUTE

@@ -1,12 +1,36 @@
 # AILang: Natural Language Programming for the AI Era
 
-**Version 0.7.0** | [fleetingswallow.com](https://fleetingswallow.com/)
+**Version 0.8.2** | [fleetingswallow.com](https://fleetingswallow.com/) | Execution runtime: [AIEX](#aiex-the-execution-runtime)
 
 ## What is AILang?
 
 AILang is a natural language programming system that lets you write programs in structured English that AI can reliably interpret and execute. It uses RAG (Retrieval-Augmented Generation) architecture to constrain AI operations to known boundaries, enabling production deployment.
 
 Instead of forcing human logic through the bottleneck of artificial syntax, AILang allows you to express computational intent in the same structured natural language you use to think through problems.
+
+## AILang vs. Prompt Engineering
+
+**Thesis:** prompt engineering optimizes a black box by guessing words; AILang exposes the dials so optimization becomes systematic.
+
+- **Reasoning type is named, not implied.** "Think about X" hedges across DEDUCE / TRACE / RETRIEVE / etc., activating ~1,531 neurons. Saying `RETRIEVE` activates ~865 (43.5% fewer) — and produces *better* output because the model commits to one pathway instead of hedging. v0.8.0 tests showed typed `TRACE` reached mechanism-level root causes ("heartbeat timing mismatch") where untyped `TRACE` stopped at event-level ("firmware update").
+- **Orthogonal axes instead of prose mush.** Operation × style × `DEPTH` × `RETRIEVAL_BUDGET` are independent knobs. In prose you smash them together ambiguously ("think carefully and creatively but don't speculate").
+- **Composition is first-class.** `THEN` chains, `REASONING_CONTEXT` accumulators, and `EMIT_DIGEST` pass structured output between steps. Prompt-engineering pipelines rely on you concatenating strings by hand.
+- **Constraints are formalizable.** `CONSTRAIN`, `SUPPRESS`, and `REALITY_CONTEXT` express what the model may not do in a way that can later be checked. Prose "don't do X" is honored or not, with no audit trail.
+- **Programs, not artifacts.** AILang is diffable, versionable, testable. Prompts are fragile — change a comma, behavior shifts.
+
+## Qualitative Idempotency
+
+LLMs are stochastic — bit-for-bit determinism is impossible. But v0.8.2 deliberately maximises the next-best property: **same input + same program produces functionally equivalent output across runs.** Same conclusions. Same key findings. Same downstream behavior. We call this *qualitative idempotency*, and it's the closest LLMs get to deterministic computation.
+
+Five v0.8.2 mechanisms compose to produce it:
+
+- **Typed reasoning operations** commit the model to one neural pathway. Untyped `INTELLIGENTLY` hedges across DEDUCE / TRACE / RETRIEVE / etc., which means each run can land on a different mixture and produce divergent reasoning chains. `DEDUCE` always activates the deductive circuit; rerun the same `DEDUCE` against the same inputs and the conclusions converge.
+- **`DEPTH` pins compute investment.** `DEPTH: STANDARD` always allocates the standard token budget and pass count — no accidental "the model felt thorough today" variation between runs.
+- **`RETRIEVAL_BUDGET` pins what knowledge is pulled in.** `RETRIEVAL_BUDGET: NONE` is closed-book; `MINIMAL` is bounded; runs no longer differ based on which random retrievals happened to fire.
+- **`CONSTRAIN` and `SUPPRESS` remove degrees of freedom** that would otherwise vary. If `SUPPRESS: [SYNTHESIZE]` is in scope, the model never chooses to synthesize on one run and not the next.
+- **`REASONING_PROFILE` and `REALITY_CONTEXT` declare the active policy explicitly.** Two runs always interpret the same program through the same lens, instead of one run treating it as "creative" and another as "analytical".
+
+Together: rerun the same v0.8.2 program against the same inputs and the *substantive* output — conclusions, recommendations, propagated bindings, contract validity — converges across runs. Surface text wording will vary; load-bearing semantics will not. This is the property that makes v0.8.2 a credible substrate for business systems where decisions need to be reproducible-enough for audit, even when they cannot be deterministic in the bit-exact sense.
 
 ## Why AILang Exists
 
@@ -56,26 +80,47 @@ This mirrors how the human mind actually functions: we think in concepts, patter
 
 AILang provides three distinct execution modes, each operating in its natural domain with appropriate guarantees:
 
-### 1. INTELLIGENT Operations: Qualitative Reasoning at Full Strength
+### 1. Typed Reasoning Operations: Qualitative Reasoning at Full Strength
 
-When humans face ambiguous situations, we apply judgment, experience, and creativity—all qualitative reasoning. AILang's intelligent operations operate entirely in the qualitative domain, providing contextual, adaptive, and creative decision-making without forced quantitative translation.
+When humans face ambiguous situations, we apply judgment, experience, and creativity—all qualitative reasoning. AILang v0.8 names the *type* of reasoning explicitly. Six typed operations cover the canonical reasoning patterns; each commits the model to a focused neural pathway with measurable efficiency and quality gains over untyped prompting:
+
+| Operation | Purpose |
+|---|---|
+| `RETRIEVE` | Factual lookup — find and return known information |
+| `COMPARE` | Side-by-side evaluation of options against criteria |
+| `TRACE` | Causal chain analysis — follow cause→effect or effect→cause |
+| `DEDUCE` | Logical inference from premises using formal rules |
+| `SYNTHESIZE` | Integrate multiple inputs into a unified recommendation |
+| `WEIGH` | Evaluate competing authorities, evidence, or expert opinions |
+
+Each operation accepts orthogonal modifiers: a *style* (`INTELLIGENTLY`, `CREATIVELY`, `ADAPTIVELY`, `CONTEXTUALLY`), a `DEPTH` (`SHALLOW` / `STANDARD` / `THOROUGH` / `DEEP` / `EXHAUSTIVE`), and a `RETRIEVAL_BUDGET` (`NONE` / `MINIMAL` / `STANDARD` / `FULL`).
 
 ```ailang
-# Pure qualitative reasoning - no forced quantification
-INTELLIGENTLY assess_customer_sentiment FROM feedback WITH:
-    MUST_INCLUDE: [emotion_indicators, satisfaction_level]
-    OUTPUT_FORMAT: detailed_analysis
+# Typed reasoning -- the engine commits to one pathway and the
+# AIEX runtime routes RETRIEVE to a cheap retrieval-class model.
+RETRIEVE customer_history FROM crm WITH:
+    RETRIEVAL_BUDGET: STANDARD
+    MUST_INCLUDE: [recent_tickets, lifecycle_stage]
 END
 
-CREATIVELY design_marketing_message BASED_ON:
-    audience_demographics AND recent_sentiment
-    CONSTRAINTS: [brand_guidelines, regulatory_requirements]
+# Trace cause-to-effect with thorough depth and constrained sources.
+ADAPTIVELY TRACE outage_root_cause FROM incident_timeline WITH:
+    DEPTH: THOROUGH
+    DIRECTION: BACKWARD
+    RETRIEVAL_BUDGET: MINIMAL
+    CANNOT_INCLUDE: [speculation_beyond_evidence]
 END
 
-ADAPTIVELY optimize_performance WHEN system_load > 80%
+# Compose typed operations with THEN -- output of one feeds the next.
+RETRIEVE pricing_history FROM market_db
+    THEN COMPARE current_quote AGAINST pricing_history WITH:
+        DIMENSIONS: [margin, win_rate, customer_segment]
+    END
 ```
 
-Enhanced intelligence modifiers (`INTELLIGENTLY`, `CREATIVELY`, `ADAPTIVELY`, `CONTEXTUALLY`) with explicit bounded intelligence constraints and contextual frameworks.
+`INTELLIGENTLY` is retained as a fallback for situations where the programmer doesn't yet know which typed op fits — the engine auto-classifies via linguistic pattern matching. Use it freely during exploration; replace it with a typed op once the reasoning shape is clear, and you'll get neuron savings, sharper output, and reproducible behavior for free.
+
+Two more v0.8 features round out the composition story: `REASONING_CONTEXT` accumulators thread `EMIT_DIGEST` summaries between pipeline steps so downstream operations consume compressed structured input rather than raw transcripts; and `CONSTRAIN` lets you graduate restriction (e.g., `CONSTRAIN: WEIGH TO "published_clinical_data_only"`) where v0.8.1's `SUPPRESS` was binary.
 
 ### 2. DETERMINISTIC Operations: Qualitative Structure with Predictable Flow
 
@@ -1008,16 +1053,44 @@ AILang represents a major evolution with:
 
 The future of programming is understanding qualitative logic—how we actually think—and how to implement these patterns of thought in a predictable manner. It's about recognizing that human reasoning operates primarily through concepts, relationships, and contextual understanding, and building computational systems that can work directly in this domain. AILang is that future, available today.
 
+## AIEX: The Execution Runtime
+
+AILang is the language; **AIEX** is the execution engine that makes it economical to run at scale. AILang predicts neuron savings per typed operation; AIEX realises them by routing each transaction to the right model tier:
+
+| Operation type | Default model tier | Why |
+|---|---|---|
+| `RETRIEVE`, `COMPARE` | BERT-class / Haiku-class | Cheap and fast; minimal qualitative generation needed |
+| `TRACE`, `DEDUCE` | Sonnet-class | Mid-range reasoning capability suffices |
+| `WEIGH`, `SYNTHESIZE` | Opus-class | Sophisticated judgment / integration required |
+
+`DEPTH: DEEP` and `DEPTH: EXHAUSTIVE` escalate one tier; qualitative output schemas escalate BERT to a generative tier.
+
+What you get from AIEX that bare AILang cannot give you:
+
+- **Pre-execution budget reports.** Cost, latency, and routing visible *before* you spend. A typical four-step program shows ~85% savings vs naive all-Opus baselines.
+- **Five-DIVISION COBOL-style execution plan.** Compiler analyses dependencies, detects parallel groups, builds a contract per transaction, and emits an ordered plan you can audit before running.
+- **Dispatch-validate-commit transactions.** `MUST_INCLUDE` / `CANNOT_INCLUDE` / `OUTPUT_FORMAT` / `RETRIEVAL_BUDGET` become validators with severity escalation (CRITICAL / MAJOR / MINOR), retry with reinforced prompts, and rollback on hard failure. Failed transactions don't corrupt state.
+- **`EXECUTE_CODE` blocks integrated.** Code blocks compile to zero-cost local-execution transactions interleaved with reasoning ops; AILang variables marshal in/out automatically.
+- **Auditable execution log.** Every variable mutation, every transaction commit/rollback, every contract violation is timestamped for post-run inspection.
+
+AIEX lives in its own repository: [github.com/pcoz/aiex](https://github.com/pcoz/aiex). Clone it, install editable with `pip install -e .` from the project root, and programs in this repo's `tests/` run under it as `aiex compile <file.ailang>` or `aiex run <file.ailang>`.
+
 ## License
 
 MIT License - See LICENSE file for details
 
 ## Documentation
 
-- **Main Specification**: `AILang_Specification.md` - Complete language reference
-- **Person Extension**: `AILang_Specification_Person_Extension.md` - Detailed Person entity documentation
-- **Matter Extension**: `AILang_Specification_Matter_Extension.md` - Detailed Matter entity documentation
+- **Language Specification:** `AILang_Specification.md` — complete v0.8.2 reference (typed reasoning, depth, retrieval budget, contracts, REASONING_CONTEXT, EXECUTE_CODE)
+- **Person Extension:** `AILang_Specification_Person_Extension.md` — Person entity modeling with cognitive routing
+- **Matter Extension:** `AILang_Specification_Matter_Extension.md` — categorical structures across abstraction levels
+- **Evolution Notes:** `ailang_evolution_v0.8.md` — how v0.8.0 → v0.8.1 → v0.8.2 was driven by test results
+- **Tests:** `tests/` — executable AILang programs that validate v0.8.2 features (run with AIEX)
+- **Test Results:** `test_results/` — captured outputs from v0.8.2 validation
+- **Examples:** `examples/` — domain-oriented AILang programs
+- **AIEX Runtime:** [github.com/pcoz/aiex](https://github.com/pcoz/aiex) — separate project; the execution engine
+- **Archive:** `archive/` — prior versions (v0.1.0 through v0.8.1) preserved for reference
 
 ---
 
-*AILang: Write programs in structured English that AI can reliably interpret and execute. Combines deterministic operations, intelligent reasoning, and genuine code execution through three distinct modes. Includes Person entities for human simulation and Matter entities for multi-level organizational modeling. Uses RAG architecture to constrain AI operations to known boundaries, enabling production deployment.*
+*AILang: Write programs in structured English that AI can reliably interpret and execute. v0.8.2 introduces typed reasoning operations, depth/retrieval-budget control, and qualitative idempotency — making production deployment of AI reasoning systems possible. Pair with the AIEX runtime for multi-tier model routing, contract enforcement, and pre-execution budget reports.*

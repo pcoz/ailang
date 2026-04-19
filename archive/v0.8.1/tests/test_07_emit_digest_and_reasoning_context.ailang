@@ -1,0 +1,266 @@
+#ailang v0.8.1
+# TEST 07: EMIT_DIGEST and REASONING_CONTEXT Accumulator
+# Purpose: Demonstrate that EMIT_DIGEST produces compact typed summaries for
+#          pipeline efficiency, and that REASONING_CONTEXT provides a shared
+#          accumulator so operations in a pipeline can reference prior results
+#          without explicit intermediate variables.
+# Measure:
+#   - Each step's digest should be significantly smaller than its full output
+#   - Later steps should reference earlier digests seamlessly via CONTEXT
+#   - The final SYNTHESIZE FROM CONTEXT should integrate all accumulated digests
+#   - No intermediate variables needed between steps inside REASONING_CONTEXT
+
+# ============================================================
+# SCENARIO: Startup Pivot Decision — B2B to B2C
+# ============================================================
+# NovaBrew is a 3-year-old SaaS startup that sells analytics dashboards
+# to enterprise clients (B2B). Growth has stalled and the founding team
+# is evaluating a pivot to direct-to-consumer (B2C).
+
+SET company_profile TO {
+    name: "NovaBrew Analytics",
+    founded: 2023,
+    current_model: "B2B SaaS — enterprise analytics dashboards",
+    arr: 1800000,
+    arr_growth_yoy: "3% (down from 42% in year 1)",
+    burn_rate: 250000,
+    runway_months: 14,
+    team_size: 22,
+    enterprise_customers: 38,
+    nps_b2b: 34,
+    churn_rate_monthly: "4.2%"
+}
+
+SET market_data_b2b TO {
+    tam: "12B",
+    competition: "Crowded — Tableau, Looker, PowerBI dominate; 40+ funded startups",
+    avg_deal_cycle: "4-6 months",
+    avg_contract_value: 48000,
+    switching_cost: "high for customers, low for vendor"
+}
+
+SET market_data_b2c TO {
+    tam: "58B",
+    competition: "Emerging — Mint, Personal Capital, YNAB; no dominant analytics-first player",
+    avg_acquisition_cost: 35,
+    avg_ltv: 420,
+    viral_coefficient: "1.3 typical for consumer fintech",
+    switching_cost: "low for customers, low for vendor"
+}
+
+SET advisor_chen TO {
+    name: "Dr. Lena Chen",
+    role: "Board member, former VP Product at Salesforce",
+    opinion: "The B2B market is saturated but NovaBrew's technology is genuinely differentiated. A pivot to B2C would waste the enterprise relationships you've built. Instead, go upmarket — target Fortune 500 with a premium tier. The B2C consumer analytics space looks big but is a graveyard of well-funded failures."
+}
+
+SET advisor_park TO {
+    name: "James Park",
+    role: "Lead investor, Horizon Ventures",
+    opinion: "Your B2B growth has flatlined and the burn rate gives you 14 months. The B2C TAM is 5x larger and your core analytics engine translates well to consumer use cases. I've seen this pattern before — companies that pivot early survive, companies that double down on a stalled market run out of runway. I'll back the pivot with bridge funding."
+}
+
+SET advisor_reyes TO {
+    name: "Maria Reyes",
+    role: "CTO and co-founder",
+    opinion: "Our tech stack is built for low-volume high-complexity enterprise queries. Pivoting to B2C means rebuilding for high-volume low-latency consumer workloads. That's 6-8 months of engineering time with no revenue. A hybrid approach — keep B2B alive while building a consumer MVP — is the only path that doesn't bet the company on one outcome."
+}
+
+SET investor_constraints TO [
+    "Series A terms require 3x ARR growth within 24 months or liquidation preference triggers",
+    "Bridge funding of 2M is available ONLY if the board approves a pivot by Q3 2026",
+    "Any pivot plan must show a path to 500K MAU within 18 months",
+    "Existing enterprise contracts have 12-month termination clauses that must be honored",
+    "Team attrition above 25% during pivot triggers an investor review clause"
+]
+
+SET b2b_stall_indicators TO [
+    "Win rate dropped from 31% to 14% in last two quarters",
+    "Three largest prospects chose Looker citing 'ecosystem integration'",
+    "Sales cycle lengthened from 4 months to 7 months average",
+    "Two senior AEs quit citing 'impossible quota in this market'",
+    "Product roadmap is dominated by customer-specific feature requests with no scalable pattern"
+]
+
+# ============================================================
+# REASONING_CONTEXT: Multi-step pivot analysis
+# ============================================================
+# All operations share the pivot_analysis context accumulator.
+# Each operation's EMIT_DIGEST: true produces a compact typed digest
+# that is automatically added to the shared context.
+
+BEGIN REASONING_CONTEXT pivot_analysis:
+
+    # ----------------------------------------------------------
+    # Step 1: RETRIEVE market intelligence
+    # ----------------------------------------------------------
+    # Gather baseline market facts to ground the analysis.
+    RETRIEVE market_intelligence FOR saas_analytics_pivot WITH:
+        DOMAIN: "SaaS market analysis"
+        SOURCES: [market_data_b2b, market_data_b2c, company_profile]
+        EMIT_DIGEST: true
+        MUST_INCLUDE: [market_size_comparison, competitive_density, unit_economics_comparison]
+        OUTPUT_FORMAT: {
+            b2b_outlook: TEXT,
+            b2c_opportunity: TEXT,
+            unit_economics_verdict: TEXT,
+            key_data_points: LIST OF TEXT
+        }
+    END
+
+    # ----------------------------------------------------------
+    # Step 2: COMPARE B2B vs B2C on multiple dimensions
+    # ----------------------------------------------------------
+    # Structured comparison using market data and company profile.
+    COMPARE b2b_vs_b2c AGAINST strategic_fit WITH:
+        DIMENSIONS: [
+            market_size_and_growth,
+            competitive_intensity,
+            unit_economics,
+            technical_feasibility,
+            team_capability_match,
+            time_to_revenue,
+            risk_profile
+        ]
+        EMIT_DIGEST: true
+        MUST_INCLUDE: [quantified_comparison_per_dimension, clear_winner_per_dimension, overall_trade_off]
+        OUTPUT_FORMAT: {
+            dimension_results: LIST OF OBJECT {
+                dimension: TEXT,
+                b2b_score: TEXT,
+                b2c_score: TEXT,
+                winner: TEXT IN ["B2B", "B2C", "tie"],
+                rationale: TEXT
+            },
+            overall_winner: TEXT,
+            critical_trade_offs: LIST OF TEXT
+        }
+    END
+
+    # ----------------------------------------------------------
+    # Step 3: WEIGH advisor opinions
+    # ----------------------------------------------------------
+    # Evaluate the three conflicting advisor perspectives.
+    WEIGH advisor_perspectives ON pivot_decision WITH:
+        SOURCES: [advisor_chen, advisor_park, advisor_reyes]
+        EMIT_DIGEST: true
+        MUST_INCLUDE: [
+            credibility_basis_per_source,
+            bias_identification,
+            areas_of_agreement,
+            irreconcilable_differences
+        ]
+        OUTPUT_FORMAT: {
+            dominant_perspective: TEXT,
+            credibility_ranking: LIST OF OBJECT {
+                advisor: TEXT,
+                credibility: QUALITATIVE IN ["high", "moderate", "low"],
+                identified_bias: TEXT,
+                key_argument: TEXT
+            },
+            consensus_points: LIST OF TEXT,
+            unresolved_disagreements: LIST OF TEXT
+        }
+    END
+
+    # ----------------------------------------------------------
+    # Step 4: TRACE what caused the B2B growth stall
+    # ----------------------------------------------------------
+    # Understand why the current model stalled before deciding to leave it.
+    TRACE b2b_stall_causes FROM b2b_stall_indicators WITH:
+        DIRECTION: BACKWARD
+        EMIT_DIGEST: true
+        MUST_INCLUDE: [
+            root_cause,
+            whether_stall_is_reversible,
+            evidence_at_each_step,
+            market_vs_execution_attribution
+        ]
+        OUTPUT_FORMAT: {
+            root_cause: TEXT,
+            causal_chain: LIST OF OBJECT { indicator: TEXT, caused_by: TEXT, evidence: TEXT },
+            reversible: BOOLEAN,
+            market_factor_pct: NUMBER,
+            execution_factor_pct: NUMBER,
+            confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+        }
+    END
+
+    # ----------------------------------------------------------
+    # Step 5: DEDUCE whether pivot satisfies investor constraints
+    # ----------------------------------------------------------
+    # Given the explicit investor constraints, can the pivot work?
+    DEDUCE pivot_feasibility FROM investor_constraints WITH:
+        APPLY_TO: company_profile
+        EMIT_DIGEST: true
+        MUST_INCLUDE: [
+            each_constraint_evaluated,
+            whether_pivot_satisfies_each,
+            blocking_constraints,
+            contingent_constraints
+        ]
+        CANNOT_INCLUDE: [assumptions_not_in_constraints]
+        OUTPUT_FORMAT: {
+            overall_feasible: BOOLEAN,
+            constraint_results: LIST OF OBJECT {
+                constraint: TEXT,
+                satisfied: BOOLEAN,
+                rationale: TEXT,
+                risk_level: QUALITATIVE IN ["blocking", "contingent", "clear"]
+            },
+            blocking_issues: LIST OF TEXT,
+            required_conditions: LIST OF TEXT
+        }
+    END
+
+    # ----------------------------------------------------------
+    # Step 6: SYNTHESIZE final decision FROM CONTEXT
+    # ----------------------------------------------------------
+    # Integrate all accumulated digests into a unified recommendation.
+    # This step reads from the REASONING_CONTEXT accumulator — it
+    # accesses all prior digests without needing explicit variable references.
+    SYNTHESIZE pivot_decision INTO executive_recommendation FROM CONTEXT WITH:
+        EMIT_DIGEST: true
+        MUST_INCLUDE: [
+            integrated_assessment,
+            areas_of_convergence,
+            unresolved_tensions,
+            go_nogo_recommendation,
+            conditions_for_success,
+            risk_mitigation_plan
+        ]
+        OUTPUT_FORMAT: {
+            recommendation: TEXT IN ["full_pivot_to_b2c", "stay_b2b_go_upmarket", "hybrid_approach", "acqui_hire_exit"],
+            confidence: QUALITATIVE IN ["high", "moderate", "low"],
+            key_reasons: LIST OF TEXT,
+            conditions: LIST OF TEXT,
+            risks: LIST OF TEXT,
+            dissenting_view: TEXT,
+            executive_summary: TEXT
+        }
+    END
+
+END REASONING_CONTEXT
+
+# ============================================================
+# VALIDATION: Verify digest pipeline behavior
+# ============================================================
+# Check that the REASONING_CONTEXT accumulated all digests
+# and that the final synthesis references findings from all 5 prior steps.
+
+COMPARE digest_pipeline_validation AGAINST completeness_criteria WITH:
+    DIMENSIONS: [digest_count, cross_referencing, information_loss]
+    SOURCES: [pivot_analysis]
+    MUST_INCLUDE: [
+        number_of_digests_accumulated,
+        whether_synthesis_references_all_prior_steps,
+        whether_any_critical_information_was_lost_in_digest_compression
+    ]
+    OUTPUT_FORMAT: {
+        digests_accumulated: NUMBER,
+        all_steps_referenced_in_synthesis: BOOLEAN,
+        information_loss_detected: BOOLEAN,
+        missing_references: LIST OF TEXT,
+        assessment: TEXT
+    }
+END

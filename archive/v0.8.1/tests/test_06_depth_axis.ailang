@@ -1,0 +1,200 @@
+#ailang v0.8.1
+# TEST 06: DEPTH Modifier (Third Axis — SHALLOW / STANDARD / DEEP / EXHAUSTIVE)
+# Purpose: Demonstrate that the DEPTH modifier controls reasoning depth independently
+#          of reasoning type (first axis) and style modifier (second axis).
+#          The same TRACE operation is run four times at increasing depth levels.
+# Measure:
+#   - SHALLOW should produce a quick surface-level root cause (fewest inference steps)
+#   - STANDARD should produce a solid causal chain with reasonable depth
+#   - DEEP should explore secondary causes, contributing factors, and hidden links
+#   - EXHAUSTIVE should leave no stone unturned: all branches, all hypotheses,
+#     all evidence gaps, all counterfactuals
+#   - Token count should increase monotonically: SHALLOW < STANDARD < DEEP < EXHAUSTIVE
+#   - All four runs should converge on the same root cause (or EXHAUSTIVE may reveal
+#     a deeper root cause that shallower runs missed)
+
+# ============================================================
+# SCENARIO: Cybersecurity Breach — Root Cause Analysis
+# ============================================================
+# A financial services company suffered a data breach. The incident timeline
+# below contains 8 entries spanning the attack lifecycle.
+
+SET incident_timeline TO [
+    {
+        timestamp: "2026-01-12T02:14:00Z",
+        event: "Phishing email delivered to accounts-payable@meridianfs.com",
+        details: "Email impersonated CFO requesting urgent wire transfer review. Contained malicious PDF attachment with embedded macro."
+    },
+    {
+        timestamp: "2026-01-12T02:31:00Z",
+        event: "Attachment opened by AP clerk on workstation WS-AP-047",
+        details: "PDF macro executed, dropping a reverse shell payload. Endpoint detection was running signature v3.41 (two versions behind current). The macro used a known CVE-2025-8812 exploit."
+    },
+    {
+        timestamp: "2026-01-12T02:33:00Z",
+        event: "Reverse shell established to C2 server 198.51.100.47",
+        details: "Outbound connection on port 443 passed through firewall. Egress filtering policy allowed all HTTPS traffic without deep packet inspection."
+    },
+    {
+        timestamp: "2026-01-12T03:15:00Z",
+        event: "Lateral movement via Pass-the-Hash from WS-AP-047 to domain controller DC-02",
+        details: "AP clerk account had local admin privileges on their workstation. NTLM hash extracted from memory using Mimikatz. DC-02 accepted NTLM authentication despite Kerberos-only policy being drafted but not yet enforced."
+    },
+    {
+        timestamp: "2026-01-12T04:02:00Z",
+        event: "Domain admin credentials harvested from DC-02",
+        details: "Attacker dumped NTDS.dit database. Three domain admin accounts used passwords that had not been rotated in 18 months, violating the 90-day rotation policy that was documented but unenforced."
+    },
+    {
+        timestamp: "2026-01-12T04:45:00Z",
+        event: "Exfiltration of customer PII database from SQL-PROD-01",
+        details: "Database containing 2.3 million customer records (names, SSNs, account numbers) was compressed and exfiltrated over DNS tunneling. DNS query logging was disabled due to performance concerns raised 6 months earlier."
+    },
+    {
+        timestamp: "2026-01-12T09:00:00Z",
+        event: "SOC analyst noticed anomalous DNS query volume during morning shift",
+        details: "Alert had been generated at 05:12 by SIEM but was classified as low-priority because DNS alerts had a 94% false positive rate. No on-call analyst was assigned to overnight low-priority alerts."
+    },
+    {
+        timestamp: "2026-01-12T11:30:00Z",
+        event: "Incident declared, containment initiated",
+        details: "Full 9-hour gap between initial exfiltration and containment. IR playbook did not include DNS tunneling as an exfiltration vector. Forensics revealed the attacker had been in the network for 9+ hours before detection."
+    }
+]
+
+# ============================================================
+# RUN 1: DEPTH SHALLOW — Surface-level root cause
+# ============================================================
+# Should identify the immediate trigger (phishing email) and
+# perhaps one layer deeper, without exploring systemic issues.
+
+TRACE breach_root_cause_shallow FROM incident_timeline WITH:
+    DEPTH: SHALLOW
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [primary_root_cause, brief_causal_chain]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT },
+        depth_reached: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# RUN 2: DEPTH STANDARD — Solid analytical depth
+# ============================================================
+# Should trace through the attack chain with evidence at each step,
+# identifying the key failures that enabled progression.
+
+TRACE breach_root_cause_standard FROM incident_timeline WITH:
+    DEPTH: STANDARD
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [root_cause, evidence_at_each_step, key_failures]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT, evidence: TEXT },
+        key_failures: LIST OF TEXT,
+        depth_reached: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# RUN 3: DEPTH DEEP — Explore contributing factors and hidden links
+# ============================================================
+# Should go beyond the direct chain to identify systemic weaknesses,
+# process failures, and organizational factors that enabled the breach.
+
+TRACE breach_root_cause_deep FROM incident_timeline WITH:
+    DEPTH: DEEP
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [
+        root_cause,
+        evidence_at_each_step,
+        contributing_systemic_factors,
+        process_failures,
+        what_controls_should_have_prevented_each_step
+    ]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT, evidence: TEXT, missed_control: TEXT },
+        systemic_factors: LIST OF TEXT,
+        process_failures: LIST OF TEXT,
+        depth_reached: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# RUN 4: DEPTH EXHAUSTIVE — Full exploration, all branches
+# ============================================================
+# Should explore every causal path, alternative hypotheses,
+# counterfactual analysis ("if X had been in place, would breach
+# have been prevented?"), evidence gaps, and organizational
+# root causes behind the technical failures.
+
+TRACE breach_root_cause_exhaustive FROM incident_timeline WITH:
+    DEPTH: EXHAUSTIVE
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [
+        root_cause,
+        evidence_at_each_step,
+        all_contributing_factors,
+        alternative_hypotheses,
+        counterfactual_analysis,
+        evidence_gaps,
+        organizational_root_causes,
+        preventability_assessment_per_step,
+        cascading_failure_analysis
+    ]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        deeper_root_cause: TEXT,
+        causal_chain: LIST OF OBJECT {
+            event: TEXT,
+            caused_by: TEXT,
+            evidence: TEXT,
+            missed_control: TEXT,
+            counterfactual: TEXT
+        },
+        alternative_hypotheses: LIST OF OBJECT {
+            hypothesis: TEXT,
+            supporting_evidence: TEXT,
+            refuting_evidence: TEXT,
+            plausibility: QUALITATIVE IN ["high", "moderate", "low"]
+        },
+        systemic_factors: LIST OF TEXT,
+        organizational_root_causes: LIST OF TEXT,
+        evidence_gaps: LIST OF TEXT,
+        cascading_failures: LIST OF OBJECT {
+            failure: TEXT,
+            enabled: TEXT,
+            preventable_by: TEXT
+        },
+        depth_reached: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# VALIDATION: Cross-depth comparison
+# ============================================================
+# Compare all four runs to verify monotonic depth increase
+# and convergence on root cause.
+
+COMPARE depth_comparison AGAINST depth_expectations WITH:
+    DIMENSIONS: [causal_chain_length, factors_identified, hypotheses_explored, token_count]
+    SOURCES: [breach_root_cause_shallow, breach_root_cause_standard, breach_root_cause_deep, breach_root_cause_exhaustive]
+    MUST_INCLUDE: [
+        monotonic_depth_increase,
+        root_cause_convergence,
+        what_exhaustive_found_that_shallow_missed
+    ]
+    OUTPUT_FORMAT: {
+        depth_monotonic: BOOLEAN,
+        root_cause_consistent: BOOLEAN,
+        chain_lengths: OBJECT { shallow: NUMBER, standard: NUMBER, deep: NUMBER, exhaustive: NUMBER },
+        unique_to_exhaustive: LIST OF TEXT,
+        assessment: TEXT
+    }
+END

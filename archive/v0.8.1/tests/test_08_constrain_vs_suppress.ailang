@@ -1,0 +1,212 @@
+#ailang v0.8.1
+# TEST 08: Graduated CONSTRAIN vs Binary SUPPRESS
+# Purpose: Demonstrate that CONSTRAIN provides graduated restriction within
+#          REASONING_PROFILE (limiting HOW a reasoning type operates) whereas
+#          SUPPRESS is binary (the reasoning type is completely disabled).
+# Measure:
+#   - Context 1 (SUPPRESS TRACE): output should contain ZERO causal reasoning
+#   - Context 2 (CONSTRAIN TRACE): output should contain causal reasoning but
+#     ONLY from documented medical records — no speculation, no inference
+#     beyond what the records explicitly state
+#   - Context 3 (no restrictions): output should contain full causal reasoning
+#     including speculative hypotheses and inferred causal links
+#   - All three contexts use the SAME INTELLIGENTLY operation on the SAME case
+
+# ============================================================
+# SCENARIO: Medical Malpractice Case
+# ============================================================
+# A patient underwent a routine laparoscopic cholecystectomy (gallbladder
+# removal) and suffered a bile duct injury. The question is whether the
+# surgeon's actions constituted malpractice.
+
+SET case_facts TO {
+    patient: "Helen Nakamura, age 62, BMI 34, Type 2 diabetes",
+    procedure: "Laparoscopic cholecystectomy for symptomatic cholelithiasis",
+    surgeon: "Dr. Richard Howe, 18 years experience, 1200+ prior cholecystectomies",
+    hospital: "St. Catherine's Regional Medical Center",
+    date: "2025-11-14",
+    incident: "Common bile duct was transected during dissection of Calot's triangle",
+    discovery: "Injury discovered intraoperatively when bile leakage was observed",
+    outcome: "Patient required Roux-en-Y hepaticojejunostomy (reconstruction), 14-day ICU stay, subsequent biliary stricture requiring 3 additional interventions over 8 months"
+}
+
+SET documented_medical_records TO [
+    "Pre-op imaging showed acute cholecystitis with significant pericholecystic inflammation and edema — rated Grade III on Tokyo Guidelines",
+    "Anesthesia record indicates procedure start at 08:15, conversion from laparoscopic to open at 09:42 when injury was identified",
+    "Operative note states: 'Dense adhesions encountered in Calot's triangle. Critical view of safety was attempted but could not be clearly established due to severe inflammation. Decision was made to proceed with dissection.'",
+    "Surgical timeout checklist was completed and documented per hospital protocol",
+    "No intraoperative cholangiogram was performed. Hospital policy states IOC is 'recommended but not required' for difficult cases",
+    "Post-op pathology confirmed acute gangrenous cholecystitis with extensive necrosis",
+    "Nursing notes indicate patient's vitals were stable throughout the procedure until bile leak was detected",
+    "Informed consent document signed by patient includes 'bile duct injury' as a listed risk with estimated incidence of 0.3-0.6%"
+]
+
+SET expert_standard TO "The standard of care for laparoscopic cholecystectomy requires the surgeon to establish the Critical View of Safety (CVS) before clipping or cutting any structures. If the CVS cannot be achieved, the standard of care requires either conversion to open surgery or use of intraoperative cholangiography to confirm anatomy before proceeding."
+
+# ============================================================
+# CONTEXT 1: SUPPRESS TRACE — No causal reasoning permitted
+# ============================================================
+# TRACE is completely disabled. The INTELLIGENTLY operation should route
+# through the PRIMARY type (DEDUCE) and produce a purely rule-based
+# assessment with no causal analysis whatsoever.
+
+DEFINE REALITY_CONTEXT strict_legal_review:
+    WORLDVIEW: "Medical malpractice is determined solely by whether the standard of care was met, assessed through documented evidence and expert testimony"
+    REASONING_PROFILE:
+        PRIMARY: DEDUCE
+        SECONDARY: COMPARE
+        SUPPRESS: [TRACE]
+    END_PROFILE
+    ASSUMPTIONS: [standard_of_care_is_objective, documentation_is_authoritative]
+    VALUE_SYSTEM: [legal_precision, evidentiary_standards, procedural_correctness]
+END_CONTEXT
+
+WITH REALITY_CONTEXT strict_legal_review:
+    INTELLIGENTLY assess_case_suppressed FROM case_facts WITH:
+        SOURCES: [documented_medical_records, expert_standard]
+        MUST_INCLUDE: [
+            standard_of_care_analysis,
+            breach_determination,
+            evidence_evaluation
+        ]
+        OUTPUT_FORMAT: {
+            standard_met: BOOLEAN,
+            breach_finding: TEXT,
+            evidence_basis: LIST OF TEXT,
+            causal_reasoning_present: BOOLEAN,
+            assessment: TEXT,
+            confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+        }
+    END
+END_WITH
+
+# ============================================================
+# CONTEXT 2: CONSTRAIN TRACE — Causal reasoning from records only
+# ============================================================
+# TRACE is permitted but CONSTRAINED to documented_medical_records_only.
+# The engine may perform causal reasoning (e.g., "the failure to achieve
+# CVS led to the bile duct transection") but ONLY if every link in the
+# causal chain is directly supported by a documented medical record.
+# No speculation, no inference beyond records.
+
+DEFINE REALITY_CONTEXT evidence_based_review:
+    WORLDVIEW: "Medical causation must be established through documented clinical evidence"
+    REASONING_PROFILE:
+        PRIMARY: TRACE
+        SECONDARY: DEDUCE
+        CONSTRAIN: TRACE TO "documented_medical_records_only"
+    END_PROFILE
+    ASSUMPTIONS: [clinical_records_are_primary_evidence, causation_requires_documentation]
+    VALUE_SYSTEM: [evidence_based_medicine, documentation_integrity, clinical_accuracy]
+END_CONTEXT
+
+WITH REALITY_CONTEXT evidence_based_review:
+    INTELLIGENTLY assess_case_constrained FROM case_facts WITH:
+        SOURCES: [documented_medical_records, expert_standard]
+        MUST_INCLUDE: [
+            standard_of_care_analysis,
+            breach_determination,
+            causal_chain_from_records,
+            evidence_evaluation
+        ]
+        OUTPUT_FORMAT: {
+            standard_met: BOOLEAN,
+            breach_finding: TEXT,
+            causal_chain: LIST OF OBJECT {
+                cause: TEXT,
+                effect: TEXT,
+                supporting_record: TEXT
+            },
+            speculative_claims_present: BOOLEAN,
+            assessment: TEXT,
+            confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+        }
+    END
+END_WITH
+
+# ============================================================
+# CONTEXT 3: No restrictions — Full causal reasoning
+# ============================================================
+# TRACE is unrestricted. The engine should perform full causal reasoning
+# including speculative hypotheses (e.g., "the surgeon may have been
+# fatigued", "the inflammation may have been worse than imaging suggested")
+# and inferred causal links not directly documented.
+
+DEFINE REALITY_CONTEXT full_clinical_review:
+    WORLDVIEW: "Medical causation involves complex interplay of documented facts, clinical judgment, and plausible inferences"
+    REASONING_PROFILE:
+        PRIMARY: TRACE
+        SECONDARY: DEDUCE
+        SUPPRESS: []
+    END_PROFILE
+    ASSUMPTIONS: [
+        clinical_records_are_starting_point,
+        expert_inference_is_valid,
+        multiple_contributing_factors_are_typical
+    ]
+    VALUE_SYSTEM: [clinical_truth, comprehensive_analysis, patient_safety]
+END_CONTEXT
+
+WITH REALITY_CONTEXT full_clinical_review:
+    INTELLIGENTLY assess_case_unrestricted FROM case_facts WITH:
+        SOURCES: [documented_medical_records, expert_standard]
+        MUST_INCLUDE: [
+            standard_of_care_analysis,
+            breach_determination,
+            full_causal_chain,
+            speculative_hypotheses,
+            contributing_factors,
+            evidence_evaluation
+        ]
+        OUTPUT_FORMAT: {
+            standard_met: BOOLEAN,
+            breach_finding: TEXT,
+            causal_chain: LIST OF OBJECT {
+                cause: TEXT,
+                effect: TEXT,
+                evidence: TEXT,
+                evidence_type: TEXT IN ["documented", "inferred", "speculative"]
+            },
+            speculative_hypotheses: LIST OF OBJECT {
+                hypothesis: TEXT,
+                plausibility: QUALITATIVE IN ["high", "moderate", "low"],
+                basis: TEXT
+            },
+            contributing_factors: LIST OF TEXT,
+            assessment: TEXT,
+            confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+        }
+    END
+END_WITH
+
+# ============================================================
+# VALIDATION: Compare the three approaches
+# ============================================================
+# Verify that SUPPRESS completely eliminated causal reasoning,
+# CONSTRAIN limited it to documented sources, and unrestricted
+# produced the full spectrum.
+
+COMPARE restriction_comparison AGAINST graduated_restriction_criteria WITH:
+    DIMENSIONS: [
+        causal_reasoning_presence,
+        speculation_presence,
+        evidence_sourcing,
+        reasoning_depth
+    ]
+    SOURCES: [assess_case_suppressed, assess_case_constrained, assess_case_unrestricted]
+    MUST_INCLUDE: [
+        whether_suppressed_has_zero_causal_chains,
+        whether_constrained_cites_only_documented_records,
+        whether_unrestricted_includes_speculation,
+        graduated_depth_verification
+    ]
+    OUTPUT_FORMAT: {
+        suppressed_has_causal_reasoning: BOOLEAN,
+        constrained_has_only_documented_sources: BOOLEAN,
+        unrestricted_has_speculative_hypotheses: BOOLEAN,
+        depth_ordering_correct: BOOLEAN,
+        graduated_restriction_working: BOOLEAN,
+        differences_summary: LIST OF TEXT,
+        assessment: TEXT
+    }
+END

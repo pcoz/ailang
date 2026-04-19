@@ -1,0 +1,51 @@
+#ailang v0.8
+# TEST 04: Style Modifier Orthogonality
+# Purpose: Demonstrate that style modifiers (CREATIVELY, ADAPTIVELY, CONTEXTUALLY)
+#          produce meaningfully different results when applied to the SAME reasoning operation
+# Scenario: TRACE the causes of declining customer retention
+
+SET retention_data TO {
+    q1_churn: "4.2%",
+    q2_churn: "5.8%",
+    q3_churn: "7.1%",
+    q4_churn: "9.3%",
+    competitor_entry: "Q2 - new competitor launched with 30% lower pricing",
+    product_changes: "Q3 - removed free tier, added usage-based pricing",
+    support_data: "Average response time increased from 2hrs to 8hrs in Q3",
+    nps_trend: "Dropped from 45 to 22 over the year"
+}
+
+# --- Standard TRACE (analytical, methodical) ---
+TRACE churn_drivers FROM retention_data WITH:
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [evidence_at_each_step, quantified_impact_where_possible]
+    OUTPUT_FORMAT: {
+        causal_chain: LIST OF OBJECT { cause: TEXT, effect: TEXT, evidence: TEXT },
+        root_cause: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# --- CREATIVELY TRACE (look for unconventional causal paths) ---
+CREATIVELY TRACE churn_drivers FROM retention_data WITH:
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [unconventional_hypotheses, hidden_causal_paths, second_order_effects]
+    OUTPUT_FORMAT: {
+        causal_chain: LIST OF OBJECT { cause: TEXT, effect: TEXT, evidence: TEXT },
+        unconventional_insights: LIST OF TEXT,
+        root_cause: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# --- ADAPTIVELY TRACE (adjust depth based on evidence strength) ---
+ADAPTIVELY TRACE churn_drivers FROM retention_data WITH:
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [evidence_quality_assessment_per_step, depth_adjustment_rationale]
+    OUTPUT_FORMAT: {
+        causal_chain: LIST OF OBJECT { cause: TEXT, effect: TEXT, evidence: TEXT, evidence_quality: QUALITATIVE },
+        depth_adjustments: LIST OF TEXT,
+        root_cause: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END

@@ -1,6 +1,6 @@
 **AILang: Complete Language Specification**
 
-**Version 0.7.0**
+**Version 0.7.1**
 
 **Author**: Edward Chalk (fleetingswallow.com)
 
@@ -72,7 +72,7 @@ The power of AILang lies in seamlessly combining these three modes, using each w
 
 ### 1. Data Types and Type System 
 
-AILang uses dynamic typing with intelligent type coercion. The AI automatically handles type conversions when context makes the intent clear.
+AILang uses dynamic typing with intelligent type coercion for compatible types. The AI automatically handles conversions between compatible types (TEXT, NUMBER, BOOLEAN) when context makes intent clear. QUALITATIVE types maintain semantic meaning and do not coerce to numeric values.
 
 #### Fundamental Data Types 
 
@@ -81,7 +81,13 @@ AILang uses dynamic typing with intelligent type coercion. The AI automatically 
 * **NUMBER**: Numeric values (examples: `42`, `3.14`, `-17`)  
     
 * **BOOLEAN**: True/false values (examples: `true`, `false`, `yes`, `no`)  
-    
+
+* **QUALITATIVE**: Opaque semantic labels for qualitative states (e.g., "tense_meeting", "supportive_tone", "fragile_morale").
+  - **Interpretation:** Engines interpret QUALITATIVE values within INTELLIGENT operations and/or an active REALITY_CONTEXT. They are not numeric and carry no inherent scalar.
+  - **Coercion:** No implicit coercion to NUMBER or BOOLEAN. Engines MAY stringify a QUALITATIVE value when a TEXT is explicitly required (e.g., logging, messages).
+  - **Operations:** Equality/inequality comparisons are defined; ordering comparisons are undefined. Rich interpretation occurs via INTELLIGENT logic and the Qualitative Spectrum.
+  - **Serialization:** Represent as TEXT with optional metadata tag `@qual` in environments that support typed metadata.
+
 * **LIST**: Ordered collections (example: `[item1, item2, item3]`)  
     
 * **OBJECT**: Structured containers with properties and methods  
@@ -89,6 +95,48 @@ AILang uses dynamic typing with intelligent type coercion. The AI automatically 
 * **NULL**: Empty or undefined values
 
 The AI may intelligently convert between compatible types when context suggests it's appropriate, such as converting `"true"` to boolean `true` or `"42"` to numeric `42`.
+
+#### Type Constraint Grammar
+
+AILang supports lightweight type constraints in structured schemas (e.g., OUTPUT_FORMAT) and declarations:
+
+**Enum (set) constraint**  
+`<Type> IN ["lit1","lit2", ...]`  
+Example: `QUALITATIVE IN ["supportive","neutral","hostile"]`
+
+**Parametric list**  
+`LIST OF <Type>`  
+Example: `LIST OF QUALITATIVE`, `LIST OF TEXT`
+
+**Typed object fields**  
+`OBJECT { field1: <Type>, field2: <Constraint>, ... }`
+
+**Validation:** Engines SHOULD validate these constraints deterministically when constructing or emitting such structures (e.g., populating `OUTPUT_FORMAT`).
+
+**Examples:**
+
+```ailang
+# Constrained qualitative enum
+OUTPUT_FORMAT: {
+  mood: QUALITATIVE IN ["tense","neutral","relaxed"],
+  confidence: TEXT IN ["high","moderate","low"]
+}
+
+# Typed list
+OUTPUT_FORMAT: {
+  tags: LIST OF QUALITATIVE,
+  scores: LIST OF NUMBER
+}
+
+# Typed object structure
+OUTPUT_FORMAT: OBJECT {
+  state: QUALITATIVE IN ["stable","strained","critical"],
+  metrics: OBJECT {
+    count: NUMBER,
+    notes: LIST OF TEXT
+  }
+}
+```
 
 ### 2. Variable Operations 
 
@@ -187,6 +235,36 @@ All comparisons return boolean values (true/false):
 * `[value1] LESS THAN [value2]` or `[value1] < [value2]`
 * `[value1] GREATER THAN OR EQUAL TO [value2]` or `[value1] >= [value2]`
 * `[value1] LESS THAN OR EQUAL TO [value2]` or `[value1] <= [value2]`
+
+#### QUALITATIVE Type Operations
+
+**Equality Operations:**  
+`[q1] EQUALS [q2]` and `[q1] != [q2]` are defined for QUALITATIVE values (label-based equality).
+
+**Ordering Operations:**  
+Ordering operators (`>`, `<`, `>=`, `<=`) are **undefined** for QUALITATIVE values. To establish ordering, define an explicit mapping function.
+
+**String Conversion:**  
+QUALITATIVE values MAY be converted to TEXT for display or logging purposes, but retain their semantic type for operations.
+
+**Examples:**
+
+```ailang
+SET mood1 TO "tense"
+SET mood2 TO "tense"
+SET mood3 TO "relaxed"
+
+IF mood1 EQUALS mood2 THEN:  # Valid - true
+  LOG "Moods match"
+END_IF
+
+IF mood1 != mood3 THEN:  # Valid - true
+  LOG "Different moods"
+END_IF
+
+# INVALID - will produce error:
+# IF mood1 > mood3 THEN:  # Error: ordering not defined
+```
 
 #### Logical Operators
 
@@ -357,6 +435,38 @@ MATCH [value] WITH:
 END_MATCH
 ```
 
+**Pattern Matching with QUALITATIVE:**
+
+QUALITATIVE values can be matched using label equality:
+
+```ailang
+SET customer_mood TO "frustrated"
+
+MATCH customer_mood WITH:
+  CASE "angry":
+    SET response_urgency TO "immediate"
+  CASE "frustrated":
+    SET response_urgency TO "high"
+  CASE "neutral":
+    SET response_urgency TO "standard"
+  CASE "satisfied":
+    SET response_urgency TO "low"
+  DEFAULT:
+    SET response_urgency TO "standard"
+END_MATCH
+```
+
+For families of labels, use set membership:
+
+```ailang
+SET mood TO "frustrated"
+SET negative_moods TO ["angry", "frustrated", "disappointed"]
+
+IF mood IN negative_moods THEN:
+  ESCALATE support_request
+END_IF
+```
+
 ### 6. Procedures and Functions
 
 Procedures encapsulate reusable logic with parameters and return values.
@@ -397,6 +507,29 @@ END_PROCEDURE
 ```
 #ailang
 CALL [procedure_name] WITH [arguments]
+```
+
+#### Procedures with QUALITATIVE Parameters and Returns
+
+Procedures MAY accept and return QUALITATIVE values. See (QUALITATIVE type) and (interface patterns) for correct handling and bridging to CODE.
+
+```ailang
+DEFINE PROCEDURE assess_response_strategy WITH PARAMETERS [mood: QUALITATIVE]:
+  MATCH mood WITH:
+    CASE "tense":
+      RETURN "de-escalate_and_validate"
+    CASE "neutral":
+      RETURN "proceed_normally"
+    CASE "relaxed":
+      RETURN "compress_timeline"
+    DEFAULT:
+      RETURN "seek_clarification"
+  END_MATCH
+END_PROCEDURE
+
+# Usage
+SET customer_state TO "tense"
+SET strategy TO assess_response_strategy(customer_state)
 ```
 
 ### 7. Object Management
@@ -497,6 +630,7 @@ ADAPTIVELY handle_errors WHEN standard_procedures_fail
 ##### `CONTEXTUALLY`
 
 Make decisions using calculated program state:
+**Specification:** `CONTEXTUALLY` is equivalent to `INTELLIGENTLY` with a requirement to use the **current program state** (variables, prior results, and any active `REALITY_CONTEXT`); it introduces no new boundary keys.
 
 ```
 #ailang
@@ -550,6 +684,30 @@ INTELLIGENTLY generate_response WITH:
     OUTPUT_FORMAT: professional_email
     MAX_SCOPE: current_incident_only
 END
+```
+
+#### QUALITATIVE Value Interpretation
+
+When inputs contain QUALITATIVE values, INTELLIGENT operations MUST ground interpretation in the active REALITY_CONTEXT and report confidence via categorical levels where requested.
+
+Engines MUST NOT invent numeric codings for QUALITATIVE values unless explicitly performing parameter exploration.
+
+**Example:**
+
+```ailang
+SET stakeholder_sentiment TO "cautiously optimistic"
+
+WITH REALITY_CONTEXT project_planning:
+  INTELLIGENTLY assess_timeline_risk FROM stakeholder_sentiment WITH:
+    MUST_INCLUDE: [risk_level, factors]
+    OUTPUT_FORMAT: {
+      risk: QUALITATIVE IN ["low","moderate","high","critical"],
+      factors: LIST OF TEXT,
+      confidence_level: TEXT IN ["high","moderate","low"]
+    }
+    MAX_SCOPE: timeline_risk_assessment
+  END
+END_WITH
 ```
 
 #### Gap-Filling Syntax
@@ -686,6 +844,47 @@ END_WITH
 # Or for single operations:
 WITHIN [context_name] DO [operation]
 ```
+**Syntax:** `WITHIN <context> DO <stmt>` is a single-statement form.
+`WITHIN <context>:` introduces a block terminated by `END`. Parsers **MUST** accept both forms.
+##### Context Resolution Precedence
+
+When multiple reality contexts could potentially apply to an operation, engines MUST resolve precedence as follows (highest to lowest priority):
+
+1. **Block context** - Explicit `WITH REALITY_CONTEXT ... END_WITH` block enclosing the operation
+2. **Single-operation context** - `WITHIN context DO operation` applied to the specific operation
+3. **Person default context** - `default_reality_context` property of a Person entity performing the operation
+4. **Global program default** - Program-level default context if specified
+
+**Example demonstrating precedence:**
+
+```
+#ailang
+# Program default (lowest priority)
+SET PROGRAM_DEFAULT_CONTEXT TO general_professional
+
+# Person with default context
+CREATE Person analyst WITH:
+    default_reality_context: financial_analysis
+END_CREATE
+
+# Person's default context applies here (priority 3)
+analyst.INTELLIGENTLY evaluate_investment
+# Uses financial_analysis context
+
+# Block context overrides person default (priority 1)
+WITH REALITY_CONTEXT legal_compliance:
+    analyst.INTELLIGENTLY evaluate_investment
+    # Uses legal_compliance context, not financial_analysis
+END_WITH
+
+# Single-operation context (priority 2)
+WITHIN risk_management DO:
+    analyst.INTELLIGENTLY evaluate_investment
+END
+# Uses risk_management context
+```
+
+**Specification**: Engines MUST apply the highest-priority context that is active for the operation. Lower-priority contexts are ignored when a higher-priority context is present.
 
 ##### Example: Multiple Reality Contexts
 
@@ -697,25 +896,37 @@ SET customer_complaint TO "This product doesn't work as advertised"
 
 WITH REALITY_CONTEXT legal_reality:
     # Legal framework sees potential liability
-    INTELLIGENTLY assess_situation
+    INTELLIGENTLY assess_situation WITH:
+        OUTPUT_FORMAT: {assessment: TEXT}
+        MAX_SCOPE: legal_implications
+    END
     # Might conclude: "Potential breach of warranty claim requiring documentation"
 END_WITH
 
 WITH REALITY_CONTEXT customer_service_reality:
     # Service framework sees relationship issue
-    INTELLIGENTLY assess_situation
+    INTELLIGENTLY assess_situation WITH:
+        OUTPUT_FORMAT: {assessment: TEXT}
+        MAX_SCOPE: customer_relationship
+    END
     # Might conclude: "Customer feels unheard and needs validation"
 END_WITH
 
 WITH REALITY_CONTEXT engineering_reality:
     # Engineering framework sees specification mismatch
-    INTELLIGENTLY assess_situation  
+    INTELLIGENTLY assess_situation WITH:
+        OUTPUT_FORMAT: {assessment: TEXT}
+        MAX_SCOPE: product_specifications
+    END
     # Might conclude: "User expectations don't match design parameters"
 END_WITH
 
 WITH REALITY_CONTEXT startup_reality:
     # Startup framework sees product-market fit signal
-    INTELLIGENTLY assess_situation
+    INTELLIGENTLY assess_situation WITH:
+        OUTPUT_FORMAT: {assessment: TEXT}
+        MAX_SCOPE: product_market_fit
+    END
     # Might conclude: "Valuable feedback for next iteration pivot"
 END_WITH
 ```
@@ -1109,32 +1320,98 @@ END_META_CONTEXT
 
 Reality contexts fundamentally change how intelligent operations interpret and respond to situations. They provide the qualitative boundaries that make AI behavior coherent within specific domains of meaning while maintaining the flexibility to shift perspectives when appropriate. This creates AI systems that can truly operate within human social, cultural, and professional contexts rather than merely processing them from the outside.
 
+---
+
 ### 10. Confidence Levels and Action Authority
 
-AILang supports explicit confidence levels for intelligent operations that determine action authority.
+AILang supports explicit confidence levels for intelligent operations that inform action authority. Confidence is reported through the output structure rather than declared as a separate control parameter.
 
 #### Confidence Declaration
+
+Confidence is requested as part of the OUTPUT_FORMAT structure:
 
 ```
 #ailang
 INTELLIGENTLY assess_situation WITH:
-    OUTPUT: assessment
-    CONFIDENCE_LEVEL: [high|moderate|low]
-    ALTERNATIVE_INTERPRETATIONS: [list_of_possibilities]
+    MUST_INCLUDE: [key_factors, assessment_basis]
+    OUTPUT_FORMAT: {
+        assessment: TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"],
+        alternative_interpretations: LIST,
+        reasoning: TEXT
+    }
+    MAX_SCOPE: situation_assessment
 END
 ```
 
+**Specification**: Engines MUST populate the `confidence_level` field when requested in OUTPUT_FORMAT. The field accepts three categorical values:
+- `"high"` - Assessment grounded in observable phenomena or clear evidence
+- `"moderate"` - Assessment based on reasonable inference with some uncertainty
+- `"low"` - Assessment involving significant interpretation or limited evidence
+
+The AI determines the appropriate confidence level based on the observable-interpretive spectrum (see Section 11).
+
 #### Confidence-Based Branching
+
+Programs can branch on the categorical confidence level returned in the output:
 
 ```
 #ailang
-IF interpretation_confidence < high THEN:
-    CONFIRM WITH user: "I understand [interpretation]. Is this correct?"
+INTELLIGENTLY assess_situation WITH:
+    OUTPUT_FORMAT: {
+        interpretation: TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"]
+    }
+    MAX_SCOPE: current_situation
+END
+
+IF assessment.confidence_level EQUALS "low" THEN:
+    CONFIRM WITH user: "I understand [assessment.interpretation]. Is this correct?"
     WAIT for_confirmation BEFORE proceeding
+ELSE IF assessment.confidence_level EQUALS "moderate" THEN:
+    LOG "Proceeding with moderate confidence"
+    PROCEED WITH assessment.interpretation
+ELSE IF assessment.confidence_level EQUALS "high" THEN:
+    PROCEED WITH assessment.interpretation
 END_IF
 ```
 
-**Specification**: Lower confidence assessments require tighter boundaries and often user confirmation before significant actions.
+**Specification**: Lower confidence assessments typically require tighter boundaries and often user confirmation before significant actions. Programs should branch on categorical confidence levels (`"high"`, `"moderate"`, `"low"`) rather than numeric thresholds.
+
+#### Confidence and Action Authority
+
+The confidence level informs what actions are appropriate:
+
+```
+#ailang
+INTELLIGENTLY assess_emotional_state FROM behavior WITH:
+    OUTPUT_FORMAT: {
+        state: TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"],
+        indicators: LIST
+    }
+    MAX_SCOPE: observable_behavior
+END
+
+# High confidence (observable phenomena) - direct action may be appropriate
+IF emotional_assessment.state EQUALS "distressed" AND emotional_assessment.confidence_level EQUALS "high" THEN:
+    OFFER support_resources
+    SAY "I can see you're upset. Would you like to talk?"
+END_IF
+
+# Low confidence (interpretive) - constrained action authority
+IF emotional_assessment.state EQUALS "depressed" AND emotional_assessment.confidence_level EQUALS "low" THEN:
+    ONLY SUGGEST: "Is everything okay? I'm here if you want to talk."
+    CANNOT:
+        - diagnose_condition
+        - prescribe_treatment
+        - assume_underlying_causes
+END_IF
+```
+
+**Specification**: Observable assessments (typically yielding high confidence) can authorize more direct actions. Interpretive assessments (typically yielding moderate or low confidence) should restrict to suggestions and require tighter boundaries.
+
+---
 
 ### 11. The Qualitative Spectrum
 
@@ -1179,6 +1456,9 @@ END_IF
 ```
 
 **Specification**: The AI must recognize where assessments fall on the observable–interpretive spectrum and adjust confidence levels and action boundaries accordingly.
+Engines **SHOULD** map *observable* assessments to `"high"` confidence by default, and *interpretive* assessments to `"moderate"` or `"low"` depending on inference depth.
+
+---
 
 ### 12. Code Execution Blocks
 
@@ -1262,6 +1542,120 @@ END_IF
 * Collections (lists, dictionaries): structure-preserving conversion
 * Complex objects: serialize with schema preservation
 * Ambiguous cases: AI provides reasonable defaults with explicit documentation
+
+---
+
+#### Serialization of QUALITATIVE Values
+
+When passing values across execution boundaries (e.g., from DETERMINISTIC to CODE blocks, or in API responses), QUALITATIVE values are serialized as TEXT with optional metadata `@qual` to preserve type information.
+
+##### In CODE Blocks
+
+QUALITATIVE values are accessible as string representations:
+
+```ailang
+SET mood TO "frustrated_but_polite"
+
+EXECUTE_CODE python:
+  # mood is received as a string
+  mood_text = mood  # "frustrated_but_polite"
+  has_frustration = "frustrated" in mood_text
+  word_count = len(mood_text.split('_'))
+  
+  # String operations are valid
+  words = mood_text.split('_')
+  first_word = words[0]  # "frustrated"
+  
+  # But don't assign semantic meaning in CODE
+  # ❌ WRONG: mood_score = 0.3  # arbitrary mapping
+END_EXECUTE
+```
+
+##### Metadata Preservation
+
+In environments that support typed metadata, QUALITATIVE values include a `@qual` tag:
+
+```
+# Serialization format (conceptual)
+{
+  "value": "frustrated_but_polite",
+  "@type": "qualitative",
+  "@qual": true
+}
+```
+
+**Consumers lacking type metadata** MUST treat QUALITATIVE values as TEXT with no numeric assumptions. They should not attempt to:
+- Convert to numeric scales
+- Apply ordering comparisons
+- Perform arithmetic operations
+- Assume any inherent quantitative meaning
+
+##### Semantic Interpretation
+
+For semantic interpretation of QUALITATIVE values, use INTELLIGENT operations:
+
+```ailang
+SET mood TO "frustrated_but_polite"
+
+# ❌ WRONG - Don't try semantic analysis in CODE
+EXECUTE_CODE python:
+  # This loses the semantic richness:
+  if "frustrated" in mood:
+    emotion_level = 0.3
+END_EXECUTE
+
+# ✓ CORRECT - Use INTELLIGENT operations for semantics
+INTELLIGENTLY categorize_emotion FROM mood WITH:
+  OUTPUT_FORMAT: {
+    primary_emotion: TEXT,
+    intensity: TEXT IN ["low","moderate","high"],
+    secondary_traits: LIST OF TEXT,
+    confidence_level: TEXT IN ["high","moderate","low"]
+  }
+  MAX_SCOPE: emotional_assessment
+END
+
+# Now you can use the structured interpretation
+IF emotion_analysis.intensity EQUALS "high" THEN:
+  SET priority TO "urgent"
+END_IF
+```
+
+##### Cross-Boundary Pattern
+
+```ailang
+# QUALITATIVE reasoning in INTELLIGENT mode
+SET customer_state TO "at_risk_but_engaged"
+
+# Qualitative interpretation
+INTELLIGENTLY assess_retention_strategy FROM customer_state WITH:
+  OUTPUT_FORMAT: {
+    approach: TEXT,
+    urgency: TEXT IN ["low","medium","high","critical"],
+    recommended_actions: LIST OF TEXT
+  }
+END
+
+# String handling in CODE (where appropriate)
+EXECUTE_CODE python:
+  # Simple string operations are fine
+  state_words = customer_state.split('_')
+  log_entry = f"Customer state: {customer_state}"
+  
+  # But don't invent meanings:
+  # ❌ WRONG: risk_score = 0.7 if "at_risk" in customer_state else 0.3
+END_EXECUTE
+
+# Back to qualitative reasoning for decisions
+IF retention_strategy.urgency IN ["high","critical"] THEN:
+  ASSIGN account_manager
+  SCHEDULE immediate_outreach
+END_IF
+```
+
+**Specification:** Engines MUST preserve the semantic type boundary when serializing QUALITATIVE values. While the value may be represented as a string for technical reasons, its QUALITATIVE nature should be preserved through metadata where possible, and engines should not provide implicit numeric conversions at serialization boundaries.
+
+---
 
 ### 13. The Qualitative-Quantitative Interface
 Managing data flow across the qualitative-quantitative boundary **is the fundamental challenge in hybrid AI-code systems.** This is because:
@@ -1632,6 +2026,204 @@ END_EXECUTE
 * Identifying operational regimes and phase transitions
 * Multiple parameters interact in complex ways
 * The "right" value depends on trade-offs rather than calculation
+
+#### QUALITATIVE to CODE Bridge
+
+When CODE blocks require numeric values but the program works with QUALITATIVE labels, programs SHOULD use one of two principled approaches:
+
+##### Option 1: Parameter Exploration (Recommended)
+
+Scan plausible numeric ranges and let AI interpret regimes across the parameter space:
+
+```ailang
+SET stakeholder_trust TO "high_trust"  # QUALITATIVE
+
+INTELLIGENTLY EXPLORE trust_scenarios:
+  PARAMETERS:
+    assumed_trust_scalar: [0.55, 0.65, 0.75, 0.85]  # candidate mappings
+  
+  EXECUTE_CODE python:
+    outcomes = {t: simulate_project(success_factor=t) 
+                for t in assumed_trust_scalar}
+  END_EXECUTE
+  
+  ANALYZE:
+    "Results are robust in 0.65–0.75 range; below 0.6 success drops sharply.
+     High trust (0.75+) provides marginal additional benefit.
+     
+     Recommended mapping: use 0.70 as proxy for 'high_trust' in quantitative
+     modeling, with sensitivity analysis showing ±0.05 variation has minimal
+     impact on outcomes."
+END_EXPLORE
+
+# Use the AI-validated mapping
+SET trust_proxy TO 0.70
+EXECUTE_CODE python:
+  final_result = simulate_project(success_factor=trust_proxy)
+END_EXECUTE
+```
+
+**Why this approach works:**
+- Explores multiple candidate mappings rather than guessing a single value
+- Lets AI identify robust ranges and sensitivity thresholds
+- Makes the qualitative-to-quantitative translation explicit and documented
+- Preserves the semantic boundary between qualitative reasoning and numeric computation
+- Provides rationale for the chosen numeric proxy
+
+##### Option 2: Explicit Domain Mapping
+
+When domain knowledge or empirical data establishes a validated mapping, provide an explicit conversion function:
+
+```ailang
+DEFINE PROCEDURE map_trust_to_scalar WITH PARAMETERS [trust_label: QUALITATIVE]:
+  # Mapping based on empirical study (Smith et al., 2024):
+  # Survey of 500 projects correlated trust assessments with success factors
+  
+  MATCH trust_label WITH:
+    CASE "no_trust":       RETURN 0.15  # Based on failed collaboration data
+    CASE "low_trust":      RETURN 0.30  # Limited information sharing observed
+    CASE "medium_trust":   RETURN 0.60  # Standard project execution baseline
+    CASE "high_trust":     RETURN 0.80  # Enhanced collaboration metrics
+    CASE "complete_trust": RETURN 0.95  # Rare, exceptional partnership data
+    DEFAULT:               RETURN 0.50  # Conservative fallback
+  END_MATCH
+END_PROCEDURE
+
+# Usage with explicit documentation
+SET trust_state TO "high_trust"
+SET trust_scalar TO map_trust_to_scalar(trust_state)
+
+LOG "Mapping qualitative trust '" + trust_state + "' to scalar " + trust_scalar
+
+EXECUTE_CODE python:
+  result = simulate_project(success_factor=trust_scalar)
+END_EXECUTE
+```
+
+**When to use explicit mapping:**
+- Empirical data validates the numeric mapping
+- Domain has established conventions (e.g., industry standards)
+- The mapping is stable and well-understood across contexts
+- Deterministic behavior is required for repeatability
+- The mapping function can be documented and justified
+
+##### Complete Example: Market Sentiment in Investment Model
+
+```ailang
+# Qualitative market assessment
+SET market_sentiment TO "cautiously_optimistic_with_high_volatility"
+SET competitive_pressure TO "increasing"
+
+# Bridge to quantitative model via exploration
+INTELLIGENTLY EXPLORE sentiment_impact:
+  PARAMETERS:
+    sentiment_factor: [0.4, 0.6, 0.8, 1.0, 1.2]
+    volatility_factor: [1.0, 1.3, 1.5, 1.8, 2.0]
+  
+  EXECUTE_CODE python:
+    import numpy as np
+    results = {}
+    
+    for sent in sentiment_factor:
+      for vol in volatility_factor:
+        # Sentiment affects expected return
+        expected_return = 0.08 * sent
+        
+        # Volatility affects risk
+        volatility = 0.15 * vol
+        
+        # Calculate risk-adjusted metrics
+        sharpe = expected_return / volatility if volatility > 0 else 0
+        var_95 = expected_return - (1.645 * volatility)
+        
+        results[(sent, vol)] = {
+          'return': expected_return,
+          'volatility': volatility,
+          'sharpe': sharpe,
+          'var_95': var_95
+        }
+  END_EXECUTE
+  
+  ANALYZE:
+    "SENTIMENT FACTOR ANALYSIS:
+     - Below 0.6: Over-weights caution, misses realistic upside
+     - 0.8-1.0: Appropriate balance for 'cautiously optimistic'
+     - Above 1.0: Ignores volatility concerns, too aggressive
+     
+     VOLATILITY FACTOR ANALYSIS:
+     - Below 1.3: Underestimates current market turbulence
+     - 1.5-1.8: Reflects 'high volatility' environment
+     - Above 1.8: Overly conservative, paralyzes strategy
+     
+     RECOMMENDED PARAMETERS:
+     - Sentiment factor: 0.85 (cautiously optimistic)
+     - Volatility factor: 1.6 (high volatility acknowledged)
+     
+     ROBUSTNESS: Results stable in sentiment [0.80-0.90] and
+     volatility [1.5-1.7] ranges. Sharp regime change at volatility > 1.8
+     (Sharpe ratio drops below 0.3, questioning viability)."
+END_EXPLORE
+
+# Apply validated parameters
+SET sentiment_param TO 0.85
+SET volatility_param TO 1.6
+
+EXECUTE_CODE python:
+  portfolio_weights = optimize_portfolio(
+    expected_sentiment=sentiment_param,
+    volatility_multiplier=volatility_param,
+    risk_tolerance=0.15
+  )
+  
+  expected_return = calculate_expected_return(portfolio_weights)
+  portfolio_risk = calculate_risk(portfolio_weights)
+END_EXECUTE
+
+# Interpret results qualitatively
+INTELLIGENTLY INTERPRET portfolio_results WITH:
+  CONTEXT: market_sentiment, competitive_pressure, client_risk_profile
+  OUTPUT_FORMAT: {
+    recommendation: TEXT,
+    rationale: TEXT,
+    risk_assessment: QUALITATIVE IN ["low","moderate","high","excessive"],
+    confidence_level: TEXT IN ["high","moderate","low"]
+  }
+END
+```
+
+##### Prohibited Pattern: Silent Coercion
+
+**❌ NEVER do this:**
+
+```ailang
+SET mood TO "tense"  # QUALITATIVE
+
+# WRONG - Implicit, undocumented numeric conversion
+EXECUTE_CODE python:
+  # This mapping is invisible to the program reader:
+  mood_map = {"relaxed": 1, "neutral": 0.5, "tense": 0}
+  score = mood_map.get(mood, 0.5)
+  result = calculate_something(score)
+END_EXECUTE
+```
+
+**Why this is prohibited:**
+- The mapping is hidden from anyone reading the program
+- No rationale for the numeric values (why is "relaxed" = 1?)
+- Loses all semantic richness of the QUALITATIVE type
+- Makes debugging and auditing impossible
+- Violates the purpose of having QUALITATIVE as a distinct type
+- Creates maintenance burden (hidden magic numbers)
+
+**Specification Requirement:**
+
+Silent, ad hoc scalarization of QUALITATIVE values by the engine or in CODE blocks is **not permitted**. Programs MUST explicitly handle the conversion using either:
+1. Parameter Exploration (INTELLIGENTLY EXPLORE), or
+2. An explicit, documented mapping function (DEFINE PROCEDURE)
+
+Engines MUST NOT provide implicit numeric coercion for QUALITATIVE values, even when CODE blocks require numeric inputs.
+
+---
 
 ### 14. Mathematical Operations
 Complex mathematical operations should generally be implemented in executable code rather than as natural language constructs. This provides:

@@ -262,7 +262,7 @@ CLASS ExperienceSystem:
                 ACUITY: this.acuity
                 FOV: this.field_of_view
                 COLOR: this.color_perception
-                DEPTH: this.depth_perception
+                DEPTH_PERCEPTION: this.depth_perception
                 LIGHT: this.light_sensitivity
                 PROCESSING: this.visual_processing
                 ATTENTION: current_attention_state

@@ -1,0 +1,130 @@
+#ailang v0.8.1
+# TEST 05: WITHOUT_RETRIEVAL Modifier
+# Purpose: Demonstrate that WITHOUT_RETRIEVAL skips the ~865 base retrieval
+#          neurons when all necessary data is already present in variables.
+# Measure:
+#   - Both runs should reach the SAME conclusion (correctness check)
+#   - Run B (WITHOUT_RETRIEVAL) should show lower token usage / faster latency
+#     because the retrieval neuron population is not activated
+#   - Run B should NOT inject external knowledge — it must reason ONLY from
+#     the premises supplied in variables
+
+# ============================================================
+# SCENARIO: Employment Law — Was the Termination Lawful?
+# ============================================================
+# A mid-level employee was terminated after reporting safety violations.
+# We provide all relevant legal premises as SET statements so the engine
+# has everything it needs in-context.
+
+SET premise_1 TO "Under the Whistleblower Protection Act, an employer may not discharge an employee in retaliation for reporting workplace safety violations to a government agency."
+SET premise_2 TO "The burden of proof falls on the employer to demonstrate that the termination would have occurred regardless of the protected activity."
+SET premise_3 TO "A temporal proximity of less than 90 days between the protected activity and the adverse action creates a rebuttable presumption of retaliation."
+SET premise_4 TO "An employee's documented performance deficiencies that predate the protected activity may constitute a legitimate non-retaliatory basis for termination."
+SET premise_5 TO "If the employer's stated reason for termination is shown to be pretextual, the presumption of retaliation stands unrebutted."
+SET premise_6 TO "Pretext is established when the employer's explanation is inconsistent with the documented record or when similarly situated employees who did not engage in protected activity were treated more favorably."
+
+SET case_facts TO {
+    employee: "Marcus Rivera, Quality Assurance Supervisor",
+    employer: "Pinnacle Chemical Corp.",
+    protected_activity: "Filed OSHA complaint on March 3 regarding improper storage of hazardous materials",
+    termination_date: "April 28 — 56 days after OSHA complaint",
+    stated_reason: "Chronic tardiness and failure to meet quarterly targets",
+    performance_record: "All performance reviews rated 'meets expectations' or above for 4 years prior to complaint; no documented tardiness warnings before March 15",
+    comparator_evidence: "Two other supervisors with documented tardiness records exceeding Rivera's were not terminated or disciplined",
+    employer_defense: "Company was undergoing a restructuring that eliminated Rivera's position"
+}
+
+# ============================================================
+# RUN A: Standard DEDUCE (with retrieval layer active)
+# ============================================================
+# The engine may activate retrieval neurons to pull in background
+# knowledge about employment law, OSHA regulations, etc.
+
+DEDUCE termination_legality_with_retrieval FROM [premise_1, premise_2, premise_3, premise_4, premise_5, premise_6] WITH:
+    APPLY_TO: case_facts
+    MUST_INCLUDE: [
+        each_inference_step,
+        which_premises_apply,
+        temporal_proximity_analysis,
+        pretext_analysis,
+        comparator_analysis,
+        final_conclusion_with_validity
+    ]
+    CANNOT_INCLUDE: [assumptions_not_in_premises]
+    OUTPUT_FORMAT: {
+        conclusion: TEXT IN ["termination_lawful", "termination_unlawful", "insufficient_evidence"],
+        inference_chain: LIST OF OBJECT {
+            step: NUMBER,
+            premise_applied: TEXT,
+            finding: TEXT
+        },
+        temporal_proximity_met: BOOLEAN,
+        pretext_established: BOOLEAN,
+        employer_defense_valid: BOOLEAN,
+        overall_validity: BOOLEAN,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# RUN B: DEDUCE WITHOUT_RETRIEVAL (retrieval layer skipped)
+# ============================================================
+# Identical operation but with WITHOUT_RETRIEVAL modifier.
+# The engine MUST NOT activate the ~865 retrieval neurons.
+# All reasoning must come exclusively from the supplied premises
+# and case_facts — no external knowledge injection.
+
+DEDUCE WITHOUT_RETRIEVAL termination_legality_no_retrieval FROM [premise_1, premise_2, premise_3, premise_4, premise_5, premise_6] WITH:
+    APPLY_TO: case_facts
+    MUST_INCLUDE: [
+        each_inference_step,
+        which_premises_apply,
+        temporal_proximity_analysis,
+        pretext_analysis,
+        comparator_analysis,
+        final_conclusion_with_validity
+    ]
+    CANNOT_INCLUDE: [assumptions_not_in_premises]
+    OUTPUT_FORMAT: {
+        conclusion: TEXT IN ["termination_lawful", "termination_unlawful", "insufficient_evidence"],
+        inference_chain: LIST OF OBJECT {
+            step: NUMBER,
+            premise_applied: TEXT,
+            finding: TEXT
+        },
+        temporal_proximity_met: BOOLEAN,
+        pretext_established: BOOLEAN,
+        employer_defense_valid: BOOLEAN,
+        overall_validity: BOOLEAN,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# VALIDATION: Compare the two runs
+# ============================================================
+# Both runs should reach the same legal conclusion because
+# the premises are self-contained and sufficient.
+# The key measurements are:
+#   1. Conclusion equivalence — do both runs agree?
+#   2. Inference chain alignment — do both follow the same logical steps?
+#   3. Token/latency delta — Run B should be measurably faster
+#   4. Knowledge leakage — Run B must NOT reference external law
+#      (e.g., citing specific case law or statutes not in the premises)
+
+COMPARE run_comparison AGAINST equivalence_criteria WITH:
+    DIMENSIONS: [conclusion_match, inference_alignment, external_knowledge_leakage]
+    SOURCES: [termination_legality_with_retrieval, termination_legality_no_retrieval]
+    MUST_INCLUDE: [
+        whether_conclusions_match,
+        any_steps_that_differ,
+        any_external_knowledge_in_run_b
+    ]
+    OUTPUT_FORMAT: {
+        conclusions_match: BOOLEAN,
+        inference_steps_aligned: BOOLEAN,
+        external_knowledge_detected_in_run_b: BOOLEAN,
+        differences_found: LIST OF TEXT,
+        assessment: TEXT
+    }
+END

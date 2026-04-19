@@ -1,0 +1,289 @@
+#ailang v0.8.1
+# TEST 09: THEN Chaining — Atomic Compound Operations
+# Purpose: Demonstrate that THEN chains multiple operations atomically
+#          without requiring intermediate variables. The output of the
+#          left-hand operation flows directly as input to the right-hand
+#          operation via the implicit RESULT reference.
+# Measure:
+#   - Each chain should execute as a single atomic unit
+#   - No intermediate variable assignments should be needed
+#   - RESULT should correctly carry the left-hand output to the right-hand input
+#   - Three-step chains should work (RESULT updates at each step)
+#   - Results should be equivalent to manually piping through SET/variables
+
+# ============================================================
+# SCENARIO 1: Tax Regulation Lookup + Deduction
+# ============================================================
+# Retrieve tax regulations, then deduce which ones apply to a
+# specific company profile — all in one atomic chain.
+
+SET company_profile TO {
+    name: "Cascade Timber Holdings LLC",
+    structure: "Multi-member LLC taxed as S-Corp",
+    state: "Oregon",
+    annual_revenue: 12500000,
+    employees: 47,
+    has_foreign_operations: false,
+    uses_accelerated_depreciation: true,
+    has_qualified_opportunity_zone_investments: true,
+    fiscal_year_end: "December 31",
+    r_and_d_expenditure: 340000
+}
+
+SET tax_premises TO [
+    "S-Corps must file Form 1120-S and issue K-1s to all shareholders",
+    "Oregon has no general sales tax but imposes a Corporate Activity Tax (CAT) on businesses with Oregon commercial activity exceeding 1M",
+    "The CAT rate is 0.57% on taxable commercial activity above 1M after a 35% subtraction",
+    "Qualified Opportunity Zone investments allow deferral of capital gains until December 31, 2026",
+    "The R&D tax credit under IRC Section 41 allows eligible small businesses to offset up to 250K in payroll taxes",
+    "Accelerated depreciation under Section 168(k) allows 80% first-year bonus depreciation for assets placed in service in 2026",
+    "Oregon timber operations may qualify for additional depletion deductions under IRC Section 611"
+]
+
+# THEN chain: RETRIEVE regulations -> DEDUCE applicability
+RETRIEVE applicable_tax_regulations FOR timber_llc_s_corp WITH:
+    DOMAIN: "US federal and Oregon state tax law"
+    MUST_INCLUDE: [filing_requirements, available_credits, state_specific_obligations]
+    OUTPUT_FORMAT: {
+        federal_requirements: LIST OF TEXT,
+        state_requirements: LIST OF TEXT,
+        available_credits: LIST OF TEXT,
+        special_provisions: LIST OF TEXT
+    }
+END
+THEN
+DEDUCE tax_applicability FROM RESULT AND company_profile WITH:
+    PREMISES: tax_premises
+    MUST_INCLUDE: [
+        each_regulation_evaluated,
+        applicability_determination,
+        estimated_impact
+    ]
+    CANNOT_INCLUDE: [assumptions_not_in_premises]
+    OUTPUT_FORMAT: {
+        applicable_regulations: LIST OF OBJECT {
+            regulation: TEXT,
+            applies: BOOLEAN,
+            rationale: TEXT,
+            estimated_annual_impact: TEXT
+        },
+        total_estimated_tax_obligation: TEXT,
+        optimization_opportunities: LIST OF TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# SCENARIO 2: Incident Root Cause + Remediation Comparison
+# ============================================================
+# Trace the root cause of an infrastructure incident, then compare
+# remediation options against operational constraints — all in one chain.
+
+SET incident_report TO {
+    service: "payment-gateway-v3",
+    impact: "All credit card transactions failing with timeout errors",
+    start_time: "2026-04-15T14:22:00Z",
+    detection: "Automated alert triggered after 50 consecutive 504 errors",
+    duration_minutes: 47,
+    affected_transactions: 12400,
+    estimated_revenue_loss: 890000,
+    timeline: [
+        "14:00 — Deployment of v3.8.2 to payment-gateway (connection pool config change: max_connections 200->500)",
+        "14:15 — Database replica lag begins increasing (0.1s -> 2.3s)",
+        "14:22 — Primary database connection pool exhaustion detected",
+        "14:23 — Circuit breaker tripped on payment-gateway -> database connections",
+        "14:25 — Cascading timeout failures propagate to checkout service",
+        "14:35 — On-call engineer begins investigation",
+        "14:50 — Root cause identified: connection pool increase exceeded database max_connections (512) limit",
+        "14:55 — Config rolled back to max_connections=200",
+        "15:09 — All services recovered, transaction backlog cleared"
+    ]
+}
+
+SET operational_constraints TO {
+    max_acceptable_downtime_per_incident: "30 minutes",
+    deployment_freeze_period: "None currently, but Q4 freeze starts Nov 1",
+    budget_for_remediation: 150000,
+    team_capacity: "2 SREs available for remediation work over next sprint",
+    compliance_requirement: "PCI-DSS requires change management for payment systems",
+    sla_target: "99.95% uptime monthly"
+}
+
+# THEN chain: TRACE root cause -> COMPARE remediation options
+TRACE incident_root_cause FROM incident_report WITH:
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [
+        root_cause,
+        evidence_at_each_step,
+        contributing_factors,
+        why_safeguards_failed
+    ]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT, evidence: TEXT },
+        contributing_factors: LIST OF TEXT,
+        safeguard_failures: LIST OF TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+THEN
+COMPARE remediation_options AGAINST operational_constraints FROM RESULT WITH:
+    DIMENSIONS: [
+        effectiveness_at_preventing_recurrence,
+        implementation_time,
+        cost,
+        operational_risk,
+        pci_compliance_impact
+    ]
+    MUST_INCLUDE: [
+        at_least_three_remediation_options,
+        quantified_comparison_per_dimension,
+        constraint_satisfaction_check
+    ]
+    OUTPUT_FORMAT: {
+        options: LIST OF OBJECT {
+            name: TEXT,
+            description: TEXT,
+            effectiveness: QUALITATIVE IN ["high", "moderate", "low"],
+            implementation_days: NUMBER,
+            estimated_cost: NUMBER,
+            pci_compliant: BOOLEAN,
+            meets_all_constraints: BOOLEAN
+        },
+        recommended_option: TEXT,
+        rationale: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# SCENARIO 3: Three-Step Chain — RETRIEVE + WEIGH + SYNTHESIZE
+# ============================================================
+# Retrieve vendor proposals, weigh them against each other, then
+# synthesize a recommendation — all in one three-step atomic chain.
+
+SET procurement_context TO {
+    project: "Enterprise Identity and Access Management (IAM) platform replacement",
+    current_system: "Legacy on-premise LDAP + custom SAML bridge, 15 years old",
+    users: 8500,
+    applications_integrated: 120,
+    budget: 450000,
+    timeline: "6 months to production",
+    critical_requirements: [
+        "SAML 2.0 and OIDC support",
+        "MFA with hardware token support",
+        "SOC 2 Type II certified",
+        "Sub-200ms authentication latency at P99",
+        "FedRAMP Moderate authorized (3 government contracts require it)"
+    ]
+}
+
+SET vendor_proposals TO {
+    okta: {
+        annual_cost: 382000,
+        implementation_estimate: "4 months",
+        fedramp_status: "Authorized",
+        mfa_options: "Push, TOTP, FIDO2/WebAuthn, SMS",
+        latency_p99: "145ms",
+        soc2: true,
+        notable: "Market leader, largest integration catalog, premium pricing"
+    },
+    azure_ad: {
+        annual_cost: 215000,
+        implementation_estimate: "5 months",
+        fedramp_status: "Authorized",
+        mfa_options: "Push, TOTP, FIDO2, Passwordless",
+        latency_p99: "165ms",
+        soc2: true,
+        notable: "Strong Microsoft ecosystem integration, less flexible for non-MS apps"
+    },
+    ping_identity: {
+        annual_cost: 295000,
+        implementation_estimate: "5.5 months",
+        fedramp_status: "Authorized",
+        mfa_options: "Push, TOTP, FIDO2",
+        latency_p99: "180ms",
+        soc2: true,
+        notable: "Strong hybrid on-prem/cloud story, complex initial configuration"
+    }
+}
+
+# Three-step THEN chain: RETRIEVE -> WEIGH -> SYNTHESIZE
+RETRIEVE iam_platform_evaluation_criteria FOR enterprise_iam_replacement WITH:
+    DOMAIN: "enterprise identity and access management"
+    MUST_INCLUDE: [industry_best_practices, common_migration_pitfalls, evaluation_framework]
+    OUTPUT_FORMAT: {
+        evaluation_dimensions: LIST OF TEXT,
+        critical_success_factors: LIST OF TEXT,
+        common_pitfalls: LIST OF TEXT,
+        recommended_evaluation_framework: TEXT
+    }
+END
+THEN
+WEIGH vendor_proposals ON platform_fit FROM RESULT WITH:
+    SOURCES: [vendor_proposals.okta, vendor_proposals.azure_ad, vendor_proposals.ping_identity]
+    MUST_INCLUDE: [
+        credibility_of_each_vendor_claim,
+        requirements_coverage,
+        risk_assessment_per_vendor,
+        cost_effectiveness_analysis
+    ]
+    OUTPUT_FORMAT: {
+        vendor_rankings: LIST OF OBJECT {
+            vendor: TEXT,
+            overall_score: TEXT,
+            strengths: LIST OF TEXT,
+            weaknesses: LIST OF TEXT,
+            requirements_met: NUMBER,
+            requirements_total: NUMBER,
+            risk_level: QUALITATIVE IN ["low", "moderate", "high"]
+        },
+        dominant_vendor: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+THEN
+SYNTHESIZE vendor_recommendation INTO procurement_decision FROM RESULT WITH:
+    SOURCES: [procurement_context, vendor_proposals]
+    MUST_INCLUDE: [
+        integrated_assessment,
+        minority_vendor_strengths,
+        implementation_risk_plan,
+        negotiation_leverage_points,
+        go_decision
+    ]
+    OUTPUT_FORMAT: {
+        recommended_vendor: TEXT,
+        recommendation_type: TEXT IN ["strong_recommend", "conditional_recommend", "no_clear_winner"],
+        key_reasons: LIST OF TEXT,
+        implementation_plan_outline: LIST OF TEXT,
+        negotiation_points: LIST OF TEXT,
+        fallback_vendor: TEXT,
+        risks: LIST OF TEXT,
+        executive_summary: TEXT
+    }
+END
+
+# ============================================================
+# VALIDATION: Verify THEN chain atomicity
+# ============================================================
+# Confirm that no intermediate variables were created and that
+# RESULT correctly propagated through each chain.
+
+COMPARE chain_validation AGAINST atomicity_criteria WITH:
+    DIMENSIONS: [intermediate_variable_count, result_propagation, output_completeness]
+    SOURCES: [tax_applicability, remediation_options, vendor_recommendation]
+    MUST_INCLUDE: [
+        whether_each_chain_produced_complete_output,
+        whether_result_carried_correct_data_between_steps,
+        whether_three_step_chain_maintained_context
+    ]
+    OUTPUT_FORMAT: {
+        scenario_1_complete: BOOLEAN,
+        scenario_2_complete: BOOLEAN,
+        scenario_3_complete: BOOLEAN,
+        intermediate_variables_used: NUMBER,
+        result_propagation_correct: BOOLEAN,
+        assessment: TEXT
+    }
+END

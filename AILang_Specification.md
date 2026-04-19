@@ -1,48 +1,96 @@
 **AILang: Complete Language Specification**
 
-**Version 0.7.1**
+**Version 0.8.2**
 
 **Author**: Edward Chalk (fleetingswallow.com)
 
 ---
 
-## Introduction 
+## Introduction
 
 AILang is a natural language programming system designed for execution by AI systems. It allows users to write computational logic using structured English that AI can reliably interpret and execute. AILang programs are written in controlled natural language that balances human readability with computational precision. Unlike traditional programming languages, AILang is executed directly by AI systems using this specification as a reference guide.
 
 AILang serves as both a production language for AI-executed programs and a rapid prototyping tool that can later be converted to traditional programming languages when needed.
 
-## Technical Foundation and Architecture 
+### What's New in v0.8.2
 
-### The AI as a CPU 
+Version 0.8.2 is an amendment to v0.8.1 that adds three fine-tuning improvements: graduated retrieval budgets, a fifth depth level, and a formal feature interaction specification. These changes refine compute control granularity and eliminate ambiguity in compound feature usage.
+
+**Key changes from v0.8.1:**
+
+1. **RETRIEVAL_BUDGET -- Graduated Retrieval Control** -- v0.8.1's `WITHOUT_RETRIEVAL` was binary: either all 865 retrieval neurons fire, or none do. This is too coarse for operations that need a small amount of retrieval (e.g., 95% of data in variables, 5% needs recall). `RETRIEVAL_BUDGET` introduces four levels: `NONE`, `MINIMAL`, `STANDARD`, and `FULL`. `RETRIEVAL_BUDGET: NONE` is equivalent to `WITHOUT_RETRIEVAL` (backward compatible). `RETRIEVAL_BUDGET: MINIMAL` activates ~200 of the 865 retrieval neurons for edge-case terminology resolution and gap-filling. `WITHOUT_RETRIEVAL` remains valid as shorthand for `RETRIEVAL_BUDGET: NONE`.
+
+2. **DEPTH: THOROUGH -- Fifth Depth Level** -- v0.8.1 had a gap between `STANDARD` (~190 tokens) and `DEEP` (~385 tokens). `THOROUGH` is inserted between them: `SHALLOW < STANDARD < THOROUGH < DEEP < EXHAUSTIVE`. THOROUGH explores contributing factors and secondary causes without the multi-pass mechanism-level analysis of DEEP. Estimated output: 1.5-2x STANDARD (vs DEEP which is 2-3x STANDARD).
+
+3. **Feature Interaction Specification** -- Appendix D is expanded to formally specify how features interact in compound use, covering: ADAPTIVELY + DEPTH adjustment ranges, RETRIEVAL_BUDGET in THEN chains, CONSTRAIN + REASONING_CONTEXT interaction, DEPTH + EMIT_DIGEST digest sizing, and THEN + REASONING_CONTEXT digest behavior.
+
+### What's New in v0.8.1
+
+Version 0.8.1 is an amendment to v0.8.0 that adds six improvements deduced from test result analysis. These improvements refine the reasoning operations architecture, add compute and pipeline efficiency features, and provide new composition primitives for multi-operation workflows.
+
+**Key changes from v0.8.0:**
+
+1. **Neuron Hierarchy and WITHOUT_RETRIEVAL Modifier** -- Jaccard analysis reveals RETRIEVE is not a peer operation but a BASE LAYER subsumed by all other operations. A new `WITHOUT_RETRIEVAL` modifier allows skipping the retrieval base layer when input data is already loaded into program variables, saving up to 72% of neuron activations.
+
+2. **DEPTH Modifier (Third Axis)** -- Test results showed identical operation+style combinations producing radically different output depths. DEPTH is introduced as a third orthogonal axis (alongside operation type and style) with five levels: `SHALLOW`, `STANDARD`, `THOROUGH`, `DEEP`, and `EXHAUSTIVE`, controlling how deeply the engine processes each reasoning step.
+
+3. **EMIT_DIGEST for Pipeline Efficiency** -- Addresses re-processing of full outputs in multi-operation pipelines. `EMIT_DIGEST: true` produces a compact typed summary (under 100 tokens) alongside the full output, enabling downstream SYNTHESIZE operations to consume digests instead of re-parsing full outputs.
+
+4. **Graduated CONSTRAIN in REASONING_PROFILE** -- Replaces binary SUPPRESS-only control with a graduated system. `CONSTRAIN` allows a reasoning type to run but applies an additional natural-language boundary, while `SUPPRESS` remains for full blocking.
+
+5. **THEN Chaining for Atomic Compound Operations** -- Adds the `THEN` keyword for chaining up to three reasoning operations without intermediate variable assignment. The output of each operation becomes available as `RESULT` in the next.
+
+6. **REASONING_CONTEXT Accumulator for Pipelines** -- Adds `BEGIN REASONING_CONTEXT` blocks that automatically accumulate digests across operations, enabling pipeline-aware reasoning where each operation reads accumulated context from prior operations.
+
+7. **Auto-Classification vs REASONING_PROFILE Precedence Rule** -- When INTELLIGENTLY is used within a REALITY_CONTEXT that has a REASONING_PROFILE, the profile's PRIMARY type takes precedence over auto-classification.
+
+### What's New in v0.8.0
+
+Version 0.8.0 integrates insights from the [LLM Reasoning Router](https://github.com/pcoz/llm-reasoning-router) project, which demonstrated that different reasoning types activate fundamentally different neuron populations in large language models (25-75% non-overlap between types). The previous specification treated intelligent operations as a monolithic capability with stylistic modifiers (INTELLIGENTLY, CREATIVELY, ADAPTIVELY, CONTEXTUALLY) that did not map to actual computational differences inside the AI engine. Version 0.8.0 makes reasoning operation type a first-class language construct.
+
+**Key changes from v0.7.1:**
+
+1. **Reasoning Operations** -- Six typed reasoning verbs (WEIGH, DEDUCE, TRACE, COMPARE, SYNTHESIZE, RETRIEVE) replace undifferentiated INTELLIGENTLY as the primary axis for intelligent operations
+2. **Style Modifiers** -- CREATIVELY, ADAPTIVELY, CONTEXTUALLY become an orthogonal secondary axis that can modify any reasoning operation
+3. **Auto-Classification** -- When INTELLIGENTLY is used as a fallback, the engine auto-classifies the appropriate reasoning type using linguistic pattern matching
+4. **Reasoning Routing Architecture** -- A new section explains the neuron-level basis for the reasoning type taxonomy and the performance benefits of typed operations
+5. **REASONING_PROFILE in Reality Contexts** -- Reality contexts can now specify primary, secondary, and suppressed reasoning types
+6. **Workflow Patterns** -- ASSESS/EXPLORE/DECIDE reframed as composable workflow patterns that use typed reasoning operations
+7. **Extension framework updates** -- Person entities and Matter entities gain reasoning-type-aware interfaces
+
+---
+
+## Technical Foundation and Architecture
+
+### The AI as a CPU
 
 Traditional programs operate on a rigid hierarchy: human intent must be translated through programming languages, compiled into machine code, and executed by silicon processors that understand only binary operations. AILang inverts this model entirely by recognizing that modern AI systems are themselves sophisticated computational engines capable of directly processing human logical intent.
 
-The breakthrough insight is that we don't need to translate these operations into an artificial syntax—the AI can process them directly in the language humans naturally use to describe logical procedures.
+The breakthrough insight is that we don't need to translate these operations into an artificial syntax -- the AI can process them directly in the language humans naturally use to describe logical procedures.
 
-### Execution Environment 
+### Execution Environment
 
 AILang programs can be executed in two primary ways:
 
-1. **AI Web Interface**: Programs can be written and executed directly through conversational AI interfaces, where users provide AILang code as part of their interaction  
-     
+1. **AI Web Interface**: Programs can be written and executed directly through conversational AI interfaces, where users provide AILang code as part of their interaction
+
 2. **API Integration**: AILang programs can be submitted via API calls to AI systems, enabling programmatic execution and integration into larger software systems
 
 
-### The RAG-Powered Solution 
+### The RAG-Powered Solution
 
-A pivotal challenge with AI systems is their inherent randomness—they cannot be responsibly deployed in production environments because their outputs are unpredictable, making it impossible to guarantee they will act within expected boundaries. AILang solves this fundamental problem through its RAG (Retrieval-Augmented Generation) architecture.
+A pivotal challenge with AI systems is their inherent randomness -- they cannot be responsibly deployed in production environments because their outputs are unpredictable, making it impossible to guarantee they will act within expected boundaries. AILang solves this fundamental problem through its RAG (Retrieval-Augmented Generation) architecture.
 
 The complete AILang specification is attached to the AI system as a knowledge base. When executing programs, the AI retrieves the exact behavioral definitions from this specification, ensuring consistent interpretation of instructions. This transforms AI from an unpredictable creative system into a reliable computational processor that follows precise rules while retaining intelligent adaptability where explicitly permitted.
 
-### Advantages Over Traditional Approaches 
+### Advantages Over Traditional Approaches
 
 AILang represents a significant advance over existing approaches:
 
-* **Versus Pseudocode**: While pseudocode describes algorithms in natural language, it is not designed to be executed and requires manual translation to working code. AILang executes directly, eliminating translation errors and enabling immediate testing and iteration.  
-    
-* **Versus Traditional Programming**: Conventional languages require learning artificial syntax and compilation steps. AILang uses natural language constructs that anyone can understand and write.  
-    
+* **Versus Pseudocode**: While pseudocode describes algorithms in natural language, it is not designed to be executed and requires manual translation to working code. AILang executes directly, eliminating translation errors and enabling immediate testing and iteration.
+
+* **Versus Traditional Programming**: Conventional languages require learning artificial syntax and compilation steps. AILang uses natural language constructs that anyone can understand and write.
+
 * **Versus Unstructured AI Prompts**: Raw AI prompts produce unpredictable outputs. AILang provides structured frameworks that ensure consistent behavior while preserving AI intelligence where appropriate.
 
 ### Three Execution Modes
@@ -53,6 +101,9 @@ AILang programs operate across three distinct execution modes, each with differe
 - Executed by AI reasoning and interpretation
 - Contextual, adaptive, creative decision-making
 - Non-deterministic by design
+- v0.8 enhancement: Operations are now typed by reasoning type (WEIGH, DEDUCE, TRACE, COMPARE, SYNTHESIZE, RETRIEVE) enabling targeted neural activation
+- v0.8.1 enhancement: DEPTH modifier controls how deeply each reasoning step is processed; WITHOUT_RETRIEVAL modifier skips base retrieval neurons when data is already loaded
+- v0.8.2 enhancement: RETRIEVAL_BUDGET provides graduated retrieval control (NONE, MINIMAL, STANDARD, FULL); DEPTH gains a fifth level (THOROUGH) between STANDARD and DEEP
 - Appropriate for: ambiguous situations, creative tasks, strategic decisions, natural language processing
 
 **2. DETERMINISTIC Operations** (Pseudo-Deterministic)
@@ -66,21 +117,23 @@ AILang programs operate across three distinct execution modes, each with differe
 - Genuinely deterministic (same code + inputs = same outputs)
 - Appropriate for: mathematical operations, algorithmic computation, data processing, performance-critical operations
 
-The power of AILang lies in seamlessly combining these three modes, using each where it provides maximum value. 
+The power of AILang lies in seamlessly combining these three modes, using each where it provides maximum value.
 
-## Core Language Constructs 
+---
 
-### 1. Data Types and Type System 
+## Core Language Constructs
+
+### 1. Data Types and Type System
 
 AILang uses dynamic typing with intelligent type coercion for compatible types. The AI automatically handles conversions between compatible types (TEXT, NUMBER, BOOLEAN) when context makes intent clear. QUALITATIVE types maintain semantic meaning and do not coerce to numeric values.
 
-#### Fundamental Data Types 
+#### Fundamental Data Types
 
-* **TEXT**: String values (examples: `"hello"`, `"user@example.com"`)  
-    
-* **NUMBER**: Numeric values (examples: `42`, `3.14`, `-17`)  
-    
-* **BOOLEAN**: True/false values (examples: `true`, `false`, `yes`, `no`)  
+* **TEXT**: String values (examples: `"hello"`, `"user@example.com"`)
+
+* **NUMBER**: Numeric values (examples: `42`, `3.14`, `-17`)
+
+* **BOOLEAN**: True/false values (examples: `true`, `false`, `yes`, `no`)
 
 * **QUALITATIVE**: Opaque semantic labels for qualitative states (e.g., "tense_meeting", "supportive_tone", "fragile_morale").
   - **Interpretation:** Engines interpret QUALITATIVE values within INTELLIGENT operations and/or an active REALITY_CONTEXT. They are not numeric and carry no inherent scalar.
@@ -88,10 +141,10 @@ AILang uses dynamic typing with intelligent type coercion for compatible types. 
   - **Operations:** Equality/inequality comparisons are defined; ordering comparisons are undefined. Rich interpretation occurs via INTELLIGENT logic and the Qualitative Spectrum.
   - **Serialization:** Represent as TEXT with optional metadata tag `@qual` in environments that support typed metadata.
 
-* **LIST**: Ordered collections (example: `[item1, item2, item3]`)  
-    
-* **OBJECT**: Structured containers with properties and methods  
-    
+* **LIST**: Ordered collections (example: `[item1, item2, item3]`)
+
+* **OBJECT**: Structured containers with properties and methods
+
 * **NULL**: Empty or undefined values
 
 The AI may intelligently convert between compatible types when context suggests it's appropriate, such as converting `"true"` to boolean `true` or `"42"` to numeric `42`.
@@ -100,15 +153,15 @@ The AI may intelligently convert between compatible types when context suggests 
 
 AILang supports lightweight type constraints in structured schemas (e.g., OUTPUT_FORMAT) and declarations:
 
-**Enum (set) constraint**  
-`<Type> IN ["lit1","lit2", ...]`  
+**Enum (set) constraint**
+`<Type> IN ["lit1","lit2", ...]`
 Example: `QUALITATIVE IN ["supportive","neutral","hostile"]`
 
-**Parametric list**  
-`LIST OF <Type>`  
+**Parametric list**
+`LIST OF <Type>`
 Example: `LIST OF QUALITATIVE`, `LIST OF TEXT`
 
-**Typed object fields**  
+**Typed object fields**
 `OBJECT { field1: <Type>, field2: <Constraint>, ... }`
 
 **Validation:** Engines SHOULD validate these constraints deterministically when constructing or emitting such structures (e.g., populating `OUTPUT_FORMAT`).
@@ -138,17 +191,16 @@ OUTPUT_FORMAT: OBJECT {
 }
 ```
 
-### 2. Variable Operations 
+### 2. Variable Operations
 
 Variables store and manipulate data throughout program execution. They maintain their values across the program scope unless explicitly reassigned.
 
-#### Assignment Syntax 
+#### Assignment Syntax
 
 Variables can be assigned using natural language patterns or traditional programming syntax:
 
-```
-#ailang
-SET [variable] TO [value]  
+```ailang
+SET [variable] TO [value]
 LET [variable] BE [value]
 
 [variable] = [value]
@@ -158,46 +210,43 @@ All three forms are equivalent and can be used interchangeably based on preferen
 
 **Examples:**
 
-```
-#ailang  
-SET customer_count TO 0  
-LET total_amount BE 1500.00  
-username = "Alice"  
+```ailang
+SET customer_count TO 0
+LET total_amount BE 1500.00
+username = "Alice"
 is_active = true
 
 calculation_result = (price * quantity) + tax
 ```
 
-#### Property Access 
+#### Property Access
 
 Object properties and nested values use dot notation:
 
-```
-#ailang  
-SET user_profile.name TO "Alice Smith"  
-user_profile.email = "alice@example.com"  
-SET customer_count TO 0  
+```ailang
+SET user_profile.name TO "Alice Smith"
+user_profile.email = "alice@example.com"
+SET customer_count TO 0
 LET total_amount BE 1500.00
 
 config.settings.timeout = 30
 ```
 
-#### Complex State Management 
+#### Complex State Management
 
 AILang supports complex state operations with nested structures:
 
-```
-#ailang  
-# Nested property access  
-SET user.preferences.notifications.email TO true  
+```ailang
+# Nested property access
+SET user.preferences.notifications.email TO true
 GET value FROM deeply.nested.object.property
 
-# Dynamic property access  
-SET property_name TO "status"  
+# Dynamic property access
+SET property_name TO "status"
 SET object.[property_name] TO "active"  # Dynamic key access
 
-# State accumulation  
-ADD item TO collection  
+# State accumulation
+ADD item TO collection
 INCREMENT counter BY 1
 
 APPEND log_entry TO audit_trail
@@ -205,11 +254,11 @@ APPEND log_entry TO audit_trail
 
 **Specification**: Variables are dynamically typed and maintain their values throughout program scope. Property access follows standard dot notation rules for nested structures. The assignment operator `=` can be used with all variable types and in all contexts where `SET` or `LET` would be valid. Complex state operations maintain deterministic behavior while supporting nested and dynamic access patterns.
 
-### 3. Operators and Expressions 
+### 3. Operators and Expressions
 
 All operators follow deterministic evaluation rules and return predictable results.
 
-#### Arithmetic Operators 
+#### Arithmetic Operators
 
 Mathematical operations on numeric values:
 
@@ -220,7 +269,7 @@ Mathematical operations on numeric values:
 * **Remainder:** `[value1] % [value2]` or `[value1] MODULO [value2]`
 * **Exponentiation:** `[value1] ^ [power]` or `[value1] TO THE POWER OF [power]`
 
-#### Comparison Operators 
+#### Comparison Operators
 
 All comparisons return boolean values (true/false):
 
@@ -238,13 +287,13 @@ All comparisons return boolean values (true/false):
 
 #### QUALITATIVE Type Operations
 
-**Equality Operations:**  
+**Equality Operations:**
 `[q1] EQUALS [q2]` and `[q1] != [q2]` are defined for QUALITATIVE values (label-based equality).
 
-**Ordering Operations:**  
+**Ordering Operations:**
 Ordering operators (`>`, `<`, `>=`, `<=`) are **undefined** for QUALITATIVE values. To establish ordering, define an explicit mapping function.
 
-**String Conversion:**  
+**String Conversion:**
 QUALITATIVE values MAY be converted to TEXT for display or logging purposes, but retain their semantic type for operations.
 
 **Examples:**
@@ -293,8 +342,7 @@ I/O operations provide deterministic data flow between the program and external 
 
 **Purpose**: Acquire data from specified sources. **Syntax Options**:
 
-```
-#ailang
+```ailang
 GET [variable] FROM [source]
 [variable] << [source]    # stream operator syntax
 ```
@@ -303,8 +351,7 @@ The AI must retrieve data from the specified source and assign it to the variabl
 
 **Examples:**
 
-```
-#ailang
+```ailang
 GET user_name FROM user_input
 GET weather_data FROM "weather_api.com/current"
 GET file_contents FROM "document.txt"
@@ -321,8 +368,7 @@ current_time << system_clock
 
 **Purpose**: Send data to specified destinations. **Syntax Options**:
 
-```
-#ailang
+```ailang
 SEND [data] TO [destination]
 [data] >> [destination]   # stream operator syntax
 ```
@@ -331,8 +377,7 @@ The AI must transmit the data to the specified destination. If transmission fail
 
 **Examples:**
 
-```
-#ailang
+```ailang
 SEND greeting_message TO user_display
 SEND analysis_results TO "report.txt"
 SEND notification TO email_system
@@ -347,8 +392,7 @@ notification >> email_system
 
 The stream operators can be chained for sequential operations:
 
-```
-#ailang
+```ailang
 # Input chaining: process data as it flows
 raw_data << "input.csv"
 processed_data << PROCESS(raw_data)
@@ -367,8 +411,7 @@ Control flow determines the execution path through the program. All control stru
 
 Conditionals evaluate boolean expressions and execute corresponding code blocks:
 
-```
-#ailang
+```ailang
 IF [condition] THEN:
     [instructions]
 ELSE IF [condition] THEN:
@@ -386,8 +429,7 @@ END_IF
 
 Execute instructions repeatedly while a condition remains true:
 
-```
-#ailang
+```ailang
 WHILE [condition] DO:
     [instructions]
 END_WHILE
@@ -399,8 +441,7 @@ END_WHILE
 
 Iterate through collections, binding each element to a variable:
 
-```
-#ailang
+```ailang
 FOR EACH [item] IN [collection] DO:
     [instructions]
 END_FOR
@@ -412,8 +453,7 @@ END_FOR
 
 Execute instructions a specific number of times:
 
-```
-#ailang
+```ailang
 REPEAT [number] TIMES:
     [instructions]
 END_REPEAT
@@ -423,8 +463,7 @@ END_REPEAT
 
 Match values against multiple patterns with structured case handling:
 
-```
-#ailang
+```ailang
 MATCH [value] WITH:
     CASE [pattern1]:
         [instructions]
@@ -475,8 +514,7 @@ Procedures encapsulate reusable logic with parameters and return values.
 
 Simple operation blocks for organizing code:
 
-```
-#ailang
+```ailang
 DO [operation_name]:
     [instructions]
 END
@@ -484,8 +522,7 @@ END
 
 Operations with parameters and return values:
 
-```
-#ailang
+```ailang
 DO [operation_name] WITH [parameters]:
     [instructions]
     RETURN [value]
@@ -496,16 +533,14 @@ END
 
 Define reusable procedures with formal parameters:
 
-```
-#ailang
+```ailang
 DEFINE PROCEDURE [name] WITH PARAMETERS [param1, param2]:
     [instructions]
     RETURN [value]
 END_PROCEDURE
 ```
 
-```
-#ailang
+```ailang
 CALL [procedure_name] WITH [arguments]
 ```
 
@@ -540,8 +575,7 @@ Objects provide structured data containers with properties and methods.
 
 Define objects with properties and methods:
 
-```
-#ailang
+```ailang
 CREATE OBJECT [name]:
     [property]: [value]
     [property]: [value]
@@ -556,8 +590,7 @@ END_OBJECT
 
 Create instances and access properties:
 
-```
-#ailang
+```ailang
 SET [variable] TO NEW [object_name]
 ```
 
@@ -568,105 +601,42 @@ Property and method access uses dot notation:
 
 **Specification**: Objects follow deterministic structure rules for property access and method invocation, while property values may be intelligently determined based on context.
 
-### 8. Enhanced Intelligent Programming Constructs
+---
 
-AILang provides constructs that explicitly delegate to AI intelligence while maintaining structured frameworks.
+### 8. Reasoning Operations
 
-#### Contextual Intelligence Framework
+AILang v0.8 introduces typed reasoning operations as first-class language constructs. This section replaces undifferentiated INTELLIGENTLY as the primary axis for intelligent operations.
 
-When transitioning from deterministic to intelligent operations, the AI has access to:
+#### 8.1 Neuroscientific Basis
 
-1. **Current Variable State**: All deterministic calculations and data assignments
-2. **Execution History**: Previous operations and their outcomes
-3. **Program Context**: The overall objective and constraints of the program
-4. **Domain Knowledge**: AI's understanding of the relevant problem domain
+Research from the LLM Reasoning Router project demonstrates that different reasoning types activate fundamentally different neuron populations within large language models:
 
-This ensures intelligent operations are grounded in concrete program state rather than arbitrary reasoning.
+- Different reasoning types activate 25-75% different neuron populations in LLM feed-forward network layers
+- **RETRIEVE** uses approximately 865 consistently activated neurons; **WEIGH** uses approximately 1,531
+- Jaccard similarity between WEIGH and RETRIEVE neuron populations is only 52.8%
+- Most divergent pairs: SYNTHESIZE vs DEDUCE (approximately 25% overlap), TRACE vs RETRIEVE (approximately 25% overlap)
+- This means typed operations can skip 25-47% of FFN compute by routing to the appropriate neuron subpopulation
+- Conservative performance estimate: 25-47% reduction per intelligent operation when routing is applied
 
-#### Intelligence Modifiers
+This finding invalidates the v0.7.1 approach of treating all intelligent operations as a single capability with stylistic differences. The reasoning types defined below correspond to genuinely distinct computational pathways in the AI engine. Specifying the correct type allows the engine to activate the relevant neuron populations directly rather than inferring the reasoning type from context.
 
-These modifiers signal that creative problem-solving and contextual adaptation are expected:
+#### 8.2 The Six Reasoning Operations
 
-##### `INTELLIGENTLY`
+Each reasoning operation verb maps to a distinct pattern of neural activation. All six accept the same bounded intelligence constraints (MUST_INCLUDE, CANNOT_INCLUDE, OUTPUT_FORMAT, MAX_SCOPE) that INTELLIGENTLY used in v0.7.1.
 
-Apply domain knowledge and best practices using current program state:
+##### `WEIGH`
 
-```
-#ailang
-# After deterministic calculations establish customer_value = 15000
-INTELLIGENTLY determine_service_tier BASED_ON customer_value
-# AI uses the concrete value of 15000 to make tier decision
+**Purpose:** Evaluate competing claims by source credibility, authority, and evidence quality.
 
-INTELLIGENTLY analyze_data FROM user_input
-INTELLIGENTLY choose_response BASED_ON customer_history
-```
+**Maps to:** Authority-evaluation neurons (approximately 1,531 consistent neurons).
 
-##### `CREATIVELY`
+**When to use:** When multiple sources provide conflicting information and the program must determine which source to trust, or when evidence must be evaluated for reliability.
 
-Generate novel approaches using established constraints:
+**Syntax:**
 
-```
-#ailang
-# After deterministic validation of available_resources = ["staff", "budget", "time"]
-CREATIVELY solve_scheduling_conflict WITH available_resources
-# AI creates solutions constrained by the specific available resources
-
-CREATIVELY design_workflow FOR new_requirements
-```
-
-##### `ADAPTIVELY`
-
-Adjust approach based on computed conditions:
-
-```
-#ailang
-# After deterministic calculation shows system_load = 85%
-ADAPTIVELY optimize_performance WHEN system_load > 80%
-# AI adapts strategy based on the specific computed load value
-
-ADAPTIVELY handle_errors WHEN standard_procedures_fail
-```
-
-##### `CONTEXTUALLY`
-
-Make decisions using calculated program state:
-**Specification:** `CONTEXTUALLY` is equivalent to `INTELLIGENTLY` with a requirement to use the **current program state** (variables, prior results, and any active `REALITY_CONTEXT`); it introduces no new boundary keys.
-
-```
-#ailang
-# After deterministic analysis shows customer_tier = "premium", issue_complexity = "high"
-CONTEXTUALLY set_response_priority BASED_ON customer_tier AND issue_complexity
-# AI sets priority using concrete deterministic values, not assumptions
-
-CONTEXTUALLY set_message_tone FOR recipient_relationship
-```
-
-#### Intelligent Operation Blocks
-
-Structured blocks that combine deterministic framework with intelligent execution:
-
-```
-#ailang
-DO INTELLIGENTLY [operation_description]:
-    [instructions with gaps]
-END
-```
-
-```
-#ailang
-DO CREATIVELY [problem_description]:
-    GIVEN [constraints]
-    [instructions]
-END
-```
-
-#### Bounded Intelligence Constraints
-
-All intelligent operations must specify explicit boundaries:
-
-```
-#ailang
-INTELLIGENTLY operation WITH:
+```ailang
+WEIGH [subject] ON [dimension] WITH:
+    SOURCES: [list_of_sources]
     MUST_INCLUDE: [required_elements]
     CANNOT_INCLUDE: [forbidden_elements]
     OUTPUT_FORMAT: [structured_requirement]
@@ -676,29 +646,1033 @@ END
 
 **Example:**
 
+```ailang
+WEIGH expert_opinions ON treatment_efficacy WITH:
+    SOURCES: [clinical_trial_data, physician_recommendation, patient_anecdote]
+    MUST_INCLUDE: [credibility_assessment, conflict_of_interest_check]
+    OUTPUT_FORMAT: {
+        recommendation: TEXT,
+        dominant_source: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
 ```
-#ailang
-INTELLIGENTLY generate_response WITH:
-    MUST_INCLUDE: [apology, next_steps, timeline]
-    CANNOT_INCLUDE: [legal_admissions, new_policies, promises]
-    OUTPUT_FORMAT: professional_email
-    MAX_SCOPE: current_incident_only
+
+**Example -- authority evaluation:**
+
+```ailang
+WEIGH contradictory_claims ON vaccine_safety WITH:
+    SOURCES: [peer_reviewed_meta_analysis, social_media_influencer, WHO_guidance]
+    MUST_INCLUDE: [source_credibility_ranking, evidence_hierarchy_position]
+    CANNOT_INCLUDE: [ad_hominem_dismissals]
+    OUTPUT_FORMAT: {
+        strongest_claim: TEXT,
+        credibility_ranking: LIST OF OBJECT { source: TEXT, credibility: QUALITATIVE },
+        consensus_direction: TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"]
+    }
+    MAX_SCOPE: published_evidence_only
+END
+```
+
+##### `DEDUCE`
+
+**Purpose:** Derive conclusions from premises via logical rules (deductive, inductive, or abductive reasoning).
+
+**Maps to:** Logical-inference neurons.
+
+**When to use:** When the program has explicit premises and needs to determine what logically follows, when evaluating the validity of an argument, or when applying rules to specific cases.
+
+**Syntax:**
+
+```ailang
+DEDUCE [conclusion] FROM [premises] WITH:
+    MUST_INCLUDE: [required_elements]
+    CANNOT_INCLUDE: [forbidden_elements]
+    OUTPUT_FORMAT: [structured_requirement]
+    MAX_SCOPE: [boundary_definition]
+END
+```
+
+**Example:**
+
+```ailang
+DEDUCE contract_breach FROM contract_terms AND observed_behavior WITH:
+    MUST_INCLUDE: [violated_clauses, logical_chain]
+    CANNOT_INCLUDE: [speculation_beyond_evidence]
+    OUTPUT_FORMAT: {
+        breach_found: BOOLEAN,
+        violated_clauses: LIST OF TEXT,
+        logical_chain: LIST OF TEXT,
+        strength_of_conclusion: TEXT IN ["certain", "probable", "possible", "unlikely"]
+    }
+END
+```
+
+**Example -- syllogistic reasoning:**
+
+```ailang
+DEDUCE classification FROM biological_facts WITH:
+    MUST_INCLUDE: [premises_used, inference_steps]
+    OUTPUT_FORMAT: {
+        conclusion: TEXT,
+        premises: LIST OF TEXT,
+        inference_type: TEXT IN ["deductive", "inductive", "abductive"],
+        validity: BOOLEAN
+    }
+    MAX_SCOPE: provided_premises_only
+END
+```
+
+##### `TRACE`
+
+**Purpose:** Follow cause-effect chains forward (cause to effect) or backward (effect to cause).
+
+**Maps to:** Causal-reasoning neurons.
+
+**When to use:** When the program needs to understand what caused something (root cause analysis), predict consequences of an action, or map a chain of events.
+
+**Supports:** `DIRECTION: FORWARD|BACKWARD` parameter to specify causal direction.
+
+**Syntax:**
+
+```ailang
+TRACE [target] FROM [starting_point] WITH:
+    DIRECTION: FORWARD|BACKWARD
+    MUST_INCLUDE: [required_elements]
+    CANNOT_INCLUDE: [forbidden_elements]
+    OUTPUT_FORMAT: [structured_requirement]
+    MAX_SCOPE: [boundary_definition]
+END
+```
+
+**Example -- backward (root cause):**
+
+```ailang
+TRACE root_cause FROM incident_timeline WITH:
+    DIRECTION: BACKWARD
+    MAX_SCOPE: "last_72_hours"
+    MUST_INCLUDE: [evidence_at_each_step, alternative_explanations_considered]
+    OUTPUT_FORMAT: {
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT, evidence: TEXT },
+        root_cause: TEXT,
+        contributing_factors: LIST OF TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"]
+    }
+END
+```
+
+**Example -- forward (consequence prediction):**
+
+```ailang
+TRACE market_impact FROM interest_rate_change WITH:
+    DIRECTION: FORWARD
+    MUST_INCLUDE: [transmission_mechanism, time_horizons]
+    CANNOT_INCLUDE: [speculative_second_order_effects_beyond_6_months]
+    OUTPUT_FORMAT: {
+        primary_effects: LIST OF TEXT,
+        secondary_effects: LIST OF TEXT,
+        estimated_timeline: TEXT,
+        causal_chain: LIST OF TEXT
+    }
+    MAX_SCOPE: domestic_economy
+END
+```
+
+##### `COMPARE`
+
+**Purpose:** Establish relative ordering, ranking, or trade-off analysis across specified dimensions.
+
+**Maps to:** Ordering neurons.
+
+**When to use:** When the program needs to rank options, compare alternatives on multiple dimensions, or identify trade-offs between choices.
+
+**Syntax:**
+
+```ailang
+COMPARE [subjects] AGAINST [criteria] WITH:
+    DIMENSIONS: [list_of_dimensions]
+    MUST_INCLUDE: [required_elements]
+    CANNOT_INCLUDE: [forbidden_elements]
+    OUTPUT_FORMAT: [structured_requirement]
+    MAX_SCOPE: [boundary_definition]
+END
+```
+
+**Example:**
+
+```ailang
+COMPARE vendor_proposals AGAINST evaluation_criteria WITH:
+    DIMENSIONS: [cost, capability, risk, timeline]
+    MUST_INCLUDE: [dimension_by_dimension_analysis, trade_off_identification]
+    CANNOT_INCLUDE: [vendor_favoritism, undisclosed_weighting]
+    OUTPUT_FORMAT: {
+        ranking: LIST OF OBJECT { vendor: TEXT, rank: NUMBER, rationale: TEXT },
+        trade_off_analysis: TEXT,
+        recommended_choice: TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"]
+    }
+END
+```
+
+**Example -- multi-attribute decision:**
+
+```ailang
+COMPARE programming_languages AGAINST project_requirements WITH:
+    DIMENSIONS: [performance, ecosystem_maturity, team_familiarity, hiring_pool, maintenance_cost]
+    MUST_INCLUDE: [scoring_rationale_per_dimension]
+    OUTPUT_FORMAT: {
+        comparison_matrix: LIST OF OBJECT {
+            language: TEXT,
+            scores: OBJECT { performance: QUALITATIVE, ecosystem: QUALITATIVE,
+                             familiarity: QUALITATIVE, hiring: QUALITATIVE, maintenance: QUALITATIVE }
+        },
+        overall_ranking: LIST OF TEXT,
+        key_trade_offs: LIST OF TEXT
+    }
+    MAX_SCOPE: shortlisted_languages_only
+END
+```
+
+##### `SYNTHESIZE`
+
+**Purpose:** Aggregate multiple perspectives, sources, or data streams into a unified view, identifying areas of consensus and tension.
+
+**Maps to:** Consensus-building neurons.
+
+**When to use:** When the program must integrate multiple viewpoints into a coherent summary, find common ground among stakeholders, or produce a balanced analysis from diverse inputs.
+
+**Note:** Named SYNTHESIZE rather than CONSENSUS because the operation is broader than vote-counting -- it includes identifying tensions, finding common themes, and producing integrated views.
+
+**Syntax:**
+
+```ailang
+SYNTHESIZE [sources] INTO [output] WITH:
+    SOURCES: [list_of_source_perspectives]
+    MUST_INCLUDE: [required_elements]
+    CANNOT_INCLUDE: [forbidden_elements]
+    OUTPUT_FORMAT: [structured_requirement]
+    MAX_SCOPE: [boundary_definition]
+END
+```
+
+**Example:**
+
+```ailang
+SYNTHESIZE stakeholder_positions INTO recommendation WITH:
+    SOURCES: [engineering_team, product_team, executive_sponsor]
+    MUST_INCLUDE: [areas_of_agreement, unresolved_tensions, minority_views]
+    CANNOT_INCLUDE: [fabricated_consensus, suppressed_disagreements]
+    OUTPUT_FORMAT: {
+        unified_view: TEXT,
+        consensus_points: LIST OF TEXT,
+        tension_points: LIST OF OBJECT { issue: TEXT, positions: LIST OF TEXT },
+        recommended_path: TEXT
+    }
+END
+```
+
+**Example -- literature review:**
+
+```ailang
+SYNTHESIZE research_findings INTO state_of_knowledge WITH:
+    SOURCES: [study_group_A, study_group_B, meta_analysis_C, dissenting_paper_D]
+    MUST_INCLUDE: [methodological_comparison, effect_size_consistency, publication_bias_assessment]
+    OUTPUT_FORMAT: {
+        consensus_findings: LIST OF TEXT,
+        contested_findings: LIST OF OBJECT { finding: TEXT, for_evidence: TEXT, against_evidence: TEXT },
+        gaps_in_knowledge: LIST OF TEXT,
+        overall_confidence: TEXT IN ["strong", "moderate", "weak", "insufficient"]
+    }
+    MAX_SCOPE: peer_reviewed_literature_post_2015
+END
+```
+
+##### `RETRIEVE`
+
+**Purpose:** Direct knowledge lookup with minimal reasoning transformation.
+
+**Maps to:** Minimal neuron activation (approximately 865 consistent neurons -- the lowest activation footprint of all reasoning types).
+
+**When to use:** When the program needs factual recall, definition lookup, or straightforward data retrieval that does not require deep inference or evaluation.
+
+**Note:** Named RETRIEVE rather than LOOKUP because it fits AILang's natural language style better while conveying the same semantics.
+
+**Syntax:**
+
+```ailang
+RETRIEVE [information] FOR [context] WITH:
+    DOMAIN: [knowledge_domain]
+    MUST_INCLUDE: [required_elements]
+    CANNOT_INCLUDE: [forbidden_elements]
+    OUTPUT_FORMAT: [structured_requirement]
+    MAX_SCOPE: [boundary_definition]
+END
+```
+
+**Example:**
+
+```ailang
+RETRIEVE compliance_requirements FOR jurisdiction WITH:
+    DOMAIN: "GDPR"
+    MUST_INCLUDE: [specific_articles, applicability_conditions]
+    OUTPUT_FORMAT: {
+        requirements: LIST OF TEXT,
+        applicable_articles: LIST OF TEXT,
+        key_definitions: LIST OF OBJECT { term: TEXT, definition: TEXT }
+    }
+END
+```
+
+**Example -- factual lookup:**
+
+```ailang
+RETRIEVE capital_cities FOR european_union_members WITH:
+    DOMAIN: "geography"
+    OUTPUT_FORMAT: {
+        results: LIST OF OBJECT { country: TEXT, capital: TEXT },
+        total_count: NUMBER
+    }
+END
+```
+
+#### 8.3 INTELLIGENTLY as Fallback
+
+`INTELLIGENTLY` is retained as a **fallback/shorthand** for situations where the programmer does not know or does not care which specific reasoning type to use. When INTELLIGENTLY is encountered, the engine auto-classifies the appropriate reasoning type using the rules described in Section 8.5 (Auto-Classification).
+
+**Syntax:**
+
+```ailang
+INTELLIGENTLY [operation] WITH:
+    MUST_INCLUDE: [required_elements]
+    CANNOT_INCLUDE: [forbidden_elements]
+    OUTPUT_FORMAT: [structured_requirement]
+    MAX_SCOPE: [boundary_definition]
+END
+```
+
+All v0.7.1 programs that use INTELLIGENTLY remain valid under v0.8. The engine applies auto-classification transparently, routing to the appropriate reasoning type. However, explicit reasoning type selection is recommended for production programs because:
+
+1. It communicates programmer intent more clearly
+2. It enables more efficient neural activation (skipping irrelevant neuron populations)
+3. It produces more predictable and auditable results
+4. It eliminates the classification step, reducing latency
+
+#### 8.4 Style Modifiers (Secondary Axis)
+
+CREATIVELY, ADAPTIVELY, and CONTEXTUALLY survive from v0.7.1 as **adverbial modifiers** that can be applied to any reasoning operation. Style and operation type are orthogonal dimensions -- you can deduce creatively, weigh adaptively, or trace contextually.
+
+When no style modifier is given, the default is standard analytical processing. INTELLIGENTLY as a style modifier means "use general AI judgment" -- it is the default style when none is specified.
+
+##### `CREATIVELY`
+
+Generate novel approaches while performing the specified reasoning type:
+
+```ailang
+CREATIVELY TRACE market_shift FROM economic_indicators WITH:
+    DIRECTION: FORWARD
+    MUST_INCLUDE: [unconventional_causal_paths, emerging_pattern_identification]
+    OUTPUT_FORMAT: { novel_causes: LIST, creative_predictions: LIST }
+END
+```
+
+##### `ADAPTIVELY`
+
+Adjust the reasoning approach based on computed conditions or varying input quality:
+
+```ailang
+ADAPTIVELY WEIGH data_sources WHEN reliability_varies WITH:
+    SOURCES: [sensor_data, manual_reports, satellite_imagery]
+    MUST_INCLUDE: [reliability_assessment_per_source, dynamic_weight_adjustment]
+    OUTPUT_FORMAT: { weighted_conclusion: TEXT, source_reliability_map: LIST }
+END
+```
+
+##### `CONTEXTUALLY`
+
+Make the reasoning operation explicitly context-dependent, grounding it in the current program state, active REALITY_CONTEXT, and accumulated variables:
+
+**Specification:** `CONTEXTUALLY` is equivalent to the reasoning operation with a requirement to use the **current program state** (variables, prior results, and any active `REALITY_CONTEXT`); it introduces no new boundary keys.
+
+```ailang
+CONTEXTUALLY DEDUCE next_steps FROM meeting_notes WITH:
+    MUST_INCLUDE: [action_items_grounded_in_discussion, responsible_parties]
+    OUTPUT_FORMAT: { action_items: LIST OF OBJECT { action: TEXT, owner: TEXT, deadline: TEXT } }
+END
+```
+
+##### Combining Style Modifiers with Reasoning Operations
+
+Style modifiers precede the reasoning operation verb:
+
+```ailang
+# Standard (no modifier) -- analytical COMPARE
+COMPARE strategies AGAINST KPIs WITH: ...
+
+# Creative COMPARE -- look for unconventional trade-offs
+CREATIVELY COMPARE strategies AGAINST KPIs WITH: ...
+
+# Adaptive TRACE -- adjust depth based on evidence quality
+ADAPTIVELY TRACE failure_chain FROM incident_report WITH: ...
+
+# Contextual SYNTHESIZE -- heavily ground in program state
+CONTEXTUALLY SYNTHESIZE team_feedback INTO action_plan WITH: ...
+```
+
+#### 8.5 Auto-Classification
+
+When `INTELLIGENTLY` is used without a specific reasoning type, the engine performs automatic classification using linguistic pattern matching. Research demonstrates 93.8% accuracy for this classification approach.
+
+**Classification Rules:**
+
+| Linguistic Pattern | Detected Reasoning Type |
+|---|---|
+| Authority markers: *expert*, *Dr.*, *Nobel*, *professor*, *study says*, *according to* | WEIGH |
+| Logical connectives: *if*, *then*, *all*, *every*, *therefore*, *it follows that*, *necessarily* | DEDUCE |
+| Causal verbs: *causes*, *leads to*, *because*, *results in*, *due to*, *consequence of* | TRACE |
+| Comparatives: *taller*, *faster*, *than*, *better*, *worse*, *rank*, *prefer*, *versus* | COMPARE |
+| Quantity/agreement words: *most*, *majority*, *consensus*, *agree*, *overall*, *integrate*, *combine* | SYNTHESIZE |
+| Simple fact requests: *what is*, *who wrote*, *when did*, *define*, *list*, *name* | RETRIEVE |
+
+**Classification Confidence:**
+
+The engine assigns a classification confidence score that affects routing aggressiveness:
+
+- **High confidence** (clear pattern match): Route directly to detected type
+- **Moderate confidence** (ambiguous patterns): Route to detected type but widen neuron activation window by 15%
+- **Low confidence** (no clear pattern): Activate broad neuron population (equivalent to untyped INTELLIGENTLY in v0.7.1)
+
+**Example of auto-classification in action:**
+
+```ailang
+# The engine detects "leads to" (causal verb) and auto-classifies as TRACE
+INTELLIGENTLY determine what_the_supply_chain_disruption_leads_to WITH:
+    OUTPUT_FORMAT: { effects: LIST OF TEXT }
+END
+# Internally routed to: TRACE effects FROM supply_chain_disruption WITH DIRECTION: FORWARD
+
+# The engine detects "what is" (fact request) and auto-classifies as RETRIEVE
+INTELLIGENTLY determine what_is_the_capital_of_France WITH:
+    OUTPUT_FORMAT: { answer: TEXT }
+END
+# Internally routed to: RETRIEVE capital FOR France
+
+# The engine detects "expert" and "Dr." (authority markers) and auto-classifies as WEIGH
+INTELLIGENTLY evaluate whether_Dr_Smith_or_the_WHO_is_more_credible WITH:
+    OUTPUT_FORMAT: { assessment: TEXT }
+END
+# Internally routed to: WEIGH claims ON credibility WITH SOURCES: [Dr_Smith, WHO]
+```
+
+**Specification:** Engines MUST implement auto-classification when INTELLIGENTLY is used. Engines SHOULD log the detected reasoning type and classification confidence for debugging and auditing purposes.
+
+#### 8.6 Reasoning Routing Architecture
+
+This section explains the computational architecture that makes typed reasoning operations more efficient than undifferentiated INTELLIGENTLY.
+
+##### Neuron Hierarchy (v0.8.1)
+
+Jaccard similarity analysis reveals that RETRIEVE is not a peer of the other five operations. It is a **base layer** that all operations subsume. Every operation consists of the RETRIEVE base (knowledge recall neurons) plus a set of unique neurons specific to that operation's reasoning type:
+
+```
+RETRIEVE (~865) --- base layer: knowledge recall
+    |-- COMPARE (~1,050) = RETRIEVE + ~185 unique ordering neurons
+    |-- TRACE (~1,100) = RETRIEVE + ~235 unique causal neurons
+    |-- DEDUCE (~1,200) = RETRIEVE + ~335 unique logical neurons
+    |-- SYNTHESIZE (~1,400) = RETRIEVE + ~535 unique integration neurons
+    |-- WEIGH (~1,531) = RETRIEVE + ~666 unique authority neurons
+```
+
+This hierarchy has two important implications:
+
+1. **RETRIEVE is always implicitly present**: When you invoke DEDUCE, the engine activates both the ~865 RETRIEVE base neurons (for knowledge recall) and the ~335 unique logical-inference neurons. The total of ~1,200 neurons reflects this combined activation.
+
+2. **The RETRIEVAL_BUDGET modifier becomes meaningful**: When all or most required input data is already loaded into program variables, some or all of the ~865 base retrieval neurons are unnecessary. Reducing or skipping them produces significant compute savings (see Section 8.7).
+
+##### Neural Activation Profiles
+
+Each reasoning type activates a characteristic subset of feed-forward network (FFN) neurons. These subsets are partially overlapping but substantially distinct:
+
+| Reasoning Type | Approximate Consistent Neurons | Unique Neurons (above RETRIEVE base) | Primary Activation Pattern |
+|---|---|---|---|
+| RETRIEVE | ~865 | 0 (is the base) | Minimal activation; direct knowledge recall pathways |
+| COMPARE | ~1,050 | ~185 | Ordering circuits; multi-attribute evaluation networks |
+| TRACE | ~1,100 | ~235 | Causal-chain networks; temporal-sequence processors |
+| DEDUCE | ~1,200 | ~335 | Logical-inference circuits; rule-application networks |
+| SYNTHESIZE | ~1,400 | ~535 | Integration networks; perspective-aggregation circuits |
+| WEIGH | ~1,531 | ~666 | Authority-evaluation circuits; credibility-assessment networks |
+
+##### Cross-Type Overlap (Jaccard Similarity)
+
+The following table shows pairwise neuron overlap between reasoning types:
+
+| Pair | Jaccard Similarity | Interpretation |
+|---|---|---|
+| WEIGH vs RETRIEVE | 52.8% | Moderate overlap -- WEIGH subsumes RETRIEVE's knowledge recall plus adds evaluation |
+| SYNTHESIZE vs DEDUCE | ~25% | Low overlap -- fundamentally different computational strategies |
+| TRACE vs RETRIEVE | ~25% | Low overlap -- causal chains require very different circuits than direct recall |
+| WEIGH vs SYNTHESIZE | ~45% | Moderate overlap -- both evaluate multiple sources but with different goals |
+| DEDUCE vs TRACE | ~40% | Moderate overlap -- both follow chains, but logical vs causal |
+| COMPARE vs WEIGH | ~42% | Moderate overlap -- both evaluate, but ordering vs authority |
+
+##### Performance Implications
+
+When the reasoning type is specified explicitly, the engine can:
+
+1. **Skip irrelevant neuron populations**: 25-47% of FFN compute can be bypassed
+2. **Prime relevant circuits**: Pre-activate the characteristic neuron subset before processing begins
+3. **Reduce routing overhead**: Eliminate the auto-classification step
+4. **Improve consistency**: Same reasoning type always activates similar neuron populations, improving output predictability
+
+**Conservative performance estimate**: 25-47% compute reduction per intelligent operation when typed reasoning is used instead of undifferentiated INTELLIGENTLY.
+
+##### Implications for Engine Implementers
+
+Engines implementing AILang v0.8.2 SHOULD:
+
+1. Maintain neuron activation profiles for each reasoning type
+2. Route typed operations to the appropriate neuron subpopulation
+3. Fall back to broad activation when INTELLIGENTLY auto-classification confidence is low
+4. Log routing decisions for performance analysis and debugging
+5. Track classification accuracy to improve auto-classification over time
+6. Implement the neuron hierarchy model: recognize RETRIEVE as the base layer and other operations as RETRIEVE + unique neurons (v0.8.1)
+7. Support the RETRIEVAL_BUDGET modifier by activating the appropriate number of base layer neurons (v0.8.2)
+
+#### 8.7 RETRIEVAL_BUDGET Modifier (v0.8.2)
+
+v0.8.1 introduced the binary `WITHOUT_RETRIEVAL` modifier -- either all 865 retrieval neurons fire, or none do. In practice, this is too coarse. Some operations need a small amount of retrieval (e.g., 95% of data is in variables but 5% needs basic terminology recall). `RETRIEVAL_BUDGET` provides graduated control over the retrieval base layer.
+
+##### Syntax
+
+```ailang
+# Graduated form (v0.8.2)
+[REASONING_TYPE] [subject] FROM [inputs] WITH:
+    RETRIEVAL_BUDGET: NONE | MINIMAL | STANDARD | FULL
+    [constraints]
+END
+
+# Binary form (v0.8.1, still valid)
+[REASONING_TYPE] [subject] FROM [inputs] WITHOUT_RETRIEVAL WITH:
+    [constraints]
+END
+```
+
+##### Retrieval Budget Levels
+
+**NONE**
+- Equivalent to `WITHOUT_RETRIEVAL`. Zero retrieval neurons activated.
+- The engine activates only the unique neurons for the specified reasoning type.
+- Use when ALL required input data is available in program variables and no knowledge recall from training data is needed.
+- Savings: ~865 neurons.
+
+**MINIMAL**
+- Activates approximately 200 of the 865 retrieval neurons.
+- The engine activates only the retrieval circuits needed for basic terminology resolution and gap-filling, not full knowledge recall.
+- Use when most data is in variables but some domain terminology or basic context may need recall. For example, the program has all the premises for a legal deduction, but the engine may need to resolve what "res judicata" means to apply a premise correctly.
+- Savings: ~665 neurons.
+
+**STANDARD**
+- The default when neither `RETRIEVAL_BUDGET` nor `WITHOUT_RETRIEVAL` is specified. Full 865 retrieval neurons activated.
+- Standard knowledge recall behavior identical to v0.8.0 and v0.8.1 default.
+- Savings: 0 neurons.
+
+**FULL**
+- Explicit form of STANDARD. Full 865 retrieval neurons activated.
+- Semantically identical to STANDARD; provided for readability when the programmer wants to explicitly signal "I want full retrieval here."
+- Savings: 0 neurons.
+
+##### Specification Rules
+
+1. **RETRIEVAL_BUDGET: NONE is equivalent to WITHOUT_RETRIEVAL.** Both forms remain valid. Programs may use either interchangeably.
+
+2. **WITHOUT_RETRIEVAL and RETRIEVAL_BUDGET are mutually exclusive** in the same operation. Specifying both is a specification error:
+   ```ailang
+   # ERROR: Cannot specify both
+   DEDUCE conclusion FROM premises WITHOUT_RETRIEVAL WITH:
+       RETRIEVAL_BUDGET: MINIMAL  # Specification error
+   END
+   ```
+
+3. **Default behavior**: When neither `RETRIEVAL_BUDGET` nor `WITHOUT_RETRIEVAL` is specified, the engine uses `RETRIEVAL_BUDGET: STANDARD` (full retrieval). This ensures full backward compatibility with v0.8.0 and v0.8.1 programs.
+
+4. **RETRIEVE exclusion**: RETRIEVE operations CANNOT use `RETRIEVAL_BUDGET: NONE` or `WITHOUT_RETRIEVAL`. RETRIEVE *is* the base layer. Applying NONE would be a no-op. Engines SHOULD issue a warning if this is attempted. RETRIEVE operations MAY use `RETRIEVAL_BUDGET: MINIMAL` to restrict retrieval scope to basic facts.
+
+5. **Modifier classification**: RETRIEVAL_BUDGET is a compute modifier, not a style modifier. It affects which neurons fire, not how they process. It is orthogonal to both style modifiers (CREATIVELY, etc.) and the DEPTH modifier.
+
+6. **Engine verification**: For RETRIEVAL_BUDGET: NONE, the engine MUST verify that no knowledge recall is needed before honoring the modifier. If verification fails, the engine MUST fall back to STANDARD activation and log a warning:
+   ```
+   WARNING: RETRIEVAL_BUDGET: NONE fallback -- operation required knowledge recall not present in variables.
+   Falling back to RETRIEVAL_BUDGET: STANDARD.
+   ```
+   For RETRIEVAL_BUDGET: MINIMAL, the engine activates the ~200 terminology-resolution neurons. If the operation needs more than basic terminology recall, the engine SHOULD expand to STANDARD activation and log:
+   ```
+   WARNING: RETRIEVAL_BUDGET: MINIMAL expanded -- operation required knowledge recall beyond terminology resolution.
+   Expanded to RETRIEVAL_BUDGET: STANDARD.
+   ```
+
+7. **Combination syntax**: RETRIEVAL_BUDGET can be combined with style modifiers and DEPTH:
+   ```ailang
+   CREATIVELY DEDUCE innovation_paths FROM loaded_market_data WITH:
+       RETRIEVAL_BUDGET: MINIMAL
+       DEPTH: DEEP
+       MUST_INCLUDE: [unconventional_connections]
+   END
+   ```
+
+##### Compute Savings Estimates
+
+| Operation | Standard Neurons | RETRIEVAL_BUDGET: NONE Neurons | NONE Savings | RETRIEVAL_BUDGET: MINIMAL Neurons | MINIMAL Savings |
+|---|---|---|---|---|---|
+| COMPARE | ~1,050 | ~185 | ~82% | ~385 | ~63% |
+| TRACE | ~1,100 | ~235 | ~79% | ~435 | ~60% |
+| DEDUCE | ~1,200 | ~335 | ~72% | ~535 | ~55% |
+| SYNTHESIZE | ~1,400 | ~535 | ~62% | ~735 | ~47% |
+| WEIGH | ~1,531 | ~666 | ~57% | ~866 | ~43% |
+
+##### When to Use Each Level
+
+**RETRIEVAL_BUDGET: NONE** (same as WITHOUT_RETRIEVAL):
+- Data has been loaded via GET/RETRIEVE into program variables in a prior step
+- All premises are explicitly stated in the program
+- Operating on outputs from prior reasoning operations (e.g., second operation in a THEN chain after RETRIEVE)
+- Inside a REASONING_CONTEXT block where prior operations have already retrieved needed data
+
+**RETRIEVAL_BUDGET: MINIMAL**:
+- Most data is in variables but domain terminology may need resolution
+- Operating on prior results that reference domain-specific concepts the engine needs to interpret correctly
+- Second or third step in a THEN chain where the first step retrieved data but subsequent steps may encounter unfamiliar terms
+- When the programmer is mostly confident all data is in-context but wants a safety margin for terminology
+
+**RETRIEVAL_BUDGET: STANDARD or FULL**:
+- The operation may need to recall domain knowledge (e.g., legal precedents, scientific facts)
+- Input variables contain references that require resolution against training data
+- The programmer is uncertain whether all needed information is in variables
+- First operation in a pipeline where no prior retrieval has occurred
+
+#### 8.8 DEPTH Modifier -- Third Axis (v0.8.1, updated v0.8.2)
+
+Test results showed that the same reasoning operation with the same style could produce radically different output depths -- a TRACE operation might produce a shallow ~68-token event-level analysis or a deep ~310-token mechanism-level analysis. Operation type determines WHICH neurons fire. Style determines HOW they process. But neither controls how DEEPLY they process.
+
+DEPTH is introduced as a third orthogonal axis that controls compute investment per reasoning step.
+
+##### Syntax
+
+```ailang
+[REASONING_TYPE] [subject] FROM [inputs] WITH:
+    DEPTH: SHALLOW | STANDARD | THOROUGH | DEEP | EXHAUSTIVE
+    [other constraints]
+END
+```
+
+##### Depth Levels
+
+**SHALLOW**
+- Single-pass processing
+- Produces quick, surface-level results
+- Event-level chains (for TRACE), headline conclusions (for DEDUCE), top-line rankings (for COMPARE)
+- Appropriate when speed matters more than depth
+- Lowest compute investment
+- Estimated output: ~95 tokens
+
+**STANDARD**
+- Default when DEPTH is omitted
+- Balanced depth and compute investment
+- Produces thorough but not exhaustive analysis
+- Appropriate for most production use cases
+- Estimated output: ~190 tokens
+
+**THOROUGH** (v0.8.2)
+- More than STANDARD: explores contributing factors and secondary causes
+- Less than DEEP: does not do multi-pass mechanism-level analysis or systemic factor identification
+- Appropriate for production analyses where STANDARD is not enough but DEEP is overkill
+- Fills the gap between STANDARD (~190 tokens) and DEEP (~385 tokens)
+- Estimated output: 1.5-2x STANDARD (~285-380 tokens)
+
+**DEEP**
+- Multi-pass processing
+- Each reasoning step is analyzed more thoroughly
+- Mechanism-level analysis (for TRACE), detailed inference chains (for DEDUCE), nuanced trade-off exploration (for COMPARE)
+- Appropriate for critical decisions, important analyses
+- Significantly higher compute investment than STANDARD
+- Estimated output: 2-3x STANDARD (~385-570 tokens)
+
+**EXHAUSTIVE**
+- Recursive processing until the engine determines no further productive reasoning can be extracted
+- Most expensive depth level
+- Leaves no stone unturned -- explores all branches, considers all angles
+- Appropriate for forensic analysis, compliance audits, research investigations, safety-critical decisions
+- The engine MUST terminate when additional passes yield diminishing returns (to prevent infinite recursion)
+- Estimated output: 3x+ STANDARD
+
+##### Examples
+
+```ailang
+# Quick surface-level root cause check
+TRACE root_cause FROM incident_log WITH:
+    DEPTH: SHALLOW
+    DIRECTION: BACKWARD
+    OUTPUT_FORMAT: { likely_cause: TEXT, confidence: TEXT }
+END
+
+# Standard analysis (DEPTH omitted = STANDARD)
+TRACE root_cause FROM incident_log WITH:
+    DIRECTION: BACKWARD
+    OUTPUT_FORMAT: { causal_chain: LIST, root_cause: TEXT }
+END
+
+# Thorough analysis -- contributing factors without full mechanism-level detail (v0.8.2)
+TRACE root_cause FROM incident_log WITH:
+    DEPTH: THOROUGH
+    DIRECTION: BACKWARD
+    OUTPUT_FORMAT: {
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT, evidence: TEXT },
+        root_cause: TEXT,
+        contributing_factors: LIST OF TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"]
+    }
+END
+
+# Deep mechanism-level analysis
+TRACE root_cause FROM incident_log WITH:
+    DEPTH: DEEP
+    DIRECTION: BACKWARD
+    OUTPUT_FORMAT: {
+        causal_chain: LIST OF OBJECT { event: TEXT, mechanism: TEXT, evidence: TEXT },
+        root_cause: TEXT,
+        contributing_factors: LIST,
+        systemic_vulnerabilities: LIST
+    }
+END
+
+# Exhaustive forensic analysis
+TRACE root_cause FROM incident_log WITH:
+    DEPTH: EXHAUSTIVE
+    DIRECTION: BACKWARD
+    OUTPUT_FORMAT: {
+        all_causal_chains: LIST OF LIST,
+        primary_root_cause: TEXT,
+        secondary_causes: LIST,
+        contributing_factors: LIST,
+        systemic_vulnerabilities: LIST,
+        unexplored_hypotheses: LIST,
+        confidence_per_chain: LIST
+    }
+END
+```
+
+##### Specification Rules
+
+1. **Orthogonality**: DEPTH modifies compute investment per reasoning step, not which neurons fire (that is the operation type's job) and not how they process (that is the style modifier's job). DEPTH is orthogonal to both axes.
+
+2. **Applicability**: DEPTH applies to all six reasoning operations (WEIGH, DEDUCE, TRACE, COMPARE, SYNTHESIZE, RETRIEVE) and to INTELLIGENTLY.
+
+3. **Default**: When DEPTH is omitted, the engine uses STANDARD depth. This ensures full backward compatibility with v0.8.0 programs.
+
+4. **Interaction with ADAPTIVELY**: When `ADAPTIVELY` style is combined with DEPTH, the engine starts at the specified depth but may dynamically adjust within a range of plus or minus one depth level from the specified base. See Appendix D for the full interaction specification.
+
+5. **Interaction with RETRIEVAL_BUDGET**: DEPTH and RETRIEVAL_BUDGET are independent modifiers. Both may be applied simultaneously:
+   ```ailang
+   DEDUCE conclusion FROM loaded_data WITH:
+       RETRIEVAL_BUDGET: NONE
+       DEPTH: DEEP
+       MUST_INCLUDE: [detailed_inference_chain]
+   END
+   # Activates only ~335 logical neurons (no retrieval base) but processes them deeply
+   ```
+
+6. **Per-operation in THEN chains**: In THEN chains (Section 8.10), DEPTH applies to the specific operation it is specified on, not the entire chain.
+
+7. **Compute cost ordering**: SHALLOW < STANDARD < THOROUGH < DEEP < EXHAUSTIVE. Engines SHOULD document approximate cost multipliers for planning purposes.
+
+#### 8.9 EMIT_DIGEST for Pipeline Efficiency (v0.8.1)
+
+Test analysis showed that SYNTHESIZE operations in multi-step pipelines were re-processing full outputs from prior operations, wasting compute on re-parsing information that could be summarized. `EMIT_DIGEST` produces a compact typed summary alongside the full output, enabling downstream operations to consume digests instead of full outputs.
+
+##### Syntax
+
+```ailang
+[REASONING_TYPE] [subject] FROM [inputs] WITH:
+    EMIT_DIGEST: true
+    [other constraints]
+END
+```
+
+##### Digest Format
+
+When `EMIT_DIGEST: true` is specified, the engine produces an additional `_digest` output alongside the standard output:
+
+```
+{
+    @reasoning_type: TEXT,       # The reasoning operation that produced this digest
+    @confidence: QUALITATIVE,   # Confidence level of the result
+    @key_finding: TEXT,          # Single most important finding
+    @digest: TEXT                # Compact summary of the full output
+}
+```
+
+##### Specification Rules
+
+1. **Token limit**: The digest MUST be under 100 tokens. This ensures digests remain genuinely compact and do not become a second full output.
+
+2. **Storage**: Digests are stored in program state as `{operation_name}_digest`. For example, if the operation assigns to `root_cause_analysis`, the digest is stored as `root_cause_analysis_digest`.
+
+3. **Backward compatibility**: EMIT_DIGEST is optional. When omitted, no digest is produced. All v0.8.0 programs work without modification.
+
+4. **SYNTHESIZE FROM DIGESTS**: SYNTHESIZE operations that specify `FROM DIGESTS` consume only the digest fields from their sources, not the full outputs. This is the primary efficiency gain:
+   ```ailang
+   SYNTHESIZE decision FROM DIGESTS WITH:
+       SOURCES: [trace_digest, deduce_digest, weigh_digest]
+       MUST_INCLUDE: [integrated_assessment]
+       OUTPUT_FORMAT: { decision: TEXT, rationale: TEXT }
+   END
+   ```
+
+5. **Automatic in REASONING_CONTEXT**: Inside a `BEGIN REASONING_CONTEXT` block (Section 8.11), every operation automatically has `EMIT_DIGEST: true`. Explicit specification is not needed within these blocks.
+
+6. **DEPTH does not affect digest length** (v0.8.2): DEPTH affects the full output but NOT the digest. Digests remain under ~100 tokens regardless of depth level. This means DEEP and EXHAUSTIVE operations produce richer digests (the 100 tokens capture more nuanced findings from the deeper analysis) but do not produce longer digests.
+
+##### Example
+
+```ailang
+# Step 1: Trace with digest
+TRACE root_cause FROM incident_log WITH:
+    EMIT_DIGEST: true
+    DIRECTION: BACKWARD
+    OUTPUT_FORMAT: {
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT },
+        root_cause: TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"]
+    }
+END
+# Produces full output AND:
+# root_cause_digest = { @reasoning_type: "TRACE", @confidence: "high",
+#                       @key_finding: "heartbeat timeout after network partition",
+#                       @digest: "Root cause: network partition at 14:32 caused heartbeat timeout..." }
+
+# Step 2: Deduce with digest
+DEDUCE regulatory_implications FROM root_cause AND compliance_framework WITH:
+    EMIT_DIGEST: true
+    OUTPUT_FORMAT: {
+        violations: LIST OF TEXT,
+        reporting_required: BOOLEAN,
+        remediation_steps: LIST OF TEXT
+    }
+END
+
+# Step 3: Synthesize consumes digests, not full outputs
+SYNTHESIZE incident_response FROM DIGESTS WITH:
+    SOURCES: [root_cause_digest, regulatory_implications_digest]
+    MUST_INCLUDE: [unified_timeline, action_items]
+    OUTPUT_FORMAT: {
+        response_plan: TEXT,
+        priority_actions: LIST OF TEXT,
+        reporting_requirements: LIST OF TEXT
+    }
+END
+```
+
+#### 8.10 THEN Chaining for Atomic Compound Operations (v0.8.1)
+
+The `THEN` keyword enables chaining reasoning operations without intermediate variable assignment. This is useful when operations form a natural sequence where each step feeds into the next.
+
+##### Syntax
+
+```ailang
+[OPERATION_1] [args]
+    THEN [OPERATION_2] FROM RESULT [AND other_inputs] WITH:
+        [constraints]
+    THEN [OPERATION_3] FROM RESULT [AND other_inputs] WITH:
+        [constraints]
+    END
+```
+
+##### Specification Rules
+
+1. **RESULT keyword**: The output of the preceding operation becomes available as `RESULT` in the next operation. `RESULT` is a reserved keyword within THEN chains that refers to the complete output of the immediately preceding operation.
+
+2. **Sequential activation**: Neuron activation is sequential -- the first operation's neurons activate and complete fully, then the second operation's neurons activate. There is no parallel execution within a chain.
+
+3. **Maximum chain length**: At most 3 operations may be chained in a single THEN sequence. This limit prevents unauditable mega-operations. For longer pipelines, use REASONING_CONTEXT blocks (Section 8.11) or explicit variable assignment.
+
+4. **Per-operation constraints**: Each operation in the chain may have its own bounded intelligence constraints (MUST_INCLUDE, CANNOT_INCLUDE, OUTPUT_FORMAT, MAX_SCOPE).
+
+5. **Per-operation style**: Style modifiers apply to the specific operation they precede, not the whole chain:
+   ```ailang
+   RETRIEVE compliance_data FOR jurisdiction
+       THEN CREATIVELY DEDUCE loopholes FROM RESULT AND regulation_text WITH:
+           OUTPUT_FORMAT: { potential_issues: LIST }
+       END
+   ```
+
+6. **RETRIEVAL_BUDGET in chains**: RETRIEVAL_BUDGET may be applied per-operation in a chain. It is particularly natural to use `RETRIEVAL_BUDGET: NONE` or `RETRIEVAL_BUDGET: MINIMAL` on the second and third operations in a chain when the first operation has already retrieved the needed data:
+   ```ailang
+   RETRIEVE facts FOR domain
+       THEN DEDUCE implications FROM RESULT WITH:
+           RETRIEVAL_BUDGET: NONE
+           OUTPUT_FORMAT: { implications: LIST }
+       END
+   ```
+
+7. **DEPTH in chains**: DEPTH applies per-operation in the chain:
+   ```ailang
+   RETRIEVE basic_facts FOR topic WITH:
+       DEPTH: SHALLOW
+       THEN DEDUCE deep_implications FROM RESULT WITH:
+           DEPTH: DEEP
+           OUTPUT_FORMAT: { conclusions: LIST }
+       END
+   ```
+
+8. **END placement**: A single `END` terminates the entire chain. Individual operations within the chain do not have their own `END` except the final one.
+
+##### Examples
+
+```ailang
+# Two-operation chain: retrieve then deduce
+RETRIEVE compliance_requirements FOR jurisdiction
+    THEN DEDUCE applicability FROM RESULT AND company_profile WITH:
+        OUTPUT_FORMAT: { applicable_rules: LIST, reasoning: TEXT }
+    END
+```
+
+```ailang
+# Three-operation chain: trace, deduce, then weigh
+TRACE root_cause FROM incident_log WITH:
+    DIRECTION: BACKWARD
+    THEN DEDUCE regulatory_exposure FROM RESULT AND compliance_framework WITH:
+        RETRIEVAL_BUDGET: NONE
+        MUST_INCLUDE: [violated_regulations]
+        THEN WEIGH response_options ON risk_mitigation WITH:
+            RETRIEVAL_BUDGET: NONE
+            SOURCES: [RESULT, available_resources, stakeholder_priorities]
+            OUTPUT_FORMAT: {
+                recommended_response: TEXT,
+                risk_level: TEXT IN ["high", "moderate", "low"],
+                action_items: LIST OF TEXT
+            }
+        END
+```
+
+```ailang
+# Chain with mixed styles, depths, and retrieval budgets
+RETRIEVE market_data FOR sector WITH:
+    DEPTH: SHALLOW
+    THEN CREATIVELY TRACE emerging_trends FROM RESULT WITH:
+        DIRECTION: FORWARD
+        DEPTH: THOROUGH
+        RETRIEVAL_BUDGET: MINIMAL
+        THEN COMPARE investment_strategies AGAINST RESULT WITH:
+            RETRIEVAL_BUDGET: NONE
+            DIMENSIONS: [risk, return, timeline]
+            DEPTH: STANDARD
+            OUTPUT_FORMAT: { ranking: LIST, recommended: TEXT }
+        END
+```
+
+---
+
+### 9. Enhanced Intelligent Programming Constructs
+
+AILang provides constructs that explicitly delegate to AI intelligence while maintaining structured frameworks. In v0.8, these constructs integrate with the typed reasoning operations defined in Section 8.
+
+#### Contextual Intelligence Framework
+
+When transitioning from deterministic to intelligent operations, the AI has access to:
+
+1. **Current Variable State**: All deterministic calculations and data assignments
+2. **Execution History**: Previous operations and their outcomes
+3. **Program Context**: The overall objective and constraints of the program
+4. **Domain Knowledge**: AI's understanding of the relevant problem domain
+5. **Reasoning Type Context**: The specified reasoning type determines which neural pathways are activated (v0.8)
+6. **Depth Context**: The specified DEPTH level determines how deeply each reasoning step is processed (v0.8.1)
+7. **Accumulated Digests**: Within a REASONING_CONTEXT block, digests from prior operations are available as additional input (v0.8.1)
+8. **Retrieval Budget Context**: The specified RETRIEVAL_BUDGET level determines how much base retrieval activation is applied (v0.8.2)
+
+This ensures intelligent operations are grounded in concrete program state rather than arbitrary reasoning.
+
+#### Intelligent Operation Blocks
+
+Structured blocks that combine deterministic framework with typed intelligent execution:
+
+```ailang
+DO [REASONING_TYPE] [operation_description]:
+    [instructions with gaps]
+END
+```
+
+```ailang
+DO CREATIVELY [REASONING_TYPE] [problem_description]:
+    GIVEN [constraints]
+    [instructions]
+END
+```
+
+**Examples:**
+
+```ailang
+DO WEIGH vendor_selection:
+    GIVEN [budget_constraint, timeline_requirement]
+    SOURCES: [vendor_A_proposal, vendor_B_proposal, vendor_C_proposal]
+    MUST_INCLUDE: [cost_comparison, risk_assessment]
+END
+
+DO CREATIVELY TRACE innovation_opportunities:
+    GIVEN [current_product_line, market_trends]
+    DIRECTION: FORWARD
+    MUST_INCLUDE: [unconventional_connections]
+END
+```
+
+For backward compatibility, INTELLIGENTLY blocks remain valid:
+
+```ailang
+DO INTELLIGENTLY [operation_description]:
+    [instructions with gaps]
+END
+```
+
+#### Bounded Intelligence Constraints
+
+All intelligent operations -- whether typed or using INTELLIGENTLY -- must specify explicit boundaries:
+
+```ailang
+[REASONING_TYPE] operation WITH:
+    MUST_INCLUDE: [required_elements]
+    CANNOT_INCLUDE: [forbidden_elements]
+    OUTPUT_FORMAT: [structured_requirement]
+    MAX_SCOPE: [boundary_definition]
+END
+```
+
+**Example with typed reasoning:**
+
+```ailang
+DEDUCE regulatory_compliance FROM product_specifications AND regulatory_framework WITH:
+    MUST_INCLUDE: [applicable_regulations, compliance_gaps, remediation_steps]
+    CANNOT_INCLUDE: [legal_advice, liability_assessment]
+    OUTPUT_FORMAT: {
+        compliant: BOOLEAN,
+        gaps: LIST OF OBJECT { regulation: TEXT, gap: TEXT, severity: QUALITATIVE },
+        remediation: LIST OF TEXT
+    }
+    MAX_SCOPE: current_product_version_only
 END
 ```
 
 #### QUALITATIVE Value Interpretation
 
-When inputs contain QUALITATIVE values, INTELLIGENT operations MUST ground interpretation in the active REALITY_CONTEXT and report confidence via categorical levels where requested.
+When inputs contain QUALITATIVE values, INTELLIGENT operations (whether typed or untyped) MUST ground interpretation in the active REALITY_CONTEXT and report confidence via categorical levels where requested.
 
 Engines MUST NOT invent numeric codings for QUALITATIVE values unless explicitly performing parameter exploration.
 
-**Example:**
+**Example with typed reasoning:**
 
 ```ailang
 SET stakeholder_sentiment TO "cautiously optimistic"
 
 WITH REALITY_CONTEXT project_planning:
-  INTELLIGENTLY assess_timeline_risk FROM stakeholder_sentiment WITH:
+  WEIGH stakeholder_input ON timeline_risk WITH:
+    SOURCES: [stakeholder_sentiment, historical_project_data, team_capacity_assessment]
     MUST_INCLUDE: [risk_level, factors]
     OUTPUT_FORMAT: {
       risk: QUALITATIVE IN ["low","moderate","high","critical"],
@@ -716,8 +1690,7 @@ END_WITH
 
 Indicates where AI should apply intelligence:
 
-```
-#ailang
+```ailang
 GET user_data FROM ...appropriate_data_source
 PROCESS information USING ...suitable_analysis_method
 RESPOND TO user WITH ...contextually_relevant_message
@@ -727,8 +1700,7 @@ RESPOND TO user WITH ...contextually_relevant_message
 
 Variables that adapt to context:
 
-```
-#ailang
+```ailang
 SET response_time TO reasonable_duration FOR current_context
 SET message_style TO appropriate_for user_preference
 SET processing_method TO optimal_for data_size
@@ -738,15 +1710,13 @@ SET processing_method TO optimal_for data_size
 
 Conditions that combine deterministic evaluation with intelligent interpretation:
 
-```
-#ailang
+```ailang
 IF situation_warrants_escalation THEN:
     # AI determines what constitutes "warranting escalation"
 END_IF
 ```
 
-```
-#ailang
+```ailang
 WHILE progress_is_being_made DO:
     # AI evaluates both quantitative and qualitative progress
 END_WHILE
@@ -756,30 +1726,299 @@ END_WHILE
 
 Loops where AI determines relevance or selection criteria:
 
-```
-#ailang
+```ailang
 FOR EACH ...relevant_record IN large_dataset DO:
     # AI determines relevance based on context and objectives
 END_FOR
 ```
 
-```
-#ailang
+```ailang
 WHILE ...customer_is_not_happy DO:
     # Escalate to higher management level
 END_WHILE
 ```
 
-### 9. Reality Context
+---
+
+### 10. Workflow Patterns: ASSESS, EXPLORE, DECIDE
+
+The ASSESS/EXPLORE/DECIDE pattern from v0.7.1 is retained as a **workflow pattern** that composes with typed reasoning operations. These three phases represent a natural decision-making workflow: frame the situation, explore options, then decide.
+
+#### 10.1 ASSESS Phase (Frame the Situation)
+
+In v0.7.1, `INTELLIGENTLY ASSESS` was the primary framing construct. In v0.8, the ASSESS phase uses typed reasoning operations to frame the situation with precision:
+
+```ailang
+# v0.7.1 style (still valid as fallback):
+INTELLIGENTLY ASSESS situation AS revenue_decline_analysis
+
+# v0.8 style -- explicit reasoning type:
+TRACE situation_drivers FROM revenue_data AND market_conditions WITH:
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [root_causes, contributing_factors, timeline]
+    OUTPUT_FORMAT: {
+        primary_drivers: LIST OF TEXT,
+        causal_chain: LIST OF TEXT,
+        severity: QUALITATIVE IN ["minor", "moderate", "severe", "critical"]
+    }
+END
+```
+
+The ASSESS phase can use any reasoning type depending on the nature of the framing needed:
+
+- **TRACE** when understanding what caused the current situation
+- **RETRIEVE** when gathering baseline facts
+- **COMPARE** when benchmarking against standards
+- **WEIGH** when evaluating conflicting assessments of the situation
+
+#### 10.2 EXPLORE Phase (Explore Options)
+
+`INTELLIGENTLY EXPLORE` stays as-is but internal ANALYZE steps can now use typed operations:
+
+```ailang
+INTELLIGENTLY EXPLORE workforce_scenarios:
+    PARAMETERS:
+        reduction_percent: [5, 10, 15, 20]
+        method: ["across_board", "performance_based", "voluntary"]
+
+    EXECUTE_CODE python:
+        scenarios = []
+        for pct in [5, 10, 15, 20]:
+            for m in ["across_board", "performance_based", "voluntary"]:
+                result = simulate_reduction(pct, m, workforce_data)
+                scenarios.append(result)
+        df_scenarios = pd.DataFrame(scenarios)
+    END_EXECUTE
+
+    ANALYZE:
+        # The ANALYZE block can now compose typed operations:
+        COMPARE results ACROSS [cost_savings, capability_retention, morale_impact] WITH:
+            DIMENSIONS: [cost_savings, capability_retention, morale_impact]
+            OUTPUT_FORMAT: { ranking: LIST, trade_offs: TEXT }
+        END
+
+        TRACE morale_consequences FROM each_scenario WITH:
+            DIRECTION: FORWARD
+            OUTPUT_FORMAT: { scenario_consequences: LIST }
+        END
+END_EXPLORE
+```
+
+#### 10.3 DECIDE Phase (Make the Decision)
+
+In v0.7.1, `INTELLIGENTLY DECIDE` was untyped. In v0.8, the decision step can specify which reasoning type best fits the decision:
+
+```ailang
+# v0.7.1 style (still valid):
+INTELLIGENTLY DECIDE final_plan BASED_ON:
+    EXPLORATION: workforce_scenarios_results
+    CONSTRAINTS: legal_risk_tolerance, timeline
+END_DECIDE
+
+# v0.8 style -- WEIGH is often the right choice for decisions:
+WEIGH scenario_outcomes AGAINST strategic_priorities WITH:
+    SOURCES: [exploration_results, executive_guidance, legal_counsel]
+    MUST_INCLUDE: [risk_assessment, implementation_feasibility, stakeholder_impact]
+    OUTPUT_FORMAT: {
+        selected_scenario: TEXT,
+        rationale: TEXT,
+        risk_level: QUALITATIVE IN ["low", "moderate", "high"],
+        implementation_requirements: LIST OF TEXT
+    }
+END
+```
+
+#### 10.4 Complete Workflow Example
+
+```ailang
+# ========================================
+# Step 1: ASSESS -- Frame the situation
+# ========================================
+TRACE revenue_decline_causes FROM quarterly_financial_data WITH:
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [revenue_streams_affected, market_factors, internal_factors]
+    MAX_SCOPE: "last_4_quarters"
+    OUTPUT_FORMAT: {
+        causal_chain: LIST OF TEXT,
+        primary_cause: TEXT,
+        contributing_factors: LIST OF TEXT,
+        severity: QUALITATIVE IN ["minor", "moderate", "severe", "critical"]
+    }
+END
+
+# ========================================
+# Step 2: EXPLORE -- Explore response options
+# ========================================
+INTELLIGENTLY EXPLORE cost_reduction_scenarios:
+    PARAMETERS:
+        budget_reduction_percent: [5, 10, 15, 20, 25]
+        reduction_method: ["across_board", "performance_based", "voluntary"]
+        retention_bonus_budget: [0, 100000, 250000, 500000]
+    RESOLUTION: medium
+
+    EXECUTE_CODE python:
+        import pandas as pd
+        scenarios = []
+        for cut_pct in [0.05, 0.10, 0.15, 0.20, 0.25]:
+            for method in ['across_board', 'performance_based', 'voluntary']:
+                for retention_budget in [0, 100000, 250000, 500000]:
+                    result = simulate_layoff_impact(
+                        budget_reduction=cut_pct,
+                        method=method,
+                        retention_budget=retention_budget,
+                        employee_database=current_workforce
+                    )
+                    scenarios.append(result)
+        df_scenarios = pd.DataFrame(scenarios)
+    END_EXECUTE
+
+    ANALYZE:
+        COMPARE scenarios ACROSS [cost_savings, talent_retention, morale_impact, legal_risk] WITH:
+            DIMENSIONS: [cost_savings, talent_retention, morale_impact, legal_risk]
+            OUTPUT_FORMAT: { sweet_spot: TEXT, danger_zones: LIST, trade_offs: TEXT }
+        END
+END_EXPLORE
+
+# ========================================
+# Step 3: DECIDE -- Choose the path forward
+# ========================================
+WEIGH scenario_outcomes AGAINST strategic_priorities WITH:
+    SOURCES: [exploration_results, executive_guidance, legal_counsel, hr_assessment]
+    MUST_INCLUDE: [risk_assessment, implementation_timeline, talent_preservation_plan]
+    CANNOT_INCLUDE: [promises_to_specific_employees, premature_announcements]
+    OUTPUT_FORMAT: {
+        selected_plan: TEXT,
+        rationale: TEXT,
+        implementation_steps: LIST OF TEXT,
+        risk_mitigation: LIST OF TEXT,
+        monitoring_plan: TEXT
+    }
+END
+
+# ========================================
+# Step 4: EXECUTE -- Implement with safeguards
+# ========================================
+EXECUTE selected_plan WITH:
+    SAFEGUARDS: [legal_review, hr_oversight, manager_training]
+    MONITORING: [weekly_morale_surveys, talent_retention_tracking, productivity_metrics]
+    ADJUSTMENT_TRIGGERS: [key_talent_departure_threshold, morale_critical_low]
+END_EXECUTE
+```
+
+---
+
+### 10.5 REASONING_CONTEXT Accumulator for Pipelines (v0.8.1)
+
+Test analysis showed that in multi-operation pipelines, each operation started cold with no awareness of prior operations' findings. The REASONING_CONTEXT block solves this by providing a shared accumulator that automatically collects digests from each operation and makes them available to subsequent operations.
+
+#### Syntax
+
+```ailang
+BEGIN REASONING_CONTEXT [context_name]:
+    [reasoning operations]
+END REASONING_CONTEXT
+```
+
+#### Specification Rules
+
+1. **Automatic digest accumulation**: Every reasoning operation inside a REASONING_CONTEXT block automatically has `EMIT_DIGEST: true`. Each operation's digest is appended to the context accumulator as it completes.
+
+2. **Accumulated context as input**: Operations inside the block receive the accumulated digests from all preceding operations as additional read-only input. The engine makes these digests available alongside the operation's explicit inputs.
+
+3. **SYNTHESIZE FROM CONTEXT**: A SYNTHESIZE operation inside the block may specify `FROM CONTEXT` to consume all accumulated digests:
+   ```ailang
+   SYNTHESIZE decision FROM CONTEXT WITH:
+       MUST_INCLUDE: [integrated_assessment]
+       OUTPUT_FORMAT: { decision: TEXT, rationale: TEXT }
+   END
+   ```
+
+4. **Scoped accumulator**: The digest accumulator is scoped to the REASONING_CONTEXT block. It does not persist beyond `END REASONING_CONTEXT`. Variables created inside the block persist normally -- only the digest accumulator is scoped.
+
+5. **Variable persistence**: Variables assigned inside the block (via SET, LET, or operation outputs) persist in normal program scope after the block ends. Only the automatic digest accumulation mechanism is scoped.
+
+6. **Nesting**: REASONING_CONTEXT blocks may be nested. Inner blocks do NOT inherit outer accumulations unless explicitly referenced:
+   ```ailang
+   BEGIN REASONING_CONTEXT outer:
+       RETRIEVE facts ...
+       BEGIN REASONING_CONTEXT inner:
+           # inner block has its own accumulator, starts empty
+           DEDUCE conclusions ...
+       END REASONING_CONTEXT
+       # outer accumulator does not include inner block's digests
+       # unless explicitly passed
+   END REASONING_CONTEXT
+   ```
+
+7. **Recommended maximum**: Maximum recommended operations per REASONING_CONTEXT is 8, to prevent context overload. The engine SHOULD warn when this limit is exceeded but MUST NOT enforce it as a hard error.
+
+8. **Interaction with THEN chains**: THEN chains inside a REASONING_CONTEXT block produce a single digest for the entire chain (the final operation's digest), not one per chained operation.
+
+#### Example
+
+```ailang
+BEGIN REASONING_CONTEXT migration_analysis:
+
+    # Step 1: Retrieve cloud facts
+    # Digest automatically produced and added to context
+    RETRIEVE cloud_platform_capabilities FOR target_platforms WITH:
+        DOMAIN: "cloud_infrastructure"
+        OUTPUT_FORMAT: {
+            platforms: LIST OF OBJECT { name: TEXT, capabilities: LIST, pricing: TEXT }
+        }
+    END
+
+    # Step 2: Compare options -- reads accumulated context (cloud_facts digest)
+    COMPARE migration_options AGAINST requirements WITH:
+        DIMENSIONS: [cost, performance, migration_effort, vendor_lock_in]
+        OUTPUT_FORMAT: {
+            ranking: LIST OF OBJECT { option: TEXT, rank: NUMBER, rationale: TEXT },
+            trade_offs: LIST OF TEXT
+        }
+    END
+
+    # Step 3: Weigh expert opinions -- reads accumulated context (cloud_facts + compare digests)
+    WEIGH architect_recommendations ON migration_strategy WITH:
+        SOURCES: [senior_architect_review, vendor_consultants, industry_analysts]
+        OUTPUT_FORMAT: {
+            recommended_approach: TEXT,
+            confidence_level: TEXT IN ["high", "moderate", "low"],
+            dissenting_views: LIST OF TEXT
+        }
+    END
+
+    # Step 4: Synthesize from all accumulated context
+    SYNTHESIZE migration_decision FROM CONTEXT WITH:
+        # Reads all three accumulated digests -- no re-parsing of full outputs needed
+        MUST_INCLUDE: [integrated_rationale, risk_assessment, implementation_roadmap]
+        OUTPUT_FORMAT: {
+            decision: TEXT,
+            rationale: TEXT,
+            implementation_phases: LIST OF TEXT,
+            risk_mitigation: LIST OF TEXT,
+            estimated_timeline: TEXT
+        }
+    END
+
+END REASONING_CONTEXT
+
+# migration_decision variable persists; digest accumulator is gone
+SEND migration_decision TO stakeholder_report
+```
+
+---
+
+### 11. Reality Context
 
 Reality contexts provide a framework for defining qualitative domains where specific patterns of understanding, interpretation, and meaning-making apply. Unlike quantitative constraints that enforce numerical boundaries, reality contexts shape how intelligent operations interpret situations and generate responses within bounded worldviews.
 
-#### 9.1 Defining Reality Contexts
+In v0.8, reality contexts gain a REASONING_PROFILE that specifies which reasoning types are primary, secondary, and suppressed within that context. In v0.8.1, the REASONING_PROFILE gains CONSTRAIN as a graduated alternative to SUPPRESS, and a precedence rule for auto-classification conflict resolution.
+
+#### 11.1 Defining Reality Contexts
 
 ##### Basic Syntax
 
-```
-#ailang
+```ailang
 DEFINE REALITY_CONTEXT [context_name]:
     WORLDVIEW: [qualitative_description]
     ASSUMPTIONS: [list_of_implicit_beliefs]
@@ -788,13 +2027,140 @@ DEFINE REALITY_CONTEXT [context_name]:
     DISCOURSE_RULES: [communication_patterns]
     VALUE_SYSTEM: [what_matters]
     CAUSAL_MODELS: [how_change_happens]
+    REASONING_PROFILE:
+        PRIMARY: [reasoning_type]
+        SECONDARY: [reasoning_type]
+        CONSTRAIN: [reasoning_type] TO [constraint_description]
+        SUPPRESS: [list_of_reasoning_types]
+    END_PROFILE
 END_CONTEXT
 ```
 
-##### Example: Therapeutic Reality Context
+##### REASONING_PROFILE
 
+The REASONING_PROFILE block (introduced in v0.8, extended in v0.8.1) specifies how reasoning operations behave within this context:
+
+- **PRIMARY**: The default reasoning type used when INTELLIGENTLY is invoked within this context. Overrides auto-classification.
+- **SECONDARY**: The second-priority reasoning type, used when the primary type cannot resolve the operation.
+- **CONSTRAIN** (v0.8.1): Allows a reasoning type to operate but applies an additional boundary. The TO clause specifies the constraint in natural language.
+- **SUPPRESS**: Reasoning types that are never activated within this context, even if explicitly requested. Attempting to use a suppressed reasoning type within the context raises a context_violation error.
+
+When inside a `WITH REALITY_CONTEXT` block, `INTELLIGENTLY` operations inherit the context's PRIMARY reasoning type rather than performing auto-classification.
+
+##### CONSTRAIN -- Graduated Reasoning Restriction (v0.8.1)
+
+SUPPRESS is binary: a reasoning type is either fully allowed or fully blocked. CONSTRAIN provides a graduated alternative that permits the reasoning type to run but applies an additional boundary:
+
+```ailang
+REASONING_PROFILE:
+    PRIMARY: DEDUCE
+    SECONDARY: RETRIEVE
+    CONSTRAIN: TRACE TO "observable_facts_only"
+    CONSTRAIN: WEIGH TO "published_sources_only"
+    SUPPRESS: [SYNTHESIZE]
+END_PROFILE
 ```
-#ailang
+
+**CONSTRAIN specification rules:**
+
+1. **Syntax**: `CONSTRAIN: [reasoning_type] TO [constraint_description]`
+   - The constraint description is a natural-language string that the engine MUST honor as a CANNOT_INCLUDE-style boundary on the constrained operation.
+
+2. **Effect**: The constrained reasoning type may run, but its output is bounded by the constraint:
+   - `CONSTRAIN: TRACE TO "observable_facts_only"` -- TRACE may run but must not speculate beyond observable evidence
+   - `CONSTRAIN: WEIGH TO "published_sources_only"` -- WEIGH may evaluate credibility but only of published/documented sources
+   - `CONSTRAIN: COMPARE TO "quantifiable_dimensions_only"` -- COMPARE must use measurable criteria only
+
+3. **Automatic application**: CONSTRAIN applies automatically when the constrained reasoning type is:
+   - Used explicitly within the context, OR
+   - Selected by auto-classification when INTELLIGENTLY routes to it
+
+4. **Mutual exclusion**: A reasoning type can be in CONSTRAIN or SUPPRESS but not both. Specifying a type in both is a specification error.
+
+5. **Compute neutrality**: CONSTRAIN has no effect on compute. The same neurons fire as in an unconstrained operation; only the output boundaries are tightened.
+
+6. **Multiple constraints**: Multiple CONSTRAIN directives may appear in a single REASONING_PROFILE, each constraining a different reasoning type.
+
+7. **Interaction with REASONING_CONTEXT** (v0.8.2): When a REASONING_CONTEXT block is inside a WITH REALITY_CONTEXT that has CONSTRAIN rules, the constraint applies to all operations in the REASONING_CONTEXT. Digests produced under CONSTRAIN conditions are tagged with the constraint metadata. See Appendix D for details.
+
+##### Auto-Classification vs REASONING_PROFILE Precedence Rule (v0.8.1)
+
+When INTELLIGENTLY is used within a REALITY_CONTEXT that has a REASONING_PROFILE, the following precedence rule applies:
+
+**Precedence rule:** The REASONING_PROFILE's PRIMARY type takes precedence over auto-classification. Auto-classification is only performed when:
+- (a) No REASONING_PROFILE is active, OR
+- (b) The active REASONING_PROFILE does not specify a PRIMARY type
+
+This means that within a context with `PRIMARY: DEDUCE`, the statement `INTELLIGENTLY assess_situation` will ALWAYS route to DEDUCE, regardless of what linguistic patterns the auto-classifier detects.
+
+**Rationale:** The REASONING_PROFILE is an explicit declaration of how reasoning should work within a specific domain. Auto-classification is a heuristic for when no such declaration exists. Explicit declarations should always win over heuristics.
+
+##### Example: Legal Proceeding Context
+
+```ailang
+DEFINE REALITY_CONTEXT legal_proceeding:
+    WORLDVIEW: "Adversarial system where truth emerges from structured argument"
+    ASSUMPTIONS: [presumption_of_innocence, burden_of_proof, rules_of_evidence]
+    INTERPRETIVE_FRAMEWORK: [
+        "Evidence must meet admissibility standards",
+        "Arguments follow logical precedent chains",
+        "Authority of law supersedes personal opinion"
+    ]
+    BEHAVIORAL_NORMS: [
+        "Formal language and procedure",
+        "Respect for court hierarchy",
+        "Due process at every stage"
+    ]
+    DISCOURSE_RULES: [
+        "Citations to authority required",
+        "Arguments must be logically structured",
+        "Precedent guides interpretation"
+    ]
+    VALUE_SYSTEM: [due_process, precedent, proportionality, justice]
+    CAUSAL_MODELS: [
+        "Liability follows from breach of duty",
+        "Precedent constrains future decisions",
+        "Procedure protects substantive rights"
+    ]
+    REASONING_PROFILE:
+        PRIMARY: DEDUCE
+        SECONDARY: WEIGH
+        CONSTRAIN: TRACE TO "documented_evidence_chain_only"
+        SUPPRESS: [SYNTHESIZE]
+    END_PROFILE
+END_CONTEXT
+```
+
+In this context:
+- `INTELLIGENTLY assess_case` routes to DEDUCE (the PRIMARY type) -- auto-classification is overridden
+- WEIGH is available as a secondary type (for evaluating witness credibility, for example)
+- TRACE may run but is constrained to documented evidence chains only -- no speculative causal reasoning (v0.8.1)
+- SYNTHESIZE is suppressed because legal proceedings require adversarial argument, not consensus-building
+- COMPARE and RETRIEVE remain available normally
+
+##### Example: Scientific Research Context
+
+```ailang
+DEFINE REALITY_CONTEXT scientific_research:
+    WORLDVIEW: "Empirical evidence reveals natural mechanisms through systematic investigation"
+    ASSUMPTIONS: [
+        "Reproducible results establish facts",
+        "Peer review validates methodology",
+        "Statistical significance indicates real effects"
+    ]
+    REASONING_PROFILE:
+        PRIMARY: DEDUCE
+        SECONDARY: TRACE
+        CONSTRAIN: WEIGH TO "peer_reviewed_sources_only"
+        SUPPRESS: []
+    END_PROFILE
+    VALUE_SYSTEM: [reproducibility, parsimony, falsifiability, intellectual_honesty]
+END_CONTEXT
+```
+
+##### Example: Therapeutic Context
+
+```ailang
 DEFINE REALITY_CONTEXT psychodynamic_therapy:
     WORLDVIEW: "Unconscious processes drive behavior"
     ASSUMPTIONS: [
@@ -828,15 +2194,19 @@ DEFINE REALITY_CONTEXT psychodynamic_therapy:
         "Naming transforms experiencing",
         "Relationship patterns repeat until resolved"
     ]
+    REASONING_PROFILE:
+        PRIMARY: TRACE
+        SECONDARY: WEIGH
+        SUPPRESS: []
+    END_PROFILE
 END_CONTEXT
 ```
 
-#### 9.2 Applying Reality Contexts
+#### 11.2 Applying Reality Contexts
 
 ##### Reality Context Activation
 
-```
-#ailang
+```ailang
 WITH REALITY_CONTEXT [context_name]:
     [operations that occur within this reality]
 END_WITH
@@ -846,6 +2216,7 @@ WITHIN [context_name] DO [operation]
 ```
 **Syntax:** `WITHIN <context> DO <stmt>` is a single-statement form.
 `WITHIN <context>:` introduces a block terminated by `END`. Parsers **MUST** accept both forms.
+
 ##### Context Resolution Precedence
 
 When multiple reality contexts could potentially apply to an operation, engines MUST resolve precedence as follows (highest to lowest priority):
@@ -857,8 +2228,7 @@ When multiple reality contexts could potentially apply to an operation, engines 
 
 **Example demonstrating precedence:**
 
-```
-#ailang
+```ailang
 # Program default (lowest priority)
 SET PROGRAM_DEFAULT_CONTEXT TO general_professional
 
@@ -868,13 +2238,13 @@ CREATE Person analyst WITH:
 END_CREATE
 
 # Person's default context applies here (priority 3)
+# INTELLIGENTLY routes to financial_analysis context's PRIMARY reasoning type
 analyst.INTELLIGENTLY evaluate_investment
-# Uses financial_analysis context
 
 # Block context overrides person default (priority 1)
 WITH REALITY_CONTEXT legal_compliance:
+    # Uses legal_compliance context -- INTELLIGENTLY routes to DEDUCE
     analyst.INTELLIGENTLY evaluate_investment
-    # Uses legal_compliance context, not financial_analysis
 END_WITH
 
 # Single-operation context (priority 2)
@@ -886,57 +2256,46 @@ END
 
 **Specification**: Engines MUST apply the highest-priority context that is active for the operation. Lower-priority contexts are ignored when a higher-priority context is present.
 
-##### Example: Multiple Reality Contexts
+##### Example: Multiple Reality Contexts with Typed Reasoning
 
-```
-#ailang
+```ailang
 # Same situation interpreted through different realities
 
 SET customer_complaint TO "This product doesn't work as advertised"
 
 WITH REALITY_CONTEXT legal_reality:
-    # Legal framework sees potential liability
-    INTELLIGENTLY assess_situation WITH:
-        OUTPUT_FORMAT: {assessment: TEXT}
+    # Legal framework -- DEDUCE is primary
+    DEDUCE liability_exposure FROM customer_complaint AND product_warranty WITH:
+        MUST_INCLUDE: [breach_of_warranty_analysis, documentation_requirements]
+        OUTPUT_FORMAT: {assessment: TEXT, risk_level: QUALITATIVE}
         MAX_SCOPE: legal_implications
     END
-    # Might conclude: "Potential breach of warranty claim requiring documentation"
 END_WITH
 
 WITH REALITY_CONTEXT customer_service_reality:
-    # Service framework sees relationship issue
-    INTELLIGENTLY assess_situation WITH:
-        OUTPUT_FORMAT: {assessment: TEXT}
+    # Service framework -- TRACE is primary (understanding what led to dissatisfaction)
+    TRACE customer_journey FROM complaint_to_root_cause WITH:
+        DIRECTION: BACKWARD
+        OUTPUT_FORMAT: {assessment: TEXT, root_cause: TEXT}
         MAX_SCOPE: customer_relationship
     END
-    # Might conclude: "Customer feels unheard and needs validation"
 END_WITH
 
 WITH REALITY_CONTEXT engineering_reality:
-    # Engineering framework sees specification mismatch
-    INTELLIGENTLY assess_situation WITH:
-        OUTPUT_FORMAT: {assessment: TEXT}
+    # Engineering framework -- COMPARE product behavior against specification
+    COMPARE actual_behavior AGAINST design_specification WITH:
+        DIMENSIONS: [functionality, performance, user_experience]
+        OUTPUT_FORMAT: {assessment: TEXT, gaps: LIST}
         MAX_SCOPE: product_specifications
     END
-    # Might conclude: "User expectations don't match design parameters"
-END_WITH
-
-WITH REALITY_CONTEXT startup_reality:
-    # Startup framework sees product-market fit signal
-    INTELLIGENTLY assess_situation WITH:
-        OUTPUT_FORMAT: {assessment: TEXT}
-        MAX_SCOPE: product_market_fit
-    END
-    # Might conclude: "Valuable feedback for next iteration pivot"
 END_WITH
 ```
 
-#### 9.3 Reality Context Inheritance and Composition
+#### 11.3 Reality Context Inheritance and Composition
 
 ##### Extending Reality Contexts
 
-```
-#ailang
+```ailang
 DEFINE REALITY_CONTEXT academic_humanities EXTENDS academic_reality:
     ADD ASSUMPTIONS: [
         "Texts have multiple valid interpretations",
@@ -948,41 +2307,77 @@ DEFINE REALITY_CONTEXT academic_humanities EXTENDS academic_reality:
         "Theory frames observation",
         "Critique is contribution"
     ]
+    # Inherits parent's REASONING_PROFILE unless overridden
+    REASONING_PROFILE:
+        PRIMARY: SYNTHESIZE
+        SECONDARY: WEIGH
+        SUPPRESS: []
+    END_PROFILE
 END_CONTEXT
 ```
 
 ##### Blending Reality Contexts
 
-```
-#ailang
+```ailang
 DEFINE REALITY_CONTEXT design_thinking BLENDS [engineering_reality, artistic_reality]:
     RECONCILE CONFLICTS WITH:
         "Function and form are equally important"
         "Constraints inspire creativity"
         "User experience trumps pure efficiency"
     END
+    # Blended contexts must explicitly specify REASONING_PROFILE
+    REASONING_PROFILE:
+        PRIMARY: SYNTHESIZE
+        SECONDARY: COMPARE
+        SUPPRESS: []
+    END_PROFILE
 END_CONTEXT
 ```
 
-#### 9.4 Reality Context-Aware Intelligent Operations
+#### 11.4 Reality Context-Aware Reasoning Operations
 
-When operating within a reality context, intelligent operations automatically adopt that context's interpretive framework:
+When operating within a reality context, reasoning operations automatically adopt that context's interpretive framework. The REASONING_PROFILE determines default routing:
 
-```
-#ailang
+```ailang
 WITH REALITY_CONTEXT corporate_reality:
+    # INTELLIGENTLY auto-routes to corporate_reality's PRIMARY type
     INTELLIGENTLY evaluate_proposal
     # Will consider: ROI, stakeholder buy-in, political implications, precedent
 END_WITH
 
 WITH REALITY_CONTEXT academic_reality:
+    # INTELLIGENTLY auto-routes to academic_reality's PRIMARY type
     INTELLIGENTLY evaluate_proposal
     # Will consider: theoretical rigor, methodology, literature positioning, novelty
 END_WITH
 ```
 
-#### 9.5 Person Entities and Reality Contexts
+Explicit reasoning types override the context's PRIMARY but still operate within the context's worldview and constraints:
+
+```ailang
+WITH REALITY_CONTEXT legal_proceeding:
+    # Explicit COMPARE is allowed (not suppressed) -- uses legal_proceeding's worldview
+    COMPARE defense_strategies AGAINST prosecution_strength WITH:
+        DIMENSIONS: [evidentiary_support, precedent_alignment, jury_impact]
+        OUTPUT_FORMAT: { ranking: LIST, recommended_strategy: TEXT }
+    END
+
+    # SYNTHESIZE would raise a context_violation error (suppressed in legal_proceeding)
+    # SYNTHESIZE witness_testimonies INTO unified_narrative  # ERROR
+
+    # TRACE is allowed but constrained (v0.8.1)
+    TRACE evidence_timeline FROM discovery_documents WITH:
+        DIRECTION: FORWARD
+        # Engine automatically applies CONSTRAIN: "documented_evidence_chain_only"
+        OUTPUT_FORMAT: { timeline: LIST OF OBJECT { date: TEXT, event: TEXT, evidence: TEXT } }
+    END
+END_WITH
+```
+
+#### 11.5 Person Entities and Reality Contexts
+
 Person entities can have inherent reality contexts that shape their worldview:
+
 ```ailang
 CREATE Person therapist WITH:
     default_reality_context: psychodynamic_therapy
@@ -1000,6 +2395,7 @@ SET conversation TO therapist.interact_with_person(engineer, neutral_context)
 # Each interprets through their reality lens, creating rich misunderstandings
 # or opportunities for perspective expansion
 ```
+
 **Context Flexibility Descriptors:**
 * **"rigid"**: Extremely difficulty shifting contexts; interprets everything through default lens
 * **"low"**: Can shift with effort but strongly prefers default context
@@ -1008,6 +2404,7 @@ SET conversation TO therapist.interact_with_person(engineer, neutral_context)
 * **"fluid"**: Seamlessly moves between contexts; no strong default
 
 The context flexibility affects how persons negotiate reality differences during interaction:
+
 ```ailang
 # Example: Context negotiation between different flexibility levels
 CREATE Person academic WITH:
@@ -1027,51 +2424,49 @@ SET collaboration TO academic.interact_with_person(entrepreneur, project_context
 # The interaction quality depends on both parties' context flexibility
 ```
 
-#### 9.6 Nested and Overlapping Reality Contexts
+#### 11.6 Nested and Overlapping Reality Contexts
 
 ##### Nested Reality Contexts
 
-```
-#ailang
+```ailang
 WITH REALITY_CONTEXT organizational_culture:
     # Outer context: company culture
-    
+
     WITH REALITY_CONTEXT team_dynamics:
         # Inner context: specific team norms
-        
+        # Inner REASONING_PROFILE takes precedence
+
         INTELLIGENTLY resolve_conflict
-        # Uses both contexts, with inner taking precedence for conflicts
+        # Uses team_dynamics' PRIMARY reasoning type
     END_WITH
 END_WITH
 ```
 
 ##### Reality Context Switching
 
-```
-#ailang
+```ailang
 DEFINE PROCEDURE context_aware_interaction:
     SET initial_context TO professional_reality
-    
+
     START conversation WITH initial_context
-    
+
     IF detect_personal_disclosure THEN:
         TRANSITION TO personal_reality
     END_IF
-    
+
     IF detect_conflict_escalation THEN:
         TRANSITION TO mediation_reality
     END_IF
-    
+
     RETURN conversation_outcome
 END_PROCEDURE
 ```
 
-#### 9.7 Cultural and Social Reality Contexts
+#### 11.7 Cultural and Social Reality Contexts
 
 ##### Cultural Reality Contexts
 
-```
-#ailang
+```ailang
 DEFINE REALITY_CONTEXT collectivist_culture:
     WORLDVIEW: "Individual identity emerges from group belonging"
     ASSUMPTIONS: [
@@ -1086,6 +2481,11 @@ DEFINE REALITY_CONTEXT collectivist_culture:
         "Share resources within in-group",
         "Maintain group reputation"
     ]
+    REASONING_PROFILE:
+        PRIMARY: SYNTHESIZE
+        SECONDARY: WEIGH
+        SUPPRESS: []
+    END_PROFILE
 END_CONTEXT
 
 DEFINE REALITY_CONTEXT individualist_culture:
@@ -1102,15 +2502,19 @@ DEFINE REALITY_CONTEXT individualist_culture:
         "Maintain personal boundaries",
         "Celebrate individual achievement"
     ]
+    REASONING_PROFILE:
+        PRIMARY: COMPARE
+        SECONDARY: DEDUCE
+        SUPPRESS: []
+    END_PROFILE
 END_CONTEXT
 ```
 
-#### 9.8 Domain-Specific Reality Contexts
+#### 11.8 Domain-Specific Reality Contexts
 
 ##### Medical Reality Context
 
-```
-#ailang
+```ailang
 DEFINE REALITY_CONTEXT biomedical_reality:
     WORLDVIEW: "Disease has biological causes with biological solutions"
     INTERPRETIVE_FRAMEWORK: [
@@ -1119,6 +2523,12 @@ DEFINE REALITY_CONTEXT biomedical_reality:
         "Treatment targets biological mechanisms",
         "Evidence hierarchy prioritizes RCTs"
     ]
+    REASONING_PROFILE:
+        PRIMARY: DEDUCE
+        SECONDARY: TRACE
+        CONSTRAIN: WEIGH TO "peer_reviewed_clinical_evidence_only"
+        SUPPRESS: []
+    END_PROFILE
 END_CONTEXT
 
 DEFINE REALITY_CONTEXT holistic_health_reality:
@@ -1129,19 +2539,25 @@ DEFINE REALITY_CONTEXT holistic_health_reality:
         "Prevention through lifestyle harmony",
         "Individual constitution determines treatment"
     ]
+    REASONING_PROFILE:
+        PRIMARY: SYNTHESIZE
+        SECONDARY: TRACE
+        SUPPRESS: []
+    END_PROFILE
 END_CONTEXT
 ```
 
-#### 9.9 Reality Context Validation
+#### 11.9 Reality Context Validation
 
 ##### Consistency Checking
 
-```
-#ailang
+```ailang
 VALIDATE REALITY_CONTEXT [context_name]:
     CHECK internal_consistency OF assumptions
     CHECK compatibility OF worldview WITH causal_models
     CHECK completeness OF interpretive_framework
+    CHECK reasoning_profile_coherence  # v0.8: verify SUPPRESS doesn't conflict with PRIMARY/SECONDARY
+    CHECK constrain_suppress_exclusivity  # v0.8.1: verify no type is in both CONSTRAIN and SUPPRESS
     IDENTIFY potential_contradictions
     SUGGEST refinements
 END_VALIDATE
@@ -1149,12 +2565,11 @@ END_VALIDATE
 
 ##### Reality Context Conflict Resolution
 
-```
-#ailang
+```ailang
 WHEN context_conflict_detected:
     IDENTIFY conflicting_assumptions
     DETERMINE conflict_severity
-    
+
     IF severity > threshold THEN:
         REQUEST explicit_context_selection FROM user
     ELSE:
@@ -1164,7 +2579,7 @@ WHEN context_conflict_detected:
 END_WHEN
 ```
 
-#### 9.10 Reality Context Implementation Notes
+#### 11.10 Reality Context Implementation Notes
 
 ##### For AI Systems
 
@@ -1176,6 +2591,12 @@ END_WHEN
 
 4. **Context Conflicts**: When multiple contexts apply, the AI should either blend them coherently or make context selection explicit
 
+5. **REASONING_PROFILE Enforcement** (v0.8): Engines MUST enforce SUPPRESS lists -- attempting to use a suppressed reasoning type within a context raises a context_violation error. Engines MUST route untyped INTELLIGENTLY operations through the context's PRIMARY reasoning type.
+
+6. **CONSTRAIN Enforcement** (v0.8.1): Engines MUST apply CONSTRAIN boundaries automatically when the constrained reasoning type is activated within the context, whether by explicit invocation or by auto-classification routing. The constraint description is treated as an implicit CANNOT_INCLUDE boundary.
+
+7. **Precedence Enforcement** (v0.8.1): Engines MUST apply the auto-classification vs REASONING_PROFILE precedence rule: PRIMARY overrides auto-classification when a REASONING_PROFILE is active.
+
 ##### Quality Assurance
 
 1. **Interpretive Consistency**: Operations within a reality context should consistently reflect that context's worldview
@@ -1186,38 +2607,50 @@ END_WHEN
 
 4. **User Awareness**: Users should be able to query which reality context is currently active and why
 
-#### 9.11 Examples of Reality Context Applications
+5. **Reasoning Type Audit** (v0.8): Log which reasoning type was activated for each operation, including whether it was explicitly specified, inherited from REASONING_PROFILE, or auto-classified
+
+6. **Constraint Audit** (v0.8.1): Log when CONSTRAIN boundaries are applied, including which constraint was active and how it affected the output
+
+#### 11.11 Examples of Reality Context Applications
 
 ##### Negotiation Across Realities
 
-```
-#ailang
+```ailang
 DEFINE PROCEDURE multi_context_negotiation:
     SET party_a TO Person WITH default_reality_context: legal_reality
     SET party_b TO Person WITH default_reality_context: relationship_reality
-    
+
     # Each party interprets the same situation differently
     SET dispute TO "Verbal agreement about shared property"
-    
-    party_a.interpretation:  # "No written contract means no agreement"
-    party_b.interpretation:  # "Our trust relationship is the agreement"
-    
+
+    party_a.interpretation:  # "No written contract means no agreement" (DEDUCE from legal_reality)
+    party_b.interpretation:  # "Our trust relationship is the agreement" (TRACE from relationship_reality)
+
     # Mediator operates in bridging context
     WITH REALITY_CONTEXT mediation_reality:
-        INTELLIGENTLY identify_shared_values
-        INTELLIGENTLY translate_between_contexts
-        INTELLIGENTLY find_creative_solutions
+        SYNTHESIZE party_positions INTO common_ground WITH:
+            SOURCES: [party_a.interpretation, party_b.interpretation]
+            MUST_INCLUDE: [shared_values, bridgeable_gaps]
+        END
+
+        TRACE path_to_resolution FROM common_ground WITH:
+            DIRECTION: FORWARD
+            MUST_INCLUDE: [actionable_steps, fairness_assessment]
+        END
+
+        WEIGH proposed_solutions ON fairness WITH:
+            SOURCES: [party_a.needs, party_b.needs, legal_standards]
+        END
     END_WITH
 END_PROCEDURE
 ```
 
 ##### Educational Context Adaptation
 
-```
-#ailang
+```ailang
 DEFINE PROCEDURE adaptive_teaching:
     ASSESS student.reality_context
-    
+
     IF student.context MATCHES scientific_materialism THEN:
         PRESENT concepts WITH empirical_evidence
         USE causal_mechanical_explanations
@@ -1233,40 +2666,48 @@ END_PROCEDURE
 
 ##### Therapeutic Reality Navigation
 
-```
-#ailang
+```ailang
 DEFINE PROCEDURE therapeutic_intervention:
     # Therapist can shift between reality contexts strategically
-    
+
     START WITH REALITY_CONTEXT cognitive_behavioral:
-        IDENTIFY thought_patterns
-        CHALLENGE cognitive_distortions
+        # cognitive_behavioral PRIMARY: DEDUCE
+        DEDUCE thought_distortions FROM patient_statements WITH:
+            MUST_INCLUDE: [cognitive_distortion_type, evidence_for_and_against]
+        END
     END_WITH
-    
+
     IF resistance_encountered THEN:
         SHIFT TO REALITY_CONTEXT psychodynamic:
-            EXPLORE what_resistance_protects
-            IDENTIFY underlying_conflicts
+            # psychodynamic PRIMARY: TRACE
+            TRACE resistance_origins FROM patient_history WITH:
+                DIRECTION: BACKWARD
+                MUST_INCLUDE: [defense_mechanism_type, underlying_conflict]
+            END
         END_WITH
     END_IF
-    
+
     IF somatic_symptoms_present THEN:
         SHIFT TO REALITY_CONTEXT somatic_experiencing:
-            FOCUS ON body_sensations
-            FACILITATE nervous_system_regulation
+            TRACE body_sensation_patterns FROM reported_symptoms WITH:
+                DIRECTION: BACKWARD
+                MUST_INCLUDE: [nervous_system_state, regulation_opportunities]
+            END
         END_WITH
     END_IF
-    
-    INTEGRATE insights ACROSS contexts
+
+    SYNTHESIZE insights ACROSS contexts INTO treatment_plan WITH:
+        SOURCES: [cognitive_findings, psychodynamic_findings, somatic_findings]
+        MUST_INCLUDE: [integrated_formulation, treatment_priorities]
+    END
 END_PROCEDURE
 ```
 
-#### 9.12 Advanced Reality Context Features
+#### 11.12 Advanced Reality Context Features
 
 ##### Probabilistic Context Mixing
 
-```
-#ailang
+```ailang
 DEFINE REALITY_CONTEXT_MIX market_analysis:
     COMPONENTS: [
         {context: fundamental_analysis, weight: 0.4},
@@ -1274,13 +2715,13 @@ DEFINE REALITY_CONTEXT_MIX market_analysis:
         {context: behavioral_finance, weight: 0.3}
     ]
     RECONCILIATION: weighted_integration
+    # REASONING_PROFILE is derived from weighted mix of component profiles
 END_CONTEXT_MIX
 ```
 
 ##### Dynamic Context Evolution
 
-```
-#ailang
+```ailang
 DEFINE EVOLVING_CONTEXT startup_growth:
     STAGE early_startup WHEN company_size < 10:
         REALITY_CONTEXT: garage_startup_reality
@@ -1288,7 +2729,7 @@ DEFINE EVOLVING_CONTEXT startup_growth:
         REALITY_CONTEXT: scaling_startup_reality
     STAGE established WHEN company_size > 50:
         REALITY_CONTEXT: corporate_reality
-    
+
     TRANSITION_RULES: [
         "Gradual culture shift over 6 months",
         "Preserve founding principles as constraints",
@@ -1299,14 +2740,13 @@ END_EVOLVING_CONTEXT
 
 ##### Meta-Context Awareness
 
-```
-#ailang
+```ailang
 DEFINE META_CONTEXT reality_awareness:
     RECOGNIZE current_operating_context
     UNDERSTAND context_limitations
     IDENTIFY when_context_shift_needed
     FACILITATE meta_cognitive_reflection
-    
+
     METHOD examine_context_assumptions:
         LIST active_assumptions
         EVALUATE assumption_validity
@@ -1318,11 +2758,11 @@ END_META_CONTEXT
 
 #### Implementation Requirements
 
-Reality contexts fundamentally change how intelligent operations interpret and respond to situations. They provide the qualitative boundaries that make AI behavior coherent within specific domains of meaning while maintaining the flexibility to shift perspectives when appropriate. This creates AI systems that can truly operate within human social, cultural, and professional contexts rather than merely processing them from the outside.
+Reality contexts fundamentally change how intelligent operations interpret and respond to situations. They provide the qualitative boundaries that make AI behavior coherent within specific domains of meaning while maintaining the flexibility to shift perspectives when appropriate. The REASONING_PROFILE (v0.8) adds a neuroscientific foundation to this: by specifying which reasoning types are primary, secondary, constrained, and suppressed, reality contexts shape not just the interpretive lens but the computational pathways activated within the AI engine. The graduated CONSTRAIN mechanism (v0.8.1) adds nuance by allowing reasoning types to operate within tighter boundaries rather than being fully blocked.
 
 ---
 
-### 10. Confidence Levels and Action Authority
+### 12. Confidence Levels and Action Authority
 
 AILang supports explicit confidence levels for intelligent operations that inform action authority. Confidence is reported through the output structure rather than declared as a separate control parameter.
 
@@ -1330,9 +2770,9 @@ AILang supports explicit confidence levels for intelligent operations that infor
 
 Confidence is requested as part of the OUTPUT_FORMAT structure:
 
-```
-#ailang
-INTELLIGENTLY assess_situation WITH:
+```ailang
+WEIGH situation_assessment ON risk_level WITH:
+    SOURCES: [field_reports, sensor_data, expert_analysis]
     MUST_INCLUDE: [key_factors, assessment_basis]
     OUTPUT_FORMAT: {
         assessment: TEXT,
@@ -1349,15 +2789,15 @@ END
 - `"moderate"` - Assessment based on reasonable inference with some uncertainty
 - `"low"` - Assessment involving significant interpretation or limited evidence
 
-The AI determines the appropriate confidence level based on the observable-interpretive spectrum (see Section 11).
+The AI determines the appropriate confidence level based on the observable-interpretive spectrum (see Section 13).
 
 #### Confidence-Based Branching
 
 Programs can branch on the categorical confidence level returned in the output:
 
-```
-#ailang
-INTELLIGENTLY assess_situation WITH:
+```ailang
+WEIGH situation ON severity WITH:
+    SOURCES: [reports, data, observations]
     OUTPUT_FORMAT: {
         interpretation: TEXT,
         confidence_level: TEXT IN ["high", "moderate", "low"]
@@ -1382,9 +2822,9 @@ END_IF
 
 The confidence level informs what actions are appropriate:
 
-```
-#ailang
-INTELLIGENTLY assess_emotional_state FROM behavior WITH:
+```ailang
+TRACE emotional_indicators FROM observable_behavior WITH:
+    DIRECTION: BACKWARD
     OUTPUT_FORMAT: {
         state: TEXT,
         confidence_level: TEXT IN ["high", "moderate", "low"],
@@ -1413,7 +2853,7 @@ END_IF
 
 ---
 
-### 11. The Qualitative Spectrum
+### 13. The Qualitative Spectrum
 
 Within qualitative processing, AILang recognizes a spectrum from observable to interpretive assessments that determines execution confidence and boundary placement.
 
@@ -1427,6 +2867,8 @@ Qualitative assessments grounded in verifiable, sensory data where multiple obse
 
 These assessments, while qualitative, have high confidence due to observable anchors.
 
+**Reasoning type mapping:** Observable assessments naturally map to **RETRIEVE** (high confidence, minimal inference required, low neuron activation). The engine uses direct knowledge recall pathways to match observations to known categories.
+
 #### Interpretive Qualitative Assessments
 
 Assessments requiring inference chains and subjective judgment:
@@ -1437,34 +2879,36 @@ Assessments requiring inference chains and subjective judgment:
 
 These assessments require lower confidence and tighter action boundaries.
 
+**Reasoning type mapping:** Interpretive assessments map to **TRACE** (following causal/inference chains) or **WEIGH** (evaluating evidence for competing interpretations). These reasoning types activate deeper neuron populations, reflecting the greater computational work required for interpretation.
+
 #### Confidence-Based Execution
 
 AILang adjusts execution based on assessment type:
 
-```
-#ailang
-# High confidence - observable
+```ailang
+# High confidence - observable (RETRIEVE-class reasoning)
 IF person_is_crying THEN:
     OFFER tissue  # Direct action authorized
 END_IF
 
-# Low confidence - interpretive    
+# Low confidence - interpretive (TRACE/WEIGH-class reasoning)
 IF mood_seems_depressed THEN:
     ONLY SUGGEST: "Would you like to talk?"  # Minimal action
     CANNOT: diagnose, prescribe, assume_causes
 END_IF
 ```
 
-**Specification**: The AI must recognize where assessments fall on the observable–interpretive spectrum and adjust confidence levels and action boundaries accordingly.
+**Specification**: The AI must recognize where assessments fall on the observable-interpretive spectrum and adjust confidence levels and action boundaries accordingly. Observable assessments activate RETRIEVE-class pathways (minimal neurons); interpretive assessments activate TRACE or WEIGH-class pathways (deeper activation).
+
 Engines **SHOULD** map *observable* assessments to `"high"` confidence by default, and *interpretive* assessments to `"moderate"` or `"low"` depending on inference depth.
 
 ---
 
-### 12. Code Execution Blocks
+### 14. Code Execution Blocks
 
 #### Basic Syntax
 
-```
+```ailang
 EXECUTE_CODE [language]:
     [native code in specified language]
 END_EXECUTE
@@ -1489,22 +2933,22 @@ END_EXECUTE
 
 #### Simple Example
 
-```
+```ailang
 # AILang variable
 SET dataset TO load_csv("customer_data.csv")
 
 # Deterministic computation in code
 EXECUTE_CODE python:
     import pandas as pd
-    
+
     # AILang variable 'dataset' is accessible
     df = pd.DataFrame(dataset)
-    
+
     # Statistical computation
     women_over_65 = len(df[(df['gender'] == 'female') & (df['age'] > 65)])
     total_records = len(df)
     percentage = (women_over_65 / total_records) * 100
-    
+
     # Results available to AILang
     analysis_results = {
         'count': women_over_65,
@@ -1517,7 +2961,11 @@ END_EXECUTE
 SEND "Analysis found " + analysis_results.count + " women over 65" TO user_display
 
 IF analysis_results.percentage > 30 THEN:
-    INTELLIGENTLY recommend_targeted_marketing_strategy FOR demographic
+    # v0.8: Use typed reasoning for the recommendation
+    COMPARE marketing_strategies AGAINST demographic_profile WITH:
+        DIMENSIONS: [reach, cost_effectiveness, engagement_potential]
+        OUTPUT_FORMAT: { recommended_strategy: TEXT, rationale: TEXT }
+    END
 END_IF
 ```
 
@@ -1526,7 +2974,7 @@ END_IF
 
 1. **Code Block Parsing**: Detect EXECUTE_CODE blocks and extract for direct execution
 2. **Language Runtime**: Maintain interpreter instances for supported languages
-3. **Variable Bridging**: Implement marshalling layer for AILang ↔ code variable access
+3. **Variable Bridging**: Implement marshalling layer for AILang to code variable access
 4. **Sandbox Security**: Execute code in isolated environments with appropriate constraints
 5. **Result Integration**: Capture code block outputs and make available to subsequent AILang operations
 
@@ -1561,13 +3009,13 @@ EXECUTE_CODE python:
   mood_text = mood  # "frustrated_but_polite"
   has_frustration = "frustrated" in mood_text
   word_count = len(mood_text.split('_'))
-  
+
   # String operations are valid
   words = mood_text.split('_')
   first_word = words[0]  # "frustrated"
-  
+
   # But don't assign semantic meaning in CODE
-  # ❌ WRONG: mood_score = 0.3  # arbitrary mapping
+  # WRONG: mood_score = 0.3  # arbitrary mapping
 END_EXECUTE
 ```
 
@@ -1592,27 +3040,28 @@ In environments that support typed metadata, QUALITATIVE values include a `@qual
 
 ##### Semantic Interpretation
 
-For semantic interpretation of QUALITATIVE values, use INTELLIGENT operations:
+For semantic interpretation of QUALITATIVE values, use typed reasoning operations:
 
 ```ailang
 SET mood TO "frustrated_but_polite"
 
-# ❌ WRONG - Don't try semantic analysis in CODE
+# WRONG - Don't try semantic analysis in CODE
 EXECUTE_CODE python:
   # This loses the semantic richness:
   if "frustrated" in mood:
     emotion_level = 0.3
 END_EXECUTE
 
-# ✓ CORRECT - Use INTELLIGENT operations for semantics
-INTELLIGENTLY categorize_emotion FROM mood WITH:
-  OUTPUT_FORMAT: {
-    primary_emotion: TEXT,
-    intensity: TEXT IN ["low","moderate","high"],
-    secondary_traits: LIST OF TEXT,
-    confidence_level: TEXT IN ["high","moderate","low"]
-  }
-  MAX_SCOPE: emotional_assessment
+# CORRECT - Use typed reasoning for semantics
+TRACE emotional_dimensions FROM mood WITH:
+    DIRECTION: BACKWARD
+    OUTPUT_FORMAT: {
+        primary_emotion: TEXT,
+        intensity: TEXT IN ["low","moderate","high"],
+        secondary_traits: LIST OF TEXT,
+        confidence_level: TEXT IN ["high","moderate","low"]
+    }
+    MAX_SCOPE: emotional_assessment
 END
 
 # Now you can use the structured interpretation
@@ -1627,13 +3076,14 @@ END_IF
 # QUALITATIVE reasoning in INTELLIGENT mode
 SET customer_state TO "at_risk_but_engaged"
 
-# Qualitative interpretation
-INTELLIGENTLY assess_retention_strategy FROM customer_state WITH:
-  OUTPUT_FORMAT: {
-    approach: TEXT,
-    urgency: TEXT IN ["low","medium","high","critical"],
-    recommended_actions: LIST OF TEXT
-  }
+# Qualitative interpretation using typed reasoning
+WEIGH retention_approaches ON effectiveness WITH:
+    SOURCES: [customer_state, account_history, industry_benchmarks]
+    OUTPUT_FORMAT: {
+        approach: TEXT,
+        urgency: TEXT IN ["low","medium","high","critical"],
+        recommended_actions: LIST OF TEXT
+    }
 END
 
 # String handling in CODE (where appropriate)
@@ -1641,9 +3091,9 @@ EXECUTE_CODE python:
   # Simple string operations are fine
   state_words = customer_state.split('_')
   log_entry = f"Customer state: {customer_state}"
-  
+
   # But don't invent meanings:
-  # ❌ WRONG: risk_score = 0.7 if "at_risk" in customer_state else 0.3
+  # WRONG: risk_score = 0.7 if "at_risk" in customer_state else 0.3
 END_EXECUTE
 
 # Back to qualitative reasoning for decisions
@@ -1657,23 +3107,25 @@ END_IF
 
 ---
 
-### 13. The Qualitative-Quantitative Interface
+### 15. The Qualitative-Quantitative Interface
+
 Managing data flow across the qualitative-quantitative boundary **is the fundamental challenge in hybrid AI-code systems.** This is because:
 
 - **Humans reason qualitatively**: We assess situations using concepts like "high risk," "urgent priority," "moderate confidence," "strong relationship"
-- **Code operates quantitatively**: Algorithms require numbers—`risk_level = 0.7`, `priority = 3`, `confidence = 0.85`
+- **Code operates quantitatively**: Algorithms require numbers -- `risk_level = 0.7`, `priority = 3`, `confidence = 0.85`
 - **The translation is non-obvious**: There is no natural, universal mapping between "high risk" and a specific numeric value
 
 Thus, managing data flow across the qualitative-quantitative boundary is the core architectural challenge of human-AI-code integration.
 
 #### Information Flow Architecture
+
 Information flows bidirectionally between execution modes, with each transition requiring explicit handling:
 
-**CODE → INTELLIGENT: Quantitative to Qualitative**
+**CODE to INTELLIGENT: Quantitative to Qualitative**
 
-Code produces numbers; AI interprets meaning:
+Code produces numbers; AI interprets meaning using typed reasoning:
 
-```
+```ailang
 EXECUTE_CODE python:
     portfolio_results = {
         'sharpe_ratio': 1.23,
@@ -1683,23 +3135,23 @@ EXECUTE_CODE python:
     }
 END_EXECUTE
 
-INTELLIGENTLY INTERPRET portfolio_results AS investment_quality:
-    CONTEXT: client_risk_profile, market_conditions, regulatory_requirements
-    STAKEHOLDER: conservative_retiree
-END_INTERPRET
-
-# AI produces qualitative interpretation:
-# "Strong risk-adjusted returns (Sharpe 1.23) with acceptable drawdown for 
-# conservative investors. Volatility slightly elevated but within tolerance 
-# for growth-oriented retirees. Value-at-Risk indicates worst-case scenarios 
-# are manageable."
+# v0.8: Use SYNTHESIZE to integrate quantitative results into qualitative interpretation
+SYNTHESIZE portfolio_results INTO investment_assessment WITH:
+    SOURCES: [portfolio_results, client_risk_profile, market_conditions]
+    MUST_INCLUDE: [risk_adjusted_performance, suitability_for_client]
+    OUTPUT_FORMAT: {
+        interpretation: TEXT,
+        suitability: QUALITATIVE IN ["unsuitable", "marginal", "suitable", "excellent"],
+        confidence_level: TEXT IN ["high", "moderate", "low"]
+    }
+END
 ```
 
-**DETERMINISTIC → CODE and CODE → DETERMINISTIC**
+**DETERMINISTIC to CODE and CODE to DETERMINISTIC**
 
 Standard variable passing with type conversion:
 
-```
+```ailang
 SET customer_records TO load_database("customers")
 
 EXECUTE_CODE python:
@@ -1710,50 +3162,64 @@ EXECUTE_CODE python:
 END_EXECUTE
 
 FOR EACH customer IN high_value_customers DO:
-    INTELLIGENTLY craft_personalized_offer FOR customer
+    # v0.8: Use typed reasoning for personalization
+    SYNTHESIZE customer_profile INTO offer WITH:
+        SOURCES: [customer.purchase_history, customer.preferences, current_promotions]
+        MUST_INCLUDE: [personalization_rationale]
+        OUTPUT_FORMAT: { offer_text: TEXT, discount_tier: TEXT }
+    END
 END_FOR
 ```
 
-**INTELLIGENT → DETERMINISTIC and DETERMINISTIC → INTELLIGENT**
+**INTELLIGENT to DETERMINISTIC and DETERMINISTIC to INTELLIGENT**
 
 Natural language interpretation handles this boundary:
 
-```
-INTELLIGENTLY ASSESS current_situation AS situation_description
+```ailang
+TRACE situation_evolution FROM current_data WITH:
+    DIRECTION: FORWARD
+    OUTPUT_FORMAT: { assessment: TEXT, priority_indicators: LIST }
+END
 
-IF situation_description CONTAINS "critical" OR situation_description CONTAINS "urgent" THEN:
+IF situation_assessment.assessment CONTAINS "critical" OR situation_assessment.assessment CONTAINS "urgent" THEN:
     SET priority TO "high"
 END_IF
 
-INTELLIGENTLY respond_to_situation WITH priority: priority
+WEIGH response_options ON appropriateness WITH:
+    SOURCES: [available_actions, priority_level, resource_constraints]
+    OUTPUT_FORMAT: { recommended_action: TEXT }
+END
 ```
 
-**INTELLIGENT → CODE: Qualitative to Quantitative**
+**INTELLIGENT to CODE: Qualitative to Quantitative**
 
 Using parameter-range exploration:
+
 ```ailang
 INTELLIGENTLY EXPLORE market_strategy:
     PARAMETERS:
         volatility_assumption: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    
+
     EXECUTE_CODE python:
         results = {v: calculate_returns(volatility=v) for v in volatility_range}
     END_EXECUTE
-    
+
     ANALYZE:
-        "Below 0.5: unrealistically optimistic, strategies would fail in practice"
-        "0.5-0.7: reasonable range given current market conditions"
-        "Above 0.7: overly conservative, misses opportunities"
-        "Strategy robust across 0.55-0.65 range"
+        # v0.8: Use typed reasoning within ANALYZE
+        COMPARE results ACROSS volatility_range WITH:
+            DIMENSIONS: [returns, risk, stability]
+            OUTPUT_FORMAT: { robust_range: TEXT, threshold_points: LIST }
+        END
 END_EXPLORE
 ```
-**Note:** See next section for a further explanation of this example.
 
 #### The Qualitative-Quantitative Interface Problem
+
 ##### When Simple Computation Works
+
 For well-defined problems with clear quantitative parameters, direct code execution is straightforward:
 
-```
+```ailang
 EXECUTE_CODE python:
     # Clear, computable questions
     record_count = len(database.records)
@@ -1770,6 +3236,7 @@ These computations are deterministic and unambiguous because:
 * No qualitative judgment is required
 
 ##### When the Interface Becomes Problematic
+
 Many real-world problems involve poorly-defined parameters where qualitative assessment must somehow inform quantitative computation. For example, consider a CEO evaluating a strategic decision:
 
 **Human reasoning (qualitative):**
@@ -1786,17 +3253,17 @@ Many real-world problems involve poorly-defined parameters where qualitative ass
 
 ###### Problematic Approach: Point Estimation
 
-```
+```ailang
 # AI pulls a number from nowhere
 INTELLIGENTLY SET risk_tolerance TO 0.7  # What does 0.7 mean?
 
 EXECUTE_CODE python:
     allocation = optimize_portfolio(risk_tolerance=0.7)
 END_EXECUTE
-
 # Result is meaningless because input was arbitrary
 ```
-The fundamental issue here is that **a single point value (0.7) has no inherent meaning.** The AI has no principled way to choose 0.7 vs 0.65 vs 0.75, and the code operates on this arbitrary value as if it were meaningful. 
+
+The fundamental issue here is that **a single point value (0.7) has no inherent meaning.** The AI has no principled way to choose 0.7 vs 0.65 vs 0.75, and the code operates on this arbitrary value as if it were meaningful.
 
 In other words, the challenge is that **code requires numbers, and there's no principled way to assign them**:
 
@@ -1807,19 +3274,20 @@ In other words, the challenge is that **code requires numbers, and there's no pr
 
 
 ###### Parameter Space Exploration
+
 In order to address this issue, rather than forcing artificial qualitative-to-quantitative conversion, AILang is designed to explore parameter ranges and let the AI interpret patterns across the landscape. This allows AI to identify patterns and leverage what LLMs are good at: recognizing trends, thresholds, and regimes. It also allows AI to generate meaningful interpretations by assessing the material changes along a spectrum of data.
 
 **Range-Based Approach:**
 
-```
+```ailang
 INTELLIGENTLY EXPLORE portfolio_strategy:
     PARAMETERS:
         risk_tolerance: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         rebalancing_frequency: ["monthly", "quarterly", "annually"]
-    
+
     EXECUTE_CODE python:
         results = []
-        
+
         for risk in [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]:
             for rebalance in ['monthly', 'quarterly', 'annually']:
                 outcome = monte_carlo_simulation(
@@ -1835,22 +3303,27 @@ INTELLIGENTLY EXPLORE portfolio_strategy:
                     'worst_case_5th_percentile': outcome['p05']
                 })
     END_EXECUTE
-    
+
     ANALYZE:
-        # AI identifies meaningful patterns across parameter space
-        "Below risk=0.4: Returns too low to meet growth goals"
-        "Risk 0.5-0.7: Sweet spot with acceptable volatility"
-        "Above risk=0.8: Volatility becomes concerning"
-        "Sharp transition at risk=0.6: portfolio behavior shifts"
-        "Monthly rebalancing adds cost without return benefit"
-        "Strategy is robust in 0.55-0.65 range (insensitive to exact value)"
+        # v0.8: Use typed reasoning within ANALYZE
+        COMPARE results ACROSS [risk_tolerance, rebalancing_frequency] WITH:
+            DIMENSIONS: [expected_return, volatility, worst_case]
+            OUTPUT_FORMAT: {
+                sweet_spot: TEXT,
+                sensitivity_analysis: TEXT,
+                regime_transitions: LIST OF TEXT
+            }
+        END
 END_EXPLORE
 
-INTELLIGENTLY DECIDE final_parameters BASED_ON:
-    EXPLORATION: portfolio_strategy_results
-    CONSTRAINTS: client_risk_profile, regulatory_requirements
-    CONTEXT: current_market_conditions
-END_DECIDE
+WEIGH final_parameters AGAINST client_constraints WITH:
+    SOURCES: [exploration_results, client_risk_profile, regulatory_requirements, market_conditions]
+    OUTPUT_FORMAT: {
+        recommended_parameters: OBJECT { risk: NUMBER, rebalancing: TEXT },
+        rationale: TEXT,
+        confidence_level: TEXT IN ["high", "moderate", "low"]
+    }
+END
 ```
 
 ###### Why Range Exploration Works
@@ -1866,59 +3339,65 @@ END_DECIDE
 
 ###### Parameter Space Exploration Syntax
 
-```
+```ailang
 INTELLIGENTLY EXPLORE [exploration_name]:
     PARAMETERS:
         [parameter1]: [range_or_list_of_values]
         [parameter2]: [range_or_list_of_values]
         ...
     RESOLUTION: [coarse|medium|fine]  # Optional: controls granularity
-    
+
     EXECUTE_CODE [language]:
         [code that explores parameter combinations]
     END_EXECUTE
-    
+
     ANALYZE:
         [AI interpretation of patterns, trends, regimes]
         [Identification of: sensitivities, plateaus, thresholds, optima]
+        [v0.8: May contain typed reasoning operations (COMPARE, TRACE, etc.)]
 END_EXPLORE
 ```
 
 ###### Interpretation Patterns
+
 The AI can interpret parameter space results by identifying:
 
-* **Sensitivity**: "Small changes in X cause large changes in outcome" → critical parameter requiring careful setting
-* **Plateaus**: "Wide range of X produces similar outcomes" → robust region, exact value not critical
-* **Thresholds**: "Below X: regime A; above X: regime B" → phase transition, operational boundary
-* **Interactions**: "Effect of X depends on value of Y" → parameters are coupled, must consider together
-* **Optima**: "Maximum/minimum at X" → sweet spot or danger zone
-* **Infeasibility**: "No parameter combination satisfies constraints" → problem requires reformulation
+* **Sensitivity**: "Small changes in X cause large changes in outcome" -- critical parameter requiring careful setting
+* **Plateaus**: "Wide range of X produces similar outcomes" -- robust region, exact value not critical
+* **Thresholds**: "Below X: regime A; above X: regime B" -- phase transition, operational boundary
+* **Interactions**: "Effect of X depends on value of Y" -- parameters are coupled, must consider together
+* **Optima**: "Maximum/minimum at X" -- sweet spot or danger zone
+* **Infeasibility**: "No parameter combination satisfies constraints" -- problem requires reformulation
 
 ###### Complex Example: Strategic Decision-Making
 
-```
+```ailang
 # CEO scenario: workforce reduction planning
 
-INTELLIGENTLY ASSESS situation AS "Revenue shortfall requires cost reduction, 
-    but must preserve core capabilities and minimize talent loss"
+# Step 1: ASSESS with typed reasoning
+TRACE revenue_situation FROM financial_data WITH:
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [root_causes, timeline, severity]
+    OUTPUT_FORMAT: { situation_summary: TEXT, severity: QUALITATIVE }
+END
 
+# Step 2: EXPLORE parameter space
 INTELLIGENTLY EXPLORE workforce_reduction_scenarios:
     PARAMETERS:
         budget_reduction_percent: [5, 10, 15, 20, 25]
         reduction_method: ["across_board", "performance_based", "last_hired", "voluntary"]
         retention_bonus_budget: [0, 100000, 250000, 500000]
     RESOLUTION: medium
-    
+
     EXECUTE_CODE python:
         import pandas as pd
         import numpy as np
-        
+
         scenarios = []
-        
+
         for cut_pct in [0.05, 0.10, 0.15, 0.20, 0.25]:
             for method in ['across_board', 'performance_based', 'last_hired', 'voluntary']:
                 for retention_budget in [0, 100000, 250000, 500000]:
-                    # Run workforce simulation
                     result = simulate_layoff_impact(
                         budget_reduction=cut_pct,
                         method=method,
@@ -1926,7 +3405,6 @@ INTELLIGENTLY EXPLORE workforce_reduction_scenarios:
                         employee_database=current_workforce,
                         performance_data=performance_reviews
                     )
-                    
                     scenarios.append({
                         'budget_cut': cut_pct,
                         'method': method,
@@ -1939,53 +3417,37 @@ INTELLIGENTLY EXPLORE workforce_reduction_scenarios:
                         'legal_risk_score': result['legal_exposure'],
                         'time_to_implement': result['implementation_weeks']
                     })
-        
+
         df_scenarios = pd.DataFrame(scenarios)
     END_EXECUTE
-    
+
     ANALYZE:
-        "Below 10% reduction: Insufficient savings, doesn't solve financial problem"
-        
-        "10-15% reduction range viable:"
-        "  - Performance-based: Preserves 87% of key talent, moderate morale impact"
-        "  - Last-hired: Severe skills gap, creates generational cliff"
-        "  - Across-board: Loses 31% of key talent, lowest legal risk"
-        "  - Voluntary: Unpredictable who leaves, takes 12+ weeks"
-        
-        "Above 15% reduction: Organizational capability collapse"
-        "  - Morale impact becomes severe across all methods"
-        "  - Productivity drops exceed cost savings in 18-month horizon"
-        
-        "Retention bonuses critical in performance-based approach:"
-        "  - $250K budget optimal: retains 6-8 critical individuals"
-        "  - Below $250K: insufficient to retain key talent"
-        "  - Above $250K: diminishing returns"
-        
-        "Threshold behavior at 12%:"
-        "  - Below 12%: Organization absorbs impact"
-        "  - Above 12%: Multiple teams lose critical mass"
-        
-        "OPERATIONAL SWEET SPOT: 11-13% reduction, performance-based, 
-         $250K retention budget"
-        
-        "RISK: Performance-based has moderate legal risk (discrimination claims),
-         requires rigorous documentation"
+        COMPARE scenarios ACROSS [cost_savings, talent_retention, morale_impact, legal_risk] WITH:
+            DIMENSIONS: [cost_savings, key_talent_retained, morale_impact_score, legal_risk_score]
+            OUTPUT_FORMAT: {
+                viable_range: TEXT,
+                optimal_configuration: TEXT,
+                danger_zones: LIST OF TEXT,
+                threshold_behaviors: LIST OF TEXT
+            }
+        END
 END_EXPLORE
 
-INTELLIGENTLY DECIDE final_plan BASED_ON:
-    EXPLORATION: workforce_reduction_scenarios_results
-    CONSTRAINTS: 
-        legal_risk_tolerance: moderate
-        timeline: must_implement_within_8_weeks
-        strategic_priorities: preserve_engineering_and_product
-    CONTEXT:
-        labor_market: tight_market_for_technical_talent
-        company_morale: already_strained_from_recent_changes
-        board_pressure: urgent_action_required
-END_DECIDE
+# Step 3: DECIDE with typed reasoning
+WEIGH scenario_outcomes AGAINST strategic_priorities WITH:
+    SOURCES: [exploration_results, executive_guidance, legal_counsel, hr_assessment]
+    MUST_INCLUDE: [risk_assessment, implementation_feasibility, talent_preservation_plan]
+    CANNOT_INCLUDE: [promises_to_specific_employees]
+    OUTPUT_FORMAT: {
+        selected_plan: TEXT,
+        rationale: TEXT,
+        implementation_steps: LIST OF TEXT,
+        risk_mitigation: LIST OF TEXT
+    }
+END
 
 # Implement decision with monitoring
-EXECUTE final_plan WITH:
+EXECUTE selected_plan WITH:
     SAFEGUARDS: [legal_review, hr_oversight, manager_training]
     MONITORING: [weekly_morale_surveys, talent_retention_tracking, productivity_metrics]
     ADJUSTMENT_TRIGGERS: [key_talent_departure_threshold, morale_critical_low]
@@ -1993,6 +3455,7 @@ END_EXECUTE
 ```
 
 #### Best Practices
+
 **Use CODE blocks for:**
 
 * Mathematical computations requiring precision
@@ -2018,6 +3481,37 @@ END_EXECUTE
 * Contextual interpretation
 * Pattern recognition in exploration results
 
+**Choose reasoning type based on the cognitive task:**
+
+| Task | Recommended Type |
+|---|---|
+| Evaluating source credibility | WEIGH |
+| Applying rules to reach conclusions | DEDUCE |
+| Root cause analysis or consequence prediction | TRACE |
+| Ranking options or trade-off analysis | COMPARE |
+| Integrating multiple perspectives | SYNTHESIZE |
+| Factual recall or definition lookup | RETRIEVE |
+| Unknown or mixed reasoning needs | INTELLIGENTLY (auto-classifies) |
+
+**Choose DEPTH based on the stakes (v0.8.1, updated v0.8.2):**
+
+| Situation | Recommended DEPTH |
+|---|---|
+| Quick triage, initial screening | SHALLOW |
+| Standard production operations | STANDARD (default) |
+| Production analyses needing more than standard | THOROUGH (v0.8.2) |
+| Critical decisions, important analyses | DEEP |
+| Forensic analysis, compliance audits, safety-critical | EXHAUSTIVE |
+
+**Choose RETRIEVAL_BUDGET based on data availability (v0.8.2):**
+
+| Situation | Recommended RETRIEVAL_BUDGET |
+|---|---|
+| All data loaded in variables, no recall needed | NONE |
+| Most data loaded, some terminology may need resolution | MINIMAL |
+| Standard operation, may need knowledge recall | STANDARD (default) |
+| Explicitly signaling full retrieval intent | FULL |
+
 **Use Parameter Exploration when:**
 
 * Converting qualitative assessments to quantitative parameters
@@ -2041,19 +3535,21 @@ SET stakeholder_trust TO "high_trust"  # QUALITATIVE
 INTELLIGENTLY EXPLORE trust_scenarios:
   PARAMETERS:
     assumed_trust_scalar: [0.55, 0.65, 0.75, 0.85]  # candidate mappings
-  
+
   EXECUTE_CODE python:
-    outcomes = {t: simulate_project(success_factor=t) 
+    outcomes = {t: simulate_project(success_factor=t)
                 for t in assumed_trust_scalar}
   END_EXECUTE
-  
+
   ANALYZE:
-    "Results are robust in 0.65–0.75 range; below 0.6 success drops sharply.
-     High trust (0.75+) provides marginal additional benefit.
-     
-     Recommended mapping: use 0.70 as proxy for 'high_trust' in quantitative
-     modeling, with sensitivity analysis showing ±0.05 variation has minimal
-     impact on outcomes."
+    COMPARE outcomes ACROSS assumed_trust_scalar WITH:
+        DIMENSIONS: [project_success, team_velocity, risk_level]
+        OUTPUT_FORMAT: {
+            robust_range: TEXT,
+            recommended_proxy: NUMBER,
+            sensitivity: TEXT
+        }
+    END
 END_EXPLORE
 
 # Use the AI-validated mapping
@@ -2063,13 +3559,6 @@ EXECUTE_CODE python:
 END_EXECUTE
 ```
 
-**Why this approach works:**
-- Explores multiple candidate mappings rather than guessing a single value
-- Lets AI identify robust ranges and sensitivity thresholds
-- Makes the qualitative-to-quantitative translation explicit and documented
-- Preserves the semantic boundary between qualitative reasoning and numeric computation
-- Provides rationale for the chosen numeric proxy
-
 ##### Option 2: Explicit Domain Mapping
 
 When domain knowledge or empirical data establishes a validated mapping, provide an explicit conversion function:
@@ -2078,7 +3567,7 @@ When domain knowledge or empirical data establishes a validated mapping, provide
 DEFINE PROCEDURE map_trust_to_scalar WITH PARAMETERS [trust_label: QUALITATIVE]:
   # Mapping based on empirical study (Smith et al., 2024):
   # Survey of 500 projects correlated trust assessments with success factors
-  
+
   MATCH trust_label WITH:
     CASE "no_trust":       RETURN 0.15  # Based on failed collaboration data
     CASE "low_trust":      RETURN 0.30  # Limited information sharing observed
@@ -2100,100 +3589,9 @@ EXECUTE_CODE python:
 END_EXECUTE
 ```
 
-**When to use explicit mapping:**
-- Empirical data validates the numeric mapping
-- Domain has established conventions (e.g., industry standards)
-- The mapping is stable and well-understood across contexts
-- Deterministic behavior is required for repeatability
-- The mapping function can be documented and justified
-
-##### Complete Example: Market Sentiment in Investment Model
-
-```ailang
-# Qualitative market assessment
-SET market_sentiment TO "cautiously_optimistic_with_high_volatility"
-SET competitive_pressure TO "increasing"
-
-# Bridge to quantitative model via exploration
-INTELLIGENTLY EXPLORE sentiment_impact:
-  PARAMETERS:
-    sentiment_factor: [0.4, 0.6, 0.8, 1.0, 1.2]
-    volatility_factor: [1.0, 1.3, 1.5, 1.8, 2.0]
-  
-  EXECUTE_CODE python:
-    import numpy as np
-    results = {}
-    
-    for sent in sentiment_factor:
-      for vol in volatility_factor:
-        # Sentiment affects expected return
-        expected_return = 0.08 * sent
-        
-        # Volatility affects risk
-        volatility = 0.15 * vol
-        
-        # Calculate risk-adjusted metrics
-        sharpe = expected_return / volatility if volatility > 0 else 0
-        var_95 = expected_return - (1.645 * volatility)
-        
-        results[(sent, vol)] = {
-          'return': expected_return,
-          'volatility': volatility,
-          'sharpe': sharpe,
-          'var_95': var_95
-        }
-  END_EXECUTE
-  
-  ANALYZE:
-    "SENTIMENT FACTOR ANALYSIS:
-     - Below 0.6: Over-weights caution, misses realistic upside
-     - 0.8-1.0: Appropriate balance for 'cautiously optimistic'
-     - Above 1.0: Ignores volatility concerns, too aggressive
-     
-     VOLATILITY FACTOR ANALYSIS:
-     - Below 1.3: Underestimates current market turbulence
-     - 1.5-1.8: Reflects 'high volatility' environment
-     - Above 1.8: Overly conservative, paralyzes strategy
-     
-     RECOMMENDED PARAMETERS:
-     - Sentiment factor: 0.85 (cautiously optimistic)
-     - Volatility factor: 1.6 (high volatility acknowledged)
-     
-     ROBUSTNESS: Results stable in sentiment [0.80-0.90] and
-     volatility [1.5-1.7] ranges. Sharp regime change at volatility > 1.8
-     (Sharpe ratio drops below 0.3, questioning viability)."
-END_EXPLORE
-
-# Apply validated parameters
-SET sentiment_param TO 0.85
-SET volatility_param TO 1.6
-
-EXECUTE_CODE python:
-  portfolio_weights = optimize_portfolio(
-    expected_sentiment=sentiment_param,
-    volatility_multiplier=volatility_param,
-    risk_tolerance=0.15
-  )
-  
-  expected_return = calculate_expected_return(portfolio_weights)
-  portfolio_risk = calculate_risk(portfolio_weights)
-END_EXECUTE
-
-# Interpret results qualitatively
-INTELLIGENTLY INTERPRET portfolio_results WITH:
-  CONTEXT: market_sentiment, competitive_pressure, client_risk_profile
-  OUTPUT_FORMAT: {
-    recommendation: TEXT,
-    rationale: TEXT,
-    risk_assessment: QUALITATIVE IN ["low","moderate","high","excessive"],
-    confidence_level: TEXT IN ["high","moderate","low"]
-  }
-END
-```
-
 ##### Prohibited Pattern: Silent Coercion
 
-**❌ NEVER do this:**
+**NEVER do this:**
 
 ```ailang
 SET mood TO "tense"  # QUALITATIVE
@@ -2225,7 +3623,8 @@ Engines MUST NOT provide implicit numeric coercion for QUALITATIVE values, even 
 
 ---
 
-### 14. Mathematical Operations
+### 16. Mathematical Operations
+
 Complex mathematical operations should generally be implemented in executable code rather than as natural language constructs. This provides:
 
 - **Guaranteed precision** for numerical computations
@@ -2247,22 +3646,23 @@ Complex mathematical operations should generally be implemented in executable co
 - Any computation requiring guaranteed precision
 
 **Example:**
+
 ```ailang
 EXECUTE_CODE python:
     import numpy as np
     from scipy import integrate, optimize
     from sympy import symbols, diff, integrate as sym_integrate
-    
+
     # Symbolic differentiation
     x = symbols('x')
     f = x**3 + 2*x
     derivative = diff(f, x)  # 3*x^2 + 2
-    
+
     # Numerical integration
     def integrand(x):
         return x**2
     result, error = integrate.quad(integrand, 0, 1)  # 1/3
-    
+
     # Optimization
     def objective(x):
         return x**2 + x + 1
@@ -2271,6 +3671,7 @@ END_EXECUTE
 ```
 
 #### Simple Mathematical Expressions in AILang
+
 For basic arithmetic that doesn't require code execution overhead, AILang supports standard mathematical notation:
 
 ```ailang
@@ -2283,162 +3684,18 @@ SET root TO sqrt(x^2 + y^2)
 SET total TO 5 + 3 * 2  # = 11
 SET percentage TO (achieved / target) * 100
 ```
+
 **Use these simple expressions when:**
 * The calculation is straightforward and unambiguous
 * Precision requirements are modest
 * Performance is not critical
 * The expression serves primarily as program logic rather than scientific computation
 
-#### Mathematical Context for Complex Domain
-When working with complex numbers, quaternions, or specialized mathematical domains, use CODE blocks with appropriate libraries:
-```ailang
-EXECUTE_CODE python:
-    import numpy as np
-    
-    # Complex number operations
-    z1 = 3 + 4j
-    z2 = 1 - 2j
-    
-    product = z1 * z2  # Complex multiplication
-    magnitude = abs(z1)  # |z1| = 5
-    phase = np.angle(z1)  # arg(z1)
-    
-    # Quaternions (using specialized library)
-    from pyquaternion import Quaternion
-    q1 = Quaternion(axis=[0, 0, 1], angle=np.pi/4)
-    q2 = Quaternion(axis=[1, 0, 0], angle=np.pi/2)
-    rotation = q1 * q2
-END_EXECUTE
-```
+In summary: let code handle computation, let typed reasoning operations handle interpretation and decision-making.
 
-#### Domain-Specific Mathematical Operations
-For specialized mathematical operations, leverage domain-specific Python libraries within CODE blocks:
+---
 
-##### Physics and Engineering:
-
-```ailang
-EXECUTE_CODE python:
-    from scipy import constants
-    from scipy.integrate import odeint
-    
-    # Physical constants
-    c = constants.speed_of_light
-    h = constants.Planck
-    
-    # Solve differential equations
-    def model(y, t):
-        dydt = -0.5 * y
-    return dydt
-    
-    y0 = 5
-    t = np.linspace(0, 10, 100)
-    solution = odeint(model, y0, t)
-END_EXECUTE
-```
-
-##### Signal Processing:
-```ailang
-EXECUTE_CODE python:
-    from scipy import signal
-    from scipy.fft import fft, fftfreq
-    
-    # Fourier transform
-    N = 1000
-    T = 1.0 / 800.0
-    x = np.linspace(0.0, N*T, N)
-    y = np.sin(50.0 * 2.0*np.pi*x) + 0.5*np.sin(80.0 * 2.0*np.pi*x)
-    
-    yf = fft(y)
-    xf = fftfreq(N, T)
-    
-    # Filter design
-    b, a = signal.butter(4, 100, 'low', fs=1000)
-    filtered = signal.filtfilt(b, a, y)
-END_EXECUTE
-```
-
-##### Optimization and Numerical Methods:
-```ailang
-EXECUTE_CODE python:
-    from scipy.optimize import minimize, differential_evolution
-    from scipy.linalg import solve, eig
-    
-    # Linear algebra
-    A = np.array([[4, 2, 3], [3, 5, 7], [8, 2, 6]])
-    eigenvalues, eigenvectors = eig(A)
-    
-    # Constrained optimization
-    def objective(x):
-        return x[0]**2 + x[1]**2
-    
-    def constraint(x):
-        return x[0] + x[1] - 1
-    
-    constraints = {'type': 'eq', 'fun': constraint}
-    result = minimize(objective, x0=[0.5, 0.5], constraints=constraints)
-END_EXECUTE
-```
-
-##### Best Practices for Mathematical Operations
-
-1. Default to CODE blocks for any mathematical operation beyond basic arithmetic
-2. Use established libraries rather than implementing numerical methods from scratch
-3. Document units and assumptions in comments within code blocks
-4. Validate results when precision is critical
-5. Consider numerical stability for ill-conditioned problems
-6. Use symbolic computation (SymPy) when exact results are needed
-
-##### Integration with AILang Workflow
-Mathematics typically fits into the broader AILang workflow like this:
-```ailang
-# AI assesses the problem qualitatively
-INTELLIGENTLY ASSESS problem_domain AS physics_simulation_requirements
-
-# Explore parameter space to understand behavior
-INTELLIGENTLY EXPLORE simulation_parameters:
-    PARAMETERS:
-        time_step: [0.001, 0.01, 0.1]
-        damping_coefficient: [0.1, 0.5, 1.0, 2.0]
-    
-    EXECUTE_CODE python:
-        import numpy as np
-        from scipy.integrate import odeint
-        
-        results = []
-        for dt in [0.001, 0.01, 0.1]:
-            for damping in [0.1, 0.5, 1.0, 2.0]:
-                # Simulate damped oscillator
-                def model(y, t, d):
-                    dydt = [y[1], -y[0] - d*y[1]]
-                    return dydt
-                
-                t = np.arange(0, 10, dt)
-                y0 = [1, 0]
-                solution = odeint(model, y0, t, args=(damping,))
-                
-                results.append({
-                    'dt': dt,
-                    'damping': damping,
-                    'final_amplitude': abs(solution[-1, 0]),
-                    'stability': is_stable(solution)
-                })
-    END_EXECUTE
-    
-    ANALYZE:
-        "Time step 0.001: Stable across all damping values"
-        "Time step 0.1: Numerical instability for low damping"
-        "Optimal range: dt=0.01, damping 0.5-1.0"
-END_EXPLORE
-
-# AI makes decision based on mathematical exploration
-INTELLIGENTLY DECIDE simulation_configuration BASED_ON:
-    EXPLORATION: simulation_parameters_results
-    REQUIREMENTS: accuracy_vs_performance_tradeoff
-END_DECIDE
-```
-In summary: let code handle computation, let AI handle interpretation and decision-making.
-
-### 15. Execution Boundaries
+### 17. Execution Boundaries
 
 Clear delineation between deterministic and intelligent execution ensures program reliability.
 
@@ -2461,15 +3718,17 @@ These aspects allow for contextual adaptation:
 3. **Optimization Decisions:** Improving performance without changing logical behavior
 4. **Contextual Interpretation:** Understanding intent when natural language is ambiguous
 5. **Creative Problem-Solving:** Generating solutions within specified constraints
+6. **Reasoning Type Selection:** When INTELLIGENTLY is used, the engine selects the appropriate reasoning type via auto-classification (v0.8)
+7. **Depth Calibration:** When ADAPTIVELY style is combined with DEPTH, the engine may dynamically adjust depth per step (v0.8.1)
+8. **Retrieval Budget Calibration:** When RETRIEVAL_BUDGET: MINIMAL is specified, the engine determines which ~200 retrieval neurons are most relevant (v0.8.2)
 
-### 16. State-Aware Dynamic Boundaries
+### 18. State-Aware Dynamic Boundaries
 
 AILang maintains state that creates dynamic execution boundaries:
 
 #### State-Dependent Limits
 
-```
-#ailang
+```ailang
 SET daily_limit TO 1000
 SET current_usage TO 0
 
@@ -2485,8 +3744,7 @@ END_FOR
 
 #### Progressive Authorization
 
-```
-#ailang
+```ailang
 IF success_rate > 0.95 FOR last_100_operations THEN:
     EXPAND authority TO level_2_operations
 ELSE IF error_rate > 0.10 THEN:
@@ -2496,8 +3754,7 @@ END_IF
 
 #### Cascade Prevention
 
-```
-#ailang
+```ailang
 # Prevent action cascades
 IF actions_taken_for(entity) > threshold TODAY THEN:
     ESCALATE TO human_supervisor
@@ -2507,8 +3764,7 @@ END_IF
 
 #### Compositional Limits
 
-```
-#ailang
+```ailang
 WITHIN time_period(1_hour) ALLOW:
     MAXIMUM 10 external_api_calls
     MAXIMUM 100 database_updates
@@ -2518,12 +3774,16 @@ END_WITHIN
 
 **Specification**: Boundaries can dynamically adjust based on program state, but must always remain within maximum defined limits. State-aware boundaries prevent cascade failures and resource exhaustion while allowing adaptive behavior within safe parameters.
 
-### 17. Person Entities: Framework Overview
+---
+
+### 19. Person Entities: Framework Overview
+
 This section provides the conceptual framework and usage patterns needed to understand and work with Person entities at a high level.
 
-**⚠️ IMPORTANT: Person entities represent one of AILang's most sophisticated domain modeling capabilities. Due to the comprehensive nature of human behavioral modeling—encompassing cognitive systems, personality dynamics, social interactions, and group memberships—the detailed specifications for all Person subsystems are provided in the [Person Extension Document](https://github.com/pcoz/ailang/blob/main/AILang_Specification_Person_Extension.md).**
+**IMPORTANT: Person entities represent one of AILang's most sophisticated domain modeling capabilities. Due to the comprehensive nature of human behavioral modeling -- encompassing cognitive systems, personality dynamics, social interactions, and group memberships -- the detailed specifications for all Person subsystems are provided in the [Person Extension Document](https://github.com/pcoz/ailang/blob/main/AILang_Specification_Person_Extension.md).**
 
-#### 17.1 Person Class Architecture
+#### 19.1 Person Class Architecture
+
 Person entities model humans across multiple dimensions:
 
 - **Cognitive Systems**: Thought processes, speech patterns, and physical actions
@@ -2536,1943 +3796,27 @@ Person entities model humans across multiple dimensions:
 - **Goal-Directed Behavior**: Intelligent planning, adaptive navigation, circumstance-responsive decision-making
 - **Identity & Contact**: Legal identifiers, contact information, digital identities, location tracking
 - **Group Memberships**: Family, organizational, and social group affiliations with role-based behavior
-
-Use Person entities when you need to:
-- Model individual human behavior with psychological depth
-- Simulate social interactions with personality dynamics
-- Track character development over time
-- Represent agents with realistic cognitive/emotional constraints
-- Model organizational hierarchies with human decision-makers
-- Simulate group dynamics and social influence
-
-**Core Architecture**
-
-```#ailang
-ailangCLASS Person:
-    PROPERTIES:
-        # Identity and Demographics
-        id: unique_identifier
-        name: text
-        age: number
-        gender: text
-        
-        # Cognitive and Behavioral Systems
-        thought_system: ThoughtSystem
-        speech_system: SpeechSystem
-        action_system: ActionSystem
-        
-        # Experiential Systems
-        experience_system: ExperienceSystem
-        memory_system: MemorySystem
-        
-        # Personality and Social Systems
-        personality: PersonalitySystem  # Logos, Energiae, Ethos
-        interaction_system: InteractionSystem
-        
-        # Contextual Systems
-        economic_system: EconomicSystem
-        knowledge_system: KnowledgeSystem
-        planning_system: PlanningSystem
-        
-        # Identity and Membership
-        background: PersonBackground
-        identity_contact: IdentityAndContactSystem
-        group_membership_system: GroupMembershipSystem
-        
-        current_state: PersonState
-```
-
-#### 17.2 Core Systems Summary
-
-**Cognitive Systems**
-
-* ThoughtSystem: Conscious and subconscious thought processes, reflection, decision-making
-* SpeechSystem: Verbal communication with tone, vocabulary, and linguistic patterns
-* ActionSystem: Physical capabilities, skill learning, and action execution
-
-**Experiential Systems**
-
-* ExperienceSystem: Multi-sensory perception (vision, hearing, touch, smell, taste, proprioception, interoception)
-* MemorySystem: Working memory, episodic memory, semantic memory, procedural memory, emotional memory
-
-**Personality Framework (Logos-Energiae-Ethos)**
-The personality system models three fundamental dimensions of human character:
-
-* Logos: Rational principle, reasoning styles, logical consistency, intellectual curiosity
-* Energiae: Active forces, drives, motivations, life force, creative energy
-* Ethos: Moral character, values, principles, virtues, integrity
-
-These three components interact dynamically, generating graded responses to events and shaping behavior through their integration.
-
-**Social and Contextual Systems**
-
-* InteractionSystem: Social skills, relationships, personality exchange mechanisms
-* EconomicSystem: Financial awareness, possessions, budgeting, purchase evaluation
-* KnowledgeSystem: Domain expertise, learning strategies, knowledge synthesis
-* PlanningSystem: Goal management, intelligent navigation, adaptive execution
-
-**Identity Systems**
-
-* PersonBackground: Demographics, family history, life events, cultural background
-* IdentityAndContactSystem: Legal identifiers, contact information, digital identities, privacy
-* GroupMembershipSystem: Family, work, social group memberships and their influence
-
-#### 17.3 Usage Patterns
-
-**Basic Person Creation**
-
-```#ailang
-CREATE Person alice WITH:
-    name: "Alice Chen"
-    age: 28
-    gender: "female"
-    background: {
-        birth_place: "San Francisco",
-        education: ["BS Computer Science", "MA Psychology"],
-        languages: {english: 1.0, mandarin: 0.9}
-    }
-END_CREATE
-
-# Initialize personality traits
-SET alice.personality.logos.reasoning_style TO "analytical"
-SET alice.personality.energiae.drives TO {achievement: 0.8, connection: 0.7}
-SET alice.personality.ethos.core_values TO ["integrity", "growth", "compassion"]
-```
-
-**Person-to-Person Interaction**
-
-```#ailang
-# Two persons interact with full personality exchange
-SET conversation TO alice.interact_with_person(bob, meeting_context)
-
-# The interaction includes:
-# - Logos exchange (intellectual/reasoning styles)
-# - Energiae exchange (energetic compatibility/resonance)
-# - Ethos exchange (moral alignment/values)
-```
-
-**Intelligent Goal Pursuit**
-
-```#ailang
-ailang# Person navigates toward goal with adaptive intelligence
-alice.planning_system.decide_and_navigate(
-    goal_description: "Learn advanced machine learning",
-    constraints: {time: "3 months", budget: 1000}
-)
-
-# The system:
-# - Assesses circumstances continuously
-# - Makes intelligent decisions at junctures
-# - Adapts path based on outcomes
-# - Learns from experience
-```
-
-**Group Context Activation**
-
-```#ailang
-ailang# Activate family context - behavior adjusts accordingly
-SET family_context TO alice.group_membership_system.activate_group_context("family")
-
-# Alice's speech, behavior, and cognition now reflect family role
-alice.interact_with_family(family_context)
-```
-
-**Multi-Person Simulation**
-
-```#ailang
-ailangDEFINE PROCEDURE social_gathering WITH PARAMETERS [attendees, location]:
-    FOR EACH person IN attendees DO:
-        person.experience_system.perceive(environment)
-    END_FOR
-    
-    WHILE gathering.active DO:
-        # Persons interact, relationships evolve
-        # Memories form, personalities influence each other
-    END_WHILE
-END_PROCEDURE
-```
-
-#### 17.4 Integration with AILang Constructs
-
-Person entities seamlessly integrate with core language features:
-
-**Deterministic Operations: Person state changes follow exact rules**
-
-```#ailang
-INCREMENT alice.age BY 1
-DECREMENT alice.action_system.energy_level BY 0.3
-```
-
-**Intelligent Operations: Decisions use INTELLIGENTLY modifiers**
-
-```#ailang
-alice.knowledge_system.INTELLIGENTLY synthesize_knowledge(["psychology", "AI"])
-```
-
-**Reality Contexts: Persons can have default reality contexts**
-
-```#ailang
-ailangCREATE Person therapist WITH:
-    default_reality_context: psychodynamic_therapy
-END_CREATE
-```
-
-**Error Handling: Person operations can fail gracefully**
-
-```#ailang
-ailangTRY:
-    alice.action_system.perform_action(complex_task, environment)
-CATCH insufficient_skill:
-    alice.knowledge_system.acquire_knowledge(required_skill, urgency: "high")
-END_TRY
-```
-
-**Implementation Notes**
-
-* State Persistence: Person state can be serialized and restored across sessions
-* Scalability: Multiple persons can coexist and interact within programs
-* Extensibility: New subsystems can be added through inheritance
-* Deterministic Core: All state changes follow deterministic rules
-* Intelligent Overlay: Decision-making uses bounded intelligence where specified
+- **Reasoning Profile** (v0.8): Primary and secondary reasoning types that shape how the person's think() and decide() methods process information
 
 For complete specifications of all Person subsystems, see the [Person Extension Document](https://github.com/pcoz/ailang/blob/main/AILang_Specification_Person_Extension.md).
 
-### 18. Universal Space and Accomplishment Systems
+---
 
-AILang provides a unified framework for modeling navigation through structured domains—whether physical terrain, manufacturing processes, or institutional hierarchies. This section introduces **spaces** as formal structures that define what accomplishments are possible, and **journeys** as the actualization of these possibilities through intelligent navigation.
+### 20. Universal Space and Accomplishment Systems
 
-The framework is grounded in a transcendental perspective: spaces are not mere containers but the formal conditions that make accomplishment intelligible. By recognizing that diverse domains share the same underlying structure—staged progression toward objectives within possibility spaces—AILang enables consistent modeling across radically different content areas.
-
-#### 18.0 Philosophical Foundation
-This framework is grounded in a transcendental perspective: space is not merely a container but the formal structure that makes experience and accomplishment possible. AILang generalizes this—different domains have their own formal structures (spaces) that are the conditions of possibility for action and accomplishment within those domains.
-
-**A Priori / A Posteriori / Synthesis.** The space structure (locations, pathways, prerequisites, rules) exists prior to any journey (a priori). The actual journey is empirical and contingent (a posteriori). Navigation requires synthesis: applying formal understanding of the space to the situation at hand to make intelligent decisions.
-
-**Why one framework works across domains.** Physical journeying, manufacturing processes, and institutional advancement share the same formal pattern: staged progression within a possibility space toward objectives. The content differs; the form is identical.
-
-#### 18.1 Conceptual Foundation
-**Space as condition of possibility.** A space in AILang is a formal structure that makes certain kinds of accomplishment possible. It defines:
-- **Locations/Stages** (positions that can be occupied/achieved)  
-- **Pathways** (permitted transitions)  
-- **Prerequisites** (what must be true to access a stage)  
-- **Rules** (constraints governing movement)
-
-**Journey as actualization within space.** A journey is the empirical actualization of possibilities within that structure, involving a **navigator**, **circumstances**, **decisions**, and resulting **accomplishments**.
-
-**Types of spaces (same form, different content).**
-- **Physical Space:** Geographic locations; accomplishment = arrival.  
-- **Process Space:** Production/service stages; accomplishment = stage completion.  
-- **Organizational Space:** Institutional positions; accomplishment = attained authorization/role.  
-- **Abstract Spaces:** States in conceptual domains; accomplishment = target state achieved.
-
-#### 18.2 Core Space Framework
-The following classes define the foundational machinery for all space types. The `Space` class captures the formal structure (locations, pathways, rules), while `Location` represents positions that can be accomplished. `SpaceCharacteristics` describes structural properties, and `NavigationRules` governs what transitions are possible. 
-
-In short: Core classes define the **formal structure (a priori)**, **empirical assessment (a posteriori)**, and **navigation rules (synthesis)**.
-
-```#ailang
-ailangCLASS Space:
-    PROPERTIES:
-        space_id: text
-        space_type: text  # "physical", "process", "organizational", "abstract"
-        space_name: text
-
-        # A priori structure
-        locations: MAP[location_id -> Location]
-        pathways: GRAPH[location_id -> LIST[location_id]]
-        entry_points: LIST[location_id]
-        objectives: LIST[location_id]  # Target accomplishments
-
-        space_characteristics: SpaceCharacteristics
-        navigation_rules: NavigationRules
-
-    CLASS Location:
-        # A position/stage/state in the formal structure
-        PROPERTIES:
-            location_id: text
-            location_type: text  # "stage", "position", "state", "waypoint"
-            name: text
-            description: text
-
-            # Formal significance within space structure
-            is_objective: boolean
-            is_milestone: boolean
-            accomplishment_value: text  # "critical","major","significant","minor"
-
-            # A priori accessibility relations
-            prerequisites: LIST
-            enables: LIST
-
-            properties: MAP[property -> value]
-
-        METHOD describe_accomplishment():
-            RETURN INTELLIGENTLY describe WITH:
-                LOCATION: this,
-                SIGNIFICANCE: this.accomplishment_value,
-                CONTEXT: space_context,
-                IMPLICATIONS: this.enables
-            END
-        END_METHOD
-    END_CLASS
-
-    CLASS SpaceCharacteristics:
-        PROPERTIES:
-            dimensionality: text  # "linear","branching","networked","multidimensional"
-            connectivity: text    # "fully_connected","sparse","hierarchical","sequential"
-            reversibility: text   # "fully_reversible","partially_reversible","irreversible"
-            progress_measurability: text  # "precise","approximate","qualitative"
-            completion_criteria: text
-            static_or_dynamic: text  # "static","evolving","reactive","adaptive"
-            time_dependency: text    # "timeless","time_sensitive","deadline_driven"
-    END_CLASS
-
-    CLASS NavigationRules:
-        PROPERTIES:
-            movement_constraints: LIST
-            transition_requirements: MAP[pathway -> requirements]
-            authorization_model: text  # "open","restricted","role_based","achievement_gated"
-
-        METHOD can_transition(from_location, to_location, navigator):
-            SET pathway TO find_pathway(from_location, to_location)
-            IF pathway NOT_EXISTS THEN:
-                RETURN {allowed: false, reason: "no_pathway_in_space_structure"}
-            END_IF
-
-            SET requirements TO this.transition_requirements[pathway]
-            SET requirements_met TO evaluate_requirements(requirements, navigator)
-
-            RETURN {
-                allowed: requirements_met.all_satisfied,
-                reason: requirements_met.explanation,
-                missing_prerequisites: requirements_met.unsatisfied
-            }
-        END_METHOD
-    END_CLASS
-
-    METHOD get_accomplishment_status(navigator):
-        RETURN {
-            locations_achieved: navigator.achieved_locations,
-            current_location: navigator.current_location,
-            objectives_completed: count_completed_objectives(navigator),
-            objectives_remaining: count_remaining_objectives(navigator),
-            progress_assessment: assess_overall_progress(navigator),
-            next_significant_accomplishments: identify_next_milestones(navigator)
-        }
-    END_METHOD
-END_CLASS
-```
-
-#### 18.3 Physical Space Specification
-Physical space extends the core framework to model geographic locations and movement through terrain. The `PhysicalLocation` class adds coordinates and accessibility properties, while `TerrainData` captures empirical conditions that affect navigation. This enables modeling of actual travel with route planning, distance calculation, and adaptation to environmental conditions.
-
-In short: Physical space represents **geographic locations and their relationships** as the formal structure; **actual travel** provides empirical content.
-
-```#ailang
-ailangCLASS PhysicalSpace EXTENDS Space:
-    PROPERTIES:
-        coordinate_system: text  # "lat_long","cartesian","address","landmark_based"
-        terrain_data: TerrainData
-        infrastructure: InfrastructureMap  # what routes exist
-
-    CLASS PhysicalLocation EXTENDS Location:
-        PROPERTIES:
-            coordinates: GeographicCoordinates OR Address
-            altitude: number
-            accessibility: text  # "easily_accessible","difficult","requires_special_equipment"
-            terrain_type: text
-            climate_zone: text
-            local_amenities: LIST
-
-        METHOD get_distance_to(other_location):
-            IF both_have_coordinates THEN:
-                RETURN calculate_haversine_distance(this.coordinates, other_location.coordinates)
-            ELSE:
-                RETURN estimate_distance_from_infrastructure()
-            END_IF
-        END_METHOD
-    END_CLASS
-
-    CLASS GeographicCoordinates:
-        PROPERTIES:
-            latitude: number
-            longitude: number
-            altitude: number
-            coordinate_system: text
-    END_CLASS
-
-    CLASS TerrainData:
-        PROPERTIES:
-            terrain_difficulty: MAP[region -> difficulty_descriptor]
-            natural_barriers: LIST
-            traversable_routes: LIST
-    END_CLASS
-
-    METHOD calculate_physical_journey(origin, destination, constraints):
-        SET available_routes TO find_physical_routes(origin, destination, this.infrastructure)
-        SET optimal_route TO INTELLIGENTLY select_route WITH:
-            ROUTES: available_routes,
-            CONSTRAINTS: constraints,
-            TERRAIN: this.terrain_data,
-            INFRASTRUCTURE: this.infrastructure,
-            TRAVELER_CAPABILITIES: constraints.traveler_profile
-        END
-
-        RETURN {
-            route: optimal_route,
-            estimated_duration: calculate_travel_time(optimal_route),
-            distance: calculate_total_distance(optimal_route),
-            waypoints: optimal_route.significant_locations,
-            accomplishments_along_route: identify_milestone_locations(optimal_route)
-        }
-    END_METHOD
-END_CLASS
-```
-
-#### 18.4 Process Space Specification
-Process space models production, service delivery, and project execution as formal stage structures. `ProcessStage` defines what must occur at each step—required inputs, transformations, expected outputs, and quality criteria. Quality gates ensure standards are met before progression. The `execute_process` method navigates through stages, handling both successful completion and failures requiring rework.
-
-In short: Process space defines the formal structure of **production, service delivery, or project execution**. Stages and their dependencies are the a priori structure; actual execution supplies a posteriori content.
-
-```#ailang
-ailangCLASS ProcessSpace EXTENDS Space:
-    PROPERTIES:
-        process_type: text  # "manufacturing","service_delivery","project","approval"
-        process_owner: text
-        quality_gates: LIST[QualityGate]
-
-    CLASS ProcessStage EXTENDS Location:
-        PROPERTIES:
-            stage_number: number
-            stage_type: text  # "input","transformation","inspection","output","decision"
-
-            # Formal requirements (a priori)
-            required_inputs: LIST
-            transformation: text
-            expected_outputs: LIST
-            duration_estimate: duration
-            resource_requirements: LIST
-
-            # Quality criteria
-            completion_criteria: LIST
-            quality_standards: LIST
-            inspection_required: boolean
-
-            # Dependencies (a priori)
-            depends_on_stages: LIST[stage_id]
-            enables_stages: LIST[stage_id]
-            parallel_allowed: boolean
-
-        METHOD accomplish_stage(inputs, resources):
-            IF NOT all_prerequisites_met() THEN:
-                RETURN {success: false, reason: "prerequisites_not_met"}
-            END_IF
-
-            SET input_validation TO validate_inputs(inputs, this.required_inputs)
-            IF NOT input_validation.valid THEN:
-                RETURN {success: false, reason: "invalid_inputs", details: input_validation}
-            END_IF
-
-            SET transformation_result TO EXECUTE this.transformation WITH inputs, resources
-            SET output_validation TO validate_outputs(transformation_result, this.expected_outputs)
-            IF NOT output_validation.valid THEN:
-                RETURN {success: false, reason: "outputs_failed_quality", details: output_validation}
-            END_IF
-
-            RETURN {
-                success: true,
-                outputs: transformation_result
-            }
-        END_METHOD
-    END_CLASS
-
-    METHOD execute_process(objective, starting_inputs, available_resources):
-        SET current_stage TO entry_points[0]
-        SET accomplished_stages TO []
-        SET process_state TO {
-            current_stage: current_stage,
-            intermediate_outputs: starting_inputs,
-            resources_consumed: [],
-            quality_assessments: []
-        }
-
-        WHILE NOT process_objective_achieved(process_state) DO:
-            SET next_stage TO INTELLIGENTLY select_next_stage WITH:
-                CURRENT_STATE: process_state,
-                ACCOMPLISHED: accomplished_stages,
-                OBJECTIVE: objective,
-                AVAILABLE_RESOURCES: available_resources,
-                PROCESS_CONSTRAINTS: this.navigation_rules
-            END
-
-            SET stage_result TO next_stage.accomplish_stage(
-                process_state.intermediate_outputs,
-                allocated_resources
-            )
-
-            IF stage_result.success THEN:
-                APPEND next_stage.location_id TO accomplished_stages
-                UPDATE process_state WITH stage_result.outputs
-
-                IF quality_gate_at(next_stage) THEN:
-                    SET gate_passage TO evaluate_quality_gate(process_state, next_stage)
-                    IF NOT gate_passage.approved THEN:
-                        RETURN {
-                            status: "blocked_at_quality_gate",
-                            gate: gate_passage.gate_id,
-                            deficiencies: gate_passage.deficiencies,
-                            accomplished_so_far: accomplished_stages
-                        }
-                    END_IF
-                END_IF
-            ELSE:
-                IF stage_result.rework_required THEN:
-                    EXECUTE rework_procedure(stage_result.deficiencies)
-                ELSE:
-                    RETURN {
-                        status: "process_failed",
-                        failed_stage: next_stage.location_id,
-                        reason: stage_result.reason,
-                        accomplished_so_far: accomplished_stages
-                    }
-                END_IF
-            END_IF
-        END_WHILE
-
-        RETURN {
-            status: "objective_accomplished",
-            final_outputs: process_state.intermediate_outputs,
-            stages_accomplished: accomplished_stages,
-            total_duration: calculate_elapsed_time(),
-            resources_consumed: process_state.resources_consumed,
-            quality_record: process_state.quality_assessments
-        }
-    END_METHOD
-END_CLASS
-```
-
-#### 18.5 Organizational Space Specification
-Organizational space captures institutional hierarchies, positions, and authority relationships. `OrganizationalPosition` defines formal authority scope, reporting structure, and qualification requirements. The `OrganizationalHierarchy` maps advancement paths, while `AuthorizationStructure` governs what actions positions can approve. This enables modeling both career advancement and approval navigation through formal chains of authority.
-
-In short: Organizational space defines the formal structure of **institutional hierarchy and authority**. Positions and their relationships are the a priori structure; actual advancement and authorization provide a posteriori content.
-
-```#ailang
-ailangCLASS OrganizationalSpace EXTENDS Space:
-    PROPERTIES:
-        organization_type: text  # "corporate","governmental","academic","nonprofit","military"
-        hierarchy: OrganizationalHierarchy
-        authorization_structure: AuthorizationStructure
-        institutional_culture: InstitutionalCulture  # empirical norms & practices
-
-    CLASS OrganizationalPosition EXTENDS Location:
-        PROPERTIES:
-            position_title: text
-            position_code: text
-            department: text
-            division: text
-            hierarchy_level: number
-
-            # Formal relationships (a priori)
-            reporting_to: position_id
-            reporting_from: LIST[position_id]
-            lateral_peers: LIST[position_id]
-            authority_scope: LIST  # domains this position can act in
-
-            # Access & capability granted by the position
-            can_authorize: LIST
-            access_privileges: LIST
-            budget_authority: number
-            hiring_authority: boolean
-            policy_setting_authority: LIST
-
-            # Requirements to attain the position (a priori)
-            qualifications_required: LIST
-            experience_required: duration
-            clearance_level: text
-            certifications_required: LIST
-
-        METHOD can_authorize_action(action, ctx):
-            IF action.type NOT_IN this.can_authorize THEN:
-                RETURN {can_authorize:false, reason:"wrong_authority_type",
-                        refer_to: identify_appropriate_authority(action)}
-            END_IF
-
-            SET within_scope TO evaluate_authority_scope(action, this.authority_scope)
-            IF NOT within_scope THEN:
-                RETURN {can_authorize:false, reason:"exceeds_authority_scope",
-                        escalation_required:true, escalate_to:this.reporting_to}
-            END_IF
-
-            IF action.requires_budget AND action.amount > this.budget_authority THEN:
-                RETURN {can_authorize:false, reason:"exceeds_budget_authority",
-                        escalation_required:true, escalate_to:this.reporting_to,
-                        budget_limit:this.budget_authority}
-            END_IF
-
-            RETURN {can_authorize:true, authority_basis:this.position_title}
-        END_METHOD
-
-        METHOD assess_accomplishment_difficulty(candidate, current_position):
-            RETURN INTELLIGENTLY evaluate WITH:
-                REQUIRED_QUALS: this.qualifications_required,
-                REQUIRED_EXPERIENCE: this.experience_required,
-                CANDIDATE_QUALS: candidate.qualifications,
-                CANDIDATE_EXPERIENCE: candidate.experience_years,
-                CULTURE: organization.institutional_culture,
-                POLITICS: organization.institutional_culture.politics
-            END
-        END_METHOD
-    END_CLASS
-
-    CLASS OrganizationalHierarchy:
-        PROPERTIES:
-            levels: number
-            structure_type: text  # "flat","tall","matrix","networked"
-            reporting_chains: GRAPH[position_id -> LIST[position_id]]
-            span_of_control: MAP[position_id -> number]
-            typical_advancement_paths: MAP[position_id -> LIST[position_id]]
-            lateral_movement_allowed: boolean
-            cross_functional_paths: LIST
-
-        METHOD find_common_authority(p1, p2):
-            # pure formal computation over reporting_chains
-            RETURN compute_lca_in_reporting_graph(p1, p2)
-        END_METHOD
-
-        METHOD identify_advancement_path(current_position, target_position):
-            IF target_position IN typical_advancement_paths[current_position] THEN:
-                RETURN {path_type:"direct_promotion", intermediate_positions:[]}
-            END_IF
-            RETURN INTELLIGENTLY construct_career_path WITH:
-                START: current_position,
-                END: target_position,
-                STRUCTURE: this,
-                ALTERNATIVES: this.cross_functional_paths
-            END
-        END_METHOD
-    END_CLASS
-
-    CLASS AuthorizationStructure:
-        PROPERTIES:
-            authorization_types: LIST[AuthorizationType]
-            delegation_rules: DelegationRules
-            signature_authority: MAP[position_id -> signature_limits]
-
-        CLASS AuthorizationType:
-            PROPERTIES:
-                type_name: text
-                authorization_levels: MAP[level -> threshold]
-                required_clearance: text
-                delegation_allowed: boolean
-
-            METHOD get_required_level_for(action):
-                # map action magnitude → required level
-                RETURN determine_level_from_thresholds(action.magnitude, authorization_levels)
-            END_METHOD
-        END_CLASS
-
-        CLASS DelegationRules:
-            PROPERTIES:
-                delegation_depth: number
-                requires_written_delegation: boolean
-                delegation_time_limits: duration
-                revocable: boolean
-
-            METHOD can_delegate(delegating_position, receiving_position, authority):
-                IF NOT authority.delegation_allowed THEN
-                    RETURN {can_delegate:false, reason:"authority_not_delegable"}
-                END_IF
-                IF hierarchy_distance(delegating_position, receiving_position) > delegation_depth THEN
-                    RETURN {can_delegate:false, reason:"exceeds_delegation_depth"}
-                END_IF
-                RETURN {can_delegate:true,
-                        requires_written:this.requires_written_delegation,
-                        time_limit:this.delegation_time_limits}
-            END_METHOD
-        END_CLASS
-
-        METHOD construct_approval_chain(action, requester_position):
-            SET req_level TO determine_required_level(action)
-            RETURN build_chain_via_hierarchy(req_level, requester_position)
-        END_METHOD
-    END_CLASS
-
-    CLASS InstitutionalCulture:
-        PROPERTIES:
-            formality_level: text
-            advancement_philosophy: text         # e.g. "time_in_role", "meritocratic"
-            networking_importance: text
-            sponsor_requirement: text
-            visibility_importance: text
-            politics: MAP[text -> value]
-    END_CLASS
-
-    METHOD navigate_institutional_advancement(person, target_position):
-        SET feasibility TO target_position.assess_accomplishment_difficulty(person, person.current_organizational_position)
-        IF feasibility.assessment IN ["impossible","highly_unlikely"] THEN:
-            RETURN {advancement_viable:false, reason:feasibility.explanation,
-                    missing:feasibility.deficiencies}
-        END_IF
-        SET path TO hierarchy.identify_advancement_path(person.current_organizational_position, target_position)
-        IF path.intermediate_positions.EMPTY THEN:
-            RETURN plan_direct_promotion(person, target_position)
-        ELSE:
-            RETURN plan_multi_step_advancement(person, path.intermediate_positions, target_position)
-        END_IF
-    END_METHOD
-
-    METHOD navigate_organizational_approval(request, requester_position):
-        SET chain TO authorization_structure.construct_approval_chain(request, requester_position)
-        RETURN execute_approval_chain(chain, request)
-    END_METHOD
-END_CLASS
-```
+AILang provides a unified framework for modeling navigation through structured domains -- whether physical terrain, manufacturing processes, or institutional hierarchies. For complete specifications, see the main specification body in v0.8.1 Section 20.
 
 ---
 
-#### 18.6 Journey and Navigation Framework
-The Journey framework unifies navigation across all space types by implementing the synthesis of formal structure with empirical circumstances. `Navigator` represents agents with capabilities and preferences, `Route` plans paths through space that can adapt to changing conditions, and `JourneyProgress` tracks actual accomplishment against formal expectations. The `navigate_intelligently_to_destination` method embodies the core synthesis loop: continuous assessment, adaptation, and intelligent decision-making.
-
-In short: The Journey framework unifies navigation across all space types: it implements synthesis of **formal structure (a priori)** with **empirical circumstances (a posteriori)** through intelligent decision-making.
-
-```#ailang
-ailangCLASS Journey:
-    PROPERTIES:
-        journey_id: text
-        space: Space
-        navigator: Navigator
-        origin: location_id
-        destination: location_id OR objective_description
-        route: Route
-        current_location: location_id
-        accomplished_locations: LIST[location_id]
-        progress: JourneyProgress
-        journey_type: text    # "planned","exploratory","adaptive","forced"
-        journey_status: text  # "not_started","in_progress","paused","completed","abandoned"
-
-    CLASS Navigator:
-        PROPERTIES:
-            navigator_id: text
-            navigator_type: text  # "person","entity","system","process"
-            capabilities: LIST
-            resources: LIST
-            constraints: LIST
-            navigation_preference: text   # "efficient","scenic","risk_averse","exploratory"
-            decision_making_style: text   # "analytical","intuitive","adaptive"
-
-        METHOD can_accomplish(location, state):
-            RETURN INTELLIGENTLY evaluate WITH:
-                REQUIREMENTS: location.prerequisites,
-                CAPABILITIES: this.capabilities,
-                RESOURCES: this.resources,
-                CONSTRAINTS: this.constraints,
-                STATE: state
-            END
-        END_METHOD
-    END_CLASS
-
-    CLASS Route:
-        PROPERTIES:
-            route_type: text  # "direct","mandatory_waypoints","flexible"
-            waypoints: LIST[location_id]
-            alternatives: LIST[AlternativeRoute]
-            estimated_duration: duration
-            estimated_cost: number OR "variable"
-            difficulty_assessment: text
-
-        METHOD adapt(current_location, circumstances):
-            SET remaining TO waypoints_after(current_location)
-            SET should_change TO INTELLIGENTLY evaluate_route WITH:
-                REMAINING: remaining,
-                CIRCUMSTANCES: circumstances,
-                ALTERNATIVES: this.alternatives,
-                PREFERENCE: journey.navigator.navigation_preference
-            END
-            IF should_change THEN
-                RETURN INTELLIGENTLY construct_adapted_route WITH:
-                    CURRENT: current_location,
-                    DESTINATION: journey.destination,
-                    CIRCUMSTANCES: circumstances,
-                    SPACE_STRUCTURE: journey.space
-                END
-            END_IF
-            RETURN this
-        END_METHOD
-    END_CLASS
-
-    CLASS JourneyProgress:
-        PROPERTIES:
-            locations_accomplished: number
-            total_locations: number
-            progress_percentage: number
-            on_schedule: boolean
-            within_budget: boolean
-            quality_maintained: boolean
-            obstacles: LIST
-            deviations: LIST
-
-        METHOD assess():
-            RETURN INTELLIGENTLY evaluate WITH:
-                RATE: this.progress_percentage,
-                SCHEDULE: this.on_schedule,
-                BUDGET: this.within_budget,
-                QUALITY: this.quality_maintained,
-                OBSTACLES: this.obstacles,
-                DEVIATIONS: this.deviations
-            END
-        END_METHOD
-    END_CLASS
-
-    METHOD begin():
-        SET current_location TO origin
-        APPEND origin TO accomplished_locations
-        SET journey_status TO "in_progress"
-        RETURN {started:true, start:origin, route:this.route}
-    END_METHOD
-
-    METHOD advance():
-        SET next_loc TO route.next_waypoint_after(current_location)
-        SET capable TO navigator.can_accomplish(space.locations[next_loc], {progress:this.progress})
-        IF NOT capable.capable THEN
-            RETURN {failed:true, reason:capable.reason, missing:capable.missing}
-        END_IF
-
-        SET allowed TO space.navigation_rules.can_transition(current_location, next_loc, navigator)
-        IF NOT allowed.allowed THEN
-            RETURN {blocked:true, reason:allowed.reason, missing_prereqs:allowed.missing_prerequisites}
-        END_IF
-
-        SET result TO accomplish_location(space.locations[next_loc], navigator, {progress:this.progress})
-        IF NOT result.success THEN
-            RETURN {accomplishment_failed:true, reason:result.reason, retry_possible:result.can_retry}
-        END_IF
-
-        SET current_location TO next_loc
-        APPEND next_loc TO accomplished_locations
-        UPDATE progress
-        RETURN {advanced:true, location:next_loc, assessment:progress.assess()}
-    END_METHOD
-
-    METHOD navigate_intelligently_to_destination():
-        WHILE current_location != destination AND journey_status == "in_progress" DO:
-            SET circumstances TO assess_current_circumstances()
-            SET route TO route.adapt(current_location, circumstances)
-            SET step TO advance()
-            IF step.failed OR step.blocked OR step.accomplishment_failed THEN:
-                CALL handle_advancement_issue(step, circumstances)
-            END_IF
-        END_WHILE
-        IF current_location == destination THEN:
-            SET journey_status TO "completed"
-            RETURN {completed:true, path:accomplished_locations, summary:progress.assess()}
-        ELSE:
-            RETURN {completed:false, status:journey_status, progress:progress.assess()}
-        END_IF
-    END_METHOD
-END_CLASS
-```
-
----
-
-#### 18.7 Synthesis in Action: Complete Examples
-The following examples demonstrate how the same framework handles fundamentally different domains—physical travel, manufacturing processes, and organizational advancement. Each example shows the interplay of formal structure (what is possible), empirical content (what is actual), and synthesis (intelligent navigation).
-
-##### Example A: Physical Journey (Form + Content + Synthesis)
-```#ailang
-# Space (a priori)
-CREATE PhysicalSpace road_net WITH:
-    coordinate_system: "lat_long"
-    locations: { sf:{}, slc:{}, denver:{}, chicago:{} }
-    pathways: { sf->slc:[], slc->denver:[], denver->chicago:[] }
-END_CREATE
-
-# Agent (a posteriori)
-CREATE Person driver WITH:
-    capabilities:["driving"], resources:["vehicle","budget:1000","time:7d"],
-    navigation_preference:"efficient"
-END_CREATE
-
-# Journey
-CREATE Journey xcountry WITH:
-    space: road_net, navigator: driver, origin: sf, destination: chicago
-END_CREATE
-
-xcountry.begin()
-# Snow closes I-76 near Denver (empirical)
-SET circumstances TO {weather:"heavy_snow_denver", road_status:"I-76_closed"}
-
-# Synthesis: adapt route
-SET route2 TO xcountry.route.adapt(xcountry.current_location, circumstances)
-xcountry.navigate_intelligently_to_destination()
-```
-
-##### Example B: Process Journey (Form + Content + Synthesis)
-```#ailang
-CREATE ProcessSpace widget WITH:
-    stages: { raw: {}, fab: {depends_on:[raw]}, asm: {depends_on:[fab]}, qc:{depends_on:[asm]} }
-END_CREATE
-
-CREATE Journey build WITH:
-    space: widget, navigator: production_team, origin: raw, destination: qc
-END_CREATE
-
-# Empirical deviation: fab tolerance off by 0.15mm
-SET dev TO {tolerance_out:0.15}
-
-# Synthesis: rework vs proceed
-SET decision TO INTELLIGENTLY decide WITH:
-    FORMAL: "tolerance ±0.1mm",
-    EMPIRICAL: dev,
-    CONSEQUENCES: {rework:{time:4h, pass_prob:"high"}, proceed:{qc_fail:"certain"}}
-END
-APPLY decision; build.navigate_intelligently_to_destination()
-```
-
-##### Example C: Organizational Journey (Form + Content + Synthesis)
-```#ailang
-CREATE OrganizationalSpace tech_co WITH: hierarchy:{typical_advancement_paths:{junior->[senior]}}
-END_CREATE
-
-CREATE Person sarah WITH: current_position: junior, qualifications:["BS_CS"], years_experience:1
-SET plan TO tech_co.navigate_institutional_advancement(sarah, director)
-# plan likely multi-step: junior → senior → manager → director
-```
-
----
-
-#### 18.8 The Kantian Pattern Across All Spaces
-
-1) **A Priori Structure (Formal Conditions)**  
-- Physical: locations & spatial relations  
-- Process: stages & dependencies  
-- Organizational: positions & authority relations  
-- Abstract: states & transformation rules  
-
-2) **A Posteriori Content (Empirical Actualization)**  
-- Physical: terrain, weather, fatigue, breakdowns  
-- Process: real inputs, machine performance, quality outcomes  
-- Organizational: qualifications, performance evidence, politics, culture  
-- Abstract: actual states, observed constraints  
-
-3) **Synthesis (Intelligent Navigation)**  
-- Apply formal understanding to empirical reality to choose routes, execute stages, gain approvals, or transform states.
-
-4) **Accomplishment (Actualization)**  
-- Arrival at destination; completion of stage; attainment of position/authorization; achievement of target state.
-
-#### 18.9 Implementation Principles
-
-When implementing space and journey systems, respect the Kantian structure.
-
-##### 1) Define Formal Structure First (*A Priori*)
-- What locations/stages/positions exist?
-- What are their relationships and pathways?
-- What are the formal requirements, constraints, and completion criteria?
-- What authorization rules and limits apply (if any)?
-- How is progress assessed in principle?
-
-##### 2) Model Empirical Content (*A Posteriori*)
-- What circumstances can actually occur in this domain?
-- What capabilities and resources does the navigator have right now?
-- What obstacles, risks, or environmental conditions appear?
-- What measurements and evidence can be observed?
-
-##### 3) Implement Synthesis (Intelligent Navigation)
-- How do structural constraints limit what is possible?
-- How do empirical circumstances shape which option is prudent?
-- How are adaptations triggered and carried out without violating structure?
-- What are the re‑synthesis triggers after a failure or change?
-
-##### 4) Track Accomplishment (Actualization)
-- What has been formally accomplished so far?
-- What remains formally possible but not yet actualized?
-- How does empirical progress compare to formal expectations?
-- What lessons were learned from deviations and failures?
-
-
-#### 18.10 Advanced Synthesis Patterns
-These patterns address sophisticated scenarios that arise during navigation: distinguishing formal impossibility from empirical infeasibility, handling multiple valid route choices, recovering from synthesis failures, adapting to structural changes, and coordinating journeys across multiple space types simultaneously.
-
-##### Pattern 1: Formal Impossibility vs Empirical Infeasibility
-```#ailang
-METHOD evaluate_accomplishment_possibility(space, target_location, navigator):
-    # Step 1 — Formal possibility (a priori)
-    SET formal_check TO space.navigation_rules.can_transition(
-        navigator.current_location, target_location, navigator
-    )
-    IF NOT formal_check.allowed THEN:
-        RETURN {
-            possible: false,
-            type: "formal_impossibility",
-            reason: formal_check.reason,
-            remedy: "requires_change_to_space_structure"
-        }
-    END_IF
-
-    # Step 2 — Empirical feasibility (a posteriori)
-    SET empirical_check TO navigator.can_accomplish(
-        space.locations[target_location], {progress: navigator.progress}
-    )
-    IF NOT empirical_check.capable THEN:
-        RETURN {
-            possible: true, feasible: false, type: "empirical_infeasibility",
-            reason: empirical_check.reason,
-            required_changes: empirical_check.missing,
-            may_become_feasible: true
-        }
-    END_IF
-
-    RETURN { possible: true, feasible: true, type: "accomplishable" }
-END_METHOD
-```
-**Examples.**
-- Physical: route exists but mountain pass is closed by snow → empirically infeasible (for now).
-- Process: gate requires manager sign‑off but manager is unavailable → delay, not impossibility.
-- Organizational: role requires 5 years experience; candidate has 2 → feasible later after accumulation.
-
-##### Pattern 2: Multiple Valid Syntheses
-```#ailang
-METHOD generate_valid_syntheses(space, navigator, objective, circumstances):
-    SET routes TO space.find_all_formal_routes(navigator.current_location, objective)
-    SET viable TO []
-    FOR EACH r IN routes DO:
-        SET s TO INTELLIGENTLY evaluate_route WITH:
-            FORMAL: r, CIRCUMSTANCES: circumstances,
-            CAPABILITIES: navigator.capabilities, PREFERENCES: navigator.preferences,
-            OPTIMIZE: ["time","cost","risk","quality"]
-        END
-        IF s.viable THEN: APPEND s TO viable END_IF
-    END_FOR
-    RETURN {
-        valid: viable,
-        fastest: select_by(viable,"time"),
-        cheapest: select_by(viable,"cost"),
-        safest: select_by(viable,"risk"),
-        best_quality: select_by(viable,"quality"),
-        recommended: INTELLIGENTLY select WITH: OPTIONS: viable, PRIORITIES: navigator.priority_ordering END
-    }
-END_METHOD
-```
-
-##### Pattern 3: Synthesis Failure and Recovery
-```#ailang
-METHOD handle_synthesis_failure(space, initial_synthesis, failure_point, failure_reason):
-    SET learned TO extract_constraints_from_failure(failure_reason)
-    SET updated TO update_empirical_model(initial_synthesis.empirical_assumptions, learned)
-
-    SET resynthesis TO INTELLIGENTLY resynthesize WITH:
-        FORMAL_STRUCTURE: space, UPDATED_EMPIRICAL: updated,
-        FAILURE_POINT: failure_point, ORIGINAL_OBJECTIVE: initial_synthesis.objective
-    END
-
-    MATCH resynthesis.strategy WITH:
-        CASE "alternative_route": RETURN {strategy:"route_change", route: resynthesis.route}
-        CASE "modify_objective": RETURN {strategy:"objective_modification", new_objective: resynthesis.objective}
-        CASE "acquire_capabilities": RETURN {strategy:"capability_acquisition", plan: resynthesis.plan}
-        CASE "wait": RETURN {strategy:"temporal_delay", until: resynthesis.until}
-        CASE "abandon": RETURN {strategy:"abandon_or_transform", lessons: resynthesis.lessons}
-    END_MATCH
-END_METHOD
-```
-
-##### Pattern 4: Formal Structure Evolution
-```#ailang
-METHOD handle_space_structure_change(space, structural_change):
-    MATCH structural_change.type WITH:
-        CASE "new_location": ADD structural_change.location TO space.locations
-                              UPDATE space.pathways WITH structural_change.connections
-                              NOTIFY active_journeys OF "new_formal_possibility"
-        CASE "remove_location": REMOVE structural_change.location FROM space.locations
-                                PRUNE space.pathways OF structural_change.location
-                                FORCE_RESYNTHESIZE journeys_using(structural_change.location)
-        CASE "prerequisites_changed": UPDATE space.locations[structural_change.location].prerequisites
-                                      REEVALUATE feasibility FOR all_active_journeys
-        CASE "new_pathway": ADD structural_change.pathway TO space.pathways
-                            NOTIFY active_journeys OF "new_route_available"
-    END_MATCH
-END_METHOD
-```
-*Examples:* create a Staff Engineer level (org), add a regulatory certification prerequisite (process).
-
-##### Pattern 5: Cross‑Space Synthesis
-```#ailang
-METHOD synthesize_multi_space_journey(spaces, navigator, compound_objective):
-    SET components TO decompose_into_space_components(compound_objective)
-
-    SET coordination TO INTELLIGENTLY identify WITH:
-        DEPENDENCIES: find_cross_space_dependencies(components),
-        TIMING: align_deadlines(components),
-        SHARED_RESOURCES: identify_shared_resources(components)
-    END
-
-    RETURN INTELLIGENTLY construct_plan WITH:
-        STRUCTURES: map_spaces_to_structures(spaces),
-        CIRCUMSTANCES: collect_current_conditions(spaces),
-        COMPONENTS: components, COORDINATION: coordination, NAVIGATOR: navigator
-    END
-END_METHOD
-```
-*Example pipeline:* secure approvals (organizational) → travel (physical) → execute on‑site actions (organizational) → return (physical) under a calendar deadline (temporal).
-
-
-#### 18.11 Philosophical Implications for AI Systems
-
-##### 1) Understanding Requires Both Structure and Content
-```#ailang
-METHOD navigate_purely_formally(space, current, destination):
-    RETURN shortest_path_in_graph(space.pathways, current, destination)
-END_METHOD  # Ignores empirical reality.
-
-METHOD navigate_purely_empirically(circumstances):
-    RETURN respond_to_current_conditions(circumstances)
-END_METHOD  # Lacks structural understanding.
-
-METHOD navigate_with_synthesis(space, navigator, circumstances, objective):
-    RETURN INTELLIGENTLY navigate WITH:
-        FORMAL_STRUCTURE: space, EMPIRICAL_REALITY: circumstances,
-        NAVIGATOR_STATE: navigator, OBJECTIVE: objective
-    END
-END_METHOD  # Adequate.
-```
-
-##### 2) Intelligence Operates at the Synthesis Layer
-```#ailang
-CLASS StructureKnowledge: PROPERTIES: space_definitions, formal_rules, relations END_CLASS
-CLASS EmpiricalPerception: PROPERTIES: observations, measurements, conditions END_CLASS
-CLASS SyntheticIntelligence:
-    PROPERTIES: structure: StructureKnowledge, perception: EmpiricalPerception, engine: SynthesisEngine
-    METHOD navigate_intelligently():
-        RETURN INTELLIGENTLY synthesize WITH: STRUCTURE: structure, REALITY: perception, ENGINE: engine END
-    END_METHOD
-END_CLASS
-```
-
-##### 3) Learning Occurs Through Failed Synthesis
-```#ailang
-METHOD learn_from_synthesis_failure(attempt, outcome):
-    SET gap TO diff(attempt.assumptions, outcome.revealed_reality)
-    UPDATE empirical_model WITH gap
-    RETURN {new_knowledge: gap, source: "failed_actualization"}
-END_METHOD
-```
-
-##### 4) Deterministic vs Intelligent Operations (Kantian Mapping)
-- **Deterministic (analytic / a priori):** assignment, arithmetic, pure graph traversal, static validation.
-- **Intelligent (synthetic / a posteriori):** route selection, adaptation, evaluation, decisions under uncertainty.
-
-
-#### 18.12 Implementation Checklist
-
-**A Priori Structure**
-- Locations/stages/positions defined; relationships/pathways explicit.
-- Prerequisites, constraints, completion criteria documented.
-- Authorization rules and limits mapped; space characteristics categorized.
-
-**A Posteriori Content**
-- Circumstances observable; capabilities/resources assessable.
-- Environmental conditions monitored; progress empirically measurable.
-- Failure reasons diagnosable with evidence capture.
-
-**Synthesis**
-- Decision points identified; integration logic specified.
-- Adaptation and re‑synthesis mechanisms defined.
-- Learning from failure enabled; multiple valid syntheses considered.
-
-**Accomplishment**
-- Formal accomplishment recognized; empirical progress measured.
-- Deviations tracked; lessons learned captured; success criteria evaluated.
-- Journey summaries produced for auditability and learning loops.
-
-
-#### 18.13 Conclusion: Space as Transcendental Structure
-
-AILang’s Space & Journey framework is more than a modeling convenience—it encodes the **transcendental conditions of purposive action**.  
-- *A Priori:* domain structure (what is formally possible).  
-- *A Posteriori:* empirical content (what is actually encountered).  
-- *Synthesis:* intelligent navigation (how structure is applied to reality).  
-- *Accomplishment:* realized outcomes (formal possibilities actualized).
-
-By honoring this structure, AI systems can model physical logistics, operational processes, and institutional navigation with **one coherent machinery**, cleanly distinguishing **formal impossibility** from **empirical infeasibility**, enabling **adaptation and learning**, and producing **auditably intelligent** decisions.
-
----
-
-### 19. Matter Entities: Framework Overview
+### 21. Matter Entities: Framework Overview
 
 This section provides the conceptual framework and usage patterns needed to understand and work with Matter entities at a high level.
 
-**⚠️ IMPORTANT: Matter entities represent one of AILang's most sophisticated domain modeling capabilities for representing human concerns and their multi-level abstraction structure. Due to the comprehensive nature of categorical cognition, abstraction level dynamics, actor positioning, lifecycle management, and conceptual mediation—the detailed specifications for all Matter subsystems are provided in the [Matter Extension Document](https://github.com/pcoz/ailang/blob/main/AILang_Specification_Matter_Extension.md).**
-
-#### 19.1 Matter Class Architecture
-
-Matter entities model units of human concern that exist at the intersection of objective reality and subjective experience. Matters are how humans structure their engagement with reality through categorical constructs that organize attention, action, and understanding.
-
-**Critical Insight: A matter cannot be fully defined or understood at its own level of abstraction.** Definition and verification require vertical movement through abstraction levels—moving downward to concrete grounding and upward to categorical frameworks.
-
-Use Matter entities when you need to:
-- Model projects, initiatives, or organizational efforts with proper abstraction structure
-- Represent concerns that evolve through lifecycle stages (recognition, becoming, completion, memorial)
-- Track how actors positioned at different levels (IN-system vs ON-system) engage with the same matter
-- Manage the translation from abstract intentions to concrete artifacts (corporealisation)
-- Preserve patterns after matter cessation through multi-level perpetuation
-- Validate claims about matters through adjacent-level checking
-- Understand how conceptual frameworks mediate actor engagement across abstraction levels
-
-**Core Architecture**
-
-```#ailang
-CLASS Matter:
-    PROPERTIES:
-        # Identity and Classification
-        matter_id: unique_identifier
-        matter_name: text
-        matter_type: text  # "project", "initiative", "organization", "democracy", etc.
-        
-        # Abstraction Hierarchy Structure
-        abstraction_hierarchy: AbstractionHierarchy
-        primary_level: abstraction_level  # The level where this matter "lives"
-        
-        # Lifecycle Management
-        lifecycle_stage: text  # "recognition", "becoming", "completion", "cessation", "memorial"
-        lifecycle_tracker: LifecycleTracker
-        
-        # Actor Configuration
-        actor_configuration: ActorConfiguration
-        
-        # Conceptual Framework
-        conceptual_framework: ConceptualFramework
-        
-        # State Dimensions
-        objective_state: ObjectiveState
-        subjective_state: SubjectiveState
-        
-        # Corporealisation Process
-        corporealisation_state: CorporealisationState
-        
-        # Memorial Persistence
-        memorial_state: MemorialState
-        
-        current_status: MatterStatus
-```
-
-#### 19.2 The Five-Layer Abstraction Hierarchy
-
-Every matter exists within a predefined abstraction hierarchy for its domain. Understanding this structure is essential for proper matter representation:
-
-**PHILOSOPHICAL FOUNDATION**
-- Deepest abstractions about the nature of concern itself
-- Theories and fundamental principles
-- Example: "What makes something matter-worthy?", theories about why humans organize
-
-**CATEGORICAL FRAMEWORK**
-- Patterns, types, and organizing structures that define kinds of matters
-- Methodologies, design patterns, matter classifications
-- Example: "Legacy modernization project", "distributed organization", "participatory democracy"
-
-**INSTANCE**
-- The specific matter itself as experienced and recognized
-- The matter as a recognizable entity
-- Example: "Our Q4 platform migration", "Acme Corporation", "The Athenian polis"
-
-**COMPONENTS**
-- Concrete parts, mechanisms, and observable properties
-- Specific modules, teams, processes, artifacts
-- Example: "The authentication module", "The finance team", "The weekly assembly meetings"
-
-**PRIMITIVES**
-- Atomic facts, singular events, individual data points
-- Individual actions, discrete observations
-- Example: "The 2pm standup on Tuesday", "Sarah's commit at 3:47pm", "327 votes cast"
-
-#### 19.3 Core Principles Summary
-
-The Matter framework is built on several foundational principles that explain why multi-level representation is necessary rather than convenient. These principles reveal deep insights about the nature of definition, validation, and human cognition. Understanding these principles is essential before working with Matter entities, as they explain the "why" behind the framework's structure.
-
-**The Impossibility of Self-Definition**
-
-At its own level of abstraction, a thing can only be itself. Attempts to define at the same level produce:
-1. **Tautology**: "A project is a project" (useless)
-2. **Level-characterization**: "Projects have goals and timelines" (defines the category, not the instance)
-3. **Instance-comparison**: "This project is larger" (assumes understanding, provides only relative positioning)
-
-Genuine definition requires vertical movement between abstraction levels.
-
-**The Adjacency Principle**
-
-To understand or verify anything at a given level, examine the **immediately adjacent levels**:
-- **One level more concrete**: Provides grounding in verifiable specifics
-- **One level more abstract**: Provides categorical framework that makes sense of specifics
-- **Validation power decreases with distance**: Adjacent levels optimal, distant levels degrade
-
-**Categorical Cognition**
-
-Human engagement with matters operates through categorical assembly:
-- Categories exist at the Categorical Framework level
-- Specific matters exist at the Instance level
-- Categorization is inherently an Instance → Categorical Framework operation
-- Conceptual frameworks span multiple levels, mediating how actors recognize and engage with matters
-
-**Actor Position Determines Abstraction Access**
-
-- **IN-system actors**: Strong access to Primitives/Components, weak to Categorical Framework/Philosophical
-- **ON-system actors**: Strong access to Categorical Framework/Philosophical, weak to Primitives/Components
-- Neither position alone provides complete understanding
-- Both perspectives required for full validation
-
-**Corporealisation as Level Translation**
-
-The process of materializing abstract intentions as concrete fragments involves:
-- Translating Categorical/Philosophical intentions → Instance design → Component fragments
-- Learning to "see" Categorical Framework patterns in Component artifacts
-- Reducing intention-dependency as actors internalize level bridging
-- Tracking fragment assembly progress and coherence
-
-#### 19.4 Lifecycle Stages and Level Operations
-
-Matters are not static—they move through a lifecycle from pre-existence through memorial persistence. Each lifecycle stage involves specific operations across abstraction levels. Understanding this lifecycle reveals how matters come into being (recognition), materialize (corporealisation), stabilize (completion), dissolve (cessation), and persist as patterns (memorial). Each stage requires different types of engagement with the abstraction hierarchy.
-
-```#ailang
-CLASS LifecycleStage:
-    # Stage 0: Pre-Recognition
-    # Matter does not yet exist as a recognizable entity
-    # Only Categorical Framework patterns available
-    
-    # Stage 1: Recognition
-    recognition_event: RecognitionEvent
-    # Operation: Categorical Framework → Instance
-    # Actor identifies formal category and recognizes specific instance
-    
-    # Stage 2: Becoming (Corporealisation)
-    becoming_process: BecomingProcess
-    # Operation: Categorical Framework → Instance → Components
-    # Abstract intentions translated to concrete fragments
-    # Components assembled while maintaining Categorical coherence
-    
-    # Stage 3: Completion
-    completion_state: CompletionState
-    # Stabilization across all levels
-    # Full Instance with complete Component grounding
-    
-    # Stage 4: Cessation
-    cessation_event: CessationEvent
-    # Primitives/Components/Instance dissolve
-    # Categorical Framework patterns persist
-    
-    # Stage 5: Memorial
-    memorial_persistence: MemorialPersistence
-    # Categorical Framework patterns perpetuated through:
-    #   - Artifacts (documents, code)
-    #   - Analogies ("like that project")
-    #   - Templates (methodologies)
-    #   - Principles (theoretical insights)
-    
-    # Stage 6: Template Application
-    template_activation: TemplateActivation
-    # Operation: Categorical Framework → new Instance
-    # Patterns guide new matter recognition/creation
-    
-    # Stage 7: Evolution
-    framework_evolution: FrameworkEvolution
-    # Categorical Framework refinement feeds back to Stage 0
-    # Learning from experience enriches available patterns
-```
-
-#### 19.5 Actor Configuration and Position
-
-Actors engage with matters from different positions, and these positions fundamentally shape which abstraction levels they can naturally access. IN-system actors (those working within the matter's concrete operations) have strong access to Primitives and Components but struggle with Categorical Framework and Philosophical Foundation. ON-system actors (those working on the matter's design and strategy) have the opposite access pattern. This section provides the machinery for representing these position-dependent access patterns and ensuring complete actor coverage.
-
-```#ailang
-CLASS ActorConfiguration:
-    PROPERTIES:
-        actors: LIST[Actor]
-        actor_positions: MAP[actor_id -> position_type]  # "in_system", "on_system"
-        abstraction_access_profiles: MAP[actor_id -> AbstractionAccessProfile]
-        coordination_mechanisms: LIST[CoordinationMechanism]
-        
-    CLASS AbstractionAccessProfile:
-        PROPERTIES:
-            actor_position: text  # "in_system", "on_system"
-            strong_levels: LIST[abstraction_level]
-            weak_levels: LIST[abstraction_level]
-            natural_operations: LIST[operation_type]
-            difficult_operations: LIST[operation_type]
-            
-        METHOD can_naturally_access(level):
-            RETURN level IN this.strong_levels
-        END_METHOD
-        
-        METHOD requires_assistance_for(level):
-            RETURN level IN this.weak_levels
-        END_METHOD
-    END_CLASS
-    
-    METHOD validate_actor_coverage():
-        # Ensure both IN-system and ON-system perspectives present
-        SET in_system_actors TO actors WHERE position == "in_system"
-        SET on_system_actors TO actors WHERE position == "on_system"
-        
-        IF in_system_actors.EMPTY OR on_system_actors.EMPTY THEN:
-            RETURN {complete: false, missing: "complementary_perspectives"}
-        END_IF
-        
-        RETURN {complete: true, coverage: "full_abstraction_access"}
-    END_METHOD
-END_CLASS
-```
-
-#### 19.6 Conceptual Framework and Mediation
-
-Actors don't engage with matters directly—they engage through conceptual frameworks that mediate their understanding. Concepts that span multiple abstraction levels enable actors to recognize patterns, translate between levels, and bridge their position-limited access. This section shows how conceptual frameworks operate as the cognitive infrastructure that makes multi-level engagement possible.
-
-```#ailang
-CLASS ConceptualFramework:
-    PROPERTIES:
-        concepts: LIST[Concept]
-        level_mappings: MAP[concept_id -> LIST[abstraction_level]]
-        recognition_patterns: LIST[RecognitionPattern]
-        interpretive_schemas: LIST[InterpretiveSchema]
-        
-    CLASS Concept:
-        PROPERTIES:
-            concept_id: unique_identifier
-            concept_name: text
-            abstraction_levels: LIST[abstraction_level]
-            definition_by_level: MAP[abstraction_level -> definition]
-            application_context: text
-            
-        METHOD spans_levels():
-            RETURN length(this.abstraction_levels) > 1
-        END_METHOD
-        
-        METHOD enables_level_bridging():
-            # Concepts that span levels enable actors to move between them
-            RETURN this.spans_levels() AND 
-                   this.has_operational_guidance_for_translation
-        END_METHOD
-    END_CLASS
-    
-    METHOD mediate_recognition(stimulus, actor):
-        # How conceptual frameworks enable actors to recognize matters
-        RETURN INTELLIGENTLY evaluate WITH:
-            STIMULUS: stimulus,
-            ACTOR_CONCEPTS: actor.available_concepts,
-            CATEGORICAL_PATTERNS: this.recognition_patterns,
-            ACTOR_POSITION: actor.position
-        END
-    END_METHOD
-    
-    METHOD support_level_translation(source_level, target_level, actor):
-        # How concepts enable movement between abstraction levels
-        SET bridging_concepts TO find_concepts_spanning(source_level, target_level)
-        
-        RETURN INTELLIGENTLY construct_translation WITH:
-            SOURCE: source_level,
-            TARGET: target_level,
-            BRIDGING_CONCEPTS: bridging_concepts,
-            ACTOR_UNDERSTANDING: actor.conceptual_framework
-        END
-    END_METHOD
-END_CLASS
-```
-
-#### 19.7 Corporealisation Process
-
-Corporealisation is the process of translating abstract intentions into concrete fragments—moving from Categorical Framework and Philosophical Foundation down through Instance to Components. This is not a simple rendering but a learning process where actors must develop the ability to "see" whether concrete fragments correctly embody abstract intentions. The framework tracks this learning through intention-dependency measures and fragment assembly states.
-
-```#ailang
-CLASS CorporealisationState:
-    PROPERTIES:
-        fragments_status: text  # "scattered", "partial", "verified"
-        intention_dependency: text  # "constant_reference_required", "frequent_consultation", 
-                                    # "occasional_checking", "intuitive_recognition"
-        fragment_assembly: FragmentAssembly
-        level_translation_tracking: LevelTranslationTracker
-        
-    CLASS FragmentAssembly:
-        PROPERTIES:
-            fragments: LIST[Fragment]
-            assembly_state: text  # "scattered", "partial", "coherent", "complete"
-            categorical_coherence: text  # "aligned", "partially_aligned", "misaligned"
-            
-        CLASS Fragment:
-            PROPERTIES:
-                fragment_id: unique_identifier
-                fragment_type: text
-                abstraction_level: abstraction_level  # Usually Components
-                created_by: actor_id
-                requires_intention: boolean
-                categorical_alignment: text  # "high_fidelity", "moderate_fidelity", 
-                                            # "low_fidelity", "distorted"
-                
-            METHOD is_self_evident():
-                # Can ON-system actors recognize pattern without creator explanation?
-                RETURN NOT this.requires_intention
-            END_METHOD
-        END_CLASS
-    END_CLASS
-    
-    CLASS LevelTranslationTracker:
-        PROPERTIES:
-            translations: LIST[Translation]
-            
-        CLASS Translation:
-            PROPERTIES:
-                source_level: abstraction_level
-                target_level: abstraction_level
-                translation_mechanism: text
-                fidelity: text  # "high_fidelity", "moderate_fidelity", "low_fidelity", "distorted"
-                learning_progress: text  # "intuitive", "developing", "nascent", "absent"
-        END_CLASS
-    END_CLASS
-    
-    METHOD assess_corporealisation_stage():
-        IF this.fragments_status == "scattered" THEN:
-            RETURN "early_fragmentation"
-        ELSE IF this.intention_dependency IN ["constant_reference_required", "frequent_consultation"] THEN:
-            RETURN "intention_dependent"
-        ELSE IF this.fragment_assembly.categorical_coherence == "aligned" THEN:
-            RETURN "pattern_emergence"
-        ELSE:
-            RETURN "mature_corporealisation"
-        END_IF
-    END_METHOD
-END_CLASS
-```
-
-#### 19.8 Memorial Persistence and Pattern Perpetuation
-
-When matters cease to exist as active entities, their patterns can persist as memorial—but only if perpetuated through multiple mechanisms across multiple abstraction levels. A pattern preserved at only one level is fragile; robust memorial requires redundant perpetuation. This section provides the machinery for representing how patterns endure after the matter itself dissolves, and for assessing memorial robustness.
-
-```#ailang
-CLASS MemorialState:
-    PROPERTIES:
-        existence_status: text  # "active", "completed", "ceased", "memorial"
-        perpetuation_means: LIST[PerpetuationMechanism]
-        pattern_robustness: text  # "fragile", "moderate", "robust", "highly_robust"
-        
-    CLASS PerpetuationMechanism:
-        PROPERTIES:
-            mechanism_type: text  # "artifact", "analogy", "template", "principle"
-            abstraction_level: abstraction_level
-            carrier: text  # What carries the pattern (document, story, methodology, theory)
-            access_requirements: LIST[requirement]
-            decay_rate: text  # "rapid", "moderate", "slow", "minimal"
-            
-        METHOD assess_robustness():
-            # Patterns perpetuated at multiple levels are more robust
-            RETURN INTELLIGENTLY evaluate WITH:
-                LEVEL: this.abstraction_level,
-                CARRIER_DURABILITY: this.carrier,
-                ACCESS_BARRIERS: this.access_requirements,
-                DECAY: this.decay_rate
-            END
-        END_METHOD
-    END_CLASS
-    
-    METHOD calculate_memorial_robustness():
-        # Multi-level perpetuation increases robustness
-        SET level_coverage TO count_distinct_levels(this.perpetuation_means)
-        SET mechanism_diversity TO count_distinct_types(this.perpetuation_means)
-        
-        IF level_coverage >= 4 AND mechanism_diversity >= 3 THEN:
-            RETURN "highly_robust"
-        ELSE IF level_coverage >= 3 OR mechanism_diversity >= 2 THEN:
-            RETURN "robust"
-        ELSE IF level_coverage >= 2 THEN:
-            RETURN "moderate"
-        ELSE:
-            RETURN "fragile"
-        END_IF
-    END_METHOD
-    
-    METHOD identify_vulnerable_patterns():
-        # Patterns perpetuated at only one level are fragile
-        SET single_level_patterns TO perpetuation_means WHERE 
-            count_mechanisms_at_same_level == 1
-            
-        RETURN single_level_patterns
-    END_METHOD
-END_CLASS
-```
-
-#### 19.9 Validation Through Adjacent Levels
-
-The core validation principle: to verify any claim about a matter, you must check adjacent abstraction levels, not the same level. Checking one level down provides concrete grounding; checking one level up provides categorical framework coherence. This section implements systematic adjacent-level validation patterns that prevent same-level validation traps (tautology, level-characterization, and instance-comparison).
-
-```#ailang
-METHOD validate_matter(matter):
-    # Validation requires checking adjacent abstraction levels
-    
-    SET target_level TO matter.primary_level
-    SET adjacent_lower TO get_adjacent_lower_level(target_level)
-    SET adjacent_higher TO get_adjacent_higher_level(target_level)
-    
-    # Check concrete grounding at lower level
-    SET lower_validation TO validate_lower_level(matter, adjacent_lower)
-    IF NOT lower_validation.valid THEN:
-        RETURN {valid: false, 
-                reason: "insufficient_concrete_grounding",
-                missing_at_level: adjacent_lower}
-    END_IF
-    
-    # Check categorical framework at higher level
-    SET higher_validation TO validate_higher_level(matter, adjacent_higher)
-    IF NOT higher_validation.valid THEN:
-        RETURN {valid: false, 
-                reason: "missing_categorical_framework",
-                missing_at_level: adjacent_higher}
-    END_IF
-    
-    # Check vertical coherence
-    SET coherence TO check_vertical_coherence(
-        matter, 
-        adjacent_lower, 
-        target_level, 
-        adjacent_higher
-    )
-    
-    IF NOT coherence.valid THEN:
-        RETURN {valid: false, 
-                reason: "vertical_incoherence",
-                details: coherence.issues}
-    END_IF
-    
-    RETURN {valid: true, 
-            validation_quality: "adjacent_level_verified",
-            grounding: lower_validation.details,
-            framework: higher_validation.details}
-END_METHOD
-
-METHOD validate_lower_level(matter, lower_level):
-    # Verify concrete grounding exists and supports Instance claims
-    IF lower_level == "components" THEN:
-        SET components TO matter.abstraction_hierarchy.components
-        
-        IF components.EMPTY THEN:
-            RETURN {valid: false, reason: "no_component_grounding"}
-        END_IF
-        
-        SET component_support TO assess_component_support(matter, components)
-        RETURN component_support
-        
-    ELSE IF lower_level == "primitives" THEN:
-        SET primitives TO matter.abstraction_hierarchy.primitives
-        
-        IF primitives.EMPTY THEN:
-            RETURN {valid: false, reason: "no_primitive_data"}
-        END_IF
-        
-        RETURN {valid: true, evidence: primitives}
-    END_IF
-END_METHOD
-
-METHOD validate_higher_level(matter, higher_level):
-    # Verify categorical framework exists and provides coherent patterns
-    IF higher_level == "categorical_framework" THEN:
-        SET framework TO matter.abstraction_hierarchy.categorical_framework
-        
-        IF framework IS NULL THEN:
-            RETURN {valid: false, reason: "no_categorical_framework"}
-        END_IF
-        
-        SET pattern_coherence TO assess_pattern_coherence(matter, framework)
-        RETURN pattern_coherence
-        
-    ELSE IF higher_level == "philosophical_foundation" THEN:
-        SET foundation TO matter.abstraction_hierarchy.philosophical_foundation
-        
-        IF foundation IS NULL THEN:
-            RETURN {valid: false, reason: "no_philosophical_grounding"}
-        END_IF
-        
-        RETURN {valid: true, foundation: foundation}
-    END_IF
-END_METHOD
-
-METHOD check_vertical_coherence(matter, lower, target, higher):
-    # Verify that lower level supports target within higher framework
-    RETURN INTELLIGENTLY evaluate WITH:
-        LOWER_EVIDENCE: matter.abstraction_hierarchy[lower],
-        TARGET_CLAIMS: matter.abstraction_hierarchy[target],
-        HIGHER_PATTERNS: matter.abstraction_hierarchy[higher],
-        COHERENCE_CRITERIA: abstraction_coherence_rules
-    END
-END_METHOD
-```
-
-#### 19.10 Usage Patterns and Examples
-
-Theory becomes practical through examples. This section demonstrates the Matter framework in action through complete examples: creating a software project matter with proper multi-level structure, tracking corporealisation progress as code is written, validating architecture claims through adjacent-level checking, and preparing robust memorial perpetuation after project completion. These patterns can be adapted to any domain where matters need representation.
-
-**Creating a Software Project Matter**
-
-```#ailang
-METHOD create_software_project_matter():
-    SET project TO CREATE Matter WITH:
-        matter_name: "Q4 Platform Migration"
-        matter_type: "software_project"
-        primary_level: "instance"
-        
-        abstraction_hierarchy: CREATE AbstractionHierarchy WITH:
-            philosophical_foundation: {
-                principles: ["modular_design", "separation_of_concerns"],
-                theories: ["software_evolution_theory"]
-            }
-            
-            categorical_framework: {
-                project_type: "legacy_modernization",
-                methodology: "iterative_migration",
-                patterns: ["strangler_fig_pattern", "anti_corruption_layer"]
-            }
-            
-            instance: {
-                specific_project: "Q4 Platform Migration",
-                start_date: "2024-10-01",
-                target_completion: "2024-12-31",
-                team_size: 8
-            }
-            
-            components: {
-                modules: ["authentication", "data_layer", "api_gateway"],
-                teams: ["backend_team", "frontend_team"],
-                processes: ["daily_standup", "weekly_review", "sprint_planning"]
-            }
-            
-            primitives: {
-                events: [],  # Will populate as project progresses
-                commits: [],
-                meetings: []
-            }
-        END
-        
-        actor_configuration: CREATE ActorConfiguration WITH:
-            actors: [
-                {id: "dev_team", position: "in_system"},
-                {id: "architect", position: "on_system"},
-                {id: "product_owner", position: "on_system"}
-            ]
-            
-            abstraction_access_profiles: {
-                "dev_team": {
-                    strong_levels: ["primitives", "components"],
-                    weak_levels: ["categorical_framework", "philosophical_foundation"]
-                },
-                "architect": {
-                    strong_levels: ["categorical_framework", "instance"],
-                    weak_levels: ["primitives"]
-                },
-                "product_owner": {
-                    strong_levels: ["instance", "categorical_framework"],
-                    weak_levels: ["components", "primitives"]
-                }
-            }
-        END
-        
-        lifecycle_stage: "recognition"
-        
-        conceptual_framework: CREATE ConceptualFramework WITH:
-            concepts: [
-                {name: "migration", levels: ["categorical_framework", "instance", "components"]},
-                {name: "strangler_pattern", levels: ["categorical_framework", "components"]},
-                {name: "api_contract", levels: ["components", "primitives"]}
-            ]
-        END
-    END
-    
-    RETURN project
-END_METHOD
-```
-
-**Tracking Corporealisation Progress**
-
-```#ailang
-METHOD track_project_corporealisation(project):
-    # Check how abstract intentions are being translated to concrete code
-    
-    SET fragments TO project.corporealisation_state.fragment_assembly.fragments
-    
-    FOR EACH fragment IN fragments:
-        # Test if ON-system actors can recognize pattern without explanation
-        SET self_evident TO test_self_evidence(fragment, project.actor_configuration.on_system_actors)
-        
-        IF self_evident THEN:
-            fragment.requires_intention = false
-            fragment.categorical_alignment = "high_fidelity"
-        ELSE:
-            fragment.requires_intention = true
-            # Need to improve translation or provide documentation
-        END_IF
-    END_FOR
-    
-    # Assess overall intention-dependency
-    SET requires_intention_count TO COUNT(fragments WHERE requires_intention == true)
-    SET total_count TO COUNT(fragments)
-    
-    IF requires_intention_count == total_count THEN:
-        project.corporealisation_state.intention_dependency = "constant_reference_required"
-    ELSE IF requires_intention_count > (total_count * 0.5) THEN:
-        project.corporealisation_state.intention_dependency = "frequent_consultation"
-    ELSE IF requires_intention_count > 0 THEN:
-        project.corporealisation_state.intention_dependency = "occasional_checking"
-    ELSE:
-        project.corporealisation_state.intention_dependency = "intuitive_recognition"
-    END_IF
-    
-    RETURN project.corporealisation_state
-END_METHOD
-```
-
-**Validating Matter Claims**
-
-```#ailang
-METHOD validate_project_success_claim(project, claim):
-    # Claim: "The Q4 migration project is well-architected"
-    # Must validate at adjacent levels
-    
-    # Check Components level (one level down from Instance)
-    SET component_validation TO INTELLIGENTLY assess WITH:
-        MODULES: project.abstraction_hierarchy.components.modules,
-        CRITERIA: ["modularity", "coupling", "cohesion", "testability"],
-        EVIDENCE: project.abstraction_hierarchy.primitives
-    END
-    
-    IF component_validation.assessment == "poor" THEN:
-        RETURN {
-            valid: false,
-            reason: "Components do not support 'well-architected' claim",
-            evidence: component_validation.issues
-        }
-    END_IF
-    
-    # Check Categorical Framework level (one level up from Instance)
-    SET framework_validation TO INTELLIGENTLY assess WITH:
-        CLAIMED_PATTERNS: project.abstraction_hierarchy.categorical_framework.patterns,
-        ACTUAL_IMPLEMENTATION: project.abstraction_hierarchy.components,
-        ALIGNMENT_CHECK: "Do components follow stated patterns?"
-    END
-    
-    IF framework_validation.alignment == "misaligned" THEN:
-        RETURN {
-            valid: false,
-            reason: "Implementation does not align with Categorical Framework patterns",
-            evidence: framework_validation.misalignments
-        }
-    END_IF
-    
-    # Check vertical coherence
-    IF component_validation.assessment == "good" AND 
-       framework_validation.alignment == "aligned" THEN:
-        RETURN {
-            valid: true,
-            confidence: "high",
-            grounding: "Components demonstrate good architecture",
-            framework: "Implementation follows stated architectural patterns"
-        }
-    END_IF
-END_METHOD
-```
-
-**Managing Matter Memorial After Project Completion**
-
-```#ailang
-METHOD prepare_project_memorial(completed_project):
-    # Ensure patterns persist at multiple levels after project ends
-    
-    SET memorial TO CREATE MemorialState WITH:
-        existence_status: "memorial"
-        perpetuation_means: []
-    END
-    
-    # Primitives/Components level: Preserve artifacts
-    ADD TO memorial.perpetuation_means:
-        CREATE PerpetuationMechanism WITH:
-            mechanism_type: "artifact"
-            abstraction_level: "components"
-            carrier: "code_repository"
-            access_requirements: ["repository_access"]
-            decay_rate: "minimal"  # Code persists well
-        END
-    END_ADD
-    
-    ADD TO memorial.perpetuation_means:
-        CREATE PerpetuationMechanism WITH:
-            mechanism_type: "artifact"
-            abstraction_level: "primitives"
-            carrier: "project_documentation"
-            access_requirements: ["wiki_access"]
-            decay_rate: "moderate"  # Docs can become outdated
-        END
-    END_ADD
-    
-    # Instance level: Create analogy references
-    ADD TO memorial.perpetuation_means:
-        CREATE PerpetuationMechanism WITH:
-            mechanism_type: "analogy"
-            abstraction_level: "instance"
-            carrier: "organizational_memory"
-            access_requirements: ["team_membership", "historical_context"]
-            decay_rate: "moderate"  # "Remember the Q4 migration?" fades
-        END
-    END_ADD
-    
-    # Categorical Framework level: Extract methodology template
-    ADD TO memorial.perpetuation_means:
-        CREATE PerpetuationMechanism WITH:
-            mechanism_type: "template"
-            abstraction_level: "categorical_framework"
-            carrier: "migration_playbook"
-            access_requirements: ["engineering_team_access"]
-            decay_rate: "slow"  # Playbooks persist well
-        END
-    END_ADD
-    
-    # Philosophical Foundation level: Document principles learned
-    ADD TO memorial.perpetuation_means:
-        CREATE PerpetuationMechanism WITH:
-            mechanism_type: "principle"
-            abstraction_level: "philosophical_foundation"
-            carrier: "architecture_guidelines"
-            access_requirements: ["architect_role"]
-            decay_rate: "minimal"  # Principles endure
-        END
-    END_ADD
-    
-    # Assess robustness
-    memorial.pattern_robustness = memorial.calculate_memorial_robustness()
-    # Result: "highly_robust" (5 levels, 4 mechanism types)
-    
-    completed_project.memorial_state = memorial
-    
-    RETURN memorial
-END_METHOD
-```
-
-#### 19.11 Key Takeaways
-
-The Matter framework encodes profound insights about how humans engage with reality through abstraction hierarchies. This summary crystallizes the essential understanding requirements: why multi-level structure is necessary, how validation must work, what actor position means for access patterns, how corporealisation translates levels, why memorial needs redundancy, and which same-level operations are insufficient. These takeaways provide the conceptual foundation needed to apply the framework effectively.
-
-**Critical Understanding Requirements:**
-
-1. **Multi-Level Structure is Essential**: Matters cannot be represented at a single abstraction level. Full representation requires explicit multi-level architecture with clear identification of which level each aspect belongs to.
-
-2. **Validation Requires Adjacent Levels**: To verify any claim about a matter, you must check both one level more concrete (for grounding) and one level more abstract (for categorical framework). Same-level verification is insufficient.
-
-3. **Actor Position Determines Perspective**: IN-system actors have strong access to Primitives/Components but weak access to Categorical Framework/Philosophical. ON-system actors have the opposite pattern. Both perspectives are required for complete understanding.
-
-4. **Corporealisation is Level Translation**: Creating a matter involves translating abstract intentions (Categorical Framework/Philosophical) through Instance design into concrete Components. This requires learning to bridge levels, tracked by reducing intention-dependency.
-
-5. **Memorial Robustness Through Multi-Level Perpetuation**: When matters cease, their patterns persist most robustly when perpetuated across multiple abstraction levels through diverse mechanisms (artifacts, analogies, templates, principles).
-
-6. **The Three Insufficient Same-Level Operations**: 
-   - Tautology: "X is X" (circular)
-   - Level-characterization: "X has properties of X-type things" (defines category, not instance)
-   - Instance-comparison: "This X is bigger than that X" (relative only)
-
-7. **Conceptual Frameworks Span Levels**: Concepts that enable effective engagement with matters are those that span multiple abstraction levels, providing bridges for actors to move between levels and translate between them.
-
-**For complete details on all Matter subsystems, implementation patterns, and philosophical foundations, refer to the [Matter Extension Document](https://github.com/pcoz/ailang/blob/main/AILang_Specification_Matter_Extension.md).**
+**IMPORTANT: Matter entities represent one of AILang's most sophisticated domain modeling capabilities for representing human concerns and their multi-level abstraction structure. Due to the comprehensive nature of categorical cognition, abstraction level dynamics, actor positioning, lifecycle management, and conceptual mediation -- the detailed specifications for all Matter subsystems are provided in the [Matter Extension Document](https://github.com/pcoz/ailang/blob/main/AILang_Specification_Matter_Extension.md).**
 
 ---
 
-### 20. Error Handling
+### 22. Error Handling
 
 AILang provides both deterministic error handling patterns and intelligent error recovery mechanisms.
 
@@ -4480,8 +3824,7 @@ AILang provides both deterministic error handling patterns and intelligent error
 
 Structured try-catch blocks with explicit error handling:
 
-```
-#ailang
+```ailang
 TRY:
     [instructions that might fail]
 CATCH [error_type]:
@@ -4497,8 +3840,7 @@ END_TRY
 
 Adaptive error handling that leverages AI intelligence within defined boundaries:
 
-```
-#ailang
+```ailang
 TRY:
     [instructions]
 INTELLIGENTLY_HANDLE any_errors WITH:
@@ -4511,15 +3853,515 @@ END_TRY
 
 The AI uses specified constraints and objectives to determine recovery strategies while maintaining safety requirements. Error handling remains bounded by explicit constraints even when using intelligence.
 
-**Example:**
+#### Context Violation Errors (v0.8)
 
+When a suppressed reasoning type is invoked within a REALITY_CONTEXT that suppresses it, the engine raises a `context_violation` error:
+
+```ailang
+DEFINE REALITY_CONTEXT adversarial_proceeding:
+    REASONING_PROFILE:
+        PRIMARY: DEDUCE
+        SUPPRESS: [SYNTHESIZE]
+    END_PROFILE
+END_CONTEXT
+
+WITH REALITY_CONTEXT adversarial_proceeding:
+    TRY:
+        # This will raise context_violation because SYNTHESIZE is suppressed
+        SYNTHESIZE positions INTO agreement WITH:
+            SOURCES: [prosecution, defense]
+        END
+    CATCH context_violation:
+        LOG "Cannot SYNTHESIZE within adversarial_proceeding context"
+        # Fall back to the context's PRIMARY reasoning type
+        DEDUCE judgment FROM evidence AND legal_standards WITH:
+            OUTPUT_FORMAT: { conclusion: TEXT, basis: LIST OF TEXT }
+        END
+    END_TRY
+END_WITH
 ```
-#ailang
+
+#### RETRIEVAL_BUDGET Fallback Warnings (v0.8.2)
+
+When `RETRIEVAL_BUDGET: NONE` or `RETRIEVAL_BUDGET: MINIMAL` is specified but the engine determines that additional knowledge recall is needed, the engine falls back to a higher retrieval level and logs a warning. Programs can catch this as a non-fatal warning:
+
+```ailang
 TRY:
-    CONNECT TO external_service
-INTELLIGENTLY_HANDLE connection_errors WITH:
-    CONSTRAINTS: [max_retries: 3, preserve_data_integrity]
-    OBJECTIVES: [maintain_service, log_details]
-    CONTEXT: current_transaction_state
+    DEDUCE implications FROM loaded_data WITH:
+        RETRIEVAL_BUDGET: NONE
+        OUTPUT_FORMAT: { implications: LIST }
+    END
+CATCH retrieval_budget_fallback:
+    LOG "RETRIEVAL_BUDGET: NONE could not be honored -- operation required knowledge recall"
+    # The operation still completed (with expanded activation), so results are available
+    # This is a warning, not an error -- execution continues normally
 END_TRY
 ```
+
+---
+
+### Appendix A: Complete Syntax Reference
+
+#### Reasoning Operation Syntax
+
+```
+# Full form
+[REASONING_TYPE] [subject] [preposition] [object] WITH:
+    [constraints]
+END
+
+# With style modifier
+[STYLE_MODIFIER] [REASONING_TYPE] [subject] [preposition] [object] WITH:
+    [constraints]
+END
+
+# With DEPTH modifier (v0.8.1, updated v0.8.2)
+[REASONING_TYPE] [subject] [preposition] [object] WITH:
+    DEPTH: SHALLOW | STANDARD | THOROUGH | DEEP | EXHAUSTIVE
+    [constraints]
+END
+
+# With RETRIEVAL_BUDGET modifier (v0.8.2)
+[REASONING_TYPE] [subject] FROM [inputs] WITH:
+    RETRIEVAL_BUDGET: NONE | MINIMAL | STANDARD | FULL
+    [constraints]
+END
+
+# With WITHOUT_RETRIEVAL modifier (v0.8.1, shorthand for RETRIEVAL_BUDGET: NONE)
+[REASONING_TYPE] [subject] FROM [inputs] WITHOUT_RETRIEVAL WITH:
+    [constraints]
+END
+
+# With EMIT_DIGEST (v0.8.1)
+[REASONING_TYPE] [subject] [preposition] [object] WITH:
+    EMIT_DIGEST: true
+    [constraints]
+END
+
+# THEN chaining (v0.8.1)
+[OPERATION_1] [args]
+    THEN [OPERATION_2] FROM RESULT [AND other_inputs] WITH:
+        [constraints]
+    THEN [OPERATION_3] FROM RESULT [AND other_inputs] WITH:
+        [constraints]
+    END
+
+# Fallback (auto-classified)
+INTELLIGENTLY [operation] WITH:
+    [constraints]
+END
+```
+
+**Reasoning types:** WEIGH, DEDUCE, TRACE, COMPARE, SYNTHESIZE, RETRIEVE
+
+**Style modifiers:** CREATIVELY, ADAPTIVELY, CONTEXTUALLY
+
+**Constraint keys:** MUST_INCLUDE, CANNOT_INCLUDE, OUTPUT_FORMAT, MAX_SCOPE
+
+**Compute modifiers (v0.8.1, updated v0.8.2):** RETRIEVAL_BUDGET, DEPTH, WITHOUT_RETRIEVAL
+
+**Pipeline keys (v0.8.1):** EMIT_DIGEST, FROM DIGESTS, FROM CONTEXT
+
+**TRACE-specific:** DIRECTION: FORWARD|BACKWARD
+
+**WEIGH-specific:** SOURCES: [list], ON [dimension]
+
+**COMPARE-specific:** AGAINST [criteria], DIMENSIONS: [list]
+
+**SYNTHESIZE-specific:** INTO [output], SOURCES: [list]
+
+**RETRIEVE-specific:** FOR [context], DOMAIN: [domain]
+
+#### REASONING_CONTEXT Syntax (v0.8.1)
+
+```
+BEGIN REASONING_CONTEXT [name]:
+    [reasoning operations with automatic digest accumulation]
+END REASONING_CONTEXT
+```
+
+#### Reality Context with REASONING_PROFILE
+
+```
+DEFINE REALITY_CONTEXT [name]:
+    WORLDVIEW: [description]
+    ASSUMPTIONS: [list]
+    INTERPRETIVE_FRAMEWORK: [list]
+    BEHAVIORAL_NORMS: [list]
+    DISCOURSE_RULES: [list]
+    VALUE_SYSTEM: [list]
+    CAUSAL_MODELS: [list]
+    REASONING_PROFILE:
+        PRIMARY: [reasoning_type]
+        SECONDARY: [reasoning_type]
+        CONSTRAIN: [reasoning_type] TO [constraint_description]
+        SUPPRESS: [list_of_reasoning_types]
+    END_PROFILE
+END_CONTEXT
+```
+
+#### Person Reasoning Profile
+
+```
+CREATE Person [name] WITH:
+    reasoning_profile: {
+        primary_reasoning: [reasoning_type],
+        secondary_reasoning: [reasoning_type],
+        reasoning_flexibility: [flexibility_descriptor]
+    }
+END_CREATE
+```
+
+---
+
+### Appendix B: Migration Guide from v0.7.1
+
+#### Backward Compatibility
+
+All v0.7.1 programs are valid v0.8 programs. The following constructs work without modification:
+
+- `INTELLIGENTLY [operation]` -- auto-classified to the appropriate reasoning type
+- `CREATIVELY [operation]` -- treated as style modifier with auto-classified reasoning type
+- `ADAPTIVELY [operation]` -- treated as style modifier with auto-classified reasoning type
+- `CONTEXTUALLY [operation]` -- treated as style modifier with auto-classified reasoning type
+- `INTELLIGENTLY ASSESS` -- auto-classified (typically TRACE or RETRIEVE)
+- `INTELLIGENTLY EXPLORE` -- unchanged
+- `INTELLIGENTLY DECIDE` -- auto-classified (typically WEIGH)
+- All bounded intelligence constraints (MUST_INCLUDE, etc.) -- work identically
+- All REALITY_CONTEXT definitions -- work without REASONING_PROFILE (no reasoning routing applied)
+
+#### v0.8.0 to v0.8.1 Backward Compatibility
+
+All v0.8.0 programs are valid v0.8.1 programs. The following v0.8.1 features are fully backward compatible:
+
+- **DEPTH**: When omitted, defaults to STANDARD (identical to v0.8.0 behavior)
+- **WITHOUT_RETRIEVAL**: Optional modifier; omitting it produces standard activation (identical to v0.8.0 behavior)
+- **EMIT_DIGEST**: When omitted, no digest is produced (identical to v0.8.0 behavior)
+- **CONSTRAIN**: REASONING_PROFILE blocks without CONSTRAIN work identically to v0.8.0
+- **THEN chaining**: A new syntax that does not conflict with existing constructs
+- **REASONING_CONTEXT**: A new block construct that does not conflict with existing constructs
+- **Precedence rule**: Formalizes behavior that was implicit in v0.8.0 (PRIMARY already overrode auto-classification in practice)
+
+#### v0.8.1 to v0.8.2 Backward Compatibility
+
+All v0.8.1 programs are valid v0.8.2 programs. The following v0.8.2 features are fully backward compatible:
+
+- **RETRIEVAL_BUDGET**: When omitted, defaults to STANDARD (identical to v0.8.1 default behavior). `WITHOUT_RETRIEVAL` remains valid as shorthand for `RETRIEVAL_BUDGET: NONE`.
+- **DEPTH: THOROUGH**: A new level inserted between STANDARD and DEEP. Programs that omit DEPTH still default to STANDARD. Programs using SHALLOW, STANDARD, DEEP, or EXHAUSTIVE work identically.
+- **Feature interaction rules**: Formalize behaviors that were either unspecified or informally described in v0.8.1.
+
+#### Recommended Upgrades
+
+For production programs, the following upgrades improve performance and clarity:
+
+| v0.7.1 Pattern | v0.8 Recommended |
+|---|---|
+| `INTELLIGENTLY assess_credibility` | `WEIGH sources ON credibility` |
+| `INTELLIGENTLY determine_cause` | `TRACE cause FROM effect WITH DIRECTION: BACKWARD` |
+| `INTELLIGENTLY predict_outcome` | `TRACE outcome FROM action WITH DIRECTION: FORWARD` |
+| `INTELLIGENTLY rank_options` | `COMPARE options AGAINST criteria` |
+| `INTELLIGENTLY integrate_views` | `SYNTHESIZE views INTO summary` |
+| `INTELLIGENTLY look_up_fact` | `RETRIEVE fact FOR context` |
+| `INTELLIGENTLY draw_conclusion` | `DEDUCE conclusion FROM premises` |
+| `INTELLIGENTLY DECIDE plan` | `WEIGH options AGAINST priorities` |
+| `INTELLIGENTLY ASSESS situation` | `TRACE drivers FROM data` or `RETRIEVE facts FOR situation` |
+
+**v0.8.1 recommended upgrades for multi-operation pipelines:**
+
+| v0.8.0 Pattern | v0.8.1 Recommended |
+|---|---|
+| Multiple operations with intermediate variables | `THEN` chaining for 2-3 step sequences |
+| SYNTHESIZE re-parsing full prior outputs | `EMIT_DIGEST: true` on prior operations, `SYNTHESIZE FROM DIGESTS` |
+| Pipeline with no shared context | `BEGIN REASONING_CONTEXT` block for automatic digest accumulation |
+| Binary SUPPRESS for reasoning types | `CONSTRAIN: [type] TO [boundary]` for graduated restriction |
+
+**v0.8.2 recommended upgrades for compute optimization:**
+
+| v0.8.1 Pattern | v0.8.2 Recommended |
+|---|---|
+| `WITHOUT_RETRIEVAL` on all post-RETRIEVE steps | `RETRIEVAL_BUDGET: MINIMAL` for steps that may need terminology resolution; `RETRIEVAL_BUDGET: NONE` only when truly no recall needed |
+| Gap between STANDARD and DEEP | Use `DEPTH: THOROUGH` for production analyses where STANDARD is insufficient but DEEP is overkill |
+| Unclear feature interaction behavior | Consult Appendix D for formal interaction rules |
+
+#### Adding REASONING_PROFILE to Existing Contexts
+
+Existing REALITY_CONTEXT definitions can optionally add a REASONING_PROFILE block. Without it, INTELLIGENTLY within the context uses standard auto-classification (no PRIMARY override, no SUPPRESS restrictions).
+
+```ailang
+# v0.7.1 (still valid)
+DEFINE REALITY_CONTEXT my_context:
+    WORLDVIEW: "..."
+    ASSUMPTIONS: [...]
+END_CONTEXT
+
+# v0.8 enhanced
+DEFINE REALITY_CONTEXT my_context:
+    WORLDVIEW: "..."
+    ASSUMPTIONS: [...]
+    REASONING_PROFILE:
+        PRIMARY: DEDUCE
+        SECONDARY: WEIGH
+        SUPPRESS: []
+    END_PROFILE
+END_CONTEXT
+
+# v0.8.1 enhanced -- with CONSTRAIN
+DEFINE REALITY_CONTEXT my_context:
+    WORLDVIEW: "..."
+    ASSUMPTIONS: [...]
+    REASONING_PROFILE:
+        PRIMARY: DEDUCE
+        SECONDARY: WEIGH
+        CONSTRAIN: TRACE TO "documented_evidence_only"
+        SUPPRESS: []
+    END_PROFILE
+END_CONTEXT
+```
+
+---
+
+### Appendix C: Reasoning Type Selection Guide
+
+#### Decision Tree
+
+```
+Is the task about evaluating who/what to trust?
+  YES -> WEIGH
+
+Is the task about deriving conclusions from rules/premises?
+  YES -> DEDUCE
+
+Is the task about understanding causes or predicting effects?
+  YES -> TRACE (BACKWARD for causes, FORWARD for effects)
+
+Is the task about ranking, ordering, or comparing options?
+  YES -> COMPARE
+
+Is the task about integrating multiple viewpoints into a unified view?
+  YES -> SYNTHESIZE
+
+Is the task about looking up a fact or definition?
+  YES -> RETRIEVE
+
+Not sure / mixed reasoning needs?
+  -> INTELLIGENTLY (auto-classification)
+```
+
+#### DEPTH Selection Guide (v0.8.1, updated v0.8.2)
+
+```
+Is speed more important than thoroughness?
+  YES -> SHALLOW
+
+Is this a standard production operation?
+  YES -> STANDARD (or omit DEPTH)
+
+Is this a production analysis needing more than standard but not a critical decision?
+  YES -> THOROUGH (v0.8.2)
+
+Is this a critical decision or important analysis?
+  YES -> DEEP
+
+Is this a forensic, compliance, or safety-critical investigation?
+  YES -> EXHAUSTIVE
+```
+
+#### RETRIEVAL_BUDGET Selection Guide (v0.8.2)
+
+```
+Is all data loaded in variables and no domain knowledge needed?
+  YES -> NONE (or WITHOUT_RETRIEVAL)
+
+Is most data loaded but some terminology might need resolution?
+  YES -> MINIMAL
+
+Is this a standard operation that may need knowledge recall?
+  YES -> STANDARD (or omit RETRIEVAL_BUDGET)
+
+Do you want to explicitly signal full retrieval?
+  YES -> FULL
+```
+
+#### Common Patterns by Domain
+
+**Legal:** DEDUCE (primary), WEIGH (witness/evidence credibility), RETRIEVE (statute lookup)
+
+**Medical:** DEDUCE (diagnosis from symptoms), TRACE (disease progression), WEIGH (treatment evidence), RETRIEVE (drug interactions)
+
+**Business Strategy:** WEIGH (strategic decisions), COMPARE (vendor/option selection), SYNTHESIZE (stakeholder alignment), TRACE (market dynamics)
+
+**Engineering:** TRACE (root cause analysis), COMPARE (architecture decisions), DEDUCE (specification compliance), RETRIEVE (standards lookup)
+
+**Research:** SYNTHESIZE (literature review), DEDUCE (hypothesis testing), WEIGH (source credibility), COMPARE (methodology selection)
+
+**Education:** RETRIEVE (knowledge recall), DEDUCE (logical exercises), SYNTHESIZE (interdisciplinary connections), COMPARE (framework comparison)
+
+---
+
+### Appendix D: Feature Interaction Specification (v0.8.1, updated v0.8.2)
+
+This appendix formally specifies how features interact in compound use. v0.8.2 expands this appendix with precise interaction rules for all feature combinations.
+
+#### D.1 RETRIEVAL_BUDGET + DEPTH
+
+These are independent modifiers. RETRIEVAL_BUDGET controls which retrieval neurons fire (or how many). DEPTH controls how deeply the active neurons process. Both may be applied simultaneously:
+
+```ailang
+DEDUCE conclusion FROM loaded_data WITH:
+    RETRIEVAL_BUDGET: NONE
+    DEPTH: DEEP
+END
+# Only ~335 logical neurons fire, but they process deeply (multi-pass)
+```
+
+```ailang
+DEDUCE conclusion FROM loaded_data WITH:
+    RETRIEVAL_BUDGET: MINIMAL
+    DEPTH: THOROUGH
+END
+# ~535 neurons fire (~200 retrieval + ~335 logical), processing at thorough depth
+```
+
+#### D.2 ADAPTIVELY + DEPTH (Adjustment Range)
+
+When `ADAPTIVELY` style is combined with DEPTH, the engine starts at the specified depth but may dynamically adjust. The adjustment range is **plus or minus one depth level** from the specified base:
+
+| Specified Base | Minimum Adjustment | Maximum Adjustment |
+|---|---|---|
+| SHALLOW | SHALLOW (cannot go lower) | STANDARD |
+| STANDARD | SHALLOW | THOROUGH |
+| THOROUGH | STANDARD | DEEP |
+| DEEP | THOROUGH | EXHAUSTIVE |
+| EXHAUSTIVE | DEEP | EXHAUSTIVE (cannot go higher) |
+
+The engine adjusts depth based on evidence quality per step:
+- **High-evidence steps**: May increase depth by one level to capture richer analysis
+- **Low-evidence steps**: May decrease depth by one level to avoid wasting compute on thin data
+- **The adjustment is per-step**, not per-operation. Within a single TRACE operation, for example, different causal chain links may be processed at different depths.
+
+**Example:**
+```ailang
+ADAPTIVELY TRACE safety_signals FROM data WITH:
+    DEPTH: THOROUGH
+    DIRECTION: BACKWARD
+END
+# Engine starts at THOROUGH
+# For high-evidence links: may increase to DEEP
+# For low-evidence links: may decrease to STANDARD
+# Will NOT go below STANDARD or above DEEP
+```
+
+#### D.3 RETRIEVAL_BUDGET / WITHOUT_RETRIEVAL + THEN Chains
+
+In a THEN chain, if step 1 is RETRIEVE (full retrieval), steps 2+ can safely use `RETRIEVAL_BUDGET: NONE` or `RETRIEVAL_BUDGET: MINIMAL` because step 1 has already retrieved the needed data.
+
+**Engine recommendation behavior**: The engine SHOULD auto-suggest `RETRIEVAL_BUDGET: NONE` for post-RETRIEVE chain steps when the programmer has not specified a RETRIEVAL_BUDGET. The engine MUST NOT enforce this -- it is a suggestion only. The programmer may override by specifying an explicit RETRIEVAL_BUDGET on any chain step.
+
+**Example:**
+```ailang
+RETRIEVE regulatory_requirements FOR jurisdiction WITH:
+    DEPTH: STANDARD
+    # Full retrieval here (RETRIEVAL_BUDGET: STANDARD by default)
+THEN DEDUCE compliance FROM RESULT AND company_data WITH:
+    RETRIEVAL_BUDGET: NONE  # Safe: step 1 already retrieved
+    DEPTH: THOROUGH
+THEN WEIGH remediation_options ON feasibility FROM RESULT WITH:
+    RETRIEVAL_BUDGET: NONE  # Safe: steps 1-2 provide all needed data
+    SOURCES: [RESULT, budget_constraints]
+    OUTPUT_FORMAT: { recommended: TEXT, rationale: TEXT }
+END
+```
+
+#### D.4 CONSTRAIN + REASONING_CONTEXT
+
+When a REASONING_CONTEXT block is inside a `WITH REALITY_CONTEXT` that has CONSTRAIN rules, the constraint applies to **all operations** in the REASONING_CONTEXT that use the constrained reasoning type. This means:
+
+1. Every operation in the REASONING_CONTEXT that invokes the constrained type has the constraint boundary automatically applied as an implicit CANNOT_INCLUDE.
+
+2. Digests produced by constrained operations are tagged with constraint metadata:
+   ```
+   {
+       @reasoning_type: "TRACE",
+       @confidence: "high",
+       @key_finding: "...",
+       @digest: "...",
+       @constrained_by: "published_clinical_data_only"  # constraint metadata
+   }
+   ```
+
+3. The REASONING_CONTEXT does NOT override or relax CONSTRAIN boundaries. The constraint is additive to any MUST_INCLUDE/CANNOT_INCLUDE specified on the individual operation.
+
+4. If a REASONING_CONTEXT contains a THEN chain where a constrained operation appears, the constraint applies to that operation within the chain.
+
+#### D.5 DEPTH + EMIT_DIGEST
+
+DEPTH affects the full output but NOT the digest. The specification is:
+
+- Digests remain under ~100 tokens regardless of the DEPTH level of the operation that produced them.
+- DEEP and EXHAUSTIVE operations produce **richer** digests: the 100 tokens capture more nuanced findings because the underlying analysis was more thorough. But the digest is not longer.
+- SHALLOW operations produce **thinner** digests: the 100 tokens may contain less insight because the underlying analysis was surface-level.
+- The digest token limit is invariant across all depth levels.
+
+#### D.6 THEN + REASONING_CONTEXT
+
+THEN chains inside a REASONING_CONTEXT produce a **single digest** for the entire chain, not per-step digests. Specifically:
+
+1. The digest is produced from the **final operation** in the THEN chain.
+2. Intermediate RESULT values are NOT individually digested into the REASONING_CONTEXT accumulator.
+3. The single chain digest captures the end-to-end finding of the chain.
+4. This is consistent with the THEN chain's design as an "atomic compound operation" -- it produces one result, so it produces one digest.
+
+**Example:**
+```ailang
+BEGIN REASONING_CONTEXT analysis:
+    # This THEN chain produces ONE digest for the accumulator
+    RETRIEVE facts FOR domain
+        THEN DEDUCE implications FROM RESULT WITH:
+            RETRIEVAL_BUDGET: NONE
+            DEPTH: THOROUGH
+        THEN COMPARE options FROM RESULT WITH:
+            RETRIEVAL_BUDGET: NONE
+            DIMENSIONS: [cost, risk]
+            OUTPUT_FORMAT: { ranking: LIST }
+        END
+    # Accumulator now contains: one digest from the COMPARE (final operation)
+    # NOT three separate digests
+
+    # Next operation reads the single chain digest
+    WEIGH decision ON priority WITH:
+        SOURCES: [CONTEXT, stakeholder_input]
+        OUTPUT_FORMAT: { decision: TEXT }
+    END
+END REASONING_CONTEXT
+```
+
+#### D.7 RETRIEVAL_BUDGET + REASONING_CONTEXT
+
+Inside a REASONING_CONTEXT, each operation may specify its own RETRIEVAL_BUDGET independently. The REASONING_CONTEXT's automatic digest accumulation does not affect RETRIEVAL_BUDGET behavior. However, because the REASONING_CONTEXT accumulates digests from prior operations, later operations in the context have more data available in program state, making `RETRIEVAL_BUDGET: NONE` or `RETRIEVAL_BUDGET: MINIMAL` progressively more appropriate for later operations.
+
+#### D.8 RETRIEVAL_BUDGET + ADAPTIVELY
+
+When ADAPTIVELY is combined with RETRIEVAL_BUDGET, the engine starts at the specified budget but may expand if needed:
+- `RETRIEVAL_BUDGET: NONE` with ADAPTIVELY: If the engine encounters a step that genuinely needs retrieval, it MAY expand to MINIMAL or STANDARD for that step, logging a warning.
+- `RETRIEVAL_BUDGET: MINIMAL` with ADAPTIVELY: If the engine encounters a step needing full retrieval, it MAY expand to STANDARD for that step, logging a warning.
+- This expansion follows the same fallback rules as static RETRIEVAL_BUDGET (Section 8.7).
+
+---
+
+### Appendix E: v0.8.2 Neuron Savings Summary
+
+This appendix provides a consolidated view of compute savings across all RETRIEVAL_BUDGET levels.
+
+| Operation | Standard Neurons | NONE Neurons | NONE Savings | MINIMAL Neurons | MINIMAL Savings |
+|---|---|---|---|---|---|
+| COMPARE | ~1,050 | ~185 | ~82% | ~385 | ~63% |
+| TRACE | ~1,100 | ~235 | ~79% | ~435 | ~60% |
+| DEDUCE | ~1,200 | ~335 | ~72% | ~535 | ~55% |
+| SYNTHESIZE | ~1,400 | ~535 | ~62% | ~735 | ~47% |
+| WEIGH | ~1,531 | ~666 | ~57% | ~866 | ~43% |
+
+**RETRIEVAL_BUDGET: STANDARD** and **RETRIEVAL_BUDGET: FULL** both activate the full ~865 retrieval base neurons (0% savings).
+
+**RETRIEVAL_BUDGET: MINIMAL** activates ~200 of the ~865 retrieval neurons (~665 neuron savings, or ~77% of the retrieval base).
+
+**RETRIEVAL_BUDGET: NONE** activates 0 of the ~865 retrieval neurons (~865 neuron savings, or 100% of the retrieval base).

@@ -1,0 +1,91 @@
+#ailang v0.8
+# TEST 03: Reality Context Reasoning Profiles
+# Purpose: Demonstrate that REASONING_PROFILE in Reality Contexts
+#          routes operations differently and produces domain-appropriate results
+# Scenario: Same employee situation evaluated through three different contexts
+
+SET situation TO "Senior engineer Sarah has been underperforming for 3 months. Her code quality dropped, she missed two deadlines, and teammates report she seems distracted. Her manager learned she is going through a divorce."
+
+# ============================================================
+# CONTEXT 1: Legal/HR Compliance
+# ============================================================
+DEFINE REALITY_CONTEXT hr_legal:
+    WORLDVIEW: "Employment relationships are governed by law, policy, and documentation"
+    REASONING_PROFILE:
+        PRIMARY: DEDUCE
+        SECONDARY: RETRIEVE
+        SUPPRESS: [TRACE]
+    END_PROFILE
+    ASSUMPTIONS: [at_will_employment, progressive_discipline_policy, ADA_considerations]
+    VALUE_SYSTEM: [compliance, documentation, liability_minimization]
+END_CONTEXT
+
+WITH REALITY_CONTEXT hr_legal:
+    # Engine should route through DEDUCE (primary) — what do policies require?
+    INTELLIGENTLY assess_situation FROM situation WITH:
+        MUST_INCLUDE: [applicable_policies, required_documentation, legal_risks]
+        OUTPUT_FORMAT: {
+            assessment: TEXT,
+            applicable_policies: LIST OF TEXT,
+            required_actions: LIST OF TEXT,
+            legal_risks: LIST OF TEXT,
+            confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+        }
+    END
+END_WITH
+
+# ============================================================
+# CONTEXT 2: Engineering Management
+# ============================================================
+DEFINE REALITY_CONTEXT eng_management:
+    WORLDVIEW: "Team productivity depends on individual capability and systemic support"
+    REASONING_PROFILE:
+        PRIMARY: TRACE
+        SECONDARY: COMPARE
+        SUPPRESS: [RETRIEVE]
+    END_PROFILE
+    ASSUMPTIONS: [performance_has_root_causes, people_want_to_do_good_work]
+    VALUE_SYSTEM: [team_health, sustained_productivity, psychological_safety]
+END_CONTEXT
+
+WITH REALITY_CONTEXT eng_management:
+    # Engine should route through TRACE (primary) — what's causing the decline?
+    INTELLIGENTLY assess_situation FROM situation WITH:
+        MUST_INCLUDE: [root_causes, impact_on_team, intervention_options]
+        OUTPUT_FORMAT: {
+            assessment: TEXT,
+            likely_causes: LIST OF TEXT,
+            team_impact: TEXT,
+            intervention_options: LIST OF OBJECT { action: TEXT, expected_outcome: TEXT },
+            confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+        }
+    END
+END_WITH
+
+# ============================================================
+# CONTEXT 3: Executive Strategy
+# ============================================================
+DEFINE REALITY_CONTEXT executive_strategy:
+    WORLDVIEW: "Individual cases represent patterns that affect organizational health"
+    REASONING_PROFILE:
+        PRIMARY: SYNTHESIZE
+        SECONDARY: WEIGH
+        SUPPRESS: [DEDUCE]
+    END_PROFILE
+    ASSUMPTIONS: [individual_cases_reflect_systemic_patterns, retention_has_strategic_value]
+    VALUE_SYSTEM: [organizational_resilience, talent_retention, culture]
+END_CONTEXT
+
+WITH REALITY_CONTEXT executive_strategy:
+    # Engine should route through SYNTHESIZE (primary) — what does this case tell us?
+    INTELLIGENTLY assess_situation FROM situation WITH:
+        MUST_INCLUDE: [systemic_implications, strategic_options, culture_impact]
+        OUTPUT_FORMAT: {
+            assessment: TEXT,
+            systemic_patterns: LIST OF TEXT,
+            strategic_options: LIST OF OBJECT { option: TEXT, impact: TEXT },
+            culture_implications: TEXT,
+            confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+        }
+    END
+END_WITH

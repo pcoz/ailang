@@ -1,0 +1,16 @@
+# Editor / tooling
+.claude/
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# OS
+.DS_Store
+Thumbs.db

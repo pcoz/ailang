@@ -1,0 +1,74 @@
+#ailang v0.8
+# TEST 01: Typed Reasoning vs Untyped INTELLIGENTLY
+# Purpose: Execute the SAME question using typed operations vs untyped INTELLIGENTLY
+# Measure: Response focus, token efficiency, reasoning path clarity
+
+# ============================================================
+# SCENARIO A: Medical treatment evaluation
+# ============================================================
+
+# --- Test A1: Untyped (v0.7.1 style) ---
+INTELLIGENTLY evaluate_treatment_options FOR patient_case WITH:
+    MUST_INCLUDE: [evidence_quality, expert_opinion, risk_assessment]
+    OUTPUT_FORMAT: {
+        recommendation: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"],
+        reasoning: TEXT
+    }
+END
+
+# --- Test A2: Typed WEIGH (v0.8 style) ---
+WEIGH treatment_options ON efficacy_and_safety WITH:
+    SOURCES: [randomized_controlled_trial, attending_physician_opinion, patient_reported_outcomes]
+    MUST_INCLUDE: [source_credibility_ranking, evidence_hierarchy_position, risk_benefit_ratio]
+    OUTPUT_FORMAT: {
+        recommendation: TEXT,
+        dominant_source: TEXT,
+        credibility_ranking: LIST,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"],
+        reasoning: TEXT
+    }
+END
+
+# ============================================================
+# SCENARIO B: Software outage investigation
+# ============================================================
+
+# --- Test B1: Untyped ---
+INTELLIGENTLY investigate_outage FROM incident_log WITH:
+    MUST_INCLUDE: [root_cause, timeline, contributing_factors]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# --- Test B2: Typed TRACE ---
+TRACE root_cause FROM incident_log WITH:
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [evidence_at_each_step, alternative_explanations_considered]
+    MAX_SCOPE: "last_48_hours"
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT, evidence: TEXT },
+        contributing_factors: LIST,
+        alternative_explanations: LIST,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# SCENARIO C: Capital city lookup
+# ============================================================
+
+# --- Test C1: Untyped ---
+INTELLIGENTLY answer what_is_the_capital_of_France WITH:
+    OUTPUT_FORMAT: { answer: TEXT }
+END
+
+# --- Test C2: Typed RETRIEVE ---
+RETRIEVE capital_city FOR France WITH:
+    DOMAIN: "geography"
+    OUTPUT_FORMAT: { answer: TEXT }
+END

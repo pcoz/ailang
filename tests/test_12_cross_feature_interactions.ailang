@@ -1,0 +1,334 @@
+#ailang v0.8.2
+# TEST 12: Cross-Feature Interaction Stress Test
+# Purpose: Validate that v0.8.2 features interact correctly when combined.
+#          Tests compound feature usage that individual tests don't cover.
+# Measure:
+#   - Scenario A: ADAPTIVELY + DEPTH + RETRIEVAL_BUDGET on a TRACE operation
+#   - Scenario B: CONSTRAIN + REASONING_CONTEXT with THEN chains and EMIT_DIGEST
+#   - Scenario C: Full compound: all features simultaneously on a realistic pipeline
+#   - Each scenario includes a validation step
+
+# ============================================================
+# SCENARIO A: ADAPTIVELY TRACE with DEPTH: THOROUGH and
+#             RETRIEVAL_BUDGET: MINIMAL inside a REALITY_CONTEXT
+# ============================================================
+# Per Appendix D.2: ADAPTIVELY + DEPTH: THOROUGH means the engine
+# may adjust per-step between STANDARD (low evidence) and DEEP
+# (high evidence), but never below STANDARD or above DEEP.
+# Per Appendix D.8: ADAPTIVELY + RETRIEVAL_BUDGET: MINIMAL means
+# the engine may expand to STANDARD retrieval if a step genuinely
+# needs it, logging a warning.
+# Per spec: REALITY_CONTEXT routing takes precedence over auto-classification.
+
+SET pharmaceutical_incident TO {
+    event: "Batch recall of cardiovascular drug Cardiazol-XR 40mg",
+    manufacturer: "Meridian Pharmaceuticals, Basel, Switzerland",
+    batch_numbers: ["CXR-40-2026-0142", "CXR-40-2026-0143", "CXR-40-2026-0144"],
+    recall_trigger: "3 patients in separate hospitals reported severe hypotension within 2 hours of administration; one required ICU admission",
+    preliminary_lab_findings: "Active ingredient concentration in recalled batches measured at 52mg (+30% above labeled dose) instead of 40mg",
+    manufacturing_timeline: [
+        "2026-01-15: New API supplier (Shenzhen ChemWorks) qualified after passing standard CoA review",
+        "2026-01-28: First production run with new API supplier — batches 0142-0144",
+        "2026-02-02: QC release testing passed — potency assay showed 98.7% (within 95-105% spec)",
+        "2026-02-10: Batches shipped to 12 hospital pharmacies across EU",
+        "2026-02-18: First adverse event report (severe hypotension, University Hospital Zurich)",
+        "2026-02-20: Second and third adverse events reported",
+        "2026-02-21: Voluntary batch recall initiated"
+    ],
+    qc_discrepancy_note: "QC assay used reference standard from previous API supplier (Lonza). The assay method was not re-validated against the new supplier's API, which has a different particle size distribution affecting dissolution rate. The potency assay measures total API content (correct at ~40mg) but does not measure bioavailable API at the dissolution timepoint. The new supplier's smaller particle size leads to faster dissolution, causing a higher effective dose despite identical total API content."
+}
+
+DEFINE REALITY_CONTEXT pharmaceutical_safety:
+    WORLDVIEW: "Patient safety is paramount; every causal link must be evidence-grounded"
+    REASONING_PROFILE:
+        PRIMARY: TRACE
+        SECONDARY: DEDUCE
+        CONSTRAIN: WEIGH TO "published_clinical_data_only"
+        SUPPRESS: [SYNTHESIZE]
+    END_PROFILE
+    ASSUMPTIONS: [precautionary_principle, evidence_hierarchy]
+    VALUE_SYSTEM: [patient_safety, regulatory_compliance, scientific_rigor]
+END_CONTEXT
+
+WITH REALITY_CONTEXT pharmaceutical_safety:
+    ADAPTIVELY TRACE recall_root_cause FROM pharmaceutical_incident WITH:
+        DEPTH: THOROUGH
+        RETRIEVAL_BUDGET: MINIMAL
+        DIRECTION: BACKWARD
+        MUST_INCLUDE: [
+            primary_root_cause,
+            contributing_factors,
+            secondary_causes,
+            evidence_at_each_step,
+            quality_system_gaps
+        ]
+        CANNOT_INCLUDE: [speculation_beyond_evidence, unsourced_claims]
+        OUTPUT_FORMAT: {
+            primary_root_cause: TEXT,
+            causal_chain: LIST OF OBJECT {
+                event: TEXT,
+                caused_by: TEXT,
+                evidence: TEXT,
+                depth_used: TEXT IN ["standard", "thorough", "deep"],
+                retrieval_used: TEXT IN ["none", "minimal", "standard"]
+            },
+            contributing_factors: LIST OF TEXT,
+            secondary_causes: LIST OF TEXT,
+            quality_system_gaps: LIST OF TEXT,
+            adaptive_adjustments: LIST OF OBJECT {
+                step: TEXT,
+                base_depth: TEXT,
+                adjusted_to: TEXT,
+                reason: TEXT
+            },
+            retrieval_expansions: LIST OF OBJECT {
+                step: TEXT,
+                base_budget: TEXT,
+                expanded_to: TEXT,
+                reason: TEXT
+            },
+            constrain_weigh_respected: BOOLEAN,
+            synthesize_suppressed: BOOLEAN,
+            confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+        }
+    END
+END_WITH
+
+# ============================================================
+# SCENARIO B: REASONING_CONTEXT with THEN chains, CONSTRAIN,
+#             EMIT_DIGEST, and graduated RETRIEVAL_BUDGET
+# ============================================================
+# Per Appendix D.6: THEN chains in REASONING_CONTEXT produce ONE digest
+# Per Appendix D.4: CONSTRAIN applies to all ops in REASONING_CONTEXT
+# Per Appendix D.7: Each op in REASONING_CONTEXT may have its own RETRIEVAL_BUDGET
+# Per Appendix D.5: DEPTH affects output richness but NOT digest size (~100 tokens)
+
+SET merger_data TO {
+    acquirer: "GlobalTech Industries (NYSE: GTI), market cap $45B, enterprise software",
+    target: "DataStream Analytics, private, annual revenue $380M, real-time analytics platform",
+    deal_value: "$4.2B (11x revenue multiple)",
+    strategic_rationale: "GTI needs real-time analytics for its cloud platform; build vs buy analysis favored acquisition",
+    regulatory_concerns: "DataStream holds 34% market share in real-time industrial analytics; combined entity would hold 52% in this vertical",
+    financial_data: {
+        gti_debt_to_equity: "0.8",
+        gti_free_cash_flow: "$3.1B annually",
+        datastream_ebitda_margin: "22%",
+        projected_synergies: "$180M annually by year 3",
+        integration_cost: "$400M over 2 years"
+    },
+    key_risks: [
+        "Antitrust review likely in US (DOJ) and EU (DG COMP) given 52% combined share",
+        "DataStream key employees have 2-year retention agreements expiring 6 months post-close",
+        "Platform integration requires rewriting DataStream's core engine from C++ to Java"
+    ]
+}
+
+DEFINE REALITY_CONTEXT corporate_ma:
+    WORLDVIEW: "Mergers are evaluated through overlapping lenses of strategic value, financial discipline, and regulatory risk"
+    REASONING_PROFILE:
+        PRIMARY: WEIGH
+        SECONDARY: DEDUCE
+        CONSTRAIN: TRACE TO "documented_precedent_only"
+    END_PROFILE
+END_CONTEXT
+
+WITH REALITY_CONTEXT corporate_ma:
+    BEGIN REASONING_CONTEXT merger_analysis:
+        # Step 1: Retrieve regulatory precedents (full retrieval)
+        RETRIEVE antitrust_precedents FOR "technology_sector_mergers_52_percent_market_share" WITH:
+            DEPTH: STANDARD
+            EMIT_DIGEST: TRUE
+            OUTPUT_FORMAT: {
+                precedents: LIST OF OBJECT { case: TEXT, outcome: TEXT, market_share: TEXT },
+                regulatory_framework: TEXT
+            }
+        END
+
+        # Step 2: THEN chain — Deduce antitrust risk, then Compare remedies
+        # Per D.6: This chain produces ONE digest
+        DEDUCE antitrust_risk FROM CONTEXT AND merger_data WITH:
+            RETRIEVAL_BUDGET: NONE
+            DEPTH: THOROUGH
+            EMIT_DIGEST: TRUE
+            MUST_INCLUDE: [doj_analysis, eu_dg_comp_analysis, precedent_application]
+        THEN COMPARE remedy_options AGAINST feasibility FROM RESULT WITH:
+            RETRIEVAL_BUDGET: NONE
+            DIMENSIONS: [regulatory_acceptance_likelihood, business_impact, timeline]
+            OUTPUT_FORMAT: {
+                remedies: LIST OF OBJECT {
+                    remedy: TEXT,
+                    regulatory_acceptance: TEXT,
+                    business_impact: TEXT
+                },
+                recommended_approach: TEXT
+            }
+        END
+
+        # Step 3: Financial analysis with constrained TRACE
+        # CONSTRAIN: TRACE TO "documented_precedent_only" from reality context
+        TRACE integration_risks FROM merger_data.key_risks WITH:
+            RETRIEVAL_BUDGET: MINIMAL
+            DEPTH: THOROUGH
+            DIRECTION: FORWARD
+            EMIT_DIGEST: TRUE
+            MUST_INCLUDE: [risk_chain_per_item, mitigation_options]
+            OUTPUT_FORMAT: {
+                risk_chains: LIST OF OBJECT {
+                    risk: TEXT,
+                    causal_chain: LIST OF TEXT,
+                    mitigation: TEXT,
+                    precedent_basis: TEXT
+                }
+            }
+        END
+
+        # Step 4: Final synthesis from accumulated digests
+        # NOTE: SYNTHESIZE is NOT suppressed in corporate_ma context
+        WEIGH merger_recommendation ON go_no_go FROM CONTEXT WITH:
+            RETRIEVAL_BUDGET: NONE
+            DEPTH: DEEP
+            SOURCES: [CONTEXT, merger_data.financial_data]
+            MUST_INCLUDE: [all_prior_analyses_referenced, risk_adjusted_recommendation]
+            OUTPUT_FORMAT: {
+                recommendation: TEXT IN ["proceed", "proceed_with_conditions", "abandon"],
+                conditions: LIST OF TEXT,
+                risk_assessment: OBJECT {
+                    regulatory: TEXT IN ["high", "moderate", "low"],
+                    financial: TEXT IN ["high", "moderate", "low"],
+                    operational: TEXT IN ["high", "moderate", "low"]
+                },
+                digests_consumed: NUMBER,
+                rationale: TEXT,
+                confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+            }
+        END
+    END REASONING_CONTEXT
+END_WITH
+
+# ============================================================
+# SCENARIO C: Full Compound — Person entity with cognitive profile
+#             inside REASONING_CONTEXT with all modifiers
+# ============================================================
+# Tests the most complex interaction: a Person entity whose think()
+# method fires through a typed reasoning operation, inside a
+# REASONING_CONTEXT, with RETRIEVAL_BUDGET and DEPTH controls
+
+SET crisis_scenario TO {
+    event: "Major cloud provider outage affecting 40% of company's infrastructure",
+    duration: "ongoing, 6 hours so far",
+    impact: "customer-facing services degraded, SLA breach imminent for 23 enterprise clients",
+    options: [
+        "Wait for provider to restore (estimated 2-4 more hours)",
+        "Failover to secondary provider (tested in DR drill 8 months ago, 45-minute cutover)",
+        "Partial failover — move enterprise clients to secondary, keep standard tier on primary",
+        "Invoke SLA force majeure clause and communicate transparently to all clients"
+    ],
+    constraints: {
+        sla_breach_penalty: "$2.3M if enterprise SLA breached beyond 8 hours",
+        failover_risk: "Last DR drill had 3 issues that were documented but not all resolved",
+        team_status: "SRE team has been working 6 hours, fatigue increasing"
+    }
+}
+
+INTELLIGENTLY create_person FROM "incident_command" WITH:
+    OUTPUT: incident_commander
+    HINTS: {
+        thinking_style: "analytical under pressure",
+        cognitive_profile: {
+            PRIMARY_REASONING: DEDUCE,
+            SECONDARY_REASONING: WEIGH,
+            REASONING_FLEXIBILITY: "moderate"
+        },
+        experience: "12 years SRE, 4 years incident command, managed 3 previous multi-hour outages"
+    }
+END
+
+BEGIN REASONING_CONTEXT crisis_response:
+    # The incident commander thinks through the crisis
+    # Their think() routes through DEDUCE (primary) per cognitive profile
+    # DEPTH and RETRIEVAL_BUDGET apply to the Person's cognitive operation
+    ADAPTIVELY incident_commander.think(crisis_scenario) WITH:
+        DEPTH: THOROUGH
+        RETRIEVAL_BUDGET: MINIMAL
+        EMIT_DIGEST: TRUE
+        MUST_INCLUDE: [
+            option_analysis,
+            risk_assessment_per_option,
+            team_fatigue_consideration,
+            time_pressure_factor
+        ]
+        OUTPUT_FORMAT: {
+            reasoning_type_used: TEXT,
+            style_modifier: TEXT,
+            depth_adjustments: LIST OF OBJECT {
+                option: TEXT,
+                depth_used: TEXT,
+                reason: TEXT
+            },
+            analysis: LIST OF OBJECT {
+                option: TEXT,
+                pros: LIST OF TEXT,
+                cons: LIST OF TEXT,
+                risk_level: TEXT IN ["high", "moderate", "low"]
+            },
+            time_pressure_assessment: TEXT,
+            team_fatigue_impact: TEXT,
+            confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+        }
+    END
+
+    # Then the commander decides, using accumulated context
+    incident_commander.decide(crisis_scenario.options) WITH:
+        DEPTH: DEEP
+        RETRIEVAL_BUDGET: NONE
+        EMIT_DIGEST: TRUE
+        MUST_INCLUDE: [decision, rationale, contingency_plan]
+        OUTPUT_FORMAT: {
+            decision: TEXT,
+            chosen_option: NUMBER,
+            rationale: TEXT,
+            contingency_if_fails: TEXT,
+            digests_consumed: NUMBER,
+            confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+        }
+    END
+END REASONING_CONTEXT
+
+# ============================================================
+# VALIDATION: Cross-feature interaction audit
+# ============================================================
+
+COMPARE [recall_root_cause, merger_analysis, crisis_response] AGAINST interaction_correctness WITH:
+    DIMENSIONS: [
+        adaptively_depth_interaction,
+        retrieval_budget_compliance,
+        reasoning_context_digest_behavior,
+        constrain_enforcement,
+        suppress_enforcement,
+        then_chain_single_digest,
+        person_cognitive_routing,
+        reality_context_precedence
+    ]
+    MUST_INCLUDE: [
+        scenario_a_adaptive_range_check,
+        scenario_a_retrieval_expansion_log,
+        scenario_a_suppress_synthesize_check,
+        scenario_b_digest_count_check,
+        scenario_b_constrain_trace_check,
+        scenario_b_then_chain_digest_check,
+        scenario_c_person_reasoning_type_check,
+        scenario_c_depth_adjustment_check,
+        interaction_anomalies
+    ]
+    OUTPUT_FORMAT: {
+        scenario_a_valid: BOOLEAN,
+        scenario_a_findings: LIST OF TEXT,
+        scenario_b_valid: BOOLEAN,
+        scenario_b_findings: LIST OF TEXT,
+        scenario_c_valid: BOOLEAN,
+        scenario_c_findings: LIST OF TEXT,
+        interaction_anomalies: LIST OF TEXT,
+        overall_validation: TEXT IN ["pass", "partial_pass", "fail"],
+        recommendations: LIST OF TEXT
+    }
+END

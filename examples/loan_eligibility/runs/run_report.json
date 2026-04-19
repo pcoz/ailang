@@ -1,0 +1,416 @@
+[
+  {
+    "scenario": "scenario_01_clear_approve",
+    "applicant": {
+      "name": "Asha Bhattacharya",
+      "age": 42,
+      "credit_score": 785,
+      "annual_income_usd": 110000,
+      "monthly_debt_obligations_usd": 950,
+      "employment_status": "full_time",
+      "employment_tenure_months": 96,
+      "industry": "healthcare",
+      "residence_status": "owns_home",
+      "requested_loan_amount_usd": 18000,
+      "requested_term_months": 48,
+      "bankruptcies_last_7_years": 0,
+      "fraud_flags": [],
+      "months_with_lender": 60,
+      "recent_credit_inquiries_6mo": 1
+    },
+    "affordability_metrics": {
+      "monthly_payment_usd": 473.13,
+      "monthly_income_usd": 9166.67,
+      "dti_pct": 15.53,
+      "payment_to_income_pct": 5.16,
+      "residual_income_usd": 7743.54,
+      "principal_usd": 18000,
+      "term_months": 48,
+      "apr_pct": 11.9
+    },
+    "hard_eligibility": {
+      "credit_score_check": "pass",
+      "dti_check": "pass",
+      "employment_tenure_check": "pass",
+      "residual_income_check": "pass",
+      "bankruptcy_disqualifier_check": "pass",
+      "fraud_flag_disqualifier_check": "pass",
+      "loan_amount_within_product_limit_check": "pass",
+      "term_within_product_limit_check": "pass",
+      "hard_outcome": "all_pass",
+      "failed_checks": [],
+      "notes": "All eligibility checks pass. Credit score 785 >= minimum 660. DTI 15.53% <= maximum 43.0%. Employment tenure 96 months >= minimum 12 months. Residual income $7,743.54 >= minimum $1,500. No bankruptcies in last 7 years. No fraud flags present. Requested loan amount $18,000 <= maximum $50,000. Requested term 48 months <= maximum 84 months."
+    },
+    "soft_factors": {
+      "industry_assessment": "neutral",
+      "tenure_assessment": "weak",
+      "relationship_assessment": "none",
+      "inquiry_velocity_assessment": "healthy",
+      "soft_factor_direction": "neutral",
+      "rationale": "insufficient_info: No source data, claims, premises, or evidence were provided in the SOURCES section. Without any input data across the specified dimensions of forward_payment_capacity, relationship_value, and risk_trajectory, it is impossible to perform authority-weighted evaluation or render assessments for any of the required output fields. All output values are set to their most conservative or neutral defaults to reflect the absence of evaluable information. Any substantive assessment would require actual source claims, data points, or authority statements to weigh."
+    },
+    "final_decision": {
+      "decision": "APPROVE_WITH_CONDITIONS",
+      "primary_rationale": "All hard eligibility checks pass without exception, demonstrating strong quantitative creditworthiness: credit score of 785 against a 660 minimum, DTI of 15.53% well below the 43% ceiling, residual income of $7,743.54 substantially exceeding the $1,500 floor, 96 months of employment tenure, no bankruptcies, no fraud flags, and a loan amount and term both within product limits. The soft factor assessment yields a net-neutral directional signal, meaning no soft factors actively support escalation to decline or referral, but the tenure assessment is flagged as 'weak' and the relationship assessment is 'none', introducing modest incremental uncertainty. The absence of a positive soft factor uplift, combined with the weak tenure and no existing relationship, warrants a conditional approval rather than a clean approval, ensuring additional verification steps are satisfied before funding.",
+      "contributing_hard_factors": [
+        "Credit score 785 passes the minimum threshold of 660 by a substantial margin, indicating strong credit quality.",
+        "DTI of 15.53% is well below the 43.0% maximum, indicating low debt burden relative to income.",
+        "Employment tenure of 96 months meets and significantly exceeds the 12-month minimum, indicating stable employment history.",
+        "Residual income of $7,743.54 exceeds the $1,500 minimum by a wide margin, indicating strong post-obligation cash flow.",
+        "No bankruptcies recorded within the last 7 years; disqualifier check passed.",
+        "No fraud flags present; disqualifier check passed.",
+        "Requested loan amount of $18,000 is within the $50,000 product maximum.",
+        "Requested term of 48 months is within the 84-month product maximum."
+      ],
+      "contributing_soft_factors": [
+        "Industry assessment is neutral, providing no positive or negative directional pressure on the decision.",
+        "Tenure assessment is rated 'weak', introducing a modest negative soft signal that tempers an outright clean approval.",
+        "Relationship assessment is 'none', meaning no existing relationship value could be weighed in the applicant's favor.",
+        "Inquiry velocity assessment is 'healthy', providing a mild positive soft signal indicating no concerning recent credit-seeking behavior.",
+        "Overall soft factor direction is neutral; no soft factors are sufficient to override the strong hard eligibility outcome, but the weak tenure and absence of relationship prevent a full uplift to unconditional approval."
+      ],
+      "conditions_if_any": [
+        "Verification of employment and income documentation should be completed prior to funding, given the 'weak' tenure soft assessment flag.",
+        "Confirmation of identity and absence of undisclosed liabilities should be obtained, given that no existing relationship exists to provide supplementary behavioral data.",
+        "Any material change in the applicant's financial profile between application and funding should trigger re-evaluation against hard eligibility thresholds."
+      ],
+      "confidence": "medium"
+    },
+    "letter_excerpt": "Dear Asha Bhattacharya, your loan request is conditionally approved. Conditions: Verification of employment and income documentation should be completed prior to funding, given the 'weak' tenure soft assessment flag.; Confirmation of identity and absence of undisclosed liabilities should be obtained, given that no existing relationship exists to provide supplementary behavioral data.; Any material change in the applicant's financial profile between application and funding should trigger re-evaluation against hard eligibility thresholds.. All hard eligibility checks pass without exception, demonstrating strong quantitative creditworthiness: credit score of 785 against a 660 minimum, DTI of 15.53% well below the 43% ceiling, residual income of $7,743.54 substantially exceeding the $1,500 floor, 96 months of employment tenure, no bankruptcies, no fraud flags, and a loan amount and term both within product limits. The soft factor assessment yields a net-neutral directional signal, meaning no soft factors actively support escalation to decline or referral, but the tenure assessment is flagged as 'weak' and the relationship assessment is 'none', introducing modest incremental uncertainty. The absence of a positive soft factor uplift, combined with the weak tenure and no existing relationship, warrants a conditional approval rather than a clean approval, ensuring additional verification steps are satisfied before funding.",
+    "transactions_committed": 5,
+    "transactions_rolled_back": 0
+  },
+  {
+    "scenario": "scenario_02_clear_decline",
+    "applicant": {
+      "name": "Marcus Reilly",
+      "age": 29,
+      "credit_score": 590,
+      "annual_income_usd": 38000,
+      "monthly_debt_obligations_usd": 1100,
+      "employment_status": "part_time",
+      "employment_tenure_months": 5,
+      "industry": "retail",
+      "residence_status": "rents",
+      "requested_loan_amount_usd": 12000,
+      "requested_term_months": 60,
+      "bankruptcies_last_7_years": 1,
+      "fraud_flags": [],
+      "months_with_lender": 4,
+      "recent_credit_inquiries_6mo": 8
+    },
+    "affordability_metrics": {
+      "monthly_payment_usd": 266.33,
+      "monthly_income_usd": 3166.67,
+      "dti_pct": 43.15,
+      "payment_to_income_pct": 8.41,
+      "residual_income_usd": 1800.34,
+      "principal_usd": 12000,
+      "term_months": 60,
+      "apr_pct": 11.9
+    },
+    "hard_eligibility": {
+      "credit_score_check": "fail",
+      "dti_check": "fail",
+      "employment_tenure_check": "fail",
+      "residual_income_check": "pass",
+      "bankruptcy_disqualifier_check": "fail",
+      "fraud_flag_disqualifier_check": "pass",
+      "loan_amount_within_product_limit_check": "pass",
+      "term_within_product_limit_check": "pass",
+      "hard_outcome": "hard_fail",
+      "failed_checks": [
+        "credit_score_check",
+        "dti_check",
+        "employment_tenure_check",
+        "bankruptcy_disqualifier_check"
+      ],
+      "notes": "credit_score_check: FAIL \u2014 applicant credit score is 590, which is below the product minimum of 660. dti_check: FAIL \u2014 computed DTI is 43.15%, which exceeds the product maximum of 43.0%. employment_tenure_check: FAIL \u2014 applicant tenure is 5 months, below the standard minimum of 12 months; the exception (owns_home AND tenure >= 6) does not apply because applicant residence_status is 'rents', not 'owns_home'. residual_income_check: PASS \u2014 computed residual income of $1,800.34 meets the product minimum of $1,500. bankruptcy_disqualifier_check: FAIL (hard disqualifier) \u2014 applicant has 1 bankruptcy in the last 7 years; the rule requires 0. fraud_flag_disqualifier_check: PASS \u2014 fraud_flags list is empty. loan_amount_within_product_limit_check: PASS \u2014 requested loan amount of $12,000 is within the product maximum of $50,000. term_within_product_limit_check: PASS \u2014 requested term of 60 months is within the product maximum of 84 months. Overall outcome is hard_fail due to the bankruptcy hard disqualifier, plus three additional eligibility failures (credit score, DTI, employment tenure)."
+    },
+    "soft_factors": {
+      "industry_assessment": "neutral",
+      "tenure_assessment": "weak",
+      "relationship_assessment": "none",
+      "inquiry_velocity_assessment": "healthy",
+      "soft_factor_direction": "neutral",
+      "rationale": "insufficient_info: No source data, claims, premises, or evidence were provided in the SOURCES section. Without any input data across the specified dimensions of forward_payment_capacity, relationship_value, and risk_trajectory, it is impossible to perform authority-weighted evaluation. All assessments default to neutral or baseline values, and no meaningful rationale can be constructed from the available inputs."
+    },
+    "final_decision": {
+      "decision": "DECLINE",
+      "primary_rationale": "The application results in a hard_fail outcome driven by four failed hard eligibility checks, including one absolute hard disqualifier: the applicant has 1 bankruptcy within the last 7 years, against a requirement of 0. This disqualifier alone mandates decline regardless of any other factors. Additionally, the applicant fails three further eligibility criteria: credit score of 590 is below the product minimum of 660; computed DTI of 43.15% exceeds the product maximum of 43.0%; and employment tenure of 5 months is below the 12-month standard minimum, with no applicable exception (the homeownership exception does not apply as the applicant rents). The cumulative weight of these hard failures leaves no pathway to approval or conditional approval.",
+      "contributing_hard_factors": [
+        "Bankruptcy hard disqualifier: 1 bankruptcy in the last 7 years; product requires 0 \u2014 absolute disqualifier",
+        "Credit score fail: applicant score of 590 is below the product minimum of 660",
+        "DTI fail: computed DTI of 43.15% exceeds the product maximum of 43.0%",
+        "Employment tenure fail: 5 months of tenure is below the 12-month minimum; homeownership exception inapplicable as applicant rents",
+        "Residual income pass: computed residual income of $1,800.34 meets the $1,500 minimum \u2014 the sole passing financial check, insufficient to offset hard failures",
+        "Loan amount and term are within product limits \u2014 not a source of failure"
+      ],
+      "contributing_soft_factors": [
+        "Industry assessment: neutral \u2014 no positive or negative contribution",
+        "Tenure assessment: weak \u2014 directionally consistent with the hard employment tenure failure, offering no compensating support",
+        "Relationship assessment: none \u2014 absence of existing relationship provides no mitigating value",
+        "Inquiry velocity assessment: healthy \u2014 the only soft factor with a positive signal, but insufficient to offset hard disqualifiers",
+        "Overall soft factor direction: neutral \u2014 soft factors neither meaningfully support nor independently justify an exception pathway"
+      ],
+      "conditions_if_any": [],
+      "confidence": "high"
+    },
+    "letter_excerpt": "Dear Marcus Reilly, we are unable to approve your loan request at this time. The application results in a hard_fail outcome driven by four failed hard eligibility checks, including one absolute hard disqualifier: the applicant has 1 bankruptcy within the last 7 years, against a requirement of 0. This disqualifier alone mandates decline regardless of any other factors. Additionally, the applicant fails three further eligibility criteria: credit score of 590 is below the product minimum of 660; computed DTI of 43.15% exceeds the product maximum of 43.0%; and employment tenure of 5 months is below the 12-month standard minimum, with no applicable exception (the homeownership exception does not apply as the applicant rents). The cumulative weight of these hard failures leaves no pathway to approval or conditional approval. You are welcome to reapply after addressing the cited factors.",
+    "transactions_committed": 5,
+    "transactions_rolled_back": 0
+  },
+  {
+    "scenario": "scenario_03_marginal_conditional",
+    "applicant": {
+      "name": "Priya Sundaram",
+      "age": 37,
+      "credit_score": 695,
+      "annual_income_usd": 64000,
+      "monthly_debt_obligations_usd": 1850,
+      "employment_status": "full_time",
+      "employment_tenure_months": 48,
+      "industry": "education",
+      "residence_status": "owns_home",
+      "requested_loan_amount_usd": 22000,
+      "requested_term_months": 60,
+      "bankruptcies_last_7_years": 0,
+      "fraud_flags": [],
+      "months_with_lender": 36,
+      "recent_credit_inquiries_6mo": 2
+    },
+    "affordability_metrics": {
+      "monthly_payment_usd": 488.27,
+      "monthly_income_usd": 5333.33,
+      "dti_pct": 43.84,
+      "payment_to_income_pct": 9.16,
+      "residual_income_usd": 2995.07,
+      "principal_usd": 22000,
+      "term_months": 60,
+      "apr_pct": 11.9
+    },
+    "hard_eligibility": {
+      "credit_score_check": "pass",
+      "dti_check": "fail",
+      "employment_tenure_check": "pass",
+      "residual_income_check": "pass",
+      "bankruptcy_disqualifier_check": "pass",
+      "fraud_flag_disqualifier_check": "pass",
+      "loan_amount_within_product_limit_check": "pass",
+      "term_within_product_limit_check": "pass",
+      "hard_outcome": "marginal",
+      "failed_checks": [
+        "dti_check"
+      ],
+      "notes": "Credit score: 695 >= 660 minimum \u2014 pass. DTI: computed dti_pct of 43.84% exceeds product maximum of 43.00% \u2014 fail. Employment tenure: applicant has 48 months tenure, which meets the standard 12-month minimum; the homeownership exception is moot as the standard threshold is already satisfied \u2014 pass. Residual income: $2,995.07 >= $1,500.00 minimum \u2014 pass. Bankruptcy disqualifier: bankruptcies_last_7_years = 0 \u2014 pass. Fraud flag disqualifier: fraud_flags is an empty list \u2014 pass. Loan amount: $22,000 requested <= $50,000 maximum \u2014 pass. Loan term: 60 months requested <= 84 months maximum \u2014 pass. The sole failing check is DTI, which is a non-disqualifier eligibility criterion (not listed as a hard disqualifier in the rules), resulting in a marginal outcome rather than a hard_fail. No speculation is made regarding rate adjustments or other undisclosed factors."
+    },
+    "soft_factors": {
+      "industry_assessment": "neutral",
+      "tenure_assessment": "weak",
+      "relationship_assessment": "none",
+      "inquiry_velocity_assessment": "healthy",
+      "soft_factor_direction": "neutral",
+      "rationale": "insufficient_info: No source data, claims, evidence, or authority inputs were provided in the SOURCES section. Without any premises or data to reason from, no weighted evaluation can be performed across the requested dimensions of forward_payment_capacity, relationship_value, or risk_trajectory. All output fields are set to neutral/baseline defaults solely to satisfy schema requirements, not as substantive assessments. A meaningful WEIGH operation requires populated source claims with associated credibility indicators, expertise relevance, potential biases, and supporting evidence."
+    },
+    "final_decision": {
+      "decision": "REFER_TO_UNDERWRITER",
+      "primary_rationale": "The application presents a marginal hard eligibility outcome driven by a single failing check: DTI of 43.84% exceeds the product maximum of 43.00% by 0.84 percentage points. All other hard eligibility criteria pass, including credit score (695 vs. 660 minimum), residual income ($2,995.07 vs. $1,500.00 minimum), employment tenure (48 months vs. 12-month minimum), and all disqualifier checks (bankruptcy, fraud). Because DTI is classified as a non-disqualifier eligibility criterion resulting in a marginal rather than hard-fail outcome, and because the soft factor assessment is effectively indeterminate due to insufficient source data, automated approval or decline cannot be responsibly rendered. The marginal DTI breach combined with neutral-to-weak soft factor signals and an absence of meaningful relationship or risk-trajectory data warrants human underwriter review to make a fully informed credit judgment.",
+      "contributing_hard_factors": [
+        "DTI FAIL: Computed DTI of 43.84% exceeds the product maximum of 43.00% by 0.84 percentage points \u2014 the sole failing hard check and the primary driver of the marginal outcome",
+        "Credit score PASS: 695 meets the 660 minimum threshold, providing a positive hard signal",
+        "Residual income PASS: $2,995.07 exceeds the $1,500.00 minimum by a meaningful margin, indicating capacity beyond minimum requirements",
+        "Employment tenure PASS: 48 months tenure substantially exceeds the 12-month minimum, indicating stability",
+        "Bankruptcy disqualifier PASS: Zero bankruptcies in the last 7 years",
+        "Fraud flag disqualifier PASS: No fraud flags present",
+        "Loan amount PASS: $22,000 requested is well within the $50,000 product maximum",
+        "Loan term PASS: 60 months requested is within the 84-month product maximum"
+      ],
+      "contributing_soft_factors": [
+        "Industry assessment: NEUTRAL \u2014 no directional signal provided",
+        "Tenure assessment: WEAK \u2014 represents a mild negative soft signal, though the basis for this assessment is noted as indeterminate due to insufficient source data",
+        "Relationship assessment: NONE \u2014 absence of existing relationship provides no mitigating soft credit support",
+        "Inquiry velocity assessment: HEALTHY \u2014 a positive soft signal suggesting the applicant is not aggressively seeking credit across multiple channels",
+        "Overall soft factor direction: NEUTRAL \u2014 the aggregate soft factor profile neither meaningfully supports nor undermines the application, but the indeterminate data quality of the soft assessment limits its weight in any automated decision"
+      ],
+      "conditions_if_any": [
+        "Underwriter should verify whether any documented reduction in recurring obligations could bring DTI to or below the 43.00% threshold prior to funding",
+        "Underwriter should assess whether the strong residual income figure ($2,995.07) and healthy inquiry velocity are sufficient compensating factors to offset the marginal DTI breach",
+        "Underwriter should obtain and evaluate the source data underlying the soft factor assessments (industry, tenure, relationship, risk trajectory) before rendering a final decision, as the soft factor module reported insufficient_info",
+        "If approved, underwriter should consider whether any loan structuring adjustments (e.g., reduced loan amount or adjusted term) could bring DTI within product guidelines"
+      ],
+      "confidence": "medium"
+    },
+    "letter_excerpt": "Dear Priya Sundaram, your application has been forwarded to a senior underwriter for individual review. We will be in touch within 3 business days.",
+    "transactions_committed": 5,
+    "transactions_rolled_back": 0
+  },
+  {
+    "scenario": "scenario_04_marginal_decline",
+    "applicant": {
+      "name": "Diego Ferreira",
+      "age": 31,
+      "credit_score": 685,
+      "annual_income_usd": 72000,
+      "monthly_debt_obligations_usd": 1200,
+      "employment_status": "full_time",
+      "employment_tenure_months": 3,
+      "industry": "rideshare_gig",
+      "residence_status": "rents",
+      "requested_loan_amount_usd": 15000,
+      "requested_term_months": 36,
+      "bankruptcies_last_7_years": 0,
+      "fraud_flags": [],
+      "months_with_lender": 2,
+      "recent_credit_inquiries_6mo": 7
+    },
+    "affordability_metrics": {
+      "monthly_payment_usd": 497.5,
+      "monthly_income_usd": 6000.0,
+      "dti_pct": 28.29,
+      "payment_to_income_pct": 8.29,
+      "residual_income_usd": 4302.5,
+      "principal_usd": 15000,
+      "term_months": 36,
+      "apr_pct": 11.9
+    },
+    "hard_eligibility": {
+      "credit_score_check": "pass",
+      "dti_check": "pass",
+      "employment_tenure_check": "fail",
+      "residual_income_check": "pass",
+      "bankruptcy_disqualifier_check": "pass",
+      "fraud_flag_disqualifier_check": "pass",
+      "loan_amount_within_product_limit_check": "pass",
+      "term_within_product_limit_check": "pass",
+      "hard_outcome": "marginal",
+      "failed_checks": [
+        "employment_tenure_check"
+      ],
+      "notes": "Diego Ferreira passes 7 of 8 eligibility checks. The sole failure is employment_tenure: his tenure of 3 months falls below the product minimum of 12 months, and the homeownership exception does not apply because his residence_status is 'rents' rather than 'owns_home'. All other criteria are satisfied: credit score (685 vs. 660 minimum), DTI (28.29% vs. 43.0% maximum), residual income ($4,302.50 vs. $1,500 minimum), no bankruptcies in the last 7 years, no fraud flags, loan amount ($15,000 vs. $50,000 maximum), and term (36 months vs. 84 months maximum) are all within product limits. Because the only failing check is a standard eligibility rule rather than an explicit hard disqualifier, the outcome is classified as marginal."
+    },
+    "soft_factors": {
+      "industry_assessment": "neutral",
+      "tenure_assessment": "weak",
+      "relationship_assessment": "none",
+      "inquiry_velocity_assessment": "healthy",
+      "soft_factor_direction": "neutral",
+      "rationale": "insufficient_info: No source data, claims, premises, or evidence were provided in the SOURCES section. All five required assessments (industry_assessment, tenure_assessment, relationship_assessment, inquiry_velocity_assessment, soft_factor_direction) cannot be meaningfully derived from the inputs as given. Default neutral/baseline values are returned solely to satisfy schema requirements, but no weighted evaluation of competing claims is possible without actual source content. The specified dimensions \u2014 forward_payment_capacity, relationship_value, and risk_trajectory \u2014 cannot be assessed without underlying data points or authority claims to weigh."
+    },
+    "final_decision": {
+      "decision": "REFER_TO_UNDERWRITER",
+      "primary_rationale": "Diego Ferreira achieves a 'marginal' hard eligibility outcome, passing 7 of 8 checks but failing the employment tenure requirement (3 months actual vs. 12 months minimum). This single failure is a standard eligibility rule rather than an absolute hard disqualifier, and the homeownership exception that could have offset the tenure shortfall does not apply given his renter status. The remaining hard factors are solidly within product limits \u2014 credit score (685), DTI (28.29%), and residual income ($4,302.50) all provide meaningful buffer above their respective thresholds. However, because the soft-factor analysis was unable to produce a meaningful weighted evaluation due to insufficient source data (returning only schema-default neutral values), the overall risk picture cannot be fully resolved by automated scoring alone. The combination of a marginal hard outcome and an unresolvable soft-factor assessment makes referral to a human underwriter the appropriate disposition, as the underwriter can apply judgment to the tenure exception question and gather any missing soft-factor evidence.",
+      "contributing_hard_factors": [
+        "FAIL \u2014 Employment tenure: 3 months actual vs. 12 months product minimum; homeownership exception inapplicable (residence_status = 'rents')",
+        "PASS \u2014 Credit score: 685 vs. 660 minimum (25-point buffer)",
+        "PASS \u2014 Debt-to-income ratio: 28.29% vs. 43.0% maximum (14.71 percentage-point buffer)",
+        "PASS \u2014 Residual income: $4,302.50 vs. $1,500 minimum (187% above floor)",
+        "PASS \u2014 Bankruptcy disqualifier: no bankruptcies within the last 7 years",
+        "PASS \u2014 Fraud flag disqualifier: no fraud flags present",
+        "PASS \u2014 Loan amount: $15,000 vs. $50,000 product maximum",
+        "PASS \u2014 Loan term: 36 months vs. 84 months product maximum"
+      ],
+      "contributing_soft_factors": [
+        "Industry assessment: neutral (default; underlying source data insufficient to derive a substantive rating)",
+        "Tenure assessment: weak (consistent with the hard-factor tenure failure; no mitigating evidence available from soft-factor sources)",
+        "Relationship assessment: none (no existing relationship data provided)",
+        "Inquiry velocity assessment: healthy (default; no contradicting evidence in available data)",
+        "Overall soft-factor direction: neutral \u2014 NOTE: all soft-factor values are schema-default placeholders due to absence of source data; they carry no independent evidentiary weight in this decision"
+      ],
+      "conditions_if_any": [
+        "Underwriter must make a specific determination on whether any exception to the 12-month employment tenure requirement is warranted given the applicant's other strong financial indicators (low DTI, high residual income buffer)",
+        "Underwriter should obtain and evaluate employment verification documentation to confirm the 3-month tenure figure and assess the stability of the current employer and role",
+        "Underwriter should gather the soft-factor source data that was unavailable at automated scoring stage \u2014 specifically: industry/employer forward-looking stability indicators, any relationship history, and a validated inquiry velocity count \u2014 before finalising the decision",
+        "If an exception is granted, underwriter must document the specific compensating factors relied upon (e.g., residual income strength, low DTI) in accordance with the institution's exception policy"
+      ],
+      "confidence": "medium"
+    },
+    "letter_excerpt": "Dear Diego Ferreira, your application has been forwarded to a senior underwriter for individual review. We will be in touch within 3 business days.",
+    "transactions_committed": 5,
+    "transactions_rolled_back": 0
+  },
+  {
+    "scenario": "scenario_05_judgment_call",
+    "applicant": {
+      "name": "Eleanor Whitfield",
+      "age": 56,
+      "credit_score": 660,
+      "annual_income_usd": 58000,
+      "monthly_debt_obligations_usd": 1400,
+      "employment_status": "full_time",
+      "employment_tenure_months": 12,
+      "industry": "manufacturing",
+      "residence_status": "rents",
+      "requested_loan_amount_usd": 20000,
+      "requested_term_months": 72,
+      "bankruptcies_last_7_years": 0,
+      "fraud_flags": [],
+      "months_with_lender": 6,
+      "recent_credit_inquiries_6mo": 3
+    },
+    "affordability_metrics": {
+      "monthly_payment_usd": 389.96,
+      "monthly_income_usd": 4833.33,
+      "dti_pct": 37.03,
+      "payment_to_income_pct": 8.07,
+      "residual_income_usd": 3043.37,
+      "principal_usd": 20000,
+      "term_months": 72,
+      "apr_pct": 11.9
+    },
+    "hard_eligibility": {
+      "credit_score_check": "pass",
+      "dti_check": "pass",
+      "employment_tenure_check": "pass",
+      "residual_income_check": "pass",
+      "bankruptcy_disqualifier_check": "pass",
+      "fraud_flag_disqualifier_check": "pass",
+      "loan_amount_within_product_limit_check": "pass",
+      "term_within_product_limit_check": "pass",
+      "hard_outcome": "all_pass",
+      "failed_checks": [],
+      "notes": "All eligibility checks pass. Credit score: 660 >= 660 (minimum). DTI: 37.03% <= 43.0% (maximum). Employment tenure: 12 months >= 12 months (minimum); the standard tenure rule is satisfied directly without needing the homeowner exception (which would not apply anyway since residence_status is 'rents'). Residual income: $3,043.37 >= $1,500.00 (minimum). Bankruptcies in last 7 years: 0 (hard disqualifier not triggered). Fraud flags: empty list (hard disqualifier not triggered). Requested loan amount: $20,000 <= $50,000 (maximum). Requested term: 72 months <= 84 months (maximum). No checks failed; outcome is all_pass."
+    },
+    "soft_factors": {
+      "industry_assessment": "neutral",
+      "tenure_assessment": "weak",
+      "relationship_assessment": "none",
+      "inquiry_velocity_assessment": "healthy",
+      "soft_factor_direction": "neutral",
+      "rationale": "insufficient_info: No source data, claims, evidence, or authority inputs were provided in the SOURCES field. Without any premises or data to reason from, all dimensions (forward_payment_capacity, relationship_value, risk_trajectory) and all required assessments (industry, tenure, relationship, inquiry_velocity, soft_factor_direction) cannot be evaluated. All output fields are set to their most neutral or minimal default values solely to satisfy schema requirements, not because any evidence supports them. A meaningful weighted evaluation requires actual source content, claims, and supporting evidence to be supplied."
+    },
+    "final_decision": {
+      "decision": "APPROVE_WITH_CONDITIONS",
+      "primary_rationale": "All eight hard eligibility checks pass with no failed checks, satisfying every mandatory threshold: credit score meets the minimum exactly (660 >= 660), DTI is within the maximum (37.03% <= 43.0%), employment tenure meets the minimum (12 months >= 12 months), residual income exceeds the minimum ($3,043.37 >= $1,500.00), no bankruptcy disqualifier, no fraud flags, loan amount within product limit ($20,000 <= $50,000), and term within product limit (72 months <= 84 months). The hard outcome is unambiguously 'all_pass', which supports approval. However, the soft factor analysis is materially incomplete: the soft_factors module explicitly states 'insufficient_info' and acknowledges that no source data, claims, or evidence were provided to evaluate forward payment capacity, relationship value, or risk trajectory. The only assessable soft signals are a 'weak' tenure assessment and a 'none' relationship assessment, both of which introduce modest incremental risk. The inquiry velocity assessment is 'healthy' and the industry assessment is 'neutral', providing partial offset. Because the hard outcome fully supports approval but the soft factor layer is substantively unresolved, a clean APPROVE cannot be issued with high confidence. Conditions are imposed to compensate for the soft factor data gap and the marginally thin credit profile (score at the floor, DTI near the upper range).",
+      "contributing_hard_factors": [
+        "Credit score of 660 meets the minimum threshold exactly (660 >= 660) \u2014 pass",
+        "DTI of 37.03% is within the maximum allowed (37.03% <= 43.0%) \u2014 pass",
+        "Employment tenure of 12 months meets the minimum exactly (12 >= 12 months) \u2014 pass",
+        "Residual income of $3,043.37 exceeds the minimum of $1,500.00 \u2014 pass",
+        "Zero bankruptcies in the last 7 years \u2014 hard disqualifier not triggered",
+        "No fraud flags present \u2014 hard disqualifier not triggered",
+        "Requested loan amount of $20,000 is within the product maximum of $50,000 \u2014 pass",
+        "Requested term of 72 months is within the product maximum of 84 months \u2014 pass",
+        "Hard outcome: all_pass with zero failed checks"
+      ],
+      "contributing_soft_factors": [
+        "Tenure assessment rated 'weak' \u2014 introduces modest incremental risk around employment stability",
+        "Relationship assessment rated 'none' \u2014 no existing relationship depth to offset risk",
+        "Industry assessment rated 'neutral' \u2014 no positive or negative directional signal from industry",
+        "Inquiry velocity assessment rated 'healthy' \u2014 no elevated credit-seeking behavior detected",
+        "Soft factor direction rated 'neutral' overall \u2014 no strong positive lift, but no strong negative drag either",
+        "Soft factor analysis flagged as 'insufficient_info' \u2014 the module lacked source data to evaluate forward payment capacity, relationship value, and risk trajectory; this data gap itself is a soft risk factor",
+        "Credit score at the exact minimum floor (660) combined with DTI at 37.03% (elevated within the passing range) represents a thin margin profile that amplifies the weight of the unresolved soft factors",
+        "Applicant rents rather than owns \u2014 homeowner exception is inapplicable, and no asset-based stability signal is available"
+      ],
+      "conditions_if_any": [
+        "Verification of employment and income documentation (e.g., recent pay stubs, employer confirmation, or equivalent) to substantiate the residual income and tenure figures before disbursement, given the tenure assessment is 'weak' and tenure is at the minimum threshold",
+        "Completion of a full soft factor evaluation with actual source data, claims, and evidence supplied to the soft_factors module; if the completed soft factor assessment returns a 'negative' direction, the file must be referred to an underwriter before proceeding",
+        "Confirmation that no material changes to employment status, income, or outstanding obligations have occurred since the application date, given the thin margin between actual DTI (37.03%) and the maximum (43.0%)"
+      ],
+      "confidence": "medium"
+    },
+    "letter_excerpt": "Dear Eleanor Whitfield, your loan request is conditionally approved. Conditions: Verification of employment and income documentation (e.g., recent pay stubs, employer confirmation, or equivalent) to substantiate the residual income and tenure figures before disbursement, given the tenure assessment is 'weak' and tenure is at the minimum threshold; Completion of a full soft factor evaluation with actual source data, claims, and evidence supplied to the soft_factors module; if the completed soft factor assessment returns a 'negative' direction, the file must be referred to an underwriter before proceeding; Confirmation that no material changes to employment status, income, or outstanding obligations have occurred since the application date, given the thin margin between actual DTI (37.03%) and the maximum (43.0%). All eight hard eligibility checks pass with no failed checks, satisfying every mandatory threshold: credit score meets the minimum exactly (660 >= 660), DTI is within the maximum (37.03% <= 43.0%), employment tenure meets the minimum (12 months >= 12 months), residual income exceeds the minimum ($3,043.37 >= $1,500.00), no bankruptcy disqualifier, no fraud flags, loan amount within product limit ($20,000 <= $50,000), and term within product limit (72 months <= 84 months). The hard outcome is unambiguously 'all_pass', which supports approval. However, the soft factor analysis is materially incomplete: the soft_factors module explicitly states 'insufficient_info' and acknowledges that no source data, claims, or evidence were provided to evaluate forward payment capacity, relationship value, or risk trajectory. The only assessable soft signals are a 'weak' tenure assessment and a 'none' relationship assessment, both of which introduce modest incremental risk. The inquiry velocity assessment is 'healthy' and the industry assessment is 'neutral', providing partial offset. Because the hard outcome fully supports approval but the soft factor layer is substantively unresolved, a clean APPROVE cannot be issued with high confidence. Conditions are imposed to compensate for the soft factor data gap and the marginally thin credit profile (score at the floor, DTI near the upper range).",
+    "transactions_committed": 5,
+    "transactions_rolled_back": 0
+  }
+]

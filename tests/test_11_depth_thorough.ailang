@@ -1,0 +1,279 @@
+#ailang v0.8.2
+# TEST 11: DEPTH: THOROUGH — Fifth Depth Level
+# Purpose: Demonstrate that THOROUGH correctly sits between STANDARD and DEEP
+#          in the five-level depth hierarchy:
+#          SHALLOW < STANDARD < THOROUGH < DEEP < EXHAUSTIVE
+# Measure:
+#   - All five runs use the same TRACE BACKWARD operation on the same data
+#   - Output depth and token count should increase monotonically
+#   - SHALLOW: surface-level, immediate cause identification (~95 tokens)
+#   - STANDARD: solid causal chain with key failures (~190 tokens)
+#   - THOROUGH: contributing factors and secondary causes (~285-380 tokens)
+#     -- more than STANDARD but no multi-pass mechanism-level analysis
+#   - DEEP: multi-pass mechanism-level analysis, systemic factors (~385-570 tokens)
+#   - EXHAUSTIVE: all branches, all hypotheses, counterfactuals (570+ tokens)
+#   - THOROUGH should explore secondary causes that STANDARD misses
+#   - THOROUGH should NOT identify systemic vulnerabilities (that is DEEP's job)
+#   - All five runs should converge on the same primary root cause
+
+# ============================================================
+# SCENARIO: Hospital EHR System Outage — 4-Hour Downtime
+# ============================================================
+# A 450-bed regional hospital's Electronic Health Records (EHR) system
+# went down for 4 hours during a weekday afternoon shift. The incident
+# timeline below contains 6 entries. Run TRACE BACKWARD at all 5 depths.
+
+SET incident_timeline TO [
+    {
+        timestamp: "2026-02-10T13:00:00Z",
+        event: "Routine database maintenance script initiated on EHR primary database server DB-EHR-01",
+        details: "Scheduled weekly index rebuild job started automatically. The job was configured to run during 'low-activity window' but the schedule had not been updated after the hospital extended afternoon clinic hours 3 months ago. The maintenance window (1pm-3pm) now overlaps with peak EHR usage (12pm-5pm)."
+    },
+    {
+        timestamp: "2026-02-10T13:22:00Z",
+        event: "Database lock contention triggers cascading query timeouts",
+        details: "Index rebuild acquired exclusive table locks on the patient_encounters table. 340 concurrent clinical sessions began experiencing 30-second query timeouts. Connection pool on application server APP-EHR-02 exhausted within 4 minutes. The connection pool was sized at 200 connections — adequate for normal load but insufficient when queries queue behind exclusive locks."
+    },
+    {
+        timestamp: "2026-02-10T13:26:00Z",
+        event: "Application server APP-EHR-02 enters degraded state, fails health check",
+        details: "Load balancer LB-01 marked APP-EHR-02 as unhealthy after 3 consecutive failed health checks (10-second intervals). All traffic redirected to APP-EHR-01, which immediately became overloaded. APP-EHR-01 connection pool (also 200) exhausted within 90 seconds under doubled load."
+    },
+    {
+        timestamp: "2026-02-10T13:28:00Z",
+        event: "Complete EHR system outage — all clinical workstations display 'System Unavailable'",
+        details: "Both application servers unresponsive. 180 physicians, 290 nurses, and 45 pharmacists lost access simultaneously. Emergency department began paper-based charting. Radiology PACS system remained operational but results could not be filed to patient records. Three patients in ICU had medication administration delayed by 35 minutes while nurses retrieved paper MAR backup sheets."
+    },
+    {
+        timestamp: "2026-02-10T15:45:00Z",
+        event: "Database maintenance script completed; DBA team manually restarted application servers",
+        details: "The index rebuild ran for 2 hours 45 minutes (normal duration: 45 minutes on the previous smaller dataset — the database had grown 3x since the maintenance job was last tuned). IT team was unaware of the outage for 22 minutes because the on-call pager was configured to alert only on 'database server down' events, not on 'application server health check failure' events. Senior DBA was in a meeting with phone silenced."
+    },
+    {
+        timestamp: "2026-02-10T17:15:00Z",
+        event: "EHR system fully restored; post-incident review initiated",
+        details: "Total outage duration: 3 hours 47 minutes. 1,247 patient encounters affected. 89 medication administrations delayed. 12 radiology results filed late. Two near-miss medication errors caught during paper-to-digital reconciliation. Hospital CIO requested formal root cause analysis and corrective action plan within 48 hours."
+    }
+]
+
+# ============================================================
+# RUN 1: DEPTH SHALLOW — Surface-level root cause
+# ============================================================
+# Should identify the immediate trigger and perhaps one layer deeper,
+# without exploring secondary causes or contributing factors.
+
+TRACE ehr_outage_shallow FROM incident_timeline WITH:
+    DEPTH: SHALLOW
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [primary_root_cause, brief_causal_chain]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT },
+        depth_label: TEXT,
+        depth_reached: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# RUN 2: DEPTH STANDARD — Solid analytical depth
+# ============================================================
+# Should trace through the outage chain with evidence at each step,
+# identifying the key failures that enabled the cascade.
+
+TRACE ehr_outage_standard FROM incident_timeline WITH:
+    DEPTH: STANDARD
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [root_cause, evidence_at_each_step, key_failures]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT, evidence: TEXT },
+        key_failures: LIST OF TEXT,
+        depth_label: TEXT,
+        depth_reached: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# RUN 3: DEPTH THOROUGH — Contributing factors and secondary causes
+# ============================================================
+# This is the NEW v0.8.2 depth level being tested.
+# Should go BEYOND STANDARD by:
+#   - Identifying contributing factors (not just the primary chain)
+#   - Exploring secondary causes (e.g., why was the maintenance window wrong?)
+#   - Noting process gaps that enabled the failure
+# Should NOT go as far as DEEP:
+#   - No multi-pass mechanism-level analysis
+#   - No systemic vulnerability identification
+#   - No organizational culture assessment
+
+TRACE ehr_outage_thorough FROM incident_timeline WITH:
+    DEPTH: THOROUGH
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [
+        root_cause,
+        evidence_at_each_step,
+        key_failures,
+        contributing_factors,
+        secondary_causes
+    ]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST OF OBJECT { event: TEXT, caused_by: TEXT, evidence: TEXT },
+        key_failures: LIST OF TEXT,
+        contributing_factors: LIST OF TEXT,
+        secondary_causes: LIST OF TEXT,
+        depth_label: TEXT,
+        depth_reached: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# RUN 4: DEPTH DEEP — Multi-pass mechanism-level analysis
+# ============================================================
+# Should go BEYOND THOROUGH by:
+#   - Multi-pass analysis of each causal link
+#   - Mechanism-level explanation (HOW each failure propagated)
+#   - Systemic vulnerability identification
+#   - Organizational and process-level failures
+
+TRACE ehr_outage_deep FROM incident_timeline WITH:
+    DEPTH: DEEP
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [
+        root_cause,
+        mechanism_level_analysis,
+        systemic_vulnerabilities,
+        contributing_factors,
+        organizational_factors,
+        each_link_analyzed_in_depth
+    ]
+    OUTPUT_FORMAT: {
+        root_cause: TEXT,
+        causal_chain: LIST OF OBJECT {
+            event: TEXT,
+            caused_by: TEXT,
+            mechanism: TEXT,
+            evidence: TEXT
+        },
+        key_failures: LIST OF TEXT,
+        contributing_factors: LIST OF TEXT,
+        secondary_causes: LIST OF TEXT,
+        systemic_vulnerabilities: LIST OF TEXT,
+        organizational_factors: LIST OF TEXT,
+        depth_label: TEXT,
+        depth_reached: TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# RUN 5: DEPTH EXHAUSTIVE — Leave no stone unturned
+# ============================================================
+# Should go BEYOND DEEP by:
+#   - Exploring ALL possible causal branches, not just the primary chain
+#   - Considering counterfactual scenarios (what if X had been different?)
+#   - Identifying unexplored hypotheses
+#   - Rating confidence per causal chain
+#   - Assessing whether the root cause itself has deeper roots
+
+TRACE ehr_outage_exhaustive FROM incident_timeline WITH:
+    DEPTH: EXHAUSTIVE
+    DIRECTION: BACKWARD
+    MUST_INCLUDE: [
+        all_causal_chains,
+        counterfactual_analysis,
+        unexplored_hypotheses,
+        confidence_per_chain,
+        systemic_vulnerabilities,
+        organizational_factors,
+        regulatory_implications,
+        prevention_recommendations
+    ]
+    OUTPUT_FORMAT: {
+        primary_root_cause: TEXT,
+        all_causal_chains: LIST OF LIST OF OBJECT {
+            event: TEXT,
+            caused_by: TEXT,
+            mechanism: TEXT,
+            evidence: TEXT,
+            alternative_explanations: LIST OF TEXT
+        },
+        secondary_root_causes: LIST OF TEXT,
+        key_failures: LIST OF TEXT,
+        contributing_factors: LIST OF TEXT,
+        systemic_vulnerabilities: LIST OF TEXT,
+        organizational_factors: LIST OF TEXT,
+        counterfactuals: LIST OF OBJECT {
+            scenario: TEXT,
+            would_have_prevented: BOOLEAN,
+            rationale: TEXT
+        },
+        unexplored_hypotheses: LIST OF TEXT,
+        confidence_per_chain: LIST OF OBJECT {
+            chain_id: NUMBER,
+            confidence: TEXT IN ["high", "moderate", "low"]
+        },
+        depth_label: TEXT,
+        depth_reached: TEXT,
+        overall_confidence: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# VALIDATION: COMPARE all five depth levels
+# ============================================================
+# Verify that:
+# 1. Output depth increases monotonically: SHALLOW < STANDARD < THOROUGH < DEEP < EXHAUSTIVE
+# 2. All five converge on the same primary root cause
+# 3. THOROUGH correctly sits between STANDARD and DEEP:
+#    a. THOROUGH includes contributing_factors that STANDARD does not
+#    b. THOROUGH does NOT include systemic_vulnerabilities (DEEP's territory)
+#    c. THOROUGH does NOT include mechanism-level analysis (DEEP's territory)
+# 4. Each level adds content that the previous level lacked
+# 5. No level loses content that a shallower level had (monotonic)
+
+COMPARE [ehr_outage_shallow, ehr_outage_standard, ehr_outage_thorough, ehr_outage_deep, ehr_outage_exhaustive] AGAINST depth_hierarchy_validation WITH:
+    DIMENSIONS: [
+        root_cause_agreement,
+        output_depth_monotonicity,
+        thorough_positioning,
+        content_accumulation,
+        depth_level_differentiation
+    ]
+    MUST_INCLUDE: [
+        root_cause_convergence_check,
+        monotonic_depth_increase_check,
+        thorough_vs_standard_delta,
+        thorough_vs_deep_delta,
+        token_count_estimates,
+        content_at_each_level
+    ]
+    OUTPUT_FORMAT: {
+        root_cause_consistent: BOOLEAN,
+        primary_root_cause: TEXT,
+        depth_ordering_correct: BOOLEAN,
+        estimated_token_counts: OBJECT {
+            shallow: NUMBER,
+            standard: NUMBER,
+            thorough: NUMBER,
+            deep: NUMBER,
+            exhaustive: NUMBER
+        },
+        thorough_positioning: OBJECT {
+            has_contributing_factors: BOOLEAN,
+            has_secondary_causes: BOOLEAN,
+            has_systemic_vulnerabilities: BOOLEAN,
+            has_mechanism_analysis: BOOLEAN,
+            correctly_positioned: BOOLEAN
+        },
+        content_added_per_level: LIST OF OBJECT {
+            level: TEXT,
+            new_content_categories: LIST OF TEXT
+        },
+        overall_validation: TEXT IN ["pass", "partial_pass", "fail"],
+        findings: LIST OF TEXT
+    }
+END

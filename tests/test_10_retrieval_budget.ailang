@@ -1,0 +1,213 @@
+#ailang v0.8.2
+# TEST 10: RETRIEVAL_BUDGET — Graduated Retrieval Control
+# Purpose: Demonstrate that RETRIEVAL_BUDGET provides graduated control over
+#          the ~865 retrieval base neurons, producing different levels of
+#          knowledge enrichment while reasoning from the same premises.
+# Measure:
+#   - RETRIEVAL_BUDGET: NONE should reason ONLY from the supplied premises
+#     (identical behavior to WITHOUT_RETRIEVAL)
+#   - RETRIEVAL_BUDGET: MINIMAL should resolve trade terminology but not
+#     inject full regulatory context (activates ~200 of 865 retrieval neurons)
+#   - RETRIEVAL_BUDGET: STANDARD should enrich with full regulatory context
+#     from the engine's training data (all 865 retrieval neurons)
+#   - All three runs should reach a defensible conclusion, but the richness
+#     of the reasoning and terminology precision should increase with budget
+#   - The COMPARE validation at the end checks monotonic enrichment
+
+# ============================================================
+# SCENARIO: International Trade Compliance — Do Tariffs Apply?
+# ============================================================
+# A Canadian steel manufacturer is exporting hot-rolled steel coils to
+# a US-based construction firm. We provide five regulatory premises
+# and a specific case. The question: do anti-dumping/countervailing
+# duty tariffs apply to this shipment?
+
+SET premise_1 TO "Under Section 232 of the Trade Expansion Act of 1962, the President may impose tariffs on imports that threaten to impair national security, including steel and aluminum products."
+
+SET premise_2 TO "The United States-Mexico-Canada Agreement (USMCA) provides preferential tariff treatment for goods that meet the agreement's rules of origin, including a regional value content threshold of 70% for steel products to qualify for tariff-free treatment."
+
+SET premise_3 TO "Anti-dumping duties are imposed when a foreign manufacturer sells goods in the US at less than fair value (LTFV), determined by comparing the export price to the normal value in the home market. The US Department of Commerce conducts LTFV investigations."
+
+SET premise_4 TO "Countervailing duties (CVDs) are imposed when a foreign government provides subsidies to its domestic producers that cause or threaten material injury to a US domestic industry. The International Trade Commission (ITC) determines material injury."
+
+SET premise_5 TO "A product is classified under the Harmonized Tariff Schedule (HTS) for duty determination. Hot-rolled steel coils fall under HTS Chapter 72, subheading 7208. The applicable duty rate depends on the country of origin, trade agreements in force, and any active anti-dumping or countervailing duty orders."
+
+SET case_facts TO {
+    exporter: "Northern Steel Corp., Hamilton, Ontario, Canada",
+    importer: "Pacific Construction Supply, Seattle, Washington, USA",
+    product: "Hot-rolled carbon steel coils, 3mm thickness, SAE 1020 grade",
+    hts_classification: "7208.27.00",
+    shipment_value: "$2,400,000 USD (FOB Hamilton)",
+    quantity: "1,200 metric tons",
+    normal_value_canada: "$2,100 per metric ton in Canadian domestic market",
+    export_price: "$2,000 per metric ton to US buyer",
+    price_difference: "Export price is $100/ton below Canadian domestic price (4.76% margin)",
+    regional_value_content: "82% — manufactured from iron ore mined in Labrador, processed in Hamilton",
+    canadian_government_subsidies: "Northern Steel received CAD $15 million provincial grant for facility modernization in 2024 under Ontario's Manufacturing Innovation Fund",
+    active_trade_orders: "The US has active AD/CVD orders on certain hot-rolled steel from multiple countries; status of Canadian orders requires verification",
+    shipment_date: "2026-03-15"
+}
+
+# ============================================================
+# RUN A: RETRIEVAL_BUDGET: NONE — Pure Premise Reasoning
+# ============================================================
+# The engine MUST NOT activate ANY retrieval neurons.
+# All reasoning must come exclusively from the 5 premises
+# and the case_facts. No external knowledge about trade law,
+# USMCA specifics, or current AD/CVD orders should appear.
+
+DEDUCE tariff_applicability_none FROM [premise_1, premise_2, premise_3, premise_4, premise_5] WITH:
+    RETRIEVAL_BUDGET: NONE
+    APPLY_TO: case_facts
+    DEPTH: STANDARD
+    MUST_INCLUDE: [
+        each_premise_evaluated,
+        section_232_applicability,
+        usmca_qualification_analysis,
+        anti_dumping_margin_analysis,
+        cvd_subsidy_analysis,
+        final_tariff_determination
+    ]
+    CANNOT_INCLUDE: [knowledge_not_in_premises, external_regulatory_details]
+    OUTPUT_FORMAT: {
+        tariffs_apply: TEXT IN ["yes_tariffs_apply", "no_tariffs_exempt", "partially_applicable", "insufficient_information"],
+        section_232_status: TEXT,
+        usmca_qualification: BOOLEAN,
+        anti_dumping_risk: TEXT IN ["high", "moderate", "low", "insufficient_info"],
+        cvd_risk: TEXT IN ["high", "moderate", "low", "insufficient_info"],
+        reasoning_chain: LIST OF OBJECT {
+            premise_number: NUMBER,
+            finding: TEXT,
+            applies: BOOLEAN
+        },
+        terminology_gaps: LIST OF TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# RUN B: RETRIEVAL_BUDGET: MINIMAL — Premises + Terminology Recall
+# ============================================================
+# The engine activates ~200 of 865 retrieval neurons.
+# It should resolve trade terminology (e.g., what exactly "fair value"
+# means under US trade law, what "material injury" entails, how
+# HTS classification works) but NOT inject full regulatory context
+# like current AD/CVD order lists or specific USMCA implementation rules.
+
+DEDUCE tariff_applicability_minimal FROM [premise_1, premise_2, premise_3, premise_4, premise_5] WITH:
+    RETRIEVAL_BUDGET: MINIMAL
+    APPLY_TO: case_facts
+    DEPTH: STANDARD
+    MUST_INCLUDE: [
+        each_premise_evaluated,
+        section_232_applicability,
+        usmca_qualification_analysis,
+        anti_dumping_margin_analysis,
+        cvd_subsidy_analysis,
+        terminology_resolution,
+        final_tariff_determination
+    ]
+    CANNOT_INCLUDE: [speculation_beyond_premises_and_basic_terminology]
+    OUTPUT_FORMAT: {
+        tariffs_apply: TEXT IN ["yes_tariffs_apply", "no_tariffs_exempt", "partially_applicable", "insufficient_information"],
+        section_232_status: TEXT,
+        usmca_qualification: BOOLEAN,
+        anti_dumping_risk: TEXT IN ["high", "moderate", "low", "insufficient_info"],
+        cvd_risk: TEXT IN ["high", "moderate", "low", "insufficient_info"],
+        reasoning_chain: LIST OF OBJECT {
+            premise_number: NUMBER,
+            finding: TEXT,
+            applies: BOOLEAN,
+            terminology_resolved: LIST OF TEXT
+        },
+        terminology_gaps: LIST OF TEXT,
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# RUN C: RETRIEVAL_BUDGET: STANDARD — Full Regulatory Context
+# ============================================================
+# The engine activates all 865 retrieval neurons.
+# It should enrich the reasoning with full regulatory context:
+# current AD/CVD order status for Canadian steel, Section 232
+# exemption history for USMCA countries, ITC injury determination
+# precedents, and specific USMCA implementation details.
+
+DEDUCE tariff_applicability_standard FROM [premise_1, premise_2, premise_3, premise_4, premise_5] WITH:
+    RETRIEVAL_BUDGET: STANDARD
+    APPLY_TO: case_facts
+    DEPTH: STANDARD
+    MUST_INCLUDE: [
+        each_premise_evaluated,
+        section_232_applicability_with_exemption_history,
+        usmca_qualification_with_implementation_details,
+        anti_dumping_margin_analysis_with_precedents,
+        cvd_subsidy_analysis_with_injury_test,
+        full_regulatory_context,
+        final_tariff_determination
+    ]
+    OUTPUT_FORMAT: {
+        tariffs_apply: TEXT IN ["yes_tariffs_apply", "no_tariffs_exempt", "partially_applicable", "insufficient_information"],
+        section_232_status: TEXT,
+        section_232_exemption_details: TEXT,
+        usmca_qualification: BOOLEAN,
+        usmca_details: TEXT,
+        anti_dumping_risk: TEXT IN ["high", "moderate", "low", "insufficient_info"],
+        anti_dumping_details: TEXT,
+        cvd_risk: TEXT IN ["high", "moderate", "low", "insufficient_info"],
+        cvd_details: TEXT,
+        reasoning_chain: LIST OF OBJECT {
+            premise_number: NUMBER,
+            finding: TEXT,
+            applies: BOOLEAN,
+            external_context_used: LIST OF TEXT
+        },
+        confidence_level: QUALITATIVE IN ["high", "moderate", "low"]
+    }
+END
+
+# ============================================================
+# VALIDATION: COMPARE the three runs
+# ============================================================
+# The COMPARE should verify:
+# 1. All three reached defensible conclusions
+# 2. Terminology precision increases: NONE < MINIMAL < STANDARD
+# 3. External knowledge injection increases monotonically
+# 4. NONE has the most "insufficient_info" and terminology gaps
+# 5. STANDARD has the richest reasoning chain
+# 6. Core logic (premise application) is consistent across all three
+
+COMPARE [tariff_applicability_none, tariff_applicability_minimal, tariff_applicability_standard] AGAINST retrieval_budget_validation_criteria WITH:
+    DIMENSIONS: [
+        conclusion_consistency,
+        terminology_precision,
+        external_knowledge_enrichment,
+        information_sufficiency,
+        reasoning_chain_richness,
+        confidence_level_progression
+    ]
+    MUST_INCLUDE: [
+        monotonic_enrichment_verification,
+        conclusion_alignment_check,
+        terminology_gap_comparison,
+        retrieval_budget_compliance_check
+    ]
+    OUTPUT_FORMAT: {
+        monotonic_enrichment: BOOLEAN,
+        conclusions_consistent: BOOLEAN,
+        terminology_precision_ranking: LIST OF TEXT,
+        external_knowledge_ranking: LIST OF TEXT,
+        confidence_progression: LIST OF TEXT,
+        none_terminology_gaps: NUMBER,
+        minimal_terminology_gaps: NUMBER,
+        standard_terminology_gaps: NUMBER,
+        budget_compliance: OBJECT {
+            none_used_only_premises: BOOLEAN,
+            minimal_resolved_terminology_only: BOOLEAN,
+            standard_used_full_context: BOOLEAN
+        },
+        overall_validation: TEXT IN ["pass", "partial_pass", "fail"],
+        findings: LIST OF TEXT
+    }
+END
