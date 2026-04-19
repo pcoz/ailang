@@ -256,7 +256,7 @@ This raised the natural next question: **how do you actually execute these progr
 
 AILang specifies *what* reasoning to perform and *how* to constrain it, but a specification alone does not run programs. The test results themselves pointed toward the execution model. The v0.8.2 test summary explicitly recommended that RETRIEVE and COMPARE operations could be routed to BERT-class models instead of full generative LLMs, reducing cost by ~60% and latency by ~80% for lightweight operations while reserving larger models for complex reasoning.
 
-This insight led to the **AIEX (AI Execution) framework** -- a COBOL-inspired execution language that makes the theoretical neuron savings real through multi-model routing:
+This insight led to the **[AIEX (AI Execution) framework](https://github.com/pcoz/aiex)** -- a COBOL-inspired execution language that makes the theoretical neuron savings real through multi-model routing:
 
 | AILang Operation | AIEX Execution Target | Rationale |
 |---|---|---|

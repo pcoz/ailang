@@ -98,7 +98,8 @@ Each operation accepts orthogonal modifiers: a *style* (`INTELLIGENTLY`, `CREATI
 ```ailang
 # Typed reasoning -- the engine commits to one pathway and the
 # AIEX runtime routes RETRIEVE to a cheap retrieval-class model.
-RETRIEVE customer_history FROM crm WITH:
+RETRIEVE customer_history FOR account_id WITH:
+    SOURCES: [crm]
     RETRIEVAL_BUDGET: STANDARD
     MUST_INCLUDE: [recent_tickets, lifecycle_stage]
 END
@@ -112,7 +113,7 @@ ADAPTIVELY TRACE outage_root_cause FROM incident_timeline WITH:
 END
 
 # Compose typed operations with THEN -- output of one feeds the next.
-RETRIEVE pricing_history FROM market_db
+RETRIEVE pricing_history FOR product_sku WITH: SOURCES: [market_db] END
     THEN COMPARE current_quote AGAINST pricing_history WITH:
         DIMENSIONS: [margin, win_rate, customer_segment]
     END
@@ -145,7 +146,7 @@ When problems require true mathematical precision or algorithmic determinism, AI
 
 ```ailang
 # Explicit transition to quantitative domain when needed
-CODE python:
+EXECUTE_CODE python:
     import numpy as np
     from scipy.optimize import minimize
     
@@ -156,7 +157,7 @@ CODE python:
         method='SLSQP',
         constraints=constraints
     )
-END_CODE
+END_EXECUTE
 
 # Return to qualitative domain with results
 SET optimal_parameters TO result.x
@@ -372,7 +373,7 @@ DO complex_calculation:
     SET threshold TO 0.95
     
     # CODE block for mathematical precision
-    CODE python:
+    EXECUTE_CODE python:
         import pandas as pd
         import numpy as np
         from sklearn.preprocessing import StandardScaler
@@ -382,7 +383,7 @@ DO complex_calculation:
         scaler = StandardScaler()
         normalized = scaler.fit_transform(df)
         outliers = np.where(normalized > threshold)[0]
-    END_CODE
+    END_EXECUTE
     
     # Continue with AILang flow
     SEND outlier_report TO monitoring_system
@@ -401,9 +402,9 @@ INTELLIGENTLY assess revenue_health FROM financial_data
 # Returns: "strong" (qualitative)
 
 IF revenue_health QUALIFIES_AS "strong" THEN:
-    CODE python:
+    EXECUTE_CODE python:
         growth_rate = 0.15  # Confident single value
-    END_CODE
+    END_EXECUTE
 END_IF
 ```
 
@@ -414,7 +415,7 @@ When qualitative assessment connects to multiple quantitative parameters, explor
 ```ailang
 INTELLIGENTLY assess market_conditions FROM market_data
 
-CODE python WITH PARAMETER_SPACE_EXPLORATION:
+EXECUTE_CODE python WITH PARAMETER_SPACE_EXPLORATION:
     # Define parameter ranges based on qualitative assessment
     if market_conditions == "volatile":
         risk_factor = explore_range(0.7, 0.9)
@@ -431,7 +432,7 @@ CODE python WITH PARAMETER_SPACE_EXPLORATION:
     
     # Select robust configuration
     optimal = find_stable_region(logged_results)
-END_CODE
+END_EXECUTE
 ```
 
 This explores the parameter space to find robust solutions rather than forcing single-point estimates that may be fragile.
@@ -456,7 +457,7 @@ ASSERT energy_in EQUALS energy_out + losses
 **Domain-specific operations with CODE:**
 ```ailang
 # Physics simulation
-CODE python:
+EXECUTE_CODE python:
     import scipy.integrate as integrate
     
     # Solve differential equation with guaranteed accuracy
@@ -465,7 +466,7 @@ CODE python:
         initial_conditions,
         time_points
     )
-END_CODE
+END_EXECUTE
 ```
 
 ### Universal Space and Accomplishment Systems
@@ -700,14 +701,14 @@ DEFINE PROCEDURE price_insurance_policy WITH PARAMETERS [applicant]:
     # Logic and domain knowledge interweave naturally
     IF applicant.age > 65 AND applicant.has_pre_existing_conditions THEN:
         # CODE block for mathematical precision from actuarial science
-        CODE python:
+        EXECUTE_CODE python:
             import actuarial_tables as act
             base_risk = act.calculate_risk(
                 mortality_tables,
                 applicant.age,
                 applicant.health_factors
             )
-        END_CODE
+        END_EXECUTE
         
         # Domain expertise expressed directly
         INTELLIGENTLY adjust_for_lifestyle_factors:
@@ -717,7 +718,7 @@ DEFINE PROCEDURE price_insurance_policy WITH PARAMETERS [applicant]:
         END
         
         # More mathematical reality in CODE
-        CODE python:
+        EXECUTE_CODE python:
             premium = price_premium(
                 base_risk,
                 loadings,
@@ -728,7 +729,7 @@ DEFINE PROCEDURE price_insurance_policy WITH PARAMETERS [applicant]:
             assert premium * expected_policies > (
                 expected_payouts + operational_costs
             )
-        END_CODE
+        END_EXECUTE
     END_IF
 END_PROCEDURE
 ```
@@ -749,7 +750,7 @@ DEFINE PROCEDURE diagnose_bread_problem WITH PARAMETERS [user_observation]:
     
     # Temperature hypothesis with CODE block for precision
     IF kitchen_sensors.temperature != previous_location.temperature THEN:
-        CODE python:
+        EXECUTE_CODE python:
             import math
             
             # Arrhenius equation for yeast activity
@@ -763,7 +764,7 @@ DEFINE PROCEDURE diagnose_bread_problem WITH PARAMETERS [user_observation]:
             k1 = A * math.exp(-Ea / (R * T1))
             k2 = A * math.exp(-Ea / (R * T2))
             activity_ratio = k2 / k1
-        END_CODE
+        END_EXECUTE
         
         IF activity_ratio < 0.5 THEN:
             RECOMMEND: "Your yeast is working at {activity_ratio*100}% speed. 
@@ -783,7 +784,7 @@ DEFINE PROCEDURE optimize_product_strategy WITH PARAMETERS [market_data]:
     INTELLIGENTLY assess_market_conditions FROM market_data
     
     # Explore parameter space rather than point estimates
-    CODE python WITH PARAMETER_SPACE_EXPLORATION:
+    EXECUTE_CODE python WITH PARAMETER_SPACE_EXPLORATION:
         import numpy as np
         from itertools import product
         
@@ -808,7 +809,7 @@ DEFINE PROCEDURE optimize_product_strategy WITH PARAMETERS [market_data]:
         
         # Find robust region (not just optimal point)
         optimal_region = find_stable_high_performance_region(results)
-    END_CODE
+    END_EXECUTE
     
     RETURN strategy_recommendations FROM optimal_region
 END_PROCEDURE
@@ -1001,7 +1002,7 @@ DO analyze_customer_behavior:
     customer_data << "customer_transactions.csv"
     
     # CODE: Calculate metrics with guaranteed precision
-    CODE python:
+    EXECUTE_CODE python:
         import pandas as pd
         import numpy as np
         
@@ -1015,7 +1016,7 @@ DO analyze_customer_behavior:
         model = LinearRegression()
         model.fit(X, y)
         trend_slope = model.coef_[0]
-    END_CODE
+    END_EXECUTE
     
     # Intelligent: Understand behavior patterns
     INTELLIGENTLY segment_customers FROM customer_data WITH:

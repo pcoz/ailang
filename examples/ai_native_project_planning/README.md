@@ -456,9 +456,9 @@ Any domain where abstract intentions must become concrete reality benefits from 
 
 ## Files in This Example
 
-- **`AILang_Specification_Matter_Extension.md`**: Full theoretical specification of Matter Extension (Extension B)
 - **`ailang_project_planner.ail`**: Operational implementation of bidirectional coherence planning
 - **`Cocoa_Lab_Plan.md`**: Generated example plan for synthetic cocoa startup (81/100 coherence, 3 gaps identified)
+- **Matter Extension specification:** lives at the AILang project root as [`AILang_Specification_Matter_Extension.md`](../../AILang_Specification_Matter_Extension.md) -- not duplicated here
 
 ## Further Reading
 

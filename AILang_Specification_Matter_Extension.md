@@ -1,5 +1,7 @@
 ## AILang Extension B: Matters: Representing Concerns as Categorical Structures Through Abstraction Level Dynamics
 
+> **Targets:** AILang v0.8.2. Verified compatible with the v0.8.2 grammar; no breaking changes were required during the 2026-04-19 audit. The Matter framework is also referenced from §21 of the main v0.8.2 specification.
+
 ### E2.1 Introduction: The Nature of Matters and the Problem of Self-Definition
 
 A **matter** (as in "the matter of," "a matter to address," "matters of concern") represents a unit of human concern that exists in the intersection between objective reality and subjective experience. Matters are how humans structure their engagement with reality—they are categorical constructs that organize our attention, action, and understanding.

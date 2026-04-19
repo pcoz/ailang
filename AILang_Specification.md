@@ -32,7 +32,7 @@ Version 0.8.1 is an amendment to v0.8.0 that adds six improvements deduced from 
 
 1. **Neuron Hierarchy and WITHOUT_RETRIEVAL Modifier** -- Jaccard analysis reveals RETRIEVE is not a peer operation but a BASE LAYER subsumed by all other operations. A new `WITHOUT_RETRIEVAL` modifier allows skipping the retrieval base layer when input data is already loaded into program variables, saving up to 72% of neuron activations.
 
-2. **DEPTH Modifier (Third Axis)** -- Test results showed identical operation+style combinations producing radically different output depths. DEPTH is introduced as a third orthogonal axis (alongside operation type and style) with five levels: `SHALLOW`, `STANDARD`, `THOROUGH`, `DEEP`, and `EXHAUSTIVE`, controlling how deeply the engine processes each reasoning step.
+2. **DEPTH Modifier (Third Axis)** -- Test results showed identical operation+style combinations producing radically different output depths. DEPTH is introduced as a third orthogonal axis (alongside operation type and style) with four levels in v0.8.1: `SHALLOW`, `STANDARD`, `DEEP`, and `EXHAUSTIVE`, controlling how deeply the engine processes each reasoning step. (v0.8.2 added an intermediate `THOROUGH` level between STANDARD and DEEP -- see the v0.8.2 changelog above.)
 
 3. **EMIT_DIGEST for Pipeline Efficiency** -- Addresses re-processing of full outputs in multi-operation pipelines. `EMIT_DIGEST: true` produces a compact typed summary (under 100 tokens) alongside the full output, enabling downstream SYNTHESIZE operations to consume digests instead of re-parsing full outputs.
 
@@ -687,12 +687,15 @@ END
 
 ```ailang
 DEDUCE [conclusion] FROM [premises] WITH:
+    APPLY_TO: [data_being_evaluated]   # optional -- the case/data the premises apply to
     MUST_INCLUDE: [required_elements]
     CANNOT_INCLUDE: [forbidden_elements]
     OUTPUT_FORMAT: [structured_requirement]
     MAX_SCOPE: [boundary_definition]
 END
 ```
+
+`APPLY_TO` is optional but recommended when the premises (`FROM`) are the rule set and the data being evaluated against those rules is a separate variable. The pattern `DEDUCE outcome FROM rules WITH: APPLY_TO: case_data` reads as "apply the rules to the case to deduce the outcome", which matches how regulated business-rules workflows typically structure their inputs.
 
 **Example:**
 

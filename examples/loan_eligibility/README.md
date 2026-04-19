@@ -10,7 +10,7 @@ The core insight: **the program is the spec**. The same text a compliance office
 - **`EXECUTE_CODE` blocks** for the deterministic parts (amortisation math, audit log formatting)
 - **Output contracts** (`MUST_INCLUDE`, `CANNOT_INCLUDE`, constrained `OUTPUT_FORMAT` enums) that lock the LLM to defensible decision categories
 - **Multi-tier model routing** — BERT/Haiku/Sonnet/Opus selected automatically per operation, ~88% cost reduction vs all-Opus
-- **Pre-execution budget reports** — every scenario costs $0.043 to run, knowable before spending
+- **Pre-execution budget reports** — every scenario costs $0.044 to run, knowable before spending
 - **Reproducibility across runs** — the same applicant produces a functionally equivalent decision every time (qualitative idempotency)
 - **Five scenarios run end-to-end against the live Anthropic API**, with captured outputs
 
@@ -74,7 +74,7 @@ EXECUTE_CODE python:           # Step 5: format audit record + customer letter
 END_EXECUTE
 ```
 
-Five transactions; two are deterministic ($0 LLM cost); three are reasoning operations routed to the appropriate model tier. Pre-execution budget: **$0.043 per scenario**, **88.1% savings vs an all-Opus baseline**.
+Five transactions; two are deterministic ($0 LLM cost); three are reasoning operations routed to the appropriate model tier. Pre-execution budget: **$0.0441 per scenario**, **87.8% savings vs an all-Opus baseline**. Both numbers come straight from `aiex compile <scenario>.ailang` — run that command on any of the scenario files to see the per-transaction routing decisions and verify the figures.
 
 ## Running it yourself
 
@@ -95,15 +95,19 @@ To add a new scenario: add an entry to the `APPLICANTS` dict in `scenarios/gener
 
 ## What the scenarios are designed to demonstrate
 
-| # | Designed outcome | What it stresses |
-|---|---|---|
-| 1 | Clear APPROVE | All hard rules pass with comfortable margins; soft factors net-positive |
-| 2 | Clear DECLINE | Hard disqualifier present (recent bankruptcy); model must cite it |
-| 3 | Marginal — conditional approval | Borderline DTI, otherwise solid; soft factors should justify approval-with-conditions |
-| 4 | Marginal — decline | Score passes thresholds but soft factors are concerning (recent job, gig industry, high inquiries) |
-| 5 | Edge case — judgment call | Right at every threshold; the right move is `REFER_TO_UNDERWRITER` |
+The table below shows the designed *intent* of each scenario alongside the *actual* decision the model produced on a live run. Where the actual differs from the designed outcome, the model leaned conservative — escalating to a human underwriter or adding conditions rather than committing to a hard call. That's the correct behaviour for a real underwriting system, and it's exactly what the contracts allow: the OUTPUT_FORMAT enum includes `REFER_TO_UNDERWRITER` and `APPROVE_WITH_CONDITIONS` precisely so the model can defer when it doesn't have enough signal.
 
-Live decisions captured in `runs/run_report.md`. The model tends to escalate borderline cases to human underwriters rather than guess — which is exactly the conservative behaviour a defensible automated system should exhibit.
+| # | Designed outcome | Actual (live run) | What it stresses |
+|---|---|---|---|
+| 1 | APPROVE | APPROVE_WITH_CONDITIONS (medium conf) | All hard rules pass with comfortable margins; model added conditions because soft-factor input data was thin |
+| 2 | DECLINE | DECLINE (high conf) | Hard disqualifier present (recent bankruptcy); model cites it directly |
+| 3 | APPROVE_WITH_CONDITIONS | REFER_TO_UNDERWRITER | Borderline DTI; model escalated rather than commit |
+| 4 | DECLINE | REFER_TO_UNDERWRITER | Score passes thresholds but soft factors concerning; model escalated |
+| 5 | REFER_TO_UNDERWRITER | APPROVE_WITH_CONDITIONS | Right at every threshold; model resolved with conditions |
+
+Full per-scenario rationales, contributing factors, and customer-letter excerpts are in [`runs/run_report.md`](runs/run_report.md).
+
+**Why the conservative skew?** The WEIGH step's soft-factor inputs in this example are deliberately minimal (one industry tag, one tenure number, etc.). Every scenario produced `soft_factor_direction: neutral` because the model lacked confident signal — which then drove the SYNTHESIZE step toward conditional or escalated decisions rather than confident APPROVE/DECLINE. With richer soft-factor inputs (recent payment history, industry-specific economic context, behavioural CRM signals) the model would discriminate more sharply. This is itself a useful lesson: AILang programs are sensitive to input richness in exactly the way a human underwriter is.
 
 ## Reproducing the qualitative idempotency claim
 

@@ -1,4 +1,7 @@
 ## AILang Extension A: Person Systems Reference
+
+> **Targets:** AILang v0.8.2. Verified compatible with the v0.8.2 grammar (one v0.7-era reserved-word collision was fixed on 2026-04-19; pre-fix snapshot preserved at `archive/v0.7.0/AILang_Specification_Person_Extension.md`). The earlier v0.7-style `INTELLIGENTLY` operations used throughout this document remain valid in v0.8.2 via the auto-classifying fallback path documented in §8.3 of the main specification.
+
 Person entities represent computational agents with human-like attributes, enabling sophisticated modeling of individuals within AILang programs. Persons combine deterministic state management with intelligent behavioral modeling.
 
 ### Person Class Definition
