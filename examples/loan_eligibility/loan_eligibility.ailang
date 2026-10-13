@@ -11,8 +11,8 @@
 # Pipeline:
 #   1. Deterministic affordability math       -> EXECUTE_CODE
 #   2. Hard rule eligibility check            -> DEDUCE   (Sonnet-class)
-#   3. Soft factor / borderline judgment      -> WEIGH    (Opus-class)
-#   4. Final decision synthesis               -> SYNTHESIZE (Opus-class)
+#   3. Soft factor / borderline judgment      -> WEIGH    (Sonnet-class)
+#   4. Final decision synthesis               -> SYNTHESIZE (Sonnet-class)
 #   5. Audit log + decision letter formatting -> EXECUTE_CODE
 #
 # The program is the spec.  The same text a compliance officer reads
@@ -173,8 +173,8 @@ END
 #
 # WEIGH is the right op because we are evaluating competing soft
 # signals against each other and producing a directional indicator.
-# AIEX routes WEIGH to Opus -- this is genuinely the kind of judgment
-# that benefits from the most capable model.
+# AIEX routes WEIGH to Sonnet at DEPTH: STANDARD; DEPTH: EXHAUSTIVE
+# would escalate it to Opus.
 
 WEIGH soft_factors ON applicant WITH:
     DEPTH: STANDARD
@@ -214,7 +214,7 @@ END
 # Combine the hard outcome with the soft direction into a single
 # defensible decision.  SYNTHESIZE is the right op when integrating
 # multiple structured inputs into a unified output.  AIEX routes
-# SYNTHESIZE to Opus.
+# SYNTHESIZE to Sonnet at DEPTH: STANDARD.
 #
 # The OUTPUT_FORMAT here is what becomes the audit record.  Every
 # field is required and constrained -- there is no room for the LLM

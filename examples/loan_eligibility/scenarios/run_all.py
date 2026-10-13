@@ -14,7 +14,7 @@ Live LLM calls are made.  Two ways to provide your API key:
   2. Set ``AIEX_ROOT`` to point at your AIEX checkout (which contains a
      ``.env`` file with the key) -- this script will load it.
 
-Budget ~$0.04 per scenario, ~$0.20 total for the five-scenario run.
+Budget ~$0.045 per scenario, ~$0.22 total for the five-scenario run.
 """
 
 from __future__ import annotations

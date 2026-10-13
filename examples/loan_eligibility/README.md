@@ -9,8 +9,8 @@ The core insight: **the program is the spec**. The same text a compliance office
 - **Typed reasoning operations** for the qualitative parts (`DEDUCE`, `WEIGH`, `SYNTHESIZE`)
 - **`EXECUTE_CODE` blocks** for the deterministic parts (amortisation math, audit log formatting)
 - **Output contracts** (`MUST_INCLUDE`, `CANNOT_INCLUDE`, constrained `OUTPUT_FORMAT` enums) that lock the LLM to defensible decision categories
-- **Multi-tier model routing** — BERT/Haiku/Sonnet/Opus selected automatically per operation, ~88% cost reduction vs all-Opus
-- **Pre-execution budget reports** — every scenario costs $0.044 to run, knowable before spending
+- **Multi-tier model routing** — BERT/Haiku/Sonnet/Opus selected automatically per operation, ~63% cost reduction vs all-Opus
+- **Pre-execution budget reports** — every scenario is estimated at $0.045 to run, knowable before spending
 - **Reproducibility across runs** — the same applicant produces a functionally equivalent decision every time (qualitative idempotency)
 - **Five scenarios run end-to-end against the live Anthropic API**, with captured outputs
 
@@ -30,7 +30,7 @@ AILang + AIEX addresses each of these in a way classical code cannot:
 | Qualitative judgment | `if score < 0.3` (proxy that loses signal) | `WEIGH soft_factors` (judgment in its native form) |
 | Policy changes | Code change, redeploy, re-test | Edit the natural-language rule description |
 | Audit trail | Bolted on; often incomplete | Built in: every transaction logged with rationale, contract violations, retries |
-| Cost at scale | Cheap (CPU); poor judgment quality | $0.043/decision with multi-tier routing; quality competitive with paralegal review |
+| Cost at scale | Cheap (CPU); poor judgment quality | ~$0.045/decision (pre-execution estimate) with multi-tier routing; quality competitive with paralegal review |
 | Reproducibility | Bit-exact (deterministic) | Functionally equivalent (qualitative idempotency) |
 
 Determinism is the one thing classical code wins on. For most business-rules systems that's a theoretical win — the input data has so much real-world variability that bit-exact reproducibility was never the actual property they had. Functionally-equivalent reproducibility (same applicant → same decision shape, same justification, same audit fields) is what they actually need, and AILang + AIEX delivers it.
@@ -68,15 +68,15 @@ EXECUTE_CODE python:           # Step 1: deterministic affordability math
 END_EXECUTE
 
 DEDUCE hard_eligibility ...    # Step 2: rule-by-rule pass/fail (Sonnet)
-WEIGH soft_factors ...         # Step 3: qualitative judgment (Sonnet/Opus)
-SYNTHESIZE final_decision ...  # Step 4: integrate hard + soft (Sonnet/Opus)
+WEIGH soft_factors ...         # Step 3: qualitative judgment (Sonnet)
+SYNTHESIZE final_decision ...  # Step 4: integrate hard + soft (Sonnet)
 
 EXECUTE_CODE python:           # Step 5: format audit record + customer letter
     audit_log_entry, letter_excerpt
 END_EXECUTE
 ```
 
-Five transactions; two are deterministic ($0 LLM cost); three are reasoning operations routed to the appropriate model tier. Pre-execution budget: **$0.0441 per scenario**, **87.8% savings vs an all-Opus baseline**. Both numbers come straight from `aiex compile <scenario>.ailang` — run that command on any of the scenario files to see the per-transaction routing decisions and verify the figures.
+Five transactions; two are deterministic ($0 LLM cost); three are reasoning operations routed to the appropriate model tier. Pre-execution budget: **$0.0447 per scenario**, **62.7% savings vs an all-Opus baseline** ($0.12). Both numbers come straight from `aiex compile <scenario>.ailang` — run that command on any of the scenario files to see the per-transaction routing decisions and verify the figures.
 
 ## Running it yourself
 
