@@ -2,8 +2,12 @@
 
 Loads each ``scenario_*.ailang`` file, executes it via the AIEX engine,
 extracts the structured decision plus key audit fields, and writes a
-markdown report to ``../runs/run_report.md`` so the README can link to
-a reproducible record of what each scenario produced.
+markdown report plus a JSON dump to ``../runs/<run-id>/`` so the README
+can link to a reproducible record of what each scenario produced.
+
+Each invocation gets its own run directory (default run id: UTC
+timestamp, override with ``--run-id``), so two runs can be kept side by
+side and compared with ``compare_runs.py``.
 
 Live LLM calls are made.  Two ways to provide your API key:
   1. Export ``ANTHROPIC_API_KEY`` in your shell before running.
@@ -15,6 +19,7 @@ Budget ~$0.04 per scenario, ~$0.20 total for the five-scenario run.
 
 from __future__ import annotations
 
+import argparse
 import datetime
 import json
 import os
@@ -177,6 +182,18 @@ def render_markdown(results: list[tuple[str, dict]]) -> str:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser(description="Run all loan-eligibility scenarios.")
+    ap.add_argument(
+        "--run-id",
+        default=datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ"),
+        help="Name of the output directory under runs/ (default: UTC timestamp).",
+    )
+    args = ap.parse_args()
+    run_dir = RUNS_DIR / args.run_id
+    if run_dir.exists():
+        sys.exit(f"{run_dir} already exists; pick another --run-id.")
+    run_dir.mkdir(parents=True)
+
     results: list[tuple[str, dict]] = []
     for scenario_name, header in SCENARIOS:
         print(f"Running {scenario_name}...")
@@ -189,11 +206,11 @@ def main() -> None:
     # in parallel.  The JSON is useful for diffing future runs against
     # this baseline to detect drift.
     md = render_markdown(results)
-    md_path = RUNS_DIR / "run_report.md"
+    md_path = run_dir / "run_report.md"
     md_path.write_text(md, encoding="utf-8")
     print(f"\nWrote {md_path}")
 
-    json_path = RUNS_DIR / "run_report.json"
+    json_path = run_dir / "run_report.json"
     json_path.write_text(
         json.dumps([r for _, r in results], indent=2, default=str),
         encoding="utf-8",
