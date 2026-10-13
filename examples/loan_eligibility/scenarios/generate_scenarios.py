@@ -67,10 +67,12 @@ APPLICANTS: dict[str, dict] = {
         "recent_credit_inquiries_6mo": 8,
     },
     "scenario_03_marginal_conditional": {
-        # Borderline DTI, otherwise solid.  Hard rules likely produce
-        # marginal; soft factors are positive (long tenure, owned home,
-        # established lender relationship).  Expected: APPROVE_WITH_
-        # CONDITIONS (e.g. shorter term to reduce monthly payment).
+        # Borderline DTI, otherwise solid.  DTI 43.84% vs 43.0% max is
+        # the only failed check and is within the 5% tolerance, so the
+        # hard outcome is marginal; soft factors are positive (long
+        # tenure, owned home, established lender relationship).
+        # Expected: APPROVE_WITH_CONDITIONS (rule R2), with a condition
+        # that cures the DTI shortfall (smaller amount or longer term).
         "name": "Priya Sundaram",
         "age": 37,
         "credit_score": 695,
@@ -88,11 +90,11 @@ APPLICANTS: dict[str, dict] = {
         "recent_credit_inquiries_6mo": 2,
     },
     "scenario_04_marginal_decline": {
-        # Decent score (above min) but multiple soft signals are
-        # negative: very recent job, volatile industry exposure (gig
-        # economy), 7 inquiries in 6 months suggests credit-shopping
-        # distress.  Expected: DECLINE or REFER_TO_UNDERWRITER even
-        # though hard rules might pass.
+        # Decent score (above min) but only 3 months in the job against
+        # a 12-month minimum (a renter, so no homeowner exception) --
+        # 75% short, far outside the 5% tolerance, so the hard outcome
+        # is hard_fail.  Soft signals are also negative (gig-economy
+        # industry, 7 inquiries in 6 months).  Expected: DECLINE (R1).
         "name": "Diego Ferreira",
         "age": 31,
         "credit_score": 685,
@@ -110,11 +112,13 @@ APPLICANTS: dict[str, dict] = {
         "recent_credit_inquiries_6mo": 7,
     },
     "scenario_05_judgment_call": {
-        # Right at every threshold.  Hard rules will say "marginal".
+        # Credit score exactly 660 (min 660) and tenure exactly 12
+        # months (min 12): every check passes, so the hard outcome is
+        # all_pass, with thin margins on credit score and tenure.
         # Soft factors are mixed (stable industry, but new to lender,
-        # moderate inquiries).  Expected: REFER_TO_UNDERWRITER --
-        # this is exactly the kind of edge case where a defensible
-        # automated system should escalate rather than guess.
+        # moderate inquiries).  Expected: APPROVE_WITH_CONDITIONS (R3)
+        # with one verification condition per thin-margin check, or
+        # REFER_TO_UNDERWRITER if the soft direction comes out negative.
         "name": "Eleanor Whitfield",
         "age": 56,
         "credit_score": 660,
