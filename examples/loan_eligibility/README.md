@@ -43,15 +43,17 @@ loan_eligibility/
 ├── loan_eligibility.ailang         # The canonical program (the executable spec)
 ├── scenarios/
 │   ├── generate_scenarios.py       # Builds the 5 .ailang variants from APPLICANTS dict
-│   ├── run_all.py                  # Runs every scenario through AIEX, captures outputs
+│   ├── run_all.py                  # Runs every scenario through AIEX, writes runs/<run-id>/
+│   ├── compare_runs.py             # Compares two run_report.json files on the load-bearing fields
 │   ├── scenario_01_clear_approve.ailang
 │   ├── scenario_02_clear_decline.ailang
 │   ├── scenario_03_marginal_conditional.ailang
 │   ├── scenario_04_marginal_decline.ailang
 │   └── scenario_05_judgment_call.ailang
 └── runs/
-    ├── run_report.md               # Human-readable decisions per scenario
-    └── run_report.json             # Machine-readable dump for diff/regression
+    ├── run_report.md               # Captured run (predates the WEIGH fix -- see note below)
+    ├── run_report.json             # Machine-readable dump of the same run
+    └── <run-id>/                   # New runs from run_all.py: run_report.md + run_report.json
 ```
 
 ## Program structure
@@ -87,7 +89,7 @@ aiex compile examples/loan_eligibility/scenarios/scenario_01_clear_approve.ailan
 # Run one scenario end-to-end
 aiex run examples/loan_eligibility/scenarios/scenario_01_clear_approve.ailang
 
-# Run all five scenarios and regenerate runs/run_report.md
+# Run all five scenarios; writes runs/<run-id>/run_report.{md,json}
 cd examples/loan_eligibility/scenarios && python run_all.py
 ```
 
@@ -95,11 +97,13 @@ To add a new scenario: add an entry to the `APPLICANTS` dict in `scenarios/gener
 
 ## What the scenarios are designed to demonstrate
 
+> **Note: the captured runs predate a fix and need regenerating.** `runs/run_report.md` and `runs/run_report.json` were produced before an AIEX fix ([pcoz/aiex](https://github.com/pcoz/aiex), "Wire WEIGH ON <topic> through compiler and engine into the prompt"): the `ON applicant` clause of the `WEIGH soft_factors` step was parsed but never rendered into the prompt, so the soft-factor step received no applicant data and, under `RETRIEVAL_BUDGET: NONE`, returned `soft_factor_direction: neutral` in every scenario (citing `insufficient_info` in several). The scenario labels describe the *intended* case, not the captured outcome; the "Actual" column below and the per-scenario rationales reflect the bug, not the program's policy. No repeat-run evidence for the qualitative-idempotency claim has been published yet. Regenerate with a fixed AIEX (`python run_all.py`, twice) and check convergence with `scenarios/compare_runs.py`.
+
 The table below shows the designed *intent* of each scenario alongside the *actual* decision the model produced on a live run. Where the actual differs from the designed outcome, the model leaned conservative — escalating to a human underwriter or adding conditions rather than committing to a hard call. That's the correct behaviour for a real underwriting system, and it's exactly what the contracts allow: the OUTPUT_FORMAT enum includes `REFER_TO_UNDERWRITER` and `APPROVE_WITH_CONDITIONS` precisely so the model can defer when it doesn't have enough signal.
 
 | # | Designed outcome | Actual (live run) | What it stresses |
 |---|---|---|---|
-| 1 | APPROVE | APPROVE_WITH_CONDITIONS (medium conf) | All hard rules pass with comfortable margins; model added conditions because soft-factor input data was thin |
+| 1 | APPROVE | APPROVE_WITH_CONDITIONS (medium conf) | All hard rules pass with comfortable margins; model added conditions because the soft-factor step received no applicant data (see note) |
 | 2 | DECLINE | DECLINE (high conf) | Hard disqualifier present (recent bankruptcy); model cites it directly |
 | 3 | APPROVE_WITH_CONDITIONS | REFER_TO_UNDERWRITER | Borderline DTI; model escalated rather than commit |
 | 4 | DECLINE | REFER_TO_UNDERWRITER | Score passes thresholds but soft factors concerning; model escalated |
@@ -107,11 +111,11 @@ The table below shows the designed *intent* of each scenario alongside the *actu
 
 Full per-scenario rationales, contributing factors, and customer-letter excerpts are in [`runs/run_report.md`](runs/run_report.md).
 
-**Why the conservative skew?** The WEIGH step's soft-factor inputs in this example are deliberately minimal (one industry tag, one tenure number, etc.). Every scenario produced `soft_factor_direction: neutral` because the model lacked confident signal — which then drove the SYNTHESIZE step toward conditional or escalated decisions rather than confident APPROVE/DECLINE. With richer soft-factor inputs (recent payment history, industry-specific economic context, behavioural CRM signals) the model would discriminate more sharply. This is itself a useful lesson: AILang programs are sensitive to input richness in exactly the way a human underwriter is.
+**Why the conservative skew?** In the captured runs every scenario produced `soft_factor_direction: neutral` because the WEIGH step never saw the applicant (see the note above) — not because the soft-factor inputs are too thin. With no soft signal, the SYNTHESIZE step leaned toward conditional or escalated decisions rather than confident APPROVE/DECLINE. Whether the scenarios land on their designed outcomes once the applicant data reaches the WEIGH step is unverified until the runs are regenerated.
 
 ## Reproducing the qualitative idempotency claim
 
-Run `python run_all.py` twice in a row. Compare the two `runs/run_report.json` files. Surface text wording will vary between the runs (LLMs are stochastic); the load-bearing fields — `decision`, `hard_outcome`, `soft_factor_direction`, `confidence`, the conditions list — converge across runs. That convergence is what makes this architecture credible for systems where decisions need to be reproducible-enough for audit, even when they cannot be deterministic in the bit-exact sense.
+Run `python run_all.py` twice in a row; each run writes to its own `runs/<run-id>/` directory (UTC timestamp by default, or pass `--run-id`). Compare them with `python compare_runs.py ../runs/<run_a>/run_report.json ../runs/<run_b>/run_report.json`, which checks the fields below per scenario and exits non-zero if any differ. Surface text wording will vary between the runs (LLMs are stochastic); the load-bearing fields — `decision`, `hard_outcome`, `soft_factor_direction`, `confidence`, the conditions list — should converge across runs (not yet demonstrated by published repeat runs). That convergence is what makes this architecture credible for systems where decisions need to be reproducible-enough for audit, even when they cannot be deterministic in the bit-exact sense.
 
 ## Where this would not fit
 

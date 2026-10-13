@@ -1,5 +1,7 @@
 # Loan Eligibility -- Live Execution Report
 
+> **Superseded -- regenerate.** This run predates an AIEX fix: the `ON applicant` clause of `WEIGH soft_factors` was never rendered into the prompt, so the soft-factor step received no applicant data and returned `neutral` (citing `insufficient_info` in several scenarios). Scenario headings name the intended case, not the outcome below. See the README note.
+
 _Generated: 2026-04-19T06:11:06Z_
 
 Each scenario runs the same `loan_eligibility.ailang` program through AIEX with a different applicant.  The reasoning operations (`DEDUCE`, `WEIGH`, `SYNTHESIZE`) make real LLM calls; the `EXECUTE_CODE` blocks compute deterministically.  Outputs below are captured verbatim from the run.
