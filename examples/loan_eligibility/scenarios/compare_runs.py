@@ -6,6 +6,7 @@ fields an auditor relies on should converge.  For each scenario present
 in both reports it compares:
 
   - final_decision.decision
+  - final_decision.decision_rule_applied
   - hard_eligibility.hard_outcome
   - soft_factors.soft_factor_direction
   - final_decision.confidence
@@ -32,6 +33,7 @@ from pathlib import Path
 # record written by run_all.py.
 CATEGORICAL_FIELDS: list[tuple[str, str, str]] = [
     ("decision", "final_decision", "decision"),
+    ("decision_rule_applied", "final_decision", "decision_rule_applied"),
     ("hard_outcome", "hard_eligibility", "hard_outcome"),
     ("soft_factor_direction", "soft_factors", "soft_factor_direction"),
     ("confidence", "final_decision", "confidence"),

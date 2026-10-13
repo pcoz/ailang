@@ -104,9 +104,12 @@ def run_scenario(scenario_name: str) -> dict:
         "scenario": scenario_name,
         "applicant": state.variables.get("applicant"),
         "affordability_metrics": state.variables.get("affordability_metrics"),
-        "hard_eligibility": _find_response(state, "hard_eligibility"),
+        # hard_eligibility is computed by an EXECUTE_CODE block, so it is
+        # a program variable rather than an LLM transaction response.
+        "hard_eligibility": state.variables.get("hard_eligibility"),
         "soft_factors": _find_response(state, "soft_factors"),
         "final_decision": _find_response(state, "final_decision"),
+        "policy_check": state.variables.get("policy_check"),
         "letter_excerpt": state.variables.get("letter_excerpt"),
         "transactions_committed": sum(
             1 for r in state.results.values() if r.status.value == "COMMITTED"
@@ -127,7 +130,7 @@ def render_markdown(results: list[tuple[str, dict]]) -> str:
     out.append(
         "Each scenario runs the same `loan_eligibility.ailang` program "
         "through AIEX with a different applicant.  The reasoning operations "
-        "(`DEDUCE`, `WEIGH`, `SYNTHESIZE`) make real LLM calls; the "
+        "(`WEIGH`, `SYNTHESIZE`) make real LLM calls; the "
         "`EXECUTE_CODE` blocks compute deterministically.  Outputs below "
         "are captured verbatim from the run."
     )
@@ -152,14 +155,22 @@ def render_markdown(results: list[tuple[str, dict]]) -> str:
         out.append(f"**Hard eligibility outcome:** `{he.get('hard_outcome')}`")
         if he.get("failed_checks"):
             out.append(f"  - Failed checks: {', '.join(he['failed_checks'])}")
+        if he.get("thin_margin_checks"):
+            out.append(f"  - Thin-margin checks: {', '.join(he['thin_margin_checks'])}")
         out.append("")
         sf = result["soft_factors"] or {}
         out.append(f"**Soft factor direction:** `{sf.get('soft_factor_direction')}`")
         out.append("")
         fd = result["final_decision"] or {}
         out.append(f"**Final decision: `{fd.get('decision')}`** "
-                   f"(confidence: {fd.get('confidence')})")
+                   f"(rule: {fd.get('decision_rule_applied')}, "
+                   f"confidence: {fd.get('confidence')})")
         out.append("")
+        pc = result.get("policy_check") or {}
+        if pc and not pc.get("consistent"):
+            out.append(f"**Policy check failed:** decision not in "
+                       f"{pc.get('allowed_decisions')}; issued as REFER_TO_UNDERWRITER.")
+            out.append("")
         if fd.get("primary_rationale"):
             out.append(f"_Rationale:_ {fd['primary_rationale']}")
             out.append("")
