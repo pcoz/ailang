@@ -9,7 +9,7 @@ The core insight: **the program is the spec**. The same text a compliance office
 - **Typed reasoning operations** for the qualitative parts (`DEDUCE`, `WEIGH`, `SYNTHESIZE`)
 - **`EXECUTE_CODE` blocks** for the deterministic parts (amortisation math, audit log formatting)
 - **Output contracts** (`MUST_INCLUDE`, `CANNOT_INCLUDE`, constrained `OUTPUT_FORMAT` enums) that lock the LLM to defensible decision categories
-- **Multi-tier model routing** — BERT/Haiku/Sonnet/Opus selected automatically per operation, ~63% cost reduction vs all-Opus
+- **Multi-tier model routing** — BERT/Haiku/Sonnet/Opus selected automatically per operation, ~40% cost reduction vs running the same plan on Opus
 - **Pre-execution budget reports** — every scenario is estimated at $0.045 to run, knowable before spending
 - **Reproducibility across runs** — the same applicant produces a functionally equivalent decision every time (qualitative idempotency)
 - **Five scenarios run end-to-end against the live Anthropic API**, with captured outputs
@@ -76,7 +76,7 @@ EXECUTE_CODE python:           # Step 5: format audit record + customer letter
 END_EXECUTE
 ```
 
-Five transactions; two are deterministic ($0 LLM cost); three are reasoning operations routed to the appropriate model tier. Pre-execution budget: **$0.0447 per scenario**, **62.7% savings vs an all-Opus baseline** ($0.12). Both numbers come straight from `aiex compile <scenario>.ailang` — run that command on any of the scenario files to see the per-transaction routing decisions and verify the figures.
+Five transactions; two are deterministic ($0 LLM cost); three are reasoning operations routed to the appropriate model tier. Pre-execution budget: **$0.0447 per scenario**, **40.0% savings vs an all-Opus baseline** ($0.0745). Both numbers come straight from `aiex compile <scenario>.ailang` — run that command on any of the scenario files to see the per-transaction routing decisions and verify the figures.
 
 ## Running it yourself
 
